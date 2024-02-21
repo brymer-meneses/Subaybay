@@ -8,7 +8,12 @@ University of the Philippines Baguio
 ```bash
 # install the dependences
 npm install
+
 # run the server
 npm run dev
 ```
 
+```bash
+# format the source code
+npm run format
+```
