@@ -1,8 +1,7 @@
 
 MODE := dev
 
-all:
-	run
+all: run
 
 database: src/database.sql
 	sqlite3 -init src/database.sql database.db .quit
