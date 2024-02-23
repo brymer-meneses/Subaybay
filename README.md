@@ -3,17 +3,16 @@
 Internal Document Tracker for the Office of the University Registrar of the
 University of the Philippines Baguio
 
-# Running
+## Running
+
+We use `Makefile` to automate tasks. Invoke the following command to run the
+client and initialize the database on **development** mode.
 
 ```bash
-# install the dependences
-npm install
-
-# run the server
-npm run dev
+make run
 ```
 
+To run the application in **production**, invoke
 ```bash
-# format the source code
-npm run format
+make run MODE=prod
 ```
