@@ -3,13 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "npm run db:init && vite dev",
+    "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "format": "npx prettier --write .",
-    "db:init": "sqlite3 -init src/database.sql database.db .quit"
+    "format": "npx prettier --write ."
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.0.0",

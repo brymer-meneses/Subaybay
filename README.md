@@ -13,6 +13,7 @@ make run
 ```
 
 To run the application in **production**, invoke
+
 ```bash
 make run MODE=prod
 ```
