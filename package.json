@@ -27,8 +27,10 @@
   },
   "type": "module",
   "dependencies": {
+    "@types/d3": "^7.4.3",
     "bits-ui": "^0.18.1",
     "clsx": "^2.1.0",
+    "d3": "^7.8.5",
     "lucide-svelte": "^0.335.0",
     "sqlite3": "^5.1.7",
     "tailwind-merge": "^2.2.1",
