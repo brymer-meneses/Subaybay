@@ -15,7 +15,7 @@ const config = {
     },
     extend: {
       colors: {
-        maroon:"#751518",
+        up_maroon: "#751518",
         border: "hsl(var(--border) / <alpha-value>)",
         input: "hsl(var(--input) / <alpha-value>)",
         ring: "hsl(var(--ring) / <alpha-value>)",
@@ -56,6 +56,8 @@ const config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
+        inter: ["Inter Variable", "sans-seriff"],
+        poppins: ["Poppins", "sans-seriff"],
         sans: [...fontFamily.sans],
       },
     },
