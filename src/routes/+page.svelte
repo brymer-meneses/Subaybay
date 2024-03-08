@@ -1,9 +1,10 @@
 <script lang="ts">
+  import UP from "$lib/assets/UP.png";
 </script>
 
 <div class="flex flex-row items-center justify-center gap-28 w-screen h-screen">
   <div class="relative">
-    <img src="UP.png" alt="up-logo" class="w-[500px] absolute z-20" />
+    <img src={UP} alt="up-logo" class="w-[500px] absolute z-20" />
 
     <div
       class="rounded-full bg-red-500 blur-[200px] aspect-square w-[400px] z-0 absolute top-10 bottom-20 left-40 animate-pulse transition"
