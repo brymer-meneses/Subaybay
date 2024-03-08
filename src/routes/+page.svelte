@@ -6,10 +6,11 @@
     />
   </div>
 
-  <div class="flex flex-col gap-4">
-    <h1 class="text-8xl font-bold text-maroon">Subaybay</h1>
-    <h2 class="text-4xl">Request Monitoring System</h2>
-    <button class="bg-maroon text-white py-4 text-xl"
+  <div class="flex flex-col gap-4 z-20">
+    <h1 class="text-8xl font-extrabold text-maroon">Subaybay</h1>
+    <h2 class="text-2xl">Request Monitoring System</h2>
+    <button
+      class="bg-white text-black py-4 text-xl border border-maroon rounded-2xl hover:bg-maroon hover:text-white"
       >Continue with google temp button lma</button
     >
   </div>
