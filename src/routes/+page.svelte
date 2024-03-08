@@ -7,7 +7,10 @@
   </div>
 
   <div class="flex flex-col gap-4">
-    <h1 class="text-8xl font-bold">Subaybay</h1>
+    <h1 class="text-8xl font-bold text-maroon">Subaybay</h1>
     <h2 class="text-4xl">Request Monitoring System</h2>
+    <button class="bg-maroon text-white py-4 text-xl"
+      >Continue with google temp button lma</button
+    >
   </div>
 </div>
