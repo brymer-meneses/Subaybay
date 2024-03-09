@@ -8,6 +8,7 @@
         y : number;
     }
   
+    let readyToRender = false;
     let graph : any;
 
     let graphWidth : number;
@@ -35,6 +36,9 @@
         // the user adds nodes
 
     // this stores the connection between stages
+    // Note: this assumes that a stage cannot be repeated twice, 
+        // make sure to add code to account for this when adding new stages
+        // todo: add Blank stage
     const flow: { [key: string]: string[]} = {};
     flow["initial"] = ["staff 1"];
     flow["staff 1"] = ["staff 2", "staff 3"];
@@ -121,6 +125,24 @@
         stageToPoint[stage] = point;
     }
 
+    function createNewStage(from : string, to : string) {
+        const isParallelAddition = flow[from].indexOf(to) == -1;
+
+        let newStage = "newStage"; //todo append an integer to avoid duplication
+        
+        if(!isParallelAddition) {
+            const i = flow[from].indexOf(to);
+            flow[from].splice(i);
+
+            linearStageCount = linearStageCount + 1;
+        }
+        
+        flow[from].push(newStage);
+        flow[newStage] = [to];
+
+        console.log(from + " | " + to);
+    }
+
 </script>
 
 <div class="flex justify-center border-blue border-4">
@@ -135,6 +157,7 @@
                                 y1={stageToPoint[start].y} 
                                 x2={stageToPoint[end].x} 
                                 y2={stageToPoint[end].y}
+                                addNodeFunction = {() => createNewStage(start, end)}
                             ></NodeLine>
                         {/each}
                     {/each}
