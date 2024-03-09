@@ -26,7 +26,7 @@
   <div class=" flex-grow flex flex-col gap-2 items-center space-y-4">
     <div class="relative group mt-4 flex items-center justify-center">
       <span
-        class="absolute top-1/4 left-20 text-white bg-gray-600 px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
+        class="absolute top-1/4 left-24 text-white bg-gray-600 px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
         >{name.split(" ")[0]}</span
       >
       <img
