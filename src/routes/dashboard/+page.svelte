@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { user } from "$lib/user";
+  import type { PageServerData } from "../$types";
 
-  const name = $user!.displayName;
+  export let data: NonNullable<PageServerData>;
 </script>
 
-<h1>Hello there {name}</h1>
+<h1>Hello there {data.name}</h1>

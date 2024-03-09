@@ -1,9 +1,8 @@
 <script lang="ts">
-  import UP from "$lib/assets/UP.png";
-  import { goto } from "$app/navigation";
-  import { user } from "$lib/user";
-
+  import { onMount } from "svelte";
   import { initializeApp, type FirebaseApp } from "firebase/app";
+  import { firebaseConfig } from "$lib/firebase";
+
   import {
     GoogleAuthProvider,
     initializeAuth,
@@ -14,35 +13,42 @@
     onAuthStateChanged,
   } from "firebase/auth";
 
-  import { onMount } from "svelte";
+  import UP from "$lib/assets/UP.png";
+  import { goto } from "$app/navigation";
 
   let app: FirebaseApp;
   let auth: Auth;
 
   onMount(() => {
-    app = initializeApp({
-      apiKey: "AIzaSyCW20RAbSKnFkNh5IW0WeTgZlOavP-UwGA",
-      authDomain: "subaybay-60d3d.firebaseapp.com",
-      projectId: "subaybay-60d3d",
-      storageBucket: "subaybay-60d3d.appspot.com",
-      messagingSenderId: "346811377701",
-      appId: "1:346811377701:web:7acd81c9d273edfe7c37cc",
-    });
+    app = initializeApp(firebaseConfig);
     auth = initializeAuth(app, {
       persistence: browserSessionPersistence,
       popupRedirectResolver: browserPopupRedirectResolver,
     });
 
-    onAuthStateChanged(auth, (loggedInUser) => {
-      if (loggedInUser) {
-        $user = loggedInUser!;
-        goto("/dashboard");
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const idToken = await user.getIdToken();
+
+        const response = await fetch("api/sessionLogin", {
+          method: "POST",
+          // @ts-ignore
+          body: JSON.stringify({ idToken }),
+          headers: {
+            "content-type": "application/json",
+          },
+        });
+
+        const { url } = response;
+
+        goto(url);
       }
     });
   });
 
   async function signInWithGoogle() {
     const provider = new GoogleAuthProvider();
+
     await signInWithRedirect(auth, provider);
   }
 </script>
