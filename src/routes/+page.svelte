@@ -47,7 +47,9 @@
   }
 </script>
 
-<div class="flex flex-row items-center justify-center gap-28 w-screen h-screen">
+<div
+  class="flex lg:flex-row flex-col items-center justify-center gap-28 w-screen h-screen"
+>
   <div class="relative">
     <img src={UP} alt="up-logo" class="w-[500px] absolute z-20" />
 
