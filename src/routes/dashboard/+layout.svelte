@@ -38,4 +38,6 @@
     />
   </div>
 </div>
-<slot />
+<div class="ml-20">
+  <slot />
+</div>
