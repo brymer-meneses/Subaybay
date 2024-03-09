@@ -12,5 +12,5 @@ export const load: LayoutServerLoad = ({ cookies }) => {
   }
 
   const payload = jose.decodeJwt(idToken!);
-  return { picture: payload.picture }
+  return { picture: payload.picture, name: payload.name }
 }

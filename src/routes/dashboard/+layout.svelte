@@ -10,6 +10,7 @@
 
   // @ts-ignore
   const picture: string = data.picture!;
+  const name: string = data.name!;
 </script>
 
 <div class="fixed bg-up_maroon h-dvh w-20 flex flex-col justify-between">
@@ -22,17 +23,16 @@
     </div>
   </div>
   <!-- nav icons here -->
-  <div class=" flex-grow flex flex-col gap-2 items-center  space-y-4">
-
-    <div class="relative group mt-4">
+  <div class=" flex-grow flex flex-col gap-2 items-center space-y-4">
+    <div class="relative group mt-4 flex items-center justify-center">
       <span
         class="absolute top-1/4 left-20 text-white bg-gray-600 px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
-        >Admin</span
+        >{name.split(" ")[0]}</span
       >
       <img
         src={picture}
         alt="Log out"
-        class="w-3/5 aspect-square m4 rounded-full"
+        class="w-3/4 aspect-square rounded-full border-green-900 border-2"
       />
     </div>
 
@@ -44,7 +44,7 @@
       <img
         src="https://placehold.co/50"
         alt="Log out"
-        class="aspect-square m4 rounded-full"
+        class="aspect-square rounded-full"
       />
     </div>
     <div class="relative group">
@@ -55,7 +55,7 @@
       <img
         src="https://placehold.co/50"
         alt="Log out"
-        class="aspect-square m4 rounded-full"
+        class="aspect-square rounded-full"
       />
     </div>
   </div>
@@ -71,7 +71,7 @@
       <img
         src="https://placehold.co/50"
         alt="Log out"
-        class="aspect-square m4 rounded-full"
+        class="aspect-square rounded-full"
       />
     </div>
   </div>
