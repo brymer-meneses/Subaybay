@@ -1,4 +1,3 @@
-
 <script lang="ts">
 </script>
 
@@ -27,7 +26,7 @@
           </span>
         </div>
         <div
-          class="relative rounded-full h-6 w-6 bg-maroon border after:content-['Date'] after:translate-y-6 after:absolute after:bg-gray-600 after:text-white after:px-2 after:py-1 after:rounded-md after:hidden hover:after:block"
+          class="relative rounded-full h-6 w-6 bg-up_maroon border after:content-['Date'] after:translate-y-6 after:absolute after:bg-gray-600 after:text-white after:px-2 after:py-1 after:rounded-md after:hidden hover:after:block"
         >
           <span class="absolute top-6 text-sm">
             Stage:<br />
@@ -35,7 +34,7 @@
           </span>
         </div>
         <div
-          class="relative rounded-full h-6 w-6 bg-maroon border after:content-['Date'] after:translate-y-6 after:absolute after:bg-gray-600 after:text-white after:px-2 after:py-1 after:rounded-md after:hidden hover:after:block"
+          class="relative rounded-full h-6 w-6 bg-up_maroon border after:content-['Date'] after:translate-y-6 after:absolute after:bg-gray-600 after:text-white after:px-2 after:py-1 after:rounded-md after:hidden hover:after:block"
         >
           <span class="absolute top-6 text-sm">
             Stage:<br />
@@ -43,7 +42,7 @@
           </span>
         </div>
         <div
-          class="relative rounded-full h-6 w-6 bg-maroon border after:content-['Date'] after:translate-y-6 after:absolute after:bg-gray-600 after:text-white after:px-2 after:py-1 after:rounded-md after:hidden hover:after:block"
+          class="relative rounded-full h-6 w-6 bg-up_maroon border after:content-['Date'] after:translate-y-6 after:absolute after:bg-gray-600 after:text-white after:px-2 after:py-1 after:rounded-md after:hidden hover:after:block"
         >
           <span class="absolute top-6 text-sm">
             Stage:<br />
@@ -51,7 +50,7 @@
           </span>
         </div>
         <div
-          class="relative rounded-full h-6 w-6 bg-maroon border after:content-['Date'] after:translate-y-6 after:absolute after:bg-gray-600 after:text-white after:px-2 after:py-1 after:rounded-md after:hidden hover:after:block"
+          class="relative rounded-full h-6 w-6 bg-up_maroon border after:content-['Date'] after:translate-y-6 after:absolute after:bg-gray-600 after:text-white after:px-2 after:py-1 after:rounded-md after:hidden hover:after:block"
         >
           <span class="absolute top-6 text-sm">
             Stage:<br />
@@ -64,9 +63,10 @@
       <h3 class="text-xl mb-5">Details</h3>
       <div class="h-[146px] w-[650] border bg-white p-6 rounded-md">
         <p>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cum, incidunt iste earum ad numquam exercitationem et excepturi est
-          natus officiis nostrum unde rem expedita. Voluptatem ratione ea
-          mollitia minima quibusdam.
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cum,
+          incidunt iste earum ad numquam exercitationem et excepturi est natus
+          officiis nostrum unde rem expedita. Voluptatem ratione ea mollitia
+          minima quibusdam.
         </p>
       </div>
     </div>
@@ -74,9 +74,10 @@
       <h3 class="text-xl mb-5">Remarks</h3>
       <div class="h-[146px] w-[650] border bg-white p-6 rounded-md">
         <p>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cum, incidunt iste earum ad numquam exercitationem et excepturi est
-          natus officiis nostrum unde rem expedita. Voluptatem ratione ea
-          mollitia minima quibusdam.
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cum,
+          incidunt iste earum ad numquam exercitationem et excepturi est natus
+          officiis nostrum unde rem expedita. Voluptatem ratione ea mollitia
+          minima quibusdam.
         </p>
       </div>
     </div>
