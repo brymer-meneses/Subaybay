@@ -6,6 +6,7 @@ import * as jose from "jose";
 export const load: LayoutServerLoad = ({ cookies }) => {
 
   const idToken = cookies.get("idToken");
+  if (!idToken) return {}
 
   if (!verifyIdToken(idToken)) {
     redirect(302, "/");

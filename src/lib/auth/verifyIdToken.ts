@@ -4,10 +4,19 @@
 import * as jose from "jose";
 import { firebaseConfig } from "$lib/firebase";
 
+// some ugly code that i am too lazy to refactor rn
+let __keyExpiresAt: number | undefined;
+let __keys: Record<string, string> | undefined;
+
 async function getGoogleKeys(): Promise<Record<string, string>> {
-  const response = await fetch("https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com");
-  const keys = await response.json();
-  return keys;
+
+  if (__keyExpiresAt! >= Date.now() || !__keys) {
+    const response = await fetch("https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com");
+    __keys = await response.json();
+    // @ts-ignore
+    __keyExpiresAt = response.headers.expiration! * 1000;
+  }
+  return __keys!;
 }
 
 function validateHeader(header: jose.ProtectedHeaderParameters, keys: Record<string, string>): boolean {
@@ -59,7 +68,9 @@ function validatePayload(payload: jose.JWTPayload): boolean {
   return true;
 }
 
-export async function verifyIdToken(idToken: string | null | undefined): Promise<boolean> {
+export async function verifyIdToken(idToken: string | undefined): Promise<boolean> {
+
+  console.log("validating ... ");
 
   if (!idToken) return false;
 

@@ -10,6 +10,7 @@
     browserSessionPersistence,
     browserPopupRedirectResolver,
     signInWithRedirect,
+    getRedirectResult,
   } from "firebase/auth";
 
   import UP from "$lib/assets/UP.png";
@@ -24,22 +25,23 @@
       persistence: browserSessionPersistence,
       popupRedirectResolver: browserPopupRedirectResolver,
     });
-    const user = auth.currentUser;
-    if (user) {
-      const idToken = await user.getIdToken();
+
+    const result = await getRedirectResult(auth, browserPopupRedirectResolver);
+    if (result) {
+      const idToken = await result.user.getIdToken();
 
       const response = await fetch("api/sessionLogin", {
         method: "POST",
-        // @ts-ignore
         body: JSON.stringify({ idToken }),
         headers: {
           "content-type": "application/json",
         },
       });
 
-      const { url } = response;
-
-      goto(url);
+      const { url, redirected } = response;
+      if (redirected) {
+        goto(url);
+      }
     }
   });
 
