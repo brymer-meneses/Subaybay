@@ -1,8 +1,15 @@
-<script>
+<script lang="ts">
   import "../../app.pcss";
   import "@fontsource-variable/inter";
   import "@fontsource/poppins";
   import UP from "$lib/assets/UP.png";
+
+  import type { PageServerData } from "./$types";
+
+  export let data: NonNullable<PageServerData>;
+
+  // @ts-ignore
+  const picture: string = data.picture!;
 </script>
 
 <div class="fixed bg-up_maroon h-dvh w-20 flex flex-col justify-between">
@@ -15,18 +22,20 @@
     </div>
   </div>
   <!-- nav icons here -->
-  <div class=" flex-grow flex flex-col gap-2 items-center space-y-4">
+  <div class=" flex-grow flex flex-col gap-2 items-center  space-y-4">
+
     <div class="relative group mt-4">
       <span
         class="absolute top-1/4 left-20 text-white bg-gray-600 px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
         >Admin</span
       >
       <img
-        src="https://placehold.co/50"
+        src={picture}
         alt="Log out"
-        class="aspect-square m4 rounded-full"
+        class="w-3/5 aspect-square m4 rounded-full"
       />
     </div>
+
     <div class="relative group">
       <span
         class="absolute top-1/4 left-20 text-white bg-gray-600 px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"

@@ -1,9 +1,9 @@
 import { redirect } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
 import { verifyIdToken } from "$lib/auth/verifyIdToken";
+import type { LayoutServerLoad } from "./$types";
 import * as jose from "jose";
 
-export const load: PageServerLoad = ({ cookies }) => {
+export const load: LayoutServerLoad = ({ cookies }) => {
 
   const idToken = cookies.get("idToken");
 
@@ -12,5 +12,5 @@ export const load: PageServerLoad = ({ cookies }) => {
   }
 
   const payload = jose.decodeJwt(idToken!);
-  return { ...payload }
+  return { picture: payload.picture }
 }
