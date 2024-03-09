@@ -63,6 +63,8 @@
     </div>
   </div>
 </div>
-<div class="ml-20">
+<div
+  class="ml-20 bg-gradient-to-tr to-red-100 from-white h-screen overflow-y-auto"
+>
   <slot />
 </div>

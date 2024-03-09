@@ -2,7 +2,7 @@
 </script>
 
 <!--TODO turn these to components later -->
-<div class="bg-red-50">
+<div class="">
   <div class="h-dvh py-10 w-10/12 mx-auto space-y-6">
     <div>
       <h2 class="text-2xl">Request Name Here</h2>
@@ -61,7 +61,7 @@
     </div>
     <div>
       <h3 class="text-xl mb-5">Details</h3>
-      <div class="h-[146px] w-[650] border bg-white p-6 rounded-md">
+      <div class="h-[146px] w-[650] border bg-white border-none p-6 rounded-md">
         <p>
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cum,
           incidunt iste earum ad numquam exercitationem et excepturi est natus
@@ -72,7 +72,7 @@
     </div>
     <div>
       <h3 class="text-xl mb-5">Remarks</h3>
-      <div class="h-[146px] w-[650] border bg-white p-6 rounded-md">
+      <div class="h-[146px] w-[650] border bg-white border-none p-6 rounded-md">
         <p>
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cum,
           incidunt iste earum ad numquam exercitationem et excepturi est natus
@@ -82,10 +82,10 @@
       </div>
     </div>
     <div>
-      <button class="border py-2 px-4 mr-6 rounded-md bg-gray-100"
+      <button class="border py-2 px-4 mr-6 rounded-md bg-[#D9D9D9]"
         >Place holder btn 1</button
       >
-      <button class="border py-2 px-4 mr-6 rounded-md bg-gray-100"
+      <button class="border py-2 px-4 mr-6 rounded-md bg-[#D9D9D9]"
         >Place holder btn 2</button
       >
     </div>
