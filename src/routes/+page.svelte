@@ -10,7 +10,6 @@
     browserSessionPersistence,
     browserPopupRedirectResolver,
     signInWithRedirect,
-    onAuthStateChanged,
   } from "firebase/auth";
 
   import UP from "$lib/assets/UP.png";
@@ -19,31 +18,29 @@
   let app: FirebaseApp;
   let auth: Auth;
 
-  onMount(() => {
+  onMount(async () => {
     app = initializeApp(firebaseConfig);
     auth = initializeAuth(app, {
       persistence: browserSessionPersistence,
       popupRedirectResolver: browserPopupRedirectResolver,
     });
+    const user = auth.currentUser;
+    if (user) {
+      const idToken = await user.getIdToken();
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const idToken = await user.getIdToken();
+      const response = await fetch("api/sessionLogin", {
+        method: "POST",
+        // @ts-ignore
+        body: JSON.stringify({ idToken }),
+        headers: {
+          "content-type": "application/json",
+        },
+      });
 
-        const response = await fetch("api/sessionLogin", {
-          method: "POST",
-          // @ts-ignore
-          body: JSON.stringify({ idToken }),
-          headers: {
-            "content-type": "application/json",
-          },
-        });
+      const { url } = response;
 
-        const { url } = response;
-
-        goto(url);
-      }
-    });
+      goto(url);
+    }
   });
 
   async function signInWithGoogle() {

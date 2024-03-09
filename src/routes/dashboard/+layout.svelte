@@ -1,8 +1,10 @@
 <script lang="ts">
   import "../../app.pcss";
+  import UP from "$lib/assets/UP.png";
   import "@fontsource-variable/inter";
   import "@fontsource/poppins";
-  import UP from "$lib/assets/UP.png";
+
+  import { goto } from "$app/navigation";
 
   import type { PageServerData } from "./$types";
 
@@ -10,7 +12,16 @@
 
   // @ts-ignore
   const picture: string = data.picture!;
+  // @ts-ignore
   const name: string = data.name!;
+
+  async function signOut() {
+    await fetch("api/sessionLogout", {
+      method: "POST",
+    });
+
+    goto("/");
+  }
 </script>
 
 <div class="fixed bg-up_maroon h-dvh w-20 flex flex-col justify-between">
@@ -68,11 +79,14 @@
         class="absolute top-1/4 left-20 text-white bg-gray-600 px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
         >Logout</span
       >
-      <img
-        src="https://placehold.co/50"
-        alt="Log out"
-        class="aspect-square rounded-full"
-      />
+
+      <button on:click={signOut}>
+        <img
+          src="https://placehold.co/50"
+          alt="Log out"
+          class="aspect-square rounded-full"
+        />
+      </button>
     </div>
   </div>
 </div>
