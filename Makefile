@@ -3,7 +3,7 @@ MODE := dev
 
 all: run
 
-database: src/database.sql
+migrate:
 	sqlite3 -init src/database.sql database.db .quit
 
 deps: package.json
@@ -17,13 +17,14 @@ clean:
 	$(RM) -rf .svelte_kit
 	$(RM) -rf node_modules
 
-run: database deps
+run: deps
 ifeq ($(MODE), prod)
 	npm run build
 	npm run preview
 else ifeq ($(MODE), dev)
+	$(MAKE) migrate
 	npm run dev
 else
-	$(error Invalid argument `$(MODE)` for `MODE`. It should be either `prod` or `dev`, skill issue!)
+	$(error Invalid argument `$(MODE)` for `MODE`. Expected either `prod` or `dev`.)
 endif
 

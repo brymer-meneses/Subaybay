@@ -1,3 +1,4 @@
+
 <script lang="ts">
 </script>
 
@@ -63,8 +64,7 @@
       <h3 class="text-xl mb-5">Details</h3>
       <div class="h-[146px] w-[650] border bg-white p-6 rounded-md">
         <p>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cum --lmao
-          --, incidunt iste earum ad numquam exercitationem et excepturi est
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cum, incidunt iste earum ad numquam exercitationem et excepturi est
           natus officiis nostrum unde rem expedita. Voluptatem ratione ea
           mollitia minima quibusdam.
         </p>
@@ -74,8 +74,7 @@
       <h3 class="text-xl mb-5">Remarks</h3>
       <div class="h-[146px] w-[650] border bg-white p-6 rounded-md">
         <p>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cum -- lmao
-          --, incidunt iste earum ad numquam exercitationem et excepturi est
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cum, incidunt iste earum ad numquam exercitationem et excepturi est
           natus officiis nostrum unde rem expedita. Voluptatem ratione ea
           mollitia minima quibusdam.
         </p>
