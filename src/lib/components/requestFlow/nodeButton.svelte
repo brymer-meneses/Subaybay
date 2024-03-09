@@ -16,9 +16,14 @@
 
 		color = 'red';
 	}
+	function handleClick() {
+
+	}
 
 	// on click, thingy thing
 </script>
 
+<!-- svelte-ignore a11y-mouse-events-have-key-events svelte-ignore a11y-click-events-have-key-events svelte-ignore a11y-no-static-element-interactions svelte-ignore a11y-mouse-events-have-key-events -->
 <circle cx={cx} cy={cy} r={r} fill={color}
-	on:mouseover={handleMouseOver} on:mouseout={handleMouseOut} />
+	on:mouseover={handleMouseOver} on:mouseout={handleMouseOut}
+	on:click={handleClick}/>

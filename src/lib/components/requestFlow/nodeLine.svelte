@@ -42,7 +42,8 @@
 </script>
 
 <g>
-    <!-- hitbox -->
+    <!-- Hitbox -->
+    <!-- svelte-ignore a11y-mouse-events-have-key-events svelte-ignore a11y-click-events-have-key-events svelte-ignore a11y-no-static-element-interactions svelte-ignore a11y-mouse-events-have-key-events -->
     <line x1={x1} y1={y1} x2={x2} y2={y2} 
         stroke=transparent stroke-width={40}
         on:mouseover={handleMouseOver} on:mouseout={handleMouseOut}/>
