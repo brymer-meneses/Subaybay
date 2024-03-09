@@ -7,7 +7,9 @@
 
 <div class="fixed bg-up_maroon h-dvh w-20 flex flex-col justify-between">
   <!-- UP logo container -->
-  <div class="flex items-center justify-center border-b h-20">
+  <div
+    class="flex items-center justify-center border-b border-[#FFFFFF55] h-20"
+  >
     <div>
       <img src={UP} alt="UP logo" class="aspect-square p-3" />
     </div>
@@ -49,7 +51,9 @@
     </div>
   </div>
   <!-- logout  -->
-  <div class="border-t h-20 flex items-center justify-center">
+  <div
+    class="border-t border-[#FFFFFF55] h-20 flex items-center justify-center"
+  >
     <div class="relative group">
       <span
         class="absolute top-1/4 left-20 text-white bg-gray-600 px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
