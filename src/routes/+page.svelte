@@ -62,15 +62,17 @@
   </div>
 
   <div class="flex flex-col gap-6 z-30">
-    <h1 class="text-8xl font-extrabold font-poppins text-up_maroon">
+    <h1
+      class="text-8xl font-extrabold font-poppins text-up_maroon text-center lg:text-left"
+    >
       Subaybay
     </h1>
-    <h2 class="text-4xl font-inter font-thin text-up_maroon">
+    <h2 class="text-4xl font-inter font-thin text-center lg:text-left">
       Request Monitoring System
     </h2>
 
     <button
-      class="flex flex-row justify-center items-center gap-4 w-64 bg-white h-full p-4 z-20 rounded-lg drop-shadow-sm hover:bg-slate-100"
+      class="flex flex-row justify-center items-center gap-4 bg-white h-full p-4 z-20 rounded-lg drop-shadow-sm hover:bg-slate-100 w-full lg:w-64"
       on:click={async () => await signInWithGoogle()}
     >
       <img src="google.png" alt="google logo" class="w-10" />
