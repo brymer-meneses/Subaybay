@@ -2,7 +2,6 @@
     import NodeButton from '$lib/components/requestFlow/nodeButton.svelte';
     import NodeLine from '$lib/components/requestFlow/nodeLine.svelte';
     import {onMount} from 'svelte';
-    import * as d3 from 'd3';
 
     type Point = {
         x : number;
@@ -34,11 +33,8 @@
     // Todo: Clean Up
         // How organize this 
     function redraw(): void {
-        d3.select(graph);
-
-        graphWidth = d3.select(graph).node().getBoundingClientRect().width;
-		graphHeight = d3.select(graph).node().getBoundingClientRect().height;
-        let g = d3.select(graph).append('g');
+        graphWidth = graph.getBoundingClientRect().width;
+		graphHeight = graph.getBoundingClientRect().height;
 
         // pick best place to compute this stuff
         const center = { x : graphWidth / 2, y : graphHeight / 2};
@@ -76,14 +72,16 @@
                 {/each}
             </g>
             
-            {#each points as point, index}
-                <!-- todo do something special with the start and end -->
-                {#if index == 0 || index == points.length - 1}
+            <g>
+                {#each points as point, index}
+                    <!-- todo do something special with the start and end -->
+                    {#if index == 0 || index == points.length - 1}
                     <NodeButton cx={point.x} cy={point.y} r={radius} editable={false}></NodeButton>
-                {:else}
+                    {:else}
                     <NodeButton cx={point.x} cy={point.y} r={radius}></NodeButton>
-                {/if}
-            {/each}
+                    {/if}
+                {/each}
+            </g>
         </svg>
     </div>  
 </div>
