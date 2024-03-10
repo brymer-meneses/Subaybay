@@ -24,7 +24,7 @@
   }
 </script>
 
-<div class="fixed bg-up_maroon h-dvh w-20 flex flex-col justify-between">
+<div class="fixed bg-primary h-dvh w-20 flex flex-col justify-between">
   <!-- UP logo container -->
   <div
     class="flex items-center justify-center border-b border-[#FFFFFF55] h-20"
@@ -43,7 +43,7 @@
       <img
         src={picture}
         alt="Log out"
-        class="w-3/4 aspect-square rounded-full border-green-900 border-2"
+        class="w-3/4 aspect-square rounded-full border-confirm border-2"
       />
     </div>
 
