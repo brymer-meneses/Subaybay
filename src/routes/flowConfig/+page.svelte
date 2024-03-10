@@ -1,6 +1,7 @@
 <script lang="ts">
     import NodeButton from '$lib/components/requestFlow/nodeButton.svelte';
     import NodeLine from '$lib/components/requestFlow/nodeLine.svelte';
+    import { maxIndex } from 'd3-array';
     import {onMount} from 'svelte';
 
     type Point = {
@@ -83,9 +84,9 @@
     // Create Layers list
     // todo: see if a depth first search also works, it might be more efficient
     function readFlow() {
-        type Item = { stage : string; pos : number; }
+        type Item = { stage : string; pos : number; height : number }
         let queue : Item[] = [];
-        const initial = { stage : "initial", pos : 0 };
+        const initial = { stage : "initial", pos : 0, height : 0 };
         queue.push(initial);
 
         while(true) {
@@ -93,50 +94,71 @@
             if(!current) return;
             
             console.log("Current: " + current.stage);
-            addToLayer(current.pos, current.stage);
+            addToLayer(current.stage, current.pos, current.height);
 
             const nextStages = flow[current.stage];
             if(!nextStages) continue; //?this only addresses "final" I think? 
            
+            let h = current.height;
             for(const stage of nextStages) {
                 console.log("Queuing: " + stage);
-                queue.push({stage : stage, pos : current.pos + 1});
+                queue.push({stage : stage, pos : current.pos + 1, height : h});
+                h++;
             }
         }
     }
 
-    // todo: we also need to keep track of lines I think AHAHHAHAHA, so many considerations !!!
+    //todo fix nesting, ew, extract the functions
+    function addToLayer(element : string, index : number, height : number) {       
+        ensureLayersSize(index);
+        ensureLayerHeight(layers[index], height);
 
-    function addToLayer(index : number, element : string) {       
-        ensureLayerSize(index);
+        let exists = false;
+        let found = false;
+        
         // remove the element if it was already placed in a previous layer
         for(let i = 0; i < index; i++) {
             const elementIndex = layers[i].indexOf(element);
             if(elementIndex != -1) {
                 console.log("Removing " + element); 
-                layers[i].splice(elementIndex, 1);
+                exists = false;
+                layers[i][elementIndex] = '';
                 break;
+            }
+        }      
+
+        if(!found) {
+            // If element already in this layer, try to minimize its height
+            const elementIndex = layers[index].indexOf(element);
+            if(elementIndex != -1) {
+                if(elementIndex > height) {
+                    layers[index][elementIndex] = '';
+                    layers[index][height] = element;
+                }
+                exists = true;
             }
         }
         
-        // place the element if it isn't already in this layer or a future one
-        let exists = false;
-        for(let i = index; i < layers.length; i++) {
-            const elementIndex = layers[i].indexOf(element);
-            if(elementIndex != -1) {
-                exists = true;
-                console.log("Not re-adding" + element); 
-                break;
+        if(!found) {
+            // If element in future layer, don't add it
+            for(let i = index; i < layers.length; i++) {
+                const elementIndex = layers[i].indexOf(element);
+                if(elementIndex != -1) {
+                    exists = true;
+                    console.log("Not re-adding" + element); 
+                    break;
+                }
             }
         }
+        
         
         if(!exists) {
             console.log("Adding " + element); 
-            layers[index].push(element);
+            layers[index][height] = element;
         }
     }
 
-    function ensureLayerSize(requiredIndex : number) {
+    function ensureLayersSize(requiredIndex : number) {
         const maxIndex = layers.length - 1;
         if(maxIndex >= requiredIndex) return;
 
@@ -145,16 +167,28 @@
         }
     }
 
+    function ensureLayerHeight(layer : string[], requiredIndex : number) {
+        const maxIndex = layer.length - 1;
+        if(maxIndex >= requiredIndex) return;
+
+        for(let i = maxIndex; i < requiredIndex; i++) {
+            layer.push('');
+        }
+    }
+
     function createPoints(lineStart : number, center : Point, xSpacing : number) {
         //todo find a way to ensure order is preserved
         for(let pos = 0; pos < layers.length; pos++) {
             let layer = layers[pos];
+            console.log("Layer length: " + layer.length);
+
             const x = lineStart + pos * xSpacing
-            const y0 = center.y - (((layer.length - 1) / 2) * ySpacing); //trust me
+            // const y0 = center.y - (((layer.length - 1) / 2) * ySpacing); //trust me
+            const y0 = margin.top + radius;
 
             for(let i = 0; i < layer.length; i++) {
                 const y = y0 + (i * ySpacing);
-                addPoint(x, y, layer[i]);
+                if(layer[i]) addPoint(x, y, layer[i]);
             }
             
             //todo do something with first pos = 0 and last pos = layers.Count - 1
