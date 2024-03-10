@@ -1,8 +1,10 @@
 <script lang='ts'>
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
 
 	export let x1 : number = 0, y1 : number = 100;
 	export let x2 : number = 500, y2 : number = 100;
+    export let onClick : () => void = () => {};
+
     $: slope = (y2 - y1) / (x2 - x1);
     // todo export a callback?    
 
@@ -19,6 +21,10 @@
     onMount(() => {
         window.addEventListener('mousemove', handleMouseMove);
     });
+
+    onDestroy(() => {
+        window.removeEventListener('mousemove', handleMouseMove);
+    })
 
     function handleMouseMove(e: any) {
         if(!hovered) return;
@@ -39,6 +45,10 @@
         color = 'black';
         thickness = 3;
 	}    
+
+    function handleClick() {
+        onClick();
+    }
 </script>
 
 <g>
@@ -46,7 +56,7 @@
     <!-- svelte-ignore a11y-mouse-events-have-key-events svelte-ignore a11y-click-events-have-key-events svelte-ignore a11y-no-static-element-interactions svelte-ignore a11y-mouse-events-have-key-events -->
     <line x1={x1} y1={y1} x2={x2} y2={y2} 
         stroke=transparent stroke-width={40}
-        on:mouseover={handleMouseOver} on:mouseout={handleMouseOut}/>
+        on:mouseover={handleMouseOver} on:mouseout={handleMouseOut} on:click={handleClick}/>
 
     <line bind:this={line} x1={x1} y1={y1} x2={x2} y2={y2}
         stroke={color} stroke-width={thickness} 
@@ -54,6 +64,5 @@
     
     {#if hovered}
         <circle bind:this={addButton} r={10} cx={hoveredX} cy={hoveredY} style="pointer-events: none;"></circle>
-        <!-- on click add new node -->
     {/if}
 </g>
