@@ -1,9 +1,8 @@
 <script lang="ts">
-  import UP from "$lib/assets/UP.png";
-  import { goto } from "$app/navigation";
-  import { user } from "$lib/user";
-
+  import { onMount } from "svelte";
   import { initializeApp, type FirebaseApp } from "firebase/app";
+  import { firebaseConfig } from "$lib/firebase";
+
   import {
     GoogleAuthProvider,
     initializeAuth,
@@ -11,43 +10,51 @@
     browserSessionPersistence,
     browserPopupRedirectResolver,
     signInWithRedirect,
-    onAuthStateChanged,
+    getRedirectResult,
   } from "firebase/auth";
 
-  import { onMount } from "svelte";
+  import UP from "$lib/assets/UP.png";
+  import { goto } from "$app/navigation";
 
   let app: FirebaseApp;
   let auth: Auth;
 
-  onMount(() => {
-    app = initializeApp({
-      apiKey: "AIzaSyCW20RAbSKnFkNh5IW0WeTgZlOavP-UwGA",
-      authDomain: "subaybay-60d3d.firebaseapp.com",
-      projectId: "subaybay-60d3d",
-      storageBucket: "subaybay-60d3d.appspot.com",
-      messagingSenderId: "346811377701",
-      appId: "1:346811377701:web:7acd81c9d273edfe7c37cc",
-    });
+  onMount(async () => {
+    app = initializeApp(firebaseConfig);
     auth = initializeAuth(app, {
       persistence: browserSessionPersistence,
       popupRedirectResolver: browserPopupRedirectResolver,
     });
 
-    onAuthStateChanged(auth, (loggedInUser) => {
-      if (loggedInUser) {
-        $user = loggedInUser!;
-        goto("/dashboard");
+    const result = await getRedirectResult(auth, browserPopupRedirectResolver);
+    if (result) {
+      const idToken = await result.user.getIdToken();
+
+      const response = await fetch("api/sessionLogin", {
+        method: "POST",
+        body: JSON.stringify({ idToken }),
+        headers: {
+          "content-type": "application/json",
+        },
+      });
+
+      const { url, redirected } = response;
+      if (redirected) {
+        goto(url);
       }
-    });
+    }
   });
 
   async function signInWithGoogle() {
     const provider = new GoogleAuthProvider();
+
     await signInWithRedirect(auth, provider);
   }
 </script>
 
-<div class="flex flex-row items-center justify-center gap-28 w-screen h-screen">
+<div
+  class="flex lg:flex-row flex-col items-center justify-center gap-28 w-screen h-screen"
+>
   <div class="relative">
     <img src={UP} alt="up-logo" class="w-[500px] absolute z-20" />
 
@@ -60,15 +67,17 @@
   </div>
 
   <div class="flex flex-col gap-6 z-30">
-    <h1 class="text-8xl font-extrabold font-poppins text-up_maroon">
+    <h1
+      class="text-8xl font-extrabold font-poppins text-up_maroon text-center lg:text-left"
+    >
       Subaybay
     </h1>
-    <h2 class="text-4xl font-inter font-thin text-up_maroon">
+    <h2 class="text-4xl font-inter font-thin text-center lg:text-left">
       Request Monitoring System
     </h2>
 
     <button
-      class="flex flex-row justify-center items-center gap-4 w-64 bg-white h-full p-4 z-20 rounded-lg drop-shadow-sm hover:bg-slate-100"
+      class="flex flex-row justify-center items-center gap-4 bg-white h-full p-4 z-20 rounded-lg drop-shadow-sm hover:bg-slate-100 w-full lg:w-64"
       on:click={async () => await signInWithGoogle()}
     >
       <img src="google.png" alt="google logo" class="w-10" />
