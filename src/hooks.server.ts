@@ -4,7 +4,6 @@ import { verifyIdToken } from "$lib/auth/verifyIdToken";
 const protectedPaths = ["dashboard"];
 
 export const handle: Handle = async ({ event, resolve }) => {
-
   const idToken = event.cookies.get("idToken");
   const isIdTokenValid = await verifyIdToken(idToken);
 
@@ -16,9 +15,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   for (const path in protectedPaths) {
     if (event.url.pathname.includes(path)) {
-
-      if (isIdTokenValid)
-        redirect(303, "/");
+      if (isIdTokenValid) redirect(303, "/");
     }
   }
 

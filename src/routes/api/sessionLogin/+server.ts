@@ -1,4 +1,4 @@
-/// Reference: 
+/// Reference:
 /// https://firebase.google.com/docs/auth/admin/verify-id-tokens
 
 import { redirect, type RequestHandler } from "@sveltejs/kit";
