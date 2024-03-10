@@ -3,7 +3,7 @@
 
 	export let x1 : number = 0, y1 : number = 100;
 	export let x2 : number = 500, y2 : number = 100;
-    export let addNodeFunction : () => void = () => {};
+    export let onClick : () => void = () => {};
 
     $: slope = (y2 - y1) / (x2 - x1);
     // todo export a callback?    
@@ -47,7 +47,7 @@
 	}    
 
     function handleClick() {
-        addNodeFunction();
+        onClick();
     }
 </script>
 

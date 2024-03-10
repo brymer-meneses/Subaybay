@@ -8,13 +8,10 @@
         y : number;
     }
   
-    let readyToRender = false;
     let graph : any;
 
     let graphWidth : number;
 	let graphHeight : number;
-
-    let linearStageCount : number = 6; // how to make automatic?
 
 	const margin = {
 		top: 20,
@@ -25,12 +22,6 @@
     const radius = 20;
     const ySpacing = 100;
     
-    // move this??
-    let xSpacing : number;
-    let lineStart : number;
-    let lineEnd : number;
-    let center : Point;
-
     // todo: make this not harcoded 
         // actually, it's gonna start as just the initial leading to the end then it mutates as 
         // the user adds nodes
@@ -39,14 +30,22 @@
     // Note: this assumes that a stage cannot be repeated twice, 
         // make sure to add code to account for this when adding new stages
         // todo: add Blank stage
+    // const flow: { [key: string]: string[]} = {};
+    // flow["initial"] = ["staff 1"];
+    // flow["staff 1"] = ["staff 2", "staff 3"];
+    // flow["staff 2"] = ["staff 2A"];
+    // flow["staff 3"] = ["staff 3A"];
+    // flow["staff 2A"] = ["UR"];
+    // flow["staff 3A"] = ["UR"];
+    // flow["UR"] = ["final"];
+
     const flow: { [key: string]: string[]} = {};
-    flow["initial"] = ["staff 1"];
-    flow["staff 1"] = ["staff 2", "staff 3"];
-    flow["staff 2"] = ["staff 2A"];
-    flow["staff 3"] = ["staff 3A"];
-    flow["staff 2A"] = ["UR"];
-    flow["staff 3A"] = ["UR"];
-    flow["UR"] = ["final"];
+    flow["initial"] = ["a1", "b1"];
+    flow["a1"] = ["a2"];
+    flow["b1"] = ["b2"];
+    flow["a2"] = ["c"];
+    flow["c"] = ["final"];
+    flow["b2"] = ["c"];
 
     // todo: look into reducing the amount of data structures here
     // this links a stage to its point
@@ -67,48 +66,88 @@
         graphWidth = graph.getBoundingClientRect().width;
 		graphHeight = graph.getBoundingClientRect().height;
 
-        center = { x : graphWidth / 2, y : graphHeight / 2};
-        lineStart = margin.left;
-        lineEnd = graphWidth - margin.right;
-        xSpacing = (lineEnd - lineStart) / (linearStageCount - 1);
-
         stageToPoint = {};
 
-        resetLayers();
+        layers = [];
 
-        readFlow("initial", 0);
+        readFlow();
 
-        createPoints();
+        let lineStart = margin.left;
+        let lineEnd = graphWidth - margin.right;
+        let center = { x : graphWidth / 2, y : graphHeight / 2};
+        let xSpacing = (lineEnd - lineStart) / (layers.length - 1);
+
+        createPoints(lineStart, center, xSpacing);
     }
 
-    function resetLayers() {
-        layers = [];
-        for(let i = 0; i < linearStageCount; i++) {
+    // Create Layers list
+    // todo: see if a depth first search also works, it might be more efficient
+    function readFlow() {
+        type Item = { stage : string; pos : number; }
+        let queue : Item[] = [];
+        const initial = { stage : "initial", pos : 0 };
+        queue.push(initial);
+
+        while(true) {
+            const current = queue.shift();
+            if(!current) return;
+            
+            console.log("Current: " + current.stage);
+            addToLayer(current.pos, current.stage);
+
+            const nextStages = flow[current.stage];
+            if(!nextStages) continue; //?this only addresses "final" I think? 
+           
+            for(const stage of nextStages) {
+                console.log("Queuing: " + stage);
+                queue.push({stage : stage, pos : current.pos + 1});
+            }
+        }
+    }
+
+    // todo: we also need to keep track of lines I think AHAHHAHAHA, so many considerations !!!
+
+    function addToLayer(index : number, element : string) {       
+        ensureLayerSize(index);
+        // remove the element if it was already placed in a previous layer
+        for(let i = 0; i < index; i++) {
+            const elementIndex = layers[i].indexOf(element);
+            if(elementIndex != -1) {
+                console.log("Removing " + element); 
+                layers[i].splice(elementIndex, 1);
+                break;
+            }
+        }
+        
+        // place the element if it isn't already in this layer or a future one
+        let exists = false;
+        for(let i = index; i < layers.length; i++) {
+            const elementIndex = layers[i].indexOf(element);
+            if(elementIndex != -1) {
+                exists = true;
+                console.log("Not re-adding" + element); 
+                break;
+            }
+        }
+        
+        if(!exists) {
+            console.log("Adding " + element); 
+            layers[index].push(element);
+        }
+    }
+
+    function ensureLayerSize(requiredIndex : number) {
+        const maxIndex = layers.length - 1;
+        if(maxIndex >= requiredIndex) return;
+
+        for(let i = maxIndex; i < requiredIndex; i++) {
             layers.push([]);
         }
     }
 
-    // Create Layers list
-    function readFlow(stage : string, pos : number) {
-        addToLayer(pos, stage);
-        
-        let nextStages = flow[stage];
-        if(!nextStages) return;
-
-        for(const stage of nextStages) {
-            readFlow(stage, pos + 1);
-        }
-    }
-
-    function addToLayer(index : number, element : string) {            
-        let layer = layers[index];
-        if(layer.indexOf(element) != -1) return;
-        layer.push(element);
-    }
-
-    function createPoints() {
+    function createPoints(lineStart : number, center : Point, xSpacing : number) {
         //todo find a way to ensure order is preserved
-        for(let pos = 0; pos < linearStageCount; pos++) {
+        for(let pos = 0; pos < layers.length; pos++) {
             let layer = layers[pos];
             const x = lineStart + pos * xSpacing
             const y0 = center.y - (((layer.length - 1) / 2) * ySpacing); //trust me
@@ -128,28 +167,38 @@
     }
 
     function createNewStage(from : string, to : string) {
-        const isParallelAddition = flow[from].indexOf(to) == -1;
+        const isLinearAddition = flow[from].indexOf(to) != -1;
 
-        let newStage = "newStage" + linearStageCount; //todo create function to generate the name
+        let newStage = generateRandomStageName("New Stage ");
         
-        if(!isParallelAddition) {
+        if(isLinearAddition) {
             const i = flow[from].indexOf(to);
-            flow[from].splice(i);
-
-            linearStageCount = linearStageCount + 1;
+            flow[from][i] = newStage;
+            flow[newStage] = [to];
+            console.log("Is Linear");
         }
-        
-        flow[from].push(newStage);
-        flow[newStage] = [to];
+        else {
+            console.log("Is Parallel")
+        }
+
+        console.log(from + " - " + to);
 
         recompute();
     }
 
+    function generateRandomStageName(base : string) : string {
+        let n = 1;
+        while(base + n in flow) {
+            n++;
+        }
+        return base + n;
+    }
+
 </script>
 
-<div class="flex justify-center border-blue border-4">
-    <div class="border-2 border-black justify-center w-[100%] max-w-[800px] h-[500px]">
-        <svg id="graph" viewBox="0 0 {graphWidth} {graphHeight}" width=100% bind:this={graph}>
+<div class="flex justify-center border-blue border-4 h-[600px]">
+    <div bind:this={graph} class="border-2 border-black justify-center w-[100%] max-w-[800px] h-[100%]">
+        <svg viewBox="0 0 {graphWidth} {graphHeight}" width=100%>
             <g>
                 {#if Object.keys(stageToPoint).length > 0} 
                     {#each Object.keys(flow) as start}
@@ -159,7 +208,7 @@
                                 y1={stageToPoint[start].y} 
                                 x2={stageToPoint[end].x} 
                                 y2={stageToPoint[end].y}
-                                addNodeFunction = {() => createNewStage(start, end)}
+                                onClick = {() => createNewStage(start, end)}
                             ></NodeLine>
                         {/each}
                     {/each}
@@ -168,8 +217,8 @@
             
             <g>
                 {#if Object.keys(stageToPoint).length > 0}
-                    {#each Object.values(stageToPoint) as point}
-                        <NodeButton cx={point.x} cy={point.y} r={radius}></NodeButton>
+                    {#each Object.entries(stageToPoint) as [stage, point]}
+                        <NodeButton cx={point.x} cy={point.y} r={radius} text={stage}></NodeButton>
                     {/each}
                 {/if}
             </g>
