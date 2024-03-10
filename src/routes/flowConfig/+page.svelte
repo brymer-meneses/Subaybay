@@ -55,6 +55,7 @@
     let layers : string[][];
 
     onMount(() => {
+        console.log("On Mount");
         recompute();
         window.addEventListener('resize', recompute);
     });
@@ -62,6 +63,7 @@
     // Todo: Clean Up
         // How organize this 
     function recompute(): void {
+        console.log("Recompute");
         graphWidth = graph.getBoundingClientRect().width;
 		graphHeight = graph.getBoundingClientRect().height;
 
@@ -128,7 +130,7 @@
     function createNewStage(from : string, to : string) {
         const isParallelAddition = flow[from].indexOf(to) == -1;
 
-        let newStage = "newStage"; //todo append an integer to avoid duplication
+        let newStage = "newStage" + linearStageCount; //todo create function to generate the name
         
         if(!isParallelAddition) {
             const i = flow[from].indexOf(to);
@@ -140,7 +142,7 @@
         flow[from].push(newStage);
         flow[newStage] = [to];
 
-        console.log(from + " | " + to);
+        recompute();
     }
 
 </script>
