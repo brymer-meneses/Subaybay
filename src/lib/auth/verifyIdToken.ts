@@ -70,8 +70,6 @@ function validatePayload(payload: jose.JWTPayload): boolean {
 
 export async function verifyIdToken(idToken: string | undefined): Promise<boolean> {
 
-  console.log("validating ... ");
-
   if (!idToken) return false;
 
   // ensure that we have a valid payload and header
@@ -79,7 +77,13 @@ export async function verifyIdToken(idToken: string | undefined): Promise<boolea
   const header = jose.decodeProtectedHeader(idToken);
   const payload = jose.decodeJwt(idToken);
 
-  if (!validatePayload(payload) || !validateHeader(header, keys)) {
+  if (!validatePayload(payload)) {
+    console.log("Validation failed for payload");
+    return false;
+  }
+
+  if (!validateHeader(header, keys)) {
+    console.log("Validation failed for header");
     return false;
   }
 
@@ -88,9 +92,11 @@ export async function verifyIdToken(idToken: string | undefined): Promise<boolea
   const jwtKey = await jose.importX509(publicKey, header.alg!);
 
   try {
-    await jose.jwtVerify(idToken, jwtKey);
+    await jose.compactVerify(idToken, jwtKey);
     return true;
-  } catch (_) {
+  } catch (e) {
+
+    console.log("Validation failed to verify: ", e.message);
     return false;
   }
 }
