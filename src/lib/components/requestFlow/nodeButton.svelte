@@ -1,6 +1,4 @@
 <script lang='ts'>
-	const textSpacing : number = 25;
-
 	export let cx : number = 0;
 	export let cy : number = 0;
 	export let r : number = 40;
@@ -23,8 +21,6 @@
 	function handleClick() {
 		onClick();
 	}
-
-	// on click, thingy thing
 </script>
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events svelte-ignore a11y-click-events-have-key-events svelte-ignore a11y-no-static-element-interactions svelte-ignore a11y-mouse-events-have-key-events -->
