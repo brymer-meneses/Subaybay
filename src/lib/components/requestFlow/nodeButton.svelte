@@ -3,20 +3,21 @@
 	export let cy : number = 0;
 	export let r : number = 40;
 	export let text : string = "";
-	export let editable : boolean = true;
+	export let hoverText : string = "hover";
+    export let color = 'gray';
 	export let onClick : () => void = () => {};
-	
-	let color = editable ? 'red' : 'blue';
-	
+
+    let isHovered : boolean = false;
+		
 	function handleMouseOver(e : any) {
-		if(!editable) return;
+		isHovered = true;
 		//show icon that allows editing
 		color = 'green';
 	}
 	function handleMouseOut(e : any) {
-		if(!editable) return;
+		isHovered = false;
 
-		color = 'red';
+		color = 'gray';
 	}
 	function handleClick() {
 		onClick();
@@ -28,6 +29,11 @@
 	<circle cx={cx} cy={cy} r={r} fill={color}
 		on:mouseover={handleMouseOver} on:mouseout={handleMouseOut}
 		on:click={handleClick}/>
+	{#if isHovered}
+		<text x={cx} y={cy - r} text-anchor=middle dominant-baseline=text-after-edge style="pointer-events: none;"> 
+			{hoverText}
+		</text>
+    {/if}
 	<text x={cx} y={cy + r} text-anchor=middle dominant-baseline=hanging style="pointer-events: none;"> 
 		{text}
 	</text>

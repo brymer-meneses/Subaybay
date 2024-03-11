@@ -3,6 +3,10 @@
 
 	export let x1 : number = 0, y1 : number = 100;
 	export let x2 : number = 500, y2 : number = 100;
+
+    export let hoverText : string = "hover";
+    export let hoverCircleRadius : number = 10;
+
     export let onClick : () => void = () => {};
 
     $: slope = (y2 - y1) / (x2 - x1);
@@ -63,6 +67,9 @@
         style="pointer-events: none;"/>
     
     {#if hovered}
-        <circle bind:this={addButton} r={10} cx={hoveredX} cy={hoveredY} style="pointer-events: none;"></circle>
+        <circle bind:this={addButton} r={hoverCircleRadius} cx={hoveredX} cy={hoveredY} style="pointer-events: none;"></circle>
+        <text x={hoveredX} y={hoveredY - hoverCircleRadius} text-anchor=middle dominant-baseline=text-after-edge style="pointer-events: none;"> 
+			{hoverText}
+		</text>
     {/if}
 </g>

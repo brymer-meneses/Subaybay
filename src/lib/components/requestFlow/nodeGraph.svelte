@@ -1,5 +1,6 @@
 <script lang="ts">
-    import NodeCircle from '$lib/components/requestFlow/nodeCircle.svelte';
+    import NodeLine from '$lib/components/requestFlow/nodeLine.svelte';
+    import NodeButton from '$lib/components/requestFlow/nodeButton.svelte';
     import {onMount} from 'svelte';
 
     type Point = {
@@ -13,16 +14,21 @@
 		bottom: 30,
 		left: 30
 	};
-    const radius = 20;
-    const yStart = margin.top + radius;
-    const ySpacing = 100;
+    export let radius = 20;
+    export let ySpacing = 100;
+    $: yStart = margin.top + radius;
+
+    export let onLineClick : (start : string, end : string) => void = (a, b) => {};
+    export let onNodeClick : (stage : string) => void = (a) => {};
+
+    export let lineHoverText : string = "hover";
   
     let graph : any;
     let graphWidth : number;
 	let graphHeight : number;
 
     // todo read from database
-    const flow: { [key: string]: string[]} = {};
+    export let flow: { [key: string]: string[]} = {};
     flow["initial"] = ["a1", "b1", "c1"];
     flow["a1"] = ["a2"];
     flow["b1"] = ["b2"];
@@ -36,13 +42,14 @@
     let structure : string[][];
 
     onMount(() => {
+        console.log("onMount");
         recompute();
         window.addEventListener('resize', recompute);
     });
     
-    function recompute(): void {
+    export const recompute = () => {
         graphWidth = graph.getBoundingClientRect().width;
-		graphHeight = graph.getBoundingClientRect().height;
+		graphHeight = graph.getBoundingClientRect().height; //TODO: adapt to required height
 
         stageToPoint = {};
         structure = [];
@@ -173,14 +180,14 @@
                     {#each flow[start] as end}
                         <!--Todo for clickable, replace this-->
                         <!--Todo Change color depending on progress-->
-                        <line 
+                        <NodeLine
                             x1 = {stageToPoint[start].x}
                             y1 = {stageToPoint[start].y}
                             x2 = {stageToPoint[end].x}
                             y2 = {stageToPoint[end].y}
-                            stroke = black
-                            stroke-width = {5}
-                        ></line>
+                            hoverText = {lineHoverText}
+                            onClick = {() => onLineClick(start, end)}
+                        ></NodeLine>
                     {/each}
                 {/each}
             {/if}
@@ -189,7 +196,12 @@
         <g>
             {#if Object.keys(stageToPoint).length > 0}
                 {#each Object.entries(stageToPoint) as [stage, point]}
-                    <NodeCircle cx={point.x} cy={point.y} r={radius} text={stage}></NodeCircle>
+                    <NodeButton 
+                        cx={point.x} cy={point.y} 
+                        r={radius} 
+                        text={stage}
+                        onClick = {() => onNodeClick(stage)}
+                    ></NodeButton>
                 {/each}
             {/if}
         </g>
