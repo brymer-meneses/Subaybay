@@ -1,4 +1,6 @@
 <script lang="ts">
+    import NodeGraph from "$lib/components/requestFlow/nodeGraph.svelte";
+
 </script>
 
 <!--TODO turn these to components later -->
@@ -6,9 +8,11 @@
   <div class="h-dvh py-10 w-10/12 mx-auto space-y-6">
     <div>
       <h2 class="text-2xl">Request Name Here</h2>
-      <div class="h-[200px] flex items-center justify-between">
+      <div class="h-[200px] flex items-center justify-center">
+        <NodeGraph ySpacing={60} radius={15}></NodeGraph>
         <!-- hover on the nodes to show details? like this maybe. Just a suggestion haha. You can delete these nodes (divs) if di gagamitin-->
         <!-- Nodes -->
+        <!--
         <div
           class="relative rounded-full h-6 w-6 bg-green-500 border-green-600 border after:content-['Date'] after:translate-y-6 after:absolute after:bg-gray-600 after:text-white after:px-2 after:py-1 after:rounded-md after:hidden hover:after:block"
         >
@@ -57,6 +61,7 @@
             Staff:
           </span>
         </div>
+      -->
       </div>
     </div>
     <div>
