@@ -5,17 +5,19 @@ const protectedPaths = ["dashboard"];
 
 export const handle: Handle = async ({ event, resolve }) => {
   const idToken = event.cookies.get("idToken");
-  const isIdTokenValid = await verifyIdToken(idToken);
+  const verificationResult = await verifyIdToken(idToken);
+
+  console.log(verificationResult.message)
 
   if (event.url.pathname === "/") {
-    if (isIdTokenValid) {
+    if (verificationResult.success) {
       redirect(303, "/dashboard");
     }
   }
 
   for (const path in protectedPaths) {
     if (event.url.pathname.includes(path)) {
-      if (isIdTokenValid) redirect(303, "/");
+      if (!verificationResult.success) redirect(303, "/");
     }
   }
 

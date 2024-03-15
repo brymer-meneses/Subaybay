@@ -8,9 +8,9 @@ import * as jose from "jose";
 export const POST: RequestHandler = async ({ request, cookies }) => {
   const { idToken } = await request.json();
 
-  const isValidIdToken = await verifyIdToken(idToken);
+  const verificationResult = await verifyIdToken(idToken);
 
-  if (!isValidIdToken) {
+  if (!verificationResult.success) {
     redirect(302, "/");
   }
 

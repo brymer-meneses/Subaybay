@@ -31,60 +31,60 @@ function validateHeader(
   return true;
 }
 
-function validatePayload(payload: jose.JWTPayload): boolean {
+function validatePayload(payload: jose.JWTPayload): { success: boolean, message: string } {
   const projectId = firebaseConfig.projectId;
   const requiredFields = ["exp", "iat", "aud", "iss", "sub", "auth_time"];
 
   // validate that each key is present within the payload
   for (const field in requiredFields.values()) {
     if (!requiredFields.includes(field)) {
-      return false;
-    }
+      return { success: false, message: `Missing field ${field}` }
+    };
   }
   const now = Math.ceil(Date.now() / 1000);
 
   // `exp` expiration time must take place in the future
-  if (payload.exp! <= now) return false;
+  if (payload.exp! <= now) return { success: false, message: `Expiratio time must take place in the future` }
   //
   // 'iat' issued-at-time must be in the past
-  if (payload.iat! >= now) return false;
+  if (payload.iat! >= now) return { success: false, message: `issued-at-time must be in the past` }
 
   // 'aud' must correspond to the firebase projectId
-  if (payload.aud! != projectId) return false;
+  if (payload.aud! != projectId) return { success: false, message: `must correspond to the firebase projectId` }
 
   if (payload.iss! != `https://securetoken.google.com/${projectId}`)
-    return false;
+    return { success: false, message: `invalid iss` }
 
   // Must be a non - empty string and must be the uid of the user or device.
   if (payload.sub!.length === 0) {
-    return false;
+    return { success: false, message: `sub must not be nonempty` }
   }
 
-  if (typeof payload.auth_time !== "number") return false;
+  if (typeof payload.auth_time !== "number") return { success: false, message: `auth_time must be a number` }
 
-  if (payload.auth_time >= now) return false;
+  if (payload.auth_time >= now) return { success: false, message: `auth_time must be a number` }
 
-  return true;
+  return { success: true, message: "success" };
 }
 
 export async function verifyIdToken(
   idToken: string | undefined,
-): Promise<boolean> {
-  if (!idToken) return false;
+): Promise<{ success: boolean, message: string }> {
+
+  if (!idToken) return { success: false, message: "invalid id token" }
 
   // ensure that we have a valid payload and header
   const keys = await getGoogleKeys();
   const header = jose.decodeProtectedHeader(idToken);
   const payload = jose.decodeJwt(idToken);
 
-  if (!validatePayload(payload)) {
-    console.log("Validation failed for payload");
-    return false;
+  if (!validateHeader(header, keys)) {
+    return { success: false, message: "Invalid payload" }
   }
 
-  if (!validateHeader(header, keys)) {
-    console.log("Validation failed for header");
-    return false;
+  const { success, message } = validatePayload(payload);
+  if (!success) {
+    return { success: false, message }
   }
 
   // verify integrity of JSON Web Token
@@ -93,9 +93,8 @@ export async function verifyIdToken(
 
   try {
     await jose.compactVerify(idToken, jwtKey);
-    return true;
+    return { success: true, message: "success" };
   } catch (e) {
-    console.log("Validation failed to verify: ", e.message);
-    return false;
+    return { success: false, message: "Failed to verify signature" };
   }
 }

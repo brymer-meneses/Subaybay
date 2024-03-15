@@ -1,6 +1,5 @@
 <script lang="ts">
-    import NodeGraph from "$lib/components/requestFlow/nodeGraph.svelte";
-
+  import NodeGraph from "$lib/components/requestFlow/nodeGraph.svelte";
 </script>
 
 <!--TODO turn these to components later -->

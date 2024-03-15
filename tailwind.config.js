@@ -15,14 +15,14 @@ const config = {
     },
     extend: {
       colors: {
-        'primary': "hsl(358, 70%, 27%)",
-        'secondary': {
+        primary: "hsl(358, 70%, 27%)",
+        secondary: {
           100: "hsl(0, 88%, 97%)",
-          200: "hsl(2, 90%, 92%)"
+          200: "hsl(2, 90%, 92%)",
         },
-        'accent': "hsl(42, 89%, 66%)",
-        'confirm': "hsl(149, 97%, 13%)",
-        'reject': "hsl(0,72.2%,50.6%)",
+        accent: "hsl(42, 89%, 66%)",
+        confirm: "hsl(149, 97%, 13%)",
+        reject: "hsl(0,72.2%,50.6%)",
       },
       borderRadius: {
         lg: "var(--radius)",
