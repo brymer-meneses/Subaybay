@@ -41,7 +41,8 @@ function validatePayload(payload: jose.JWTPayload): { success: boolean, message:
       return { success: false, message: `Missing field ${field}` }
     };
   }
-  const now = Math.ceil(Date.now() / 1000);
+
+  const now = Math.floor(Date.now() / 1000);
 
   // `exp` expiration time must take place in the future
   if (payload.exp! <= now) return { success: false, message: `Expiratio time must take place in the future` }
