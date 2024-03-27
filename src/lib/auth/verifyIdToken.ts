@@ -1,24 +1,38 @@
-/// Reference:
-/// https://firebase.google.com/docs/auth/admin/verify-id-tokens
-
 import * as jose from "jose";
 import { firebaseConfig } from "$lib/firebase";
 
-// some ugly code that i am too lazy to refactor rn
-let __keyExpiresAt: number | undefined;
-let __keys: Record<string, string> | undefined;
+class Keys {
 
-async function getGoogleKeys(): Promise<Record<string, string>> {
-  if (__keyExpiresAt! >= Date.now() || !__keys) {
+  private keyExpiresAt: number | undefined;
+  private keys: Record<string, string> | undefined;
+
+  constructor() {
+    this.keys = undefined;
+    this.keyExpiresAt = undefined;
+  }
+
+  async get() {
+    const now = Date.now();
+    if (this.keyExpiresAt == undefined || this.keyExpiresAt >= now) {
+      await this.refresh()
+    }
+
+    return { keys: this.keys!, expiresAt: this.keyExpiresAt }
+  }
+
+  private async refresh() {
     const response = await fetch(
       "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com",
     );
-    __keys = await response.json();
+
+    this.keys = await response.json();
+
     // @ts-ignore
-    __keyExpiresAt = response.headers.expiration! * 1000;
+    this.keyExpiresAt = response.headers.expiration! * 1000 // convert to miliseconds;
   }
-  return __keys!;
 }
+
+const KEYS = new Keys();
 
 function validateHeader(
   header: jose.ProtectedHeaderParameters,
@@ -31,6 +45,8 @@ function validateHeader(
   return true;
 }
 
+/// Reference:
+/// https://firebase.google.com/docs/auth/admin/verify-id-tokens
 function validatePayload(payload: jose.JWTPayload): { success: boolean, message: string } {
   const projectId = firebaseConfig.projectId;
   const requiredFields = ["exp", "iat", "aud", "iss", "sub", "auth_time"];
@@ -45,7 +61,7 @@ function validatePayload(payload: jose.JWTPayload): { success: boolean, message:
   const now = Math.floor(Date.now() / 1000);
 
   // `exp` expiration time must take place in the future
-  if (payload.exp! <= now) return { success: false, message: `Expiratio time must take place in the future` }
+  if (payload.exp! <= now) return { success: false, message: `Expiration time must take place in the future` }
   //
   // 'iat' issued-at-time must be in the past
   if (payload.iat! >= now) return { success: false, message: `issued-at-time must be in the past` }
@@ -75,7 +91,7 @@ export async function verifyIdToken(
   if (!idToken) return { success: false, message: "invalid id token" }
 
   // ensure that we have a valid payload and header
-  const keys = await getGoogleKeys();
+  const { keys } = await KEYS.get();
   const header = jose.decodeProtectedHeader(idToken);
   const payload = jose.decodeJwt(idToken);
 
