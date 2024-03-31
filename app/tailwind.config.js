@@ -15,6 +15,13 @@ const config = {
     },
     extend: {
       colors: {
+        "pale-red": {
+          100: "#F6EDED",
+          200: "#F0E2E2",
+          300: "#E1C4C5",
+          400: "#E9D9D9",
+          500: "#BA9798",
+        },
         primary: "hsl(358, 70%, 27%)",
         secondary: {
           100: "hsl(0, 88%, 97%)",

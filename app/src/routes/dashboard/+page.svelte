@@ -1,3 +1,47 @@
-<div>
-  <h1>Hello there</h1>
-</div>
+<script lang="ts">
+  import StageItem from "./StageItem.svelte";
+  import ScrollArea from "$lib/components/general/ScrollArea.svelte";
+
+  import { BxSearch } from "svelte-boxicons";
+
+  const freshcat = "https://streetcat.wiki/images/4/48/Freshguygif.gif";
+</script>
+
+<section class="flex flex-col items-center gap-8 basis-2/5 p-5 bg-pale-red-100">
+  <div class="w-full flex">
+    <div
+      class="flex justify-center items-center gap-5 bg-white w-[200px] rounded-2xl p-2 ml-4"
+    >
+      <img
+        src={freshcat}
+        alt="mr.fresh"
+        class="object-cover w-[50px] h-[50px] rounded-full"
+      />
+      <h1>Fresh D. Cat</h1>
+    </div>
+  </div>
+
+  <div
+    class="w-[95%] h-[50px] bg-pale-red-300 rounded-xl flex flex-row items-center justify-start p-3 gap-3"
+  >
+    <BxSearch size="20" class="fill-pale-red-500" />
+    <p class="text-pale-red-500">Search</p>
+  </div>
+
+  <ScrollArea>
+    <div class="flex flex-col gap-2">
+      {#each Array(100) as _, index (index)}
+        <StageItem
+          stageTitle="HD and GMC forwarded to UR for signature"
+          requestTitle="Honorable Dismissal"
+          dateSent={new Date().toDateString()}
+          requestId={1}
+        />
+      {/each}
+    </div>
+  </ScrollArea>
+</section>
+
+<section class="basis-2/5 p-10 bg-pale-red-200">
+  <h1>Sent By.</h1>
+</section>
