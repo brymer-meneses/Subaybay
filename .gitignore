@@ -11,5 +11,7 @@ package
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
+backend/target
+
 database.db
 log.txt

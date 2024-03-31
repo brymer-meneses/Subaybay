@@ -2,7 +2,7 @@ MODE := dev
 
 CONFIG := \
 	APP_PORT=80 \
-	DATABASE_PORT=3001
+	DATABASE_PORT=3000
 
 all: run
 
