@@ -1,0 +1,15 @@
+node_modules
+components.json
+
+.gitignore
+.git
+.svelte_kit
+
+build
+package
+
+README.md
+Dockerfile
+
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*

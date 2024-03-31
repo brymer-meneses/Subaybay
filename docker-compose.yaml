@@ -1,0 +1,21 @@
+
+name: subaybay
+
+services:
+  app:
+    build: app
+    restart: always
+    ports: 
+      - ${APP_PORT}:3000
+
+  database:
+    image: mongo
+    restart: always
+    volumes:
+       - db-data:/data/db
+    ports:
+      - ${DATABASE_PORT}:27017
+
+volumes:
+  db-data:
+

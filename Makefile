@@ -1,30 +1,16 @@
-
 MODE := dev
+
+CONFIG := \
+	APP_PORT=80 \
+	DATABASE_PORT=3001
 
 all: run
 
-migrate:
-	sqlite3 -init src/database.sql database.db .quit
-
-deps: package.json
-	npm install
-
-format:
-	npx prettier --write .
-	
-clean:
-	$(RM) database.db
-	$(RM) -rf .svelte_kit
-	$(RM) -rf node_modules
-
-run: deps
-ifeq ($(MODE), prod)
-	npm run build
-	npm run preview
-else ifeq ($(MODE), dev)
-	$(MAKE) migrate
-	npm run dev
+run:
+ifeq ($(MODE), dev)
+	$(CONFIG) docker-compose up
+else ifeq ($(MODE), prod)
+	$(CONFIG) docker-compose up > log.txt
 else
 	$(error Invalid argument `$(MODE)` for `MODE`. Expected either `prod` or `dev`.)
 endif
-
