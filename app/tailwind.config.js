@@ -5,6 +5,9 @@ const config = {
   darkMode: ["class"],
   content: ["./src/**/*.{html,js,svelte,ts}"],
   safelist: ["dark"],
+  plugins: [
+    require("@tailwindcss/forms"),
+  ],
   theme: {
     container: {
       center: true,
@@ -21,6 +24,10 @@ const config = {
           300: "#E1C4C5",
           400: "#E9D9D9",
           500: "#BA9798",
+          600: "#FFCFCF",
+        },
+        "pale-yellow": {
+          100: "#F6EEC2",
         },
         primary: "hsl(358, 70%, 27%)",
         secondary: {

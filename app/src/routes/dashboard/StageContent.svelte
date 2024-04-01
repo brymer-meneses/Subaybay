@@ -2,6 +2,6 @@
   import ChatArea from "$lib/components/general/ChatArea/ChatArea.svelte";
 </script>
 
-<main class="w-screen h-screen bg-white p-10">
+<div class="h-full w-full flex flex-col gap-4">
   <ChatArea roomId="abcd" />
-</main>
+</div>

@@ -153,6 +153,7 @@ dependencies = [
  "headers",
  "mongodb",
  "serde",
+ "serde_json",
  "tokio",
  "tower-http",
  "trace",

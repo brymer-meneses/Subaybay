@@ -1,8 +1,10 @@
 <script lang="ts">
   import StageItem from "./StageItem.svelte";
   import ScrollArea from "$lib/components/general/ScrollArea.svelte";
+  import ChatArea from "$lib/components/general/ChatArea/ChatArea.svelte";
 
   import { BxSearch } from "svelte-boxicons";
+  import StageContent from "./StageContent.svelte";
 
   const freshcat = "https://streetcat.wiki/images/4/48/Freshguygif.gif";
 </script>
@@ -43,5 +45,5 @@
 </section>
 
 <section class="basis-2/5 p-10 bg-pale-red-200">
-  <h1>Sent By.</h1>
+  <StageContent />
 </section>
