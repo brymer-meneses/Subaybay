@@ -6,3 +6,5 @@ COPY . .
 RUN cargo install --path .
 
 CMD ["backend"]
+
+expose 8080
