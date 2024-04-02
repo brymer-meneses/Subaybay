@@ -1,19 +1,20 @@
 MODE := dev
+SERVICES := backend
 
 all: run
 
-run-database:
-	docker compose --env-file .env.dev up --build database -d
-
-run-backend:
-	docker compose --env-file .env.dev up --build backend -d
+stop:
+	docker compose --env-file .env.dev down
 
 run:
 ifeq ($(MODE), dev)
-	docker compose --env-file .env.dev up --build database backend -d
-	cd backend && npm run dev
+
+	docker compose --env-file .env.dev up --build $(SERVICES) -d
+	cd app && npm run dev
+
 else ifeq ($(MODE), prod)
 	docker compose --env-file .env.dev up --build
+
 else
 	$(error Invalid argument `$(MODE)` for `MODE`. Expected either `prod` or `dev`.)
 endif

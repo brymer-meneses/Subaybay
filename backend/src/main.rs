@@ -26,7 +26,9 @@ use tracing_subscriber;
 mod client;
 
 async fn initialize_client() -> Client {
-    let uri = "mongodb://admin:password@localhost:3000";
+    let host = std::env::var("DATABASE_HOSTNAME").unwrap_or("localhost".to_owned());
+    let uri = format!("mongodb://{host}:27017");
+
     let client = {
         let mut options = ClientOptions::parse_async(uri).await.expect("Invalid URI");
         options.server_api = Some(ServerApi::builder().version(ServerApiVersion::V1).build());
@@ -60,6 +62,7 @@ async fn main() {
     });
 
     let app = Router::new()
+        .route("/", routing::get(root))
         .route("/chat/messages", routing::get(messages))
         .route("/chat/ws", routing::get(ws_handler))
         .with_state(app_state)
@@ -76,6 +79,10 @@ async fn main() {
     )
     .await
     .unwrap();
+}
+
+async fn root() -> impl IntoResponse {
+    return "Hello there";
 }
 
 async fn ws_handler(

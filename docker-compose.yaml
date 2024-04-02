@@ -7,6 +7,11 @@ services:
     restart: always
     ports: 
       - ${APP_PORT}:3000
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - backend
+      - database
 
   database:
     image: mongo
@@ -15,15 +20,18 @@ services:
        - db-data:/data/db
     ports:
       - ${DATABASE_PORT}:27017
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password
+    env_file:
+      - ./.env.dev
 
   backend:
     build: backend
     restart: always
     ports: 
       - ${BACKEND_PORT}:8080
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - database
 
 
 volumes:
