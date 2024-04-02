@@ -52,10 +52,12 @@
 		graphHeight = graph.getBoundingClientRect().height; //TODO: adapt to required height
 
         stageToPoint = {};
-        structure = [];
+        structure = [] = [['']];
 
         readFlow();
 
+        //todo balance thing by adding dummy nodes
+        
         createPoints();
     }
 
@@ -86,8 +88,8 @@
 
     //todo fix nesting, ew, extract the functions
     function addToLayer(element : string, index : number, height : number) {       
-        ensureLayersSize(index);
-        ensureLayerHeight(structure[index], height);
+        ensureWidth(index);
+        ensureHeight(structure[index], height);
 
         let exists = false;
         let found = false;
@@ -131,21 +133,25 @@
         }
     }
 
-    function ensureLayersSize(requiredIndex : number) {
+    function ensureWidth(requiredIndex : number) {
         const maxIndex = structure.length - 1;
         if(maxIndex >= requiredIndex) return;
+        
+        const height = structure[structure.length - 1].length;
 
         for(let i = maxIndex; i < requiredIndex; i++) {
-            structure.push([]);
+            structure.push(new Array(height));
         }
     }
 
-    function ensureLayerHeight(layer : string[], requiredIndex : number) {
-        const maxIndex = layer.length - 1;
-        if(maxIndex >= requiredIndex) return;
+    function ensureHeight(requiredIndex : number) {
+        const maxIndex = structure[structure.length - 1].length;
+        if (maxIndex >= requiredIndex) return;
 
-        for(let i = maxIndex; i < requiredIndex; i++) {
-            layer.push('');
+        for (let col = 0; col < structure.length; col++) {
+            for (let i = maxIndex; i < requiredIndex; i++) {
+                structure[col].push('');
+            }
         }
     }
 
@@ -157,7 +163,7 @@
         for(let pos = 0; pos < structure.length; pos++) {
             let layer = structure[pos];
 
-            const x = lineStart + pos * xSpacing
+            const x = lineStart + pos * xSpacing;
 
             for(let i = 0; i < layer.length; i++) {
                 const y = yStart + (i * ySpacing);
