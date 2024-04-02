@@ -1,26 +1,37 @@
-import { redirect, type Handle } from "@sveltejs/kit";
-import { verifyIdToken } from "$lib/auth/verifyIdToken";
 
-const protectedPaths = ["dashboard"];
+// Reference:
+//  https://lucia-auth.com/getting-started/sveltekit
+import { lucia } from "$lib/server/auth";
+import type { Handle } from "@sveltejs/kit";
 
 export const handle: Handle = async ({ event, resolve }) => {
-  const idToken = event.cookies.get("idToken");
-  const verificationResult = await verifyIdToken(idToken);
-
-  console.log(verificationResult.message)
-
-  if (event.url.pathname === "/") {
-    if (verificationResult.success) {
-      redirect(303, "/dashboard");
-    }
+  const sessionId = event.cookies.get(lucia.sessionCookieName);
+  if (!sessionId) {
+    event.locals.user = null;
+    event.locals.session = null;
+    return resolve(event);
   }
 
-  for (const path in protectedPaths) {
-    if (event.url.pathname.includes(path)) {
-      if (!verificationResult.success) redirect(303, "/");
-    }
+  const { session, user } = await lucia.validateSession(sessionId);
+  if (session && session.fresh) {
+    const sessionCookie = lucia.createSessionCookie(session.id);
+    // sveltekit types deviates from the de-facto standard
+    // you can use 'as any' too
+    event.cookies.set(sessionCookie.name, sessionCookie.value, {
+      path: ".",
+      ...sessionCookie.attributes
+    });
+  }
+  if (!session) {
+    const sessionCookie = lucia.createBlankSessionCookie();
+    event.cookies.set(sessionCookie.name, sessionCookie.value, {
+      path: ".",
+      ...sessionCookie.attributes
+    });
   }
 
-  const response = await resolve(event);
-  return response;
+  console.log("setting...");
+  event.locals.user = user;
+  event.locals.session = session;
+  return resolve(event);
 };

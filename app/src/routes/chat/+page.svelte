@@ -1,7 +1,0 @@
-<script lang="ts">
-  import ChatArea from "$lib/components/general/ChatArea/ChatArea.svelte";
-</script>
-
-<main class="w-screen h-screen bg-white p-10">
-  <ChatArea roomId="abcd" />
-</main>

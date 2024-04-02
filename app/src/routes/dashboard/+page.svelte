@@ -1,12 +1,11 @@
 <script lang="ts">
   import StageItem from "./StageItem.svelte";
   import ScrollArea from "$lib/components/general/ScrollArea.svelte";
-  import ChatArea from "$lib/components/general/ChatArea/ChatArea.svelte";
-
   import { BxSearch } from "svelte-boxicons";
   import StageContent from "./StageContent.svelte";
+  import type { PageServerData } from "./$types";
 
-  const freshcat = "https://streetcat.wiki/images/4/48/Freshguygif.gif";
+  export let data: PageServerData;
 </script>
 
 <section class="flex flex-col items-center gap-8 basis-2/5 p-5 bg-pale-red-100">
@@ -15,11 +14,11 @@
       class="flex justify-center items-center gap-5 bg-white w-[200px] rounded-2xl p-2 ml-4"
     >
       <img
-        src={freshcat}
+        src={data.imageUrl}
         alt="mr.fresh"
         class="object-cover w-[50px] h-[50px] rounded-full"
       />
-      <h1>Fresh D. Cat</h1>
+      <h1>{data.name}</h1>
     </div>
   </div>
 

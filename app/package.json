@@ -34,13 +34,15 @@
   "type": "module",
   "dependencies": {
     "@auth/core": "^0.28.0",
-    "@auth/sveltekit": "^0.14.0",
+    "@auth/sveltekit": "^0.14.2",
     "@fontsource-variable/inter": "^5.0.17",
     "@fontsource/poppins": "^5.0.12",
+    "@lucia-auth/adapter-mongodb": "^1.0.3",
+    "arctic": "^1.5.0",
     "bits-ui": "^0.21.1",
     "clsx": "^2.1.0",
-    "firebase": "^10.8.1",
     "jose": "^5.2.3",
+    "lucia": "^3.1.1",
     "lucide-svelte": "^0.335.0",
     "tailwind-merge": "^2.2.1",
     "tailwind-variants": "^0.2.0"

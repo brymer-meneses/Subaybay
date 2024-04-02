@@ -1,55 +1,7 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { initializeApp, type FirebaseApp } from "firebase/app";
-  import { firebaseConfig } from "$lib/firebase";
-
-  import {
-    GoogleAuthProvider,
-    initializeAuth,
-    type Auth,
-    browserSessionPersistence,
-    browserPopupRedirectResolver,
-    signInWithRedirect,
-    getRedirectResult,
-  } from "firebase/auth";
-
   import UP from "$lib/assets/UP.png";
-  import { goto } from "$app/navigation";
 
-  let app: FirebaseApp;
-  let auth: Auth;
-
-  onMount(async () => {
-    app = initializeApp(firebaseConfig);
-    auth = initializeAuth(app, {
-      persistence: browserSessionPersistence,
-      popupRedirectResolver: browserPopupRedirectResolver,
-    });
-
-    const result = await getRedirectResult(auth, browserPopupRedirectResolver);
-    if (result) {
-      const idToken = await result.user.getIdToken();
-
-      const response = await fetch("api/sessionLogin", {
-        method: "POST",
-        body: JSON.stringify({ idToken }),
-        headers: {
-          "content-type": "application/json",
-        },
-      });
-
-      const { url, redirected } = response;
-      if (redirected) {
-        goto(url);
-      }
-    }
-  });
-
-  async function signInWithGoogle() {
-    const provider = new GoogleAuthProvider();
-
-    await signInWithRedirect(auth, provider);
-  }
+  async function signInWithGoogle() {}
 </script>
 
 <div
@@ -76,13 +28,13 @@
       Request Monitoring System
     </h2>
 
-    <button
+    <a
       class="flex flex-row justify-center items-center gap-4 bg-white h-full p-4 z-20 rounded-lg drop-shadow-sm hover:bg-slate-100 w-full lg:w-64"
-      on:click={async () => await signInWithGoogle()}
+      href="/login/"
     >
       <img src="google.png" alt="google logo" class="w-10" />
       <p class="font-inter font-normal">Sign in with Google</p>
-    </button>
+    </a>
   </div>
 </div>
 
