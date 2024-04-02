@@ -19,6 +19,13 @@ services:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: password
 
+  backend:
+    build: backend
+    restart: always
+    ports: 
+      - ${BACKEND_PORT}:8080
+
+
 volumes:
   db-data:
 

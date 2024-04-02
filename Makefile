@@ -1,16 +1,19 @@
 MODE := dev
 
-CONFIG := \
-	APP_PORT=80 \
-	DATABASE_PORT=3000
-
 all: run
+
+run-database:
+	docker compose --env-file .env.dev up --build database -d
+
+run-backend:
+	docker compose --env-file .env.dev up --build backend -d
 
 run:
 ifeq ($(MODE), dev)
-	$(CONFIG) docker-compose up
+	docker compose --env-file .env.dev up --build database backend -d
+	cd backend && npm run dev
 else ifeq ($(MODE), prod)
-	$(CONFIG) docker-compose up > log.txt
+	docker compose --env-file .env.dev up --build
 else
 	$(error Invalid argument `$(MODE)` for `MODE`. Expected either `prod` or `dev`.)
 endif

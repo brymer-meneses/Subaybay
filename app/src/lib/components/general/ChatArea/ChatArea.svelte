@@ -19,8 +19,6 @@
   let socket: WebSocket;
   let messageContent: string;
 
-  let messagesContainer: HTMLDivElement;
-
   onMount(async () => {
     const response = await fetch(
       `http://localhost:8080/chat/messages?roomId=${roomId}`,
@@ -34,17 +32,7 @@
     // probably in this format: requestId-step
     socket = new WebSocket(`ws://localhost:8080/chat/ws?roomId=${roomId}`);
     socket.onmessage = receiveMessageHandler;
-
-    scrollToBottom(messagesContainer);
   });
-
-  afterUpdate(() => {
-    if (messages) scrollToBottom(messagesContainer);
-  });
-
-  async function scrollToBottom(node: HTMLDivElement) {
-    node.scroll({ top: node.scrollHeight, behavior: "smooth" });
-  }
 
   async function receiveMessageHandler(event: any) {
     try {

@@ -4,7 +4,6 @@ build
 .svelte-kit
 package
 
-.env.*
 
 !.env
 !.env.dev
