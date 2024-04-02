@@ -1,17 +1,8 @@
 <script lang="ts">
   import { BxsInbox, BxsFileDoc, BxsCog, BxsLogOut } from "svelte-boxicons";
-  import { goto } from "$app/navigation";
 
   import UpLogo from "$lib/assets/UP.png";
   import NavLink from "./NavLink.svelte";
-
-  async function signOut() {
-    await fetch("api/sessionLogout", {
-      method: "POST",
-    });
-
-    goto("/");
-  }
 </script>
 
 <main class="h-screen w-screen flex bg-background">
@@ -36,12 +27,14 @@
       </nav>
     </div>
 
-    <button
-      on:click={signOut}
-      class="flex items-center justify-center w-1/2 hover:bg-pale-red-100 gap-3 bg-pale-red-200 p-3 rounded-xl"
-    >
-      <BxsLogOut size="20" /> Logout
-    </button>
+    <form method="POST" action="/logout">
+      <button
+        type="submit"
+        class="flex items-center justify-center w-full hover:bg-pale-red-100 gap-2 bg-pale-red-200 p-4 rounded-xl"
+      >
+        <BxsLogOut size="20" /> Logout
+      </button>
+    </form>
   </section>
 
   <slot />
