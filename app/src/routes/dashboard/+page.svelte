@@ -14,11 +14,11 @@
       class="flex justify-center items-center gap-5 bg-white w-[200px] rounded-2xl p-2 ml-4"
     >
       <img
-        src={data.imageUrl}
+        src={data.userInfo.imageUrl}
         alt="mr.fresh"
         class="object-cover w-[50px] h-[50px] rounded-full"
       />
-      <h1>{data.name}</h1>
+      <h1>{data.userInfo.name}</h1>
     </div>
   </div>
 

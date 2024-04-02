@@ -6,7 +6,5 @@ export const load: PageServerLoad = async (event) => {
     redirect(302, "/login");
   };
 
-  const { name, email, imageUrl } = event.locals.user;
-  console.log(imageUrl)
-  return { name, email, imageUrl };
+  return { userInfo: event.locals.user };
 }

@@ -6,15 +6,16 @@
   import { ScrollArea } from "bits-ui";
   import { BxsSend } from "svelte-boxicons";
 
-  import { afterUpdate } from "svelte";
-
   type Message = {
-    time: number;
+    dateTime: number;
     content: string;
-    from: string;
+    email: string;
+    profileUrl: string;
   };
 
-  const name: string = "example@up.edu.ph";
+  export let email: string;
+  export let senderProfileUrl: string;
+
   let messages: Array<Message> = [];
   let socket: WebSocket;
   let messageContent: string;
@@ -44,7 +45,13 @@
   }
 
   async function sendMessageHandler() {
-    socket.send(JSON.stringify({ from: name, content: messageContent }));
+    socket.send(
+      JSON.stringify({
+        email,
+        content: messageContent,
+        profileUrl: senderProfileUrl,
+      }),
+    );
   }
 </script>
 
@@ -59,7 +66,9 @@
           {#each messages as message, index}
             <ChatMessage
               message={message.content}
-              byYou={message.from == null ? true : false}
+              byYou={message.email == email ? true : false}
+              dateTime={message.dateTime}
+              profileUrl={message.profileUrl}
             />
           {/each}
         </div>

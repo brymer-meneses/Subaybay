@@ -1,8 +1,7 @@
 import { OAuth2RequestError } from "arctic";
 import { type RequestEvent } from "@sveltejs/kit";
 import { google, lucia } from "$lib/server/auth";
-import { user, database } from "$lib/server/database";
-import { generateId } from "lucia";
+import { user } from "$lib/server/database";
 
 interface GoogleAccount {
   sub: string,
@@ -59,7 +58,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
     });
 
 
-    console.log("Routing to dashboard");
     return new Response(null, {
       status: 302,
       headers: {

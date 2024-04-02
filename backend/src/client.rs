@@ -8,9 +8,10 @@ use std::time::{SystemTime, UNIX_EPOCH};
 #[serde(rename_all = "camelCase")]
 pub struct Message {
     #[serde(default = "get_time")]
-    pub date: u64,
+    pub date_time: u64,
     pub content: String,
-    pub from: String,
+    pub email: String,
+    pub profile_url: String,
 }
 
 #[derive(serde::Deserialize, Debug)]
@@ -32,6 +33,7 @@ pub fn get_time() -> u64 {
         Err(_) => panic!("SystemTime before UNIX Epoch"),
     }
 }
+
 impl From<Message> for Bson {
     fn from(msg: Message) -> Self {
         bson::to_document(&msg).unwrap().into()
