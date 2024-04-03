@@ -13,13 +13,14 @@
   import { page } from "$app/stores";
 </script>
 
-<section
-  class="basis-1/5 white flex flex-col items-center justify-between h-full w-full py-10"
+<div
+  class="white flex flex-col items-center justify-between h-full w-full py-10"
 >
   <div class="flex flex-col gap-y-16 w-full items-center justify-center">
-    <img alt="up logo" src={UpLogo} class="w-40 aspect-square" />
-
-    <h1 class="font-bold text-4xl font-poppins">Subaybay</h1>
+    <div class="w-full items-center justify-start flex-row flex gap-4 p-4">
+      <img alt="up logo" src={UpLogo} class="w-10 aspect-square" />
+      <h1 class="text-2xl font-poppins">Subaybay</h1>
+    </div>
     <nav class="flex flex-col w-full">
       <NavLink href="/inbox">
         <BxsInbox size="15" />
@@ -53,4 +54,4 @@
       <BxsLogOut size="20" /> Logout
     </button>
   </form>
-</section>
+</div>

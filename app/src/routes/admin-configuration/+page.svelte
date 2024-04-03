@@ -1,12 +1,31 @@
 <script lang="ts">
-  import Profile from "$lib/components/general/Profile.svelte";
-  import type { PageServerData } from "./$types";
+  import Sidebar from "$lib/components/general/Sidebar/Sidebar.svelte";
 
-  export let data: PageServerData;
+  import * as Resizable from "$lib/components/ui/resizable";
 </script>
 
-<section class="flex flex-col items-center gap-8 basis-2/5 p-5 bg-pale-red-100">
-  <Profile name={data.userInfo.name} profileUrl={data.userInfo.imageUrl} />
-</section>
+<Resizable.PaneGroup
+  direction="horizontal"
+  class="h-screen w-screen flex bg-background"
+  autoSaveId="paneGroup1"
+>
+  <Resizable.Pane defaultSize={10} minSize={5} maxSize={20}>
+    <Sidebar />
+  </Resizable.Pane>
 
-<section class="basis-2/5 p-10 bg-pale-red-200"></section>
+  <Resizable.Handle />
+
+  <Resizable.Pane defaultSize={25} minSize={20}>
+    <section
+      class="flex flex-col items-center gap-8 p-5 bg-pale-red-100 h-screen"
+    ></section>
+  </Resizable.Pane>
+
+  <Resizable.Handle />
+
+  <Resizable.Pane defaultSize={30} minSize={40}>
+    <section
+      class="p-5 bg-pale-red-200 flex flex-col gap-10 h-screen"
+    ></section>
+  </Resizable.Pane>
+</Resizable.PaneGroup>
