@@ -74,8 +74,8 @@
       HD and GMC forwarded to UR for signature
     </h1>
     <h2 class="text-xl font-light flex-row flex gap-2">
-      <p class="font-medium">Honorable Dismissal</p>
-      <p class="font-light">#00001</p>
+      <p class="font-light">Honorable Dismissal</p>
+      <p class="font-extralight">#00001</p>
     </h2>
 
     <ul class="bg-white rounded-md p-2 font-light">

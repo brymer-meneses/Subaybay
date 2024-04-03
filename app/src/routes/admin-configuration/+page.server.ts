@@ -6,5 +6,10 @@ export const load: PageServerLoad = async (event) => {
     redirect(302, "/login");
   };
 
+  // unauthorized access
+  if (!event.locals.user.isAdmin) {
+    redirect(302, "/");
+  };
+
   return { userInfo: event.locals.user };
 }

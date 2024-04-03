@@ -11,8 +11,7 @@
   {href}
   class={clsx(
     "flex flex-row gap-x-3 w-4/5  p-2 rounded-r-lg",
-    isSelected && "bg-primary text-white drop-shadow-lg",
-    !isSelected && "hover:bg-pale-red-100",
+    isSelected ? "bg-primary text-white drop-shadow-lg" : "hover:bg-pale-red-100 font-light",
   )}
 >
   <div class="w-full flex gap-2 px-5 items-center">
