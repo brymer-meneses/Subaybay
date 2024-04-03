@@ -30,7 +30,7 @@
 
     <a
       class="flex flex-row justify-center items-center gap-4 bg-white h-full p-4 z-20 rounded-lg drop-shadow-sm hover:bg-slate-100 w-full lg:w-64"
-      href="/login/"
+      href="/auth/login/"
     >
       <img src="google.png" alt="google logo" class="w-10" />
       <p class="font-inter font-normal">Sign in with Google</p>

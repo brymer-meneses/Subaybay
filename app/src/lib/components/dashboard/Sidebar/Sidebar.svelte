@@ -46,7 +46,7 @@
     </nav>
   </div>
 
-  <form method="POST" action="/logout">
+  <form method="POST" action="/auth/logout">
     <button
       type="submit"
       class="flex items-center justify-center w-full hover:bg-pale-red-100 gap-2 bg-pale-red-200 p-4 rounded-xl"

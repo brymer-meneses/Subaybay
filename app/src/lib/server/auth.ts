@@ -9,7 +9,7 @@ import { session, user, type User } from "./database";
 export const google = new Google(
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
-  "http://localhost:5173/login/callback",
+  "http://localhost:5173/auth/login/callback",
 )
 
 const adapter = new MongodbAdapter(session, user);

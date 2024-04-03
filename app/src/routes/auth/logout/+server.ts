@@ -1,5 +1,6 @@
 import { redirect } from "@sveltejs/kit";
 import { lucia } from "$lib/server/auth";
+import { session } from "$lib/server/database";
 
 import { type RequestEvent } from "@sveltejs/kit";
 
@@ -15,6 +16,6 @@ export async function POST(event: RequestEvent): Promise<Response> {
     ...sessionCookie.attributes
   });
 
-  redirect(302, "/login");
+  redirect(302, "/");
 }
 

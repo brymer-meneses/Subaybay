@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Sidebar from "$lib/components/general/Sidebar/Sidebar.svelte";
+  import Sidebar from "$lib/components/dashboard/Sidebar/Sidebar.svelte";
   import * as Resizable from "$lib/components/ui/resizable/index.js";
 </script>
 
@@ -14,7 +14,7 @@
 
   <Resizable.Handle />
 
-  <Resizable.Pane>
+  <Resizable.Pane defaultSize={90}>
     <div class="h-screen w-full bg-pale-red-100">
       <slot />
     </div>

@@ -1,14 +1,14 @@
 <script lang="ts">
+  import "@fontsource/poppins/600.css";
   import StageItem from "./StageItem.svelte";
   import ScrollArea from "$lib/components/general/ScrollArea.svelte";
+  import Profile from "$lib/components/dashboard/Profile.svelte";
+  import ChatArea from "$lib/components/dashboard/ChatArea/ChatArea.svelte";
+
   import type { PageServerData } from "./$types";
-  import ChatArea from "$lib/components/general/ChatArea/ChatArea.svelte";
 
-  import "@fontsource/poppins/600.css";
-
-  import Profile from "$lib/components/general/Profile.svelte";
-  import { BxSearch, BxsSend } from "svelte-boxicons";
-  import { CheckCheck, MoveLeft, User, Send } from "lucide-svelte";
+  import { BxSearch } from "svelte-boxicons";
+  import { CheckCheck, MoveLeft, User } from "lucide-svelte";
 
   import { Progress } from "$lib/components/ui/progress/index.js";
   import Button from "$lib/components/ui/button/button.svelte";
