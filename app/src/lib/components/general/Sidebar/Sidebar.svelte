@@ -9,10 +9,6 @@
 
   import UpLogo from "$lib/assets/UP.png";
   import NavLink from "./NavLink.svelte";
-
-  import { page } from "$app/stores";
-
-  const isInboxSelected = $page;
 </script>
 
 <section
@@ -32,9 +28,9 @@
         <p class="text-sm">Request Tracker</p>
       </NavLink>
 
-      <NavLink href="/document-settings">
+      <NavLink href="/configuration">
         <BxsCog size="15" />
-        <p class="text-sm">Document Settings</p>
+        <p class="text-sm">Configuration</p>
       </NavLink>
 
       <NavLink href="/admin-configuration">

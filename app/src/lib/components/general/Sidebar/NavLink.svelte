@@ -11,7 +11,7 @@
   {href}
   class={clsx(
     "flex flex-row gap-x-3 w-4/5  p-2 rounded-r-lg",
-    isSelected && "bg-primary text-white",
+    isSelected && "bg-primary text-white drop-shadow-lg",
     !isSelected && "hover:bg-pale-red-100",
   )}
 >

@@ -96,7 +96,7 @@
     />
 
     <button on:click={sendMessageHandler}>
-      <BxsSend />
+      <BxsSend class="text-primary" />
     </button>
   </div>
 </section>

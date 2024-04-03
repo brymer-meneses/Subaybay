@@ -20,8 +20,36 @@ export interface User {
   isAdmin: boolean,
 }
 
+// TODO: convert to camelCase 
 export interface Session {
   _id: string;
   expires_at: Date;
   user_id: string;
+}
+
+export interface StageType {
+  _id: string;
+  stageTitle: string;
+  // how far along is this stage?
+  stageNumber: number;
+  handler: string;
+}
+
+export interface RequestType {
+  _id: string;
+  stages: Array<StageType>;
+}
+
+// instance of a `RequestType`
+export interface Request {
+  _id: string;
+  requestType: RequestType,
+  // metadata
+}
+
+// instance of a `StageType`
+export interface Stage {
+  _id: string;
+  stageType: StageType,
+  currentHandler: string;
 }
