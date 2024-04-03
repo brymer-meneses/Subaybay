@@ -22,23 +22,23 @@
       <h1 class="text-2xl font-poppins">Subaybay</h1>
     </div>
     <nav class="flex flex-col w-full">
-      <NavLink href="/inbox">
+      <NavLink href="/dashboard/inbox">
         <BxsInbox size="15" />
         <p class="text-sm">Inbox</p>
       </NavLink>
 
-      <NavLink href="/request-tracker">
+      <NavLink href="/dashboard/request-tracker">
         <BxsFileDoc size="15" />
         <p class="text-sm">Request Tracker</p>
       </NavLink>
 
-      <NavLink href="/configuration">
+      <NavLink href="/dashboard/configuration">
         <BxsCog size="15" />
         <p class="text-sm">Configuration</p>
       </NavLink>
 
       {#if $page.data.userInfo.isAdmin}
-        <NavLink href="/admin-configuration">
+        <NavLink href="/dashboard/admin">
           <BxsLockOpen size="15" />
           <p class="text-sm">Admin Configuration</p>
         </NavLink>

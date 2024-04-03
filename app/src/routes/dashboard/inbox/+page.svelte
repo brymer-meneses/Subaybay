@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Sidebar from "$lib/components/general/Sidebar/Sidebar.svelte";
   import StageItem from "./StageItem.svelte";
   import ScrollArea from "$lib/components/general/ScrollArea.svelte";
   import type { PageServerData } from "./$types";
@@ -19,17 +18,7 @@
   export let data: PageServerData;
 </script>
 
-<Resizable.PaneGroup
-  direction="horizontal"
-  class="h-screen w-screen flex bg-background"
-  autoSaveId="paneGroup1"
->
-  <Resizable.Pane defaultSize={10} minSize={5} maxSize={20}>
-    <Sidebar />
-  </Resizable.Pane>
-
-  <Resizable.Handle />
-
+<Resizable.PaneGroup direction="horizontal">
   <Resizable.Pane defaultSize={25} minSize={20}>
     <section
       class="flex flex-col items-center gap-8 p-5 bg-pale-red-100 h-screen"
