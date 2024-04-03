@@ -6,7 +6,7 @@
 
   import Profile from "$lib/components/general/Profile.svelte";
   import { BxSearch, BxsSend } from "svelte-boxicons";
-  import { CheckCheck, MoveLeft, User } from "lucide-svelte";
+  import { CheckCheck, MoveLeft, User, Send } from "lucide-svelte";
 
   import { Progress } from "$lib/components/ui/progress/index.js";
   import Button from "$lib/components/ui/button/button.svelte";
@@ -50,31 +50,31 @@
 </section>
 
 <!-- stage content -->
-<section class="h-full basis-2/5 p-5 bg-pale-red-200 flex flex-col gap-4">
+<section class="h-full basis-2/5 p-5 bg-pale-red-200 flex flex-col gap-10">
   <!-- previous stage metadata -->
-  <div class="w-full flex flex-row justify-center items-center">
-    <BxsSend class="text-primary" />
-    <div class="w-full flex gap-2 items-center">
-      <div
-        class="flex justify-center items-center gap-3 bg-pale-red-100 w-fit rounded-2xl p-2 px-4 ml-4"
-      >
-        <img
-          src={data.userInfo.imageUrl}
-          alt="profile"
-          class="object-cover w-5 h-5 rounded-full"
-        />
+  <div class="w-full flex flex-row justify-start items-center">
+    By
+    <div
+      class="flex justify-center items-center gap-3 bg-pale-red-100 w-fit rounded-2xl p-2 px-4 ml-4"
+    >
+      <img
+        src={data.userInfo.imageUrl}
+        alt="profile"
+        class="object-cover w-8 h-8 rounded-full"
+      />
+      <div class="flex flex-col">
         <p class="text-base text-black">{data.userInfo.name}</p>
+        <p class="text-sm font-light">March 25, 2024 7:32 AM</p>
       </div>
-      <p class="text-sm font-light">March 25, 2024 7:32 AM</p>
     </div>
   </div>
 
   <div class="flex-col flex gap-2">
-    <h1 class="text-3xl font-bold text-primary drop-shadow-sm">
+    <h1 class="text-4xl font-extrabold text-primary drop-shadow-sm">
       HD and GMC forwarded to UR for signature
     </h1>
     <h2 class="text-xl font-light flex-row flex gap-2">
-      <p class="font-bold">Honorable Dismissal</p>
+      <p class="font-medium">Honorable Dismissal</p>
       <p class="font-light">#00001</p>
     </h2>
 
@@ -85,8 +85,6 @@
     </ul>
   </div>
 
-  <Progress value={2} max={10} class="w-full h-5" />
-
   <div class="h-1/3 flex flex-col gap-4">
     <ChatArea
       email={data.userInfo.email}
@@ -94,6 +92,7 @@
       roomId="abcd"
     />
   </div>
+  <Progress value={2} max={10} class="w-full h-5" />
 
   <!-- buttons -->
   <div class="flex gap-2">
