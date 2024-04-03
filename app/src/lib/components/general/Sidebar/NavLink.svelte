@@ -1,12 +1,19 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
+  import clsx from "clsx";
+  import { page } from "$app/stores";
 
   export let href: string;
+
+  $: isSelected = $page.route.id == href;
 </script>
 
 <a
   {href}
-  class="flex flex-row gap-x-3 w-4/5 hover:bg-primary hover:text-white p-2 rounded-r-lg"
+  class={clsx(
+    "flex flex-row gap-x-3 w-4/5  p-2 rounded-r-lg",
+    isSelected && "bg-primary text-white",
+    !isSelected && "hover:bg-pale-red-100",
+  )}
 >
   <div class="w-full flex gap-2 px-5 items-center">
     <slot />

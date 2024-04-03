@@ -9,6 +9,10 @@
 
   import UpLogo from "$lib/assets/UP.png";
   import NavLink from "./NavLink.svelte";
+
+  import { page } from "$app/stores";
+
+  const isInboxSelected = $page;
 </script>
 
 <section
