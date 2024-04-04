@@ -40,7 +40,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
     const account: GoogleAccount = await response.json();
     const googleId = account.sub;
 
-    const existingAccount = await user.findOne({ "googleId": googleId });
+    const existingAccount = await user.findOne({ "_id": googleId });
     if (!existingAccount) {
       await user.insertOne({
         _id: account.sub,
@@ -68,6 +68,8 @@ export async function GET(event: RequestEvent): Promise<Response> {
     });
 
   } catch (e) {
+    console.error(e);
+
     if (e instanceof OAuth2RequestError) {
       return new Response(null, {
         status: 400

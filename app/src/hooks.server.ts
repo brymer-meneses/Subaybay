@@ -9,28 +9,39 @@ export const handle: Handle = async ({ event, resolve }) => {
   if (!sessionId) {
     event.locals.user = null;
     event.locals.session = null;
-    return resolve(event);
+  } else {
+    const { session, user } = await lucia.validateSession(sessionId);
+    if (session && session.fresh) {
+      const sessionCookie = lucia.createSessionCookie(session.id);
+      // sveltekit types deviates from the de-facto standard
+      // you can use 'as any' too
+      event.cookies.set(sessionCookie.name, sessionCookie.value, {
+        path: ".",
+        ...sessionCookie.attributes
+      });
+    }
+    if (!session) {
+      const sessionCookie = lucia.createBlankSessionCookie();
+      event.cookies.set(sessionCookie.name, sessionCookie.value, {
+        path: ".",
+        ...sessionCookie.attributes
+      });
+    }
+
+    event.locals.user = user;
+    event.locals.session = session;
   }
 
-  const { session, user } = await lucia.validateSession(sessionId);
-  if (session && session.fresh) {
-    const sessionCookie = lucia.createSessionCookie(session.id);
-    // sveltekit types deviates from the de-facto standard
-    // you can use 'as any' too
-    event.cookies.set(sessionCookie.name, sessionCookie.value, {
-      path: ".",
-      ...sessionCookie.attributes
-    });
-  }
-  if (!session) {
-    const sessionCookie = lucia.createBlankSessionCookie();
-    event.cookies.set(sessionCookie.name, sessionCookie.value, {
-      path: ".",
-      ...sessionCookie.attributes
-    });
+  const protectedRoutes = ["dashboard"];
+  const isAuthenticated = !!event.locals.user;
+
+  if (!isAuthenticated) {
+    for (const route of protectedRoutes) {
+      if (event.url.pathname.includes(route)) {
+        throw redirect(303, "/");
+      }
+    }
   }
 
-  event.locals.user = user;
-  event.locals.session = session;
   return resolve(event);
 };

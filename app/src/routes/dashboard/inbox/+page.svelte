@@ -5,8 +5,6 @@
   import Profile from "$lib/components/dashboard/Profile.svelte";
   import ChatArea from "$lib/components/dashboard/ChatArea/ChatArea.svelte";
 
-  import type { PageServerData } from "./$types";
-
   import { BxSearch } from "svelte-boxicons";
   import { CheckCheck, MoveLeft, User } from "lucide-svelte";
 
@@ -14,6 +12,7 @@
   import Button from "$lib/components/ui/button/button.svelte";
 
   import * as Resizable from "$lib/components/ui/resizable/index.js";
+  import type { PageServerData } from "./$types";
 
   export let data: PageServerData;
 </script>
