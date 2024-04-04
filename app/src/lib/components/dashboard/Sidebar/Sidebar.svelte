@@ -10,7 +10,16 @@
   import UpLogo from "$lib/assets/UP.png";
   import NavLink from "./NavLink.svelte";
 
+  import { Inbox, ListTodo, Settings, UserRoundCog } from "lucide-svelte";
   import { page } from "$app/stores";
+
+  // afterUpdate(() => {
+  //   console.log(width);
+  // });
+
+  let width: number;
+
+  $: collapsed = width < 200;
 </script>
 
 <div
@@ -21,27 +30,27 @@
       <img alt="up logo" src={UpLogo} class="w-10 aspect-square" />
       <h1 class="text-2xl font-poppins">Subaybay</h1>
     </div>
-    <nav class="flex flex-col w-full">
-      <NavLink href="/dashboard/inbox">
-        <BxsInbox size="15" />
-        <p class="text-sm">Inbox</p>
-      </NavLink>
+    <nav class="flex flex-col w-full gap-1">
+      <NavLink href="/dashboard/inbox" name="Inbox" icon={Inbox} />
 
-      <NavLink href="/dashboard/request-tracker">
-        <BxsFileDoc size="15" />
-        <p class="text-sm">Request Tracker</p>
-      </NavLink>
+      <NavLink
+        href="/dashboard/request-tracker"
+        name="Request Tracker"
+        icon={ListTodo}
+      />
 
-      <NavLink href="/dashboard/configuration">
-        <BxsCog size="15" />
-        <p class="text-sm">Configuration</p>
-      </NavLink>
+      <NavLink
+        href="/dashboard/configuration"
+        name="Configuration"
+        icon={Settings}
+      />
 
       {#if $page.data.userInfo.isAdmin}
-        <NavLink href="/dashboard/admin">
-          <BxsLockOpen size="15" />
-          <p class="text-sm">Admin Configuration</p>
-        </NavLink>
+        <NavLink
+          href="/dashboard/admin"
+          name="Admin Configuration"
+          icon={UserRoundCog}
+        />
       {/if}
     </nav>
   </div>
