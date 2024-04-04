@@ -23,10 +23,10 @@ export const lucia = new Lucia(adapter, {
 
   getUserAttributes: (attributes) => {
     return {
-      isAdmin: attributes.isAdmin,
       name: attributes.name,
       email: attributes.email,
-      imageUrl: attributes.imageUrl,
+      profileUrl: attributes.profileUrl,
+      isAdmin: attributes.isAdmin,
     };
   }
 });
