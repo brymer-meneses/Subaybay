@@ -6,6 +6,9 @@ all: run
 stop:
 	docker compose --env-file .env.development down
 
+reset-database:
+	docker-compose exec database /bin/bash -c 'mongosh subaybay -u $$MONGO_USER -p $$MONGO_PASSWORD --authenticationDatabase admin --eval "db.dropDatabase();"'
+
 run:
 ifeq ($(MODE), dev)
 
