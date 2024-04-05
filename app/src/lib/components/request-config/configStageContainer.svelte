@@ -1,33 +1,71 @@
 <script lang="ts">
+    import {disabledColor, mainBGColor, deleteColor, deleteHoverColor, addColor, addHoverColor, subBGColor, headerColor} from "./configConstants";
+    import {height} from "./configConstants";
+    import {ButtonType} from "./configConstants";
     import ConfigStageButton from "./configStageButton.svelte";
     import {flip} from 'svelte/animate';
 
-    const headerColor = "#dadfe0";
-    const bgColor = "#bdc3c7"
-    const greenDefault = "#7bedbc";
-    const greenHover = "#49d180";
-    const redDefault = "#db2a4d";
-    const redHover = "";
-    const grayDefault = "#dadfe0";
-    const grayHover = "#909599";
 
     export let stageNumber = 1;
-    export let buttonSize = 40;
+    export let buttonType : ButtonType = ButtonType.Disabled;
 
-    export let subStages : string[] = [];
+    export let substages : string[] = [];
+    export let onClick = () => {};
     
-    //todo: this will be handled automatically based on some bools or enums
-    export let leftColor = greenDefault;
+    let defaultColor = disabledColor;
+    let hoverColor = disabledColor;
 
+    let substageCount = substages.length; //Needed to trigger a re-render
+
+    $: switch (buttonType) {
+        case ButtonType.Delete:
+            defaultColor = deleteColor;
+            hoverColor = deleteHoverColor;
+            break;
+        case ButtonType.Disabled:
+            defaultColor = disabledColor;
+            hoverColor = disabledColor;
+            break;
+        case ButtonType.Add:
+            defaultColor = addColor;
+            hoverColor = addHoverColor;
+            break;
+    }
+
+    $: buttonColor = defaultColor;
+
+    function onButtonHoverStart() {
+        buttonColor = hoverColor;
+    }
+
+    function onButtonHoverEnd() {
+        buttonColor = defaultColor;
+    }
+
+    function deleteSubstage(index : number) {
+        substages.splice(index, 1);
+        substageCount = substages.length;
+    }
+    
+    function addSubstage() {
+        substages.push("New Stage");
+        substageCount = substages.length;
+    }
 </script>
 
+{#key substageCount}
+<div class="m-2 rounded-lg" style="background-color:{mainBGColor};">
 
-<div class="m-2 p-0 rounded-lg" style="background-color:{bgColor}">
-    <div class="m-0 p-0 flex border-black border-1 items-center p-1" style="width: 500;"> <!--Header-->
+    <div class="m-0 p-0 flex border-black border-1 items-center" style="width: 500;"> <!--Header-->
+        <!-- svelte-ignore a11y-no-static-element-interactions svelte-ignore a11y-click-events-have-key-events -->
         <div class="p-2 cursor-pointer rounded-tl-lg text-white flex items-center justify-center" 
-            style="width: {buttonSize}px; height: {buttonSize}px; background-color: {leftColor}"></div>
+            style="width: {height}px; height: {height}px; background-color: {buttonColor};
+                border-bottom-left-radius: {buttonType == 1 ? '6px' : '0px'}"
+                on:mouseenter={onButtonHoverStart} on:mouseleave={onButtonHoverEnd} on:click={onClick}></div>
+
         <div class="p-2 cursor-pointer rounded-tr-lg flex-grow" 
-            style="height: {buttonSize}px; background-color:{headerColor}">
+            style="height: {height}px; background-color:{headerColor};
+                border-bottom-right-radius: {buttonType == 1 ? '6px' : '0px'}">
             <strong>
                 {#if stageNumber > 0}
                     Stage {stageNumber}
@@ -37,20 +75,24 @@
             </strong>
         </div>
     </div>
+
     {#if stageNumber > 0}
         <div class="m-0 p-0 cursor-pointer rounded-bl-lg rounded-br-lg" 
-            style="background-color:{bgColor}; flex-grow;">
-            {#if subStages.length > 0}
-                <ConfigStageButton leftColor="#909599" stageName={subStages[0]}></ConfigStageButton>
+            style="flex-grow;">
+            {#if substages.length >= 1}
+                <ConfigStageButton buttonType={0} stageName={substages[0]} isRenamable={buttonType != 0} isLast={buttonType == 0}></ConfigStageButton>
             {/if}
-            {#if subStages.length > 1}
-                {#each subStages as stage, index}
+            {#if substages.length >= 2}
+                {#each substages as stage, index}
                     {#if index > 0}
-                        <ConfigStageButton stageName={stage}></ConfigStageButton>
+                        <ConfigStageButton buttonType={-1} stageName={stage} onClick={() => deleteSubstage(index)}></ConfigStageButton>
                     {/if}
                 {/each}
             {/if}
         </div>
-        <ConfigStageButton leftColor="#7bedbc" stageName={"Add New"}></ConfigStageButton>
+        {#if buttonType != ButtonType.Disabled}
+            <ConfigStageButton buttonType={1} stageName={"Add New"} isLast={true} isRenamable={false} onClick={addSubstage}></ConfigStageButton>
+        {/if}
     {/if}
 </div>
+{/key}
