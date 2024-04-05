@@ -72,7 +72,10 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
     if (e instanceof OAuth2RequestError) {
       return new Response(null, {
-        status: 400
+        status: 302,
+        headers: {
+          Location: "/"
+        }
       });
     }
     return new Response(null, {
