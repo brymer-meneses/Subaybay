@@ -16,11 +16,11 @@ export interface User {
   _id: string;
   email: string,
   name: string,
-  imageUrl: string,
+  profileUrl: string,
   isAdmin: boolean,
 }
 
-// TODO: convert to camelCase 
+// camelcase needs to stay since `lucia` requires so
 export interface Session {
   _id: string;
   expires_at: Date;

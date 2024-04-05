@@ -2,6 +2,7 @@ import { OAuth2RequestError } from "arctic";
 import { type RequestEvent } from "@sveltejs/kit";
 import { google, lucia } from "$lib/server/auth";
 import { user } from "$lib/server/database";
+import { generateId } from "lucia";
 
 interface GoogleAccount {
   sub: string,
@@ -42,16 +43,17 @@ export async function GET(event: RequestEvent): Promise<Response> {
     const existingAccount = await user.findOne({ "_id": googleId });
     if (!existingAccount) {
       await user.insertOne({
-        _id: googleId,
+        _id: account.sub,
         name: account.name,
         email: account.email,
-        imageUrl: account.picture,
+        profileUrl: account.picture,
         isAdmin: false,
       })
     }
 
-    const session = await lucia.createSession(googleId, {});
+    const session = await lucia.createSession(existingAccount!._id, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
+
     event.cookies.set(sessionCookie.name, sessionCookie.value, {
       path: ".",
       ...sessionCookie.attributes,
@@ -66,6 +68,8 @@ export async function GET(event: RequestEvent): Promise<Response> {
     });
 
   } catch (e) {
+    console.error(e);
+
     if (e instanceof OAuth2RequestError) {
       return new Response(null, {
         status: 400

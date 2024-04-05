@@ -2,14 +2,9 @@ import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async (event) => {
-  if (!event.locals.user) {
-    redirect(302, "/auth/login");
-  };
-
+  // NOTE: user cannot not be null here since this page won't be loaded if that's the case
   // unauthorized access
-  if (!event.locals.user.isAdmin) {
+  if (!event.locals.user!.isAdmin) {
     redirect(302, "/");
   };
-
-  return { userInfo: event.locals.user };
 }

@@ -5,8 +5,6 @@
   import Profile from "$lib/components/dashboard/Profile.svelte";
   import ChatArea from "$lib/components/dashboard/ChatArea/ChatArea.svelte";
 
-  import type { PageServerData } from "./$types";
-
   import { BxSearch } from "svelte-boxicons";
   import { CheckCheck, MoveLeft, User } from "lucide-svelte";
 
@@ -14,6 +12,7 @@
   import Button from "$lib/components/ui/button/button.svelte";
 
   import * as Resizable from "$lib/components/ui/resizable/index.js";
+  import type { PageServerData } from "./$types";
 
   export let data: PageServerData;
 </script>
@@ -23,14 +22,17 @@
     <section
       class="flex flex-col items-center gap-8 p-5 bg-pale-red-100 h-screen"
     >
-      <Profile name={data.userInfo.name} profileUrl={data.userInfo.imageUrl} />
+      <Profile
+        name={data.userInfo.name}
+        profileUrl={data.userInfo.profileUrl}
+      />
 
       <!-- search -->
       <div
         class="w-[95%] h-[50px] bg-pale-red-300 rounded-xl flex flex-row items-center justify-start p-3 gap-3"
       >
         <BxSearch size="20" class="fill-pale-red-500" />
-        <p class="text-pale-red-500">Search</p>
+        <p class="text-pale-red-499">Search</p>
       </div>
 
       <!-- inbox items -->
@@ -69,7 +71,7 @@
           class="flex justify-center items-center gap-3 bg-pale-red-100 w-fit rounded-2xl p-2 px-4 ml-4"
         >
           <img
-            src={data.userInfo.imageUrl}
+            src={data.userInfo.profileUrl}
             alt="profile"
             class="object-cover w-8 h-8 rounded-full"
           />
@@ -100,8 +102,8 @@
 
       <div class="h-1/3 flex flex-col gap-4">
         <ChatArea
-          email={data.userInfo.email}
-          senderProfileUrl={data.userInfo.imageUrl}
+          userId={data.userInfo.id}
+          sessionId={data.sessionId}
           roomId="abcd"
         />
       </div>

@@ -9,33 +9,45 @@
   type Message = {
     dateTime: number;
     content: string;
-    email: string;
+    userId: string;
     profileUrl: string;
   };
 
-  export let email: string;
-  export let senderProfileUrl: string;
+  type MessagePayload = {
+    content: string;
+    userId: string;
+  };
+
+  export let userId: string;
+  export let sessionId: string;
 
   let messages: Array<Message> = [];
   let socket: WebSocket;
+  let firstTime = true;
   let messageContent: string;
 
   onMount(async () => {
-    const response = await fetch(
-      `http://localhost:8080/chat/messages?roomId=${roomId}`,
-      {
-        method: "GET",
-      },
-    );
-    messages = await response.json();
-
     // TODO: should encode roomId somehow
     // probably in this format: requestId-step
-    socket = new WebSocket(`ws://localhost:8080/chat/ws?roomId=${roomId}`);
+    socket = new WebSocket(
+      `ws://localhost:8080/chat/${roomId}/ws?sessionId=${sessionId}`,
+    );
+
+    socket.onopen = () => {
+      socket.send(sessionId);
+    };
+
     socket.onmessage = receiveMessageHandler;
   });
 
   async function receiveMessageHandler(event: any) {
+    // the first message passed by the socket is all the previous messages
+    if (firstTime) {
+      messages = JSON.parse(event.data);
+      firstTime = false;
+      return;
+    }
+
     try {
       let message: Message = JSON.parse(event.data);
       messages = [...messages, message];
@@ -45,13 +57,8 @@
   }
 
   async function sendMessageHandler() {
-    socket.send(
-      JSON.stringify({
-        email,
-        content: messageContent,
-        profileUrl: senderProfileUrl,
-      }),
-    );
+    const messagePayload: MessagePayload = { content: messageContent, userId };
+    socket.send(JSON.stringify(messagePayload));
   }
 </script>
 
@@ -63,10 +70,10 @@
     <ScrollArea.Viewport class="w-full h-full [&>div]:!block">
       <ScrollArea.Content>
         <div class="flex flex-col gap-3">
-          {#each messages as message, index}
+          {#each messages as message, _}
             <ChatMessage
               message={message.content}
-              byYou={message.email == email ? true : false}
+              byYou={message.userId == userId ? true : false}
               dateTime={message.dateTime}
               profileUrl={message.profileUrl}
             />
