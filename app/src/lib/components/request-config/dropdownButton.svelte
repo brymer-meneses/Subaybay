@@ -31,9 +31,9 @@
     }
 
     function toggleDropdown() {
-        console.log(users.length);
+        // recalculate position if being opened 
+        if(!isOpen == true) rect = dropdownButton.getBoundingClientRect();
         isOpen = !isOpen;
-        console.log("HI");
     }
 
     function onHoverStart() {

@@ -32,7 +32,7 @@
 {#if isOpen}
     <!-- todo add scrollability -->
     <!-- svelte-ignore a11y-click-events-have-key-events svelte-ignore a11y-no-static-element-interactions svelte-ignore a11y-mouse-events-have-key-events -->
-    <div class="dropdown border-black border-1 border"
+    <div class="dropdown border-black border-1 border shadow-lg"
         style="top: {top}px; left: {left}px; width: {width}px; background-color:{mainBGColor};"
         on:mouseleave={onHoverExit}>
         

@@ -68,17 +68,24 @@
                 border-bottom-left-radius: {buttonType == 1 ? '6px' : '0px'}"
                 on:mouseenter={onButtonHoverStart} on:mouseleave={onButtonHoverEnd} on:click={onClick}></div>
 
-        <div class="p-2 rounded-tr-lg flex-grow" 
-            style="height: {height}px; background-color:{headerColor};
-                border-bottom-right-radius: {buttonType == 1 ? '6px' : '0px'}">
-            <strong>
-                {#if stageNumber > 0}
+        {#if buttonType != ButtonType.Add}
+            <div class="p-2 rounded-tr-lg flex-grow" 
+                style="height: {height}px; background-color:{headerColor};">
+                <strong>
                     Stage {stageNumber}
-                {:else}
+                </strong>
+            </div>
+        {:else}
+            <!-- svelte-ignore a11y-no-static-element-interactions svelte-ignore a11y-click-events-have-key-events -->
+            <div class="p-2 rounded-tr-lg flex-grow cursor-pointer" 
+                style="height: {height}px; background-color:{buttonColor}; border-bottom-right-radius: 6px;"
+                on:mouseenter={onButtonHoverStart} on:mouseleave={onButtonHoverEnd} on:click={onClick}
+            >
+                <strong>
                     Add New Stage
-                {/if}
-            </strong>
-        </div>
+                </strong>
+            </div>
+        {/if}
     </div>
 
     {#if stageNumber > 0}

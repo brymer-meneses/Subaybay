@@ -35,7 +35,7 @@
 </script>
 
 {#key stageCount}
-<div class="justify-center flex">
+<div class="justify-center flex" style="overflow-y: auto; height: 100%">
     <div style="width:600px; margin-top: 10px; margin-bottom: 100px;">
         {#if stages.length > 0}
             <ConfigStageContainer buttonType={ButtonType.Disabled} stageNumber={1} substages={stages[0]} users={users} />
