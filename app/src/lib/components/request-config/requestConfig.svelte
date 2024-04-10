@@ -1,11 +1,9 @@
 <script lang="ts">
-    import { ButtonType, UserData } from "./configConstants";
-    import ConfigStageButton from "./configStageButton.svelte";
+    import { ButtonType, UserData, SubstageData } from "./configConstants";
     import ConfigStageContainer from "./configStageContainer.svelte";
-    import Dropdown from "./dropdown.svelte";
     import defaultProfilePic from "$lib/assets/defaultProfilePic.jpg";
 
-    let stages : string[][] = []
+    let stages : SubstageData[][] = []
     let stageCount = stages.length; //Needed to trigger a re-render
 
     let users : UserData[] = [
@@ -13,11 +11,12 @@
         new UserData("1", "Yuumi", "https://www.mobafire.com/images/champion/square/yuumi.png"),
         new UserData("2", "Gnar", "https://www.mobafire.com/images/champion/square/gnar.png"),
         new UserData("3", "Smolder", "https://www.mobafire.com/images/champion/square/smolder.png"),
+        new UserData("4", "Aurelion Sol", "https://www.mobafire.com/images/champion/square/aurelion-sol.png")
     ];
 
     stages = [
-        ["Create/Submit Request"],
-        ["New Step (Click to Rename)"]
+        [new SubstageData("Create/Submit Request", 0)],
+        [new SubstageData("New Substage (Click to Rename)", 0)]
     ]
 
     function deleteStage(index : number) {
@@ -26,12 +25,12 @@
     }
     
     function addStage() {
-        stages.push(["New Stage"]);
+        stages.push([new SubstageData("New Substage (Click to Rename)", 0)]);
         stageCount = stages.length;
     }
 
     function storeInDatabase() {
-        
+        //todo convert stages into a prompt on the database; all of the information is already there
     }
 </script>
 

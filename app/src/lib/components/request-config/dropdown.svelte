@@ -1,7 +1,7 @@
 <script lang="ts">
     import { height } from "./configConstants";
     import { headerColor, mainBGColor } from "./configConstants";
-    import DropdownButton from "./dropdownButton.svelte";
+    import DropdownButton from "./dropdownItem.svelte";
     import { UserData } from "./configConstants";
     const width = 200;
 
@@ -46,16 +46,25 @@
             </div>
         </div>
 
-        <!--Options-->
-        {#each users as option, index}
-            <DropdownButton name = { option.name } imgUrl = { option.imgSrc } index={index} onSelect={select} />
-        {/each}
+        <div class="dropdown-options-container">
+             <!--Options-->
+            {#each users as option, index}
+                <DropdownButton name = { option.name } imgUrl = { option.imgSrc } index={index} onSelect={select} />
+            {/each}
+        </div>
     </div>
 {/if}
 
 <style>
     .dropdown {
-      position: absolute;
-      z-index: 100;
+        position: absolute;
+        z-index: 100;
+        overflow: hidden;
+        border-radius: 12px;
+        border-top-left-radius: 0px;
+    }
+    .dropdown-options-container {
+        overflow: auto;
+        max-height: 200px;
     }
 </style>

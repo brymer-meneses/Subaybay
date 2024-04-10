@@ -30,11 +30,11 @@ export class UserData {
     }
 }
 
-export class Step {
-    name: string;
-    handler: string;
-    constructor(stepName: string, defaultHandler: string) {
-        this.name = stepName;
-        this.handler = defaultHandler;
+export class SubstageData {
+    stageName: string;
+    handlerIndex: number;
+    constructor(stageName: string, handlerIndex: number) {
+        this.stageName = stageName;
+        this.handlerIndex = handlerIndex;
     }
 }
