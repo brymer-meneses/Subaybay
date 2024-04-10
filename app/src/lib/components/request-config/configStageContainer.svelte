@@ -1,10 +1,11 @@
 <script lang="ts">
-    import {disabledColor, mainBGColor, deleteColor, deleteHoverColor, addColor, addHoverColor, subBGColor, headerColor} from "./configConstants";
+    import {disabledColor, mainBGColor, deleteColor, deleteHoverColor, addColor, addHoverColor, subBGColor, headerColor, UserData} from "./configConstants";
     import {height} from "./configConstants";
     import {ButtonType} from "./configConstants";
     import ConfigStageButton from "./configStageButton.svelte";
     import {flip} from 'svelte/animate';
 
+    export let users : UserData[];
 
     export let stageNumber = 1;
     export let buttonType : ButtonType = ButtonType.Disabled;
@@ -48,7 +49,7 @@
     }
     
     function addSubstage() {
-        substages.push("New Stage");
+        substages.push("New Step (Click to Rename)");
         substageCount = substages.length;
     }
 </script>
@@ -80,18 +81,18 @@
         <div class="m-0 p-0 cursor-pointer rounded-bl-lg rounded-br-lg" 
             style="flex-grow;">
             {#if substages.length >= 1}
-                <ConfigStageButton buttonType={0} stageName={substages[0]} isRenamable={buttonType != 0} isLast={buttonType == 0}></ConfigStageButton>
+                <ConfigStageButton buttonType={0} stageName={substages[0]} isRenamable={buttonType != 0} isLast={buttonType == 0} users={users} />
             {/if}
             {#if substages.length >= 2}
                 {#each substages as stage, index}
                     {#if index > 0}
-                        <ConfigStageButton buttonType={-1} stageName={stage} onClick={() => deleteSubstage(index)}></ConfigStageButton>
+                        <ConfigStageButton buttonType={-1} stageName={stage} onClick={() => deleteSubstage(index)} users={users} />
                     {/if}
                 {/each}
             {/if}
         </div>
         {#if buttonType != ButtonType.Disabled}
-            <ConfigStageButton buttonType={1} stageName={"Add New"} isLast={true} isRenamable={false} onClick={addSubstage}></ConfigStageButton>
+            <ConfigStageButton buttonType={1} stageName={"Add New"} isLast={true} isRenamable={false} onClick={addSubstage} users={users}/>
         {/if}
     {/if}
 </div>
