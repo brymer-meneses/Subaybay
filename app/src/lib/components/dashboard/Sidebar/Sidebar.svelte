@@ -44,23 +44,18 @@
         </div>
       </div>
       <nav class="flex flex-col w-full gap-1">
-        <NavLink
-          {isExpanded}
-          href="/dashboard/inbox"
-          name="Inbox"
-          icon={Inbox}
-        />
+        <NavLink {isExpanded} href="/inbox" name="Inbox" icon={Inbox} />
 
         <NavLink
           {isExpanded}
-          href="/dashboard/request-tracker"
+          href="/request-tracker"
           name="Request Tracker"
           icon={ListTodo}
         />
 
         <NavLink
           {isExpanded}
-          href="/dashboard/configuration"
+          href="/configuration"
           name="Configuration"
           icon={Settings}
         />
@@ -68,7 +63,7 @@
         {#if $page.data.userInfo.isAdmin}
           <NavLink
             {isExpanded}
-            href="/dashboard/admin"
+            href="/admin"
             name="Admin Configuration"
             icon={UserRoundCog}
           />

@@ -1,7 +1,5 @@
 <script lang="ts">
   import UP from "$lib/assets/UP.png";
-
-  async function signInWithGoogle() {}
 </script>
 
 <div

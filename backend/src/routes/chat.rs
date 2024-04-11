@@ -35,31 +35,7 @@ async fn chat_connect(
     State(state): State<Arc<AppState>>,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
 ) -> impl IntoResponse {
-    // Make sure the room exists
-
-    let chats = state.database.collection::<Chat>("chats");
-    let queried_chat = chats
-        .find_one(doc! { "chatId": &chat_id }, None)
-        .await
-        .unwrap();
-
-    if queried_chat.is_none() {
-        let status = chats
-            .insert_one(
-                Chat {
-                    chat_id: chat_id.clone(),
-                    messages: vec![],
-                },
-                None,
-            )
-            .await;
-
-        if status.is_err() {
-            return Err(StatusCode::INTERNAL_SERVER_ERROR);
-        };
-    }
-
-    Ok(ws.on_upgrade(move |socket| handle_chat_connection(state, socket, addr, chat_id)))
+    ws.on_upgrade(move |socket| handle_chat_connection(state, socket, addr, chat_id))
 }
 
 async fn validate_session_id(sessions: Collection<Session>, session_id: &String) -> bool {
@@ -79,6 +55,8 @@ async fn validate_session_id(sessions: Collection<Session>, session_id: &String)
         return false;
     }
 }
+
+struct ConnectionError;
 
 async fn handle_chat_connection(
     state: Arc<AppState>,
@@ -104,22 +82,35 @@ async fn handle_chat_connection(
 
         // send in all the messages from the user
         let chats = state.database.collection::<Chat>("chats");
-        let queried_chat = chats
-            .find_one(doc! { "chatId": &chat_id }, None)
-            .await
-            .unwrap();
+        let queried_chat = chats.find_one(doc! { "chatId": &chat_id }, None).await;
 
-        if let Some(chat) = queried_chat {
-            let serialized_message =
-                serde_json::to_string(&chat.messages).expect("Failed to serialize");
+        if let Ok(Some(chat)) = queried_chat {
+            // send in all the messages from the user
+            let messages = serde_json::to_string(&chat.messages).expect("Failed to serialize");
 
-            let status = ws_sender.send(Message::Text(serialized_message)).await;
+            let status = ws_sender.send(Message::Text(messages)).await;
 
             if status.is_err() {
                 return;
             }
+        } else {
+            // if queried chat is none then we make one
+            let chat = Chat {
+                chat_id: chat_id.clone(),
+                messages: vec![],
+            };
+
+            let insert_status = chats.insert_one(&chat, None).await;
+            let messages = serde_json::to_string(&chat.messages).expect("Failed to serialize");
+
+            let status = ws_sender.send(Message::Text(messages)).await;
+
+            if status.is_err() || insert_status.is_err() {
+                return;
+            };
         }
     } else {
+        // the client did not send a valid message so we close
         let _ = ws_sender.send(Message::Close(None)).await;
         return;
     }

@@ -6,7 +6,7 @@
   export let name: string;
   export let icon: any;
 
-  $: isSelected = $page.route.id == href;
+  $: isSelected = $page.route.id?.includes(href);
 
   export let isExpanded: boolean;
 </script>

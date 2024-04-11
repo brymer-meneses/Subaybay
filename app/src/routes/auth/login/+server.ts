@@ -7,7 +7,7 @@ import { dev } from "$app/environment";
 export async function GET(event: RequestEvent): Promise<Response> {
 
   if (event.locals.user) {
-    redirect(302, "/dashboard/inbox");
+    redirect(302, "/inbox");
   }
 
 

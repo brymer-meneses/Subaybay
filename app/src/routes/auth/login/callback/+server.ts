@@ -51,7 +51,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
       })
     }
 
-    const session = await lucia.createSession(existingAccount!._id, {});
+    const session = await lucia.createSession(googleId, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
 
     event.cookies.set(sessionCookie.name, sessionCookie.value, {
@@ -63,7 +63,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
     return new Response(null, {
       status: 302,
       headers: {
-        Location: "/dashboard/inbox"
+        Location: "/inbox"
       }
     });
 
