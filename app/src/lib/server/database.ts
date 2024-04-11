@@ -35,7 +35,7 @@ export interface StageType {
   handler: string;
 }
 
-export interface RequestType {
+export interface RequestType { //todo add title?
   _id: string;
   stages: Array<StageType>;
 }

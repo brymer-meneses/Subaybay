@@ -35,8 +35,9 @@
 </script>
 
 {#key stageCount}
-<div class="justify-center flex" style="overflow-y: auto; height: 100%">
+<div class="justify-center flex" style="overflow-y: auto; height: 100%; padding-bottom: 200px;">
     <div style="width:600px; margin-top: 10px; margin-bottom: 100px;">
+        <input placeholder="Request Name"/>
         {#if stages.length > 0}
             <ConfigStageContainer buttonType={ButtonType.Disabled} stageNumber={1} substages={stages[0]} users={users} />
 
@@ -50,6 +51,8 @@
 
             <ConfigStageContainer buttonType={ButtonType.Add} stageNumber={0} onClick={addStage} users={users} />
         {/if}
+        submit button
+        <div class="flex" style="height: 200px;"> </div>
     </div>
 </div>
 {/key}
