@@ -23,8 +23,8 @@
       class="flex flex-col items-center gap-8 p-5 bg-pale-red-100 h-screen"
     >
       <Profile
-        name={data.userInfo.name}
-        profileUrl={data.userInfo.profileUrl}
+        name={data.user.userInfo.name}
+        profileUrl={data.user.userInfo.profileUrl}
       />
 
       <!-- search -->
@@ -71,12 +71,12 @@
           class="flex justify-center items-center gap-3 bg-pale-red-100 w-fit rounded-2xl p-2 px-4 ml-4"
         >
           <img
-            src={data.userInfo.profileUrl}
+            src={data.user.userInfo.profileUrl}
             alt="profile"
             class="object-cover w-8 h-8 rounded-full"
           />
           <div class="flex flex-col">
-            <p class="text-base text-black">{data.userInfo.name}</p>
+            <p class="text-base text-black">{data.user.userInfo.name}</p>
             <p class="text-sm font-light">March 25, 2024 7:32 AM</p>
           </div>
         </div>
@@ -102,8 +102,8 @@
 
       <div class="h-1/3 flex flex-col gap-4">
         <ChatArea
-          userId={data.userInfo.id}
-          sessionId={data.sessionId}
+          userId={data.user.userInfo.id}
+          sessionId={data.user.sessionId}
           roomId="abcd"
         />
       </div>
