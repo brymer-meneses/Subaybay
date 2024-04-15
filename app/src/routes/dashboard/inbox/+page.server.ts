@@ -1,5 +1,6 @@
 import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
+import * as db from "$lib/server/database";
 
 export const load: PageServerLoad = async (event) => {
 
@@ -11,6 +12,6 @@ export const load: PageServerLoad = async (event) => {
   const user = { userInfo: event.locals.user!, sessionId: sessionId! }
 
   // Reactive search bar and results: get data here
-  const search: string = 'TODO later';
-  return {user, search};
+  const requests = await db.request.find({}).toArray();
+  return {user, requests};
 }

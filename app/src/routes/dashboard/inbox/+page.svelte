@@ -15,6 +15,53 @@
   import type { PageServerData } from "./$types";
 
   export let data: PageServerData;
+
+  // const searchItems = data.search.map((item: object) => ({ ...item }));
+
+  type item = {
+    isSelected: boolean;
+    stageTitle: string;
+    requestTitle: string;
+    dateSent: string;
+    requestId: number;
+  };
+
+  //DUMMY DATA
+  let searchItems: item[] = [];
+  for (let i = 0; i < 100; i++) {
+    searchItems.push({
+      isSelected: false,
+      stageTitle: "HD and GMC forwarded to UR for signature",
+      requestTitle: "Honorable Dismissal",
+      dateSent: new Date(
+        Math.floor(Math.random() * 10000000000000),
+      ).toDateString(),
+      requestId: Math.floor(Math.random() * 10000),
+    });
+  }
+
+  let searchTerm: string = "";
+  // i wanted the selected StageItem to stay selected even when searching but it's not working yet
+  let selectedId: number = -1;
+
+  $: filteredItems = searchItems.filter((item: item) => {
+    for (const key in item) {
+      if (String(item[key]).toLowerCase().includes(searchTerm.toLowerCase())) {
+        return item;
+      }
+    }
+  });
+
+  function handleSelectItem(item: item) {
+    selectedId = item.requestId;
+    filteredItems = filteredItems.map((i) => {
+      if (item === i) {
+        return { ...i, isSelected: true };
+      } else {
+        return { ...i, isSelected: false };
+      }
+    });
+  }
 </script>
 
 <Resizable.PaneGroup direction="horizontal">
@@ -32,26 +79,33 @@
         class="w-[95%] h-[50px] bg-pale-red-300 rounded-xl flex flex-row items-center justify-start p-3 gap-3"
       >
         <BxSearch size="20" class="fill-pale-red-500" />
-        <p class="text-pale-red-499">Search</p>
+        <input
+          type="search"
+          class="flex-grow text-pale-red-499 px-0 bg-transparent border-none"
+          placeholder="Search..."
+          bind:value={searchTerm}
+        />
       </div>
 
       <!-- inbox items -->
       <ScrollArea>
+        {#if searchTerm !== ""}
+          <p>
+            Returned {filteredItems.length} result{filteredItems.length === 1
+              ? "."
+              : "s."}
+          </p>
+        {/if}
+        <p></p>
         <div class="flex flex-col gap-2">
-          <StageItem
-            isSelected={true}
-            stageTitle="HD and GMC forwarded to UR for signature"
-            requestTitle="Honorable Dismissal"
-            dateSent={new Date().toDateString()}
-            requestId={1}
-          />
-          {#each Array(100) as _, index (index)}
+          {#each filteredItems as item}
             <StageItem
-              isSelected={false}
-              stageTitle="HD and GMC forwarded to UR for signature"
-              requestTitle="Honorable Dismissal"
-              dateSent={new Date().toDateString()}
-              requestId={1}
+              isSelected={item.isSelected}
+              stageTitle={item.stageTitle}
+              requestTitle={item.requestTitle}
+              dateSent={item.dateSent}
+              requestId={item.requestId}
+              on:click={() => handleSelectItem(item)}
             />
           {/each}
         </div>
