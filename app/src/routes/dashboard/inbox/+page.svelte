@@ -46,7 +46,10 @@
 
   $: filteredItems = searchItems.filter((item: item) => {
     for (const key in item) {
-      if (String(item[key]).toLowerCase().includes(searchTerm.toLowerCase())) {
+      const itemKey = key as keyof item;
+      if (
+        String(item[itemKey]).toLowerCase().includes(searchTerm.toLowerCase())
+      ) {
         return item;
       }
     }
