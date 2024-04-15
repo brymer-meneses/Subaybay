@@ -15,6 +15,7 @@
     isSelected ? "bg-primary text-white pointer-events-none" : "bg-white",
     !isSelected && "hover:drop-shadow-md",
   )}
+  on:click
 >
   <div class="flex flex-col w-full items-start gap-1">
     <div class="flex flex-row w-full justify-between">

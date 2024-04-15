@@ -11,6 +11,7 @@ export const database = client.db(DATABASE_NAME);
 
 export const user = database.collection<User>("users");
 export const session = database.collection<Session>("sessions");
+export const request = database.collection<Request>("requests");
 
 export interface User {
   _id: string;
@@ -35,7 +36,7 @@ export interface StageType {
   handler: string;
 }
 
-export interface RequestType { //todo add title?
+export interface RequestType {
   _id: string;
   stages: Array<StageType>;
 }
