@@ -9,9 +9,9 @@ export const load: PageServerLoad = async (event) => {
   }
 
   const sessionId = event.cookies.get('auth_session');
+  // const requests = await db.request.find({}).toArray();
 
   // DUMMY DATA FOR NOW
-  // const requests = await db.request.find({}).toArray();
   let requests = []
   for (let i = 0; i < 100; i++) {
     requests.push({

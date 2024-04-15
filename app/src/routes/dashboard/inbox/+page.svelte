@@ -14,7 +14,7 @@
   import * as Resizable from "$lib/components/ui/resizable/index.js";
   import type { PageServerData } from "./$types";
   import Input from "$lib/components/ui/input/input.svelte";
-
+  import { browser } from "$app/environment";
   export let data: PageServerData;
 
   type item = {
@@ -65,6 +65,17 @@
       }
     });
   }
+
+  function handleKeyDown(e: KeyboardEvent) {
+    if (e.key === "/" && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      document.getElementById("searchBar")?.focus();
+    }
+  }
+
+  if (browser) {
+    window.addEventListener("keydown", handleKeyDown);
+  }
 </script>
 
 <Resizable.PaneGroup direction="horizontal">
@@ -86,7 +97,7 @@
           id="searchBar"
           type="search"
           class="flex-grow text-pale-red-499 px-2 bg-pale-red-200 border-none rounded-tl-none rounded-bl-none rounded-r-xl focus:border-"
-          placeholder="Search (Ctrl + K to focus)"
+          placeholder="Search (Ctrl + / to focus)"
           bind:value={searchTerm}
         />
       </div>
