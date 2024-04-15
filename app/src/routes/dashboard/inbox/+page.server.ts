@@ -1,6 +1,6 @@
 import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-import * as db from "$lib/server/database";
+import { database } from "$lib/server/database";
 
 export const load: PageServerLoad = async (event) => {
 
@@ -9,7 +9,7 @@ export const load: PageServerLoad = async (event) => {
   }
 
   const sessionId = event.cookies.get('auth_session');
-  // const requests = await db.request.find({}).toArray();
+  // const requests = await database.request.find({}).toArray();
 
   // DUMMY DATA FOR NOW
   let requests = []
