@@ -46,6 +46,7 @@
 
   $: filteredItems = searchItems.filter((item: item) => {
     for (const key in item) {
+      if (key === "isSelected") continue;
       const itemKey = key as keyof item;
       if (
         String(item[itemKey]).toLowerCase().includes(searchTerm.toLowerCase())
