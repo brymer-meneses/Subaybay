@@ -93,9 +93,9 @@
         <BxSearch size="20" class="fill-pale-red-500" />
         <input
           id="searchBar"
-          type="text"
-          class="flex-grow text-pale-red-499 px-0 bg-transparent border-none"
-          placeholder="Type here to search or CTRL + K to focus."
+          type="search"
+          class="flex-grow text-pale-red-499 px-2 bg-transparent border-none"
+          placeholder="Search (Ctrl + K to focus)"
           bind:value={searchTerm}
         />
       </div>
