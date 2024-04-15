@@ -65,6 +65,15 @@
       }
     });
   }
+
+  function handleKeyDown(e: KeyboardEvent) {
+    if (e.key === "k" && e.ctrlKey) {
+      e.preventDefault();
+      document.getElementById("searchBar")?.focus();
+    }
+  }
+
+  window.addEventListener("keydown", handleKeyDown);
 </script>
 
 <Resizable.PaneGroup direction="horizontal">
@@ -83,9 +92,10 @@
       >
         <BxSearch size="20" class="fill-pale-red-500" />
         <input
-          type="search"
+          id="searchBar"
+          type="text"
           class="flex-grow text-pale-red-499 px-0 bg-transparent border-none"
-          placeholder="Search..."
+          placeholder="Type here to search or CTRL + K to focus."
           bind:value={searchTerm}
         />
       </div>
