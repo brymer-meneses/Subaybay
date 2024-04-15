@@ -1,4 +1,5 @@
 <script lang="ts">
+  import SearchPopUp from "$lib/components/dashboard/Search/SearchPopUp.svelte";
   import Sidebar from "$lib/components/dashboard/Sidebar/Sidebar.svelte";
   import * as Resizable from "$lib/components/ui/resizable/index.js";
 </script>
@@ -18,3 +19,4 @@
     </div>
   </Resizable.Pane>
 </Resizable.PaneGroup>
+<SearchPopUp />
