@@ -9,9 +9,20 @@ export const load: PageServerLoad = async (event) => {
   }
 
   const sessionId = event.cookies.get('auth_session');
-  const user = { userInfo: event.locals.user!, sessionId: sessionId! }
 
-  // Reactive search bar and results: get data here
-  const requests = await db.request.find({}).toArray();
-  return {user, requests};
+  // DUMMY DATA FOR NOW
+  // const requests = await db.request.find({}).toArray();
+  let requests = []
+  for (let i = 0; i < 100; i++) {
+    requests.push({
+      stageTitle: "HD and GMC forwarded to UR for signature",
+      requestTitle: "Honorable Dismissal",
+      dateSent: new Date(
+        Math.floor(Math.random() * 10000000000000),
+      ).toDateString(),
+      requestId: Math.floor(Math.random() * 10000),
+    });
+  }
+
+  return { userInfo: event.locals.user!, sessionId: sessionId!, requests };
 }

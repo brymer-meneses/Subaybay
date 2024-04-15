@@ -13,38 +13,37 @@
 
   import * as Resizable from "$lib/components/ui/resizable/index.js";
   import type { PageServerData } from "./$types";
+  import Input from "$lib/components/ui/input/input.svelte";
 
   export let data: PageServerData;
 
-  // const searchItems = data.search.map((item: object) => ({ ...item }));
-
   type item = {
-    isSelected: boolean;
     stageTitle: string;
     requestTitle: string;
     dateSent: string;
     requestId: number;
   };
 
-  //DUMMY DATA
-  let searchItems: item[] = [];
-  for (let i = 0; i < 100; i++) {
-    searchItems.push({
+  type item2 = {
+    stageTitle: string;
+    requestTitle: string;
+    dateSent: string;
+    requestId: number;
+    isSelected: boolean;
+  };
+
+  const searchItems = data.requests.map(
+    (item: item): item2 => ({
+      ...item,
       isSelected: false,
-      stageTitle: "HD and GMC forwarded to UR for signature",
-      requestTitle: "Honorable Dismissal",
-      dateSent: new Date(
-        Math.floor(Math.random() * 10000000000000),
-      ).toDateString(),
-      requestId: Math.floor(Math.random() * 10000),
-    });
-  }
+    }),
+  );
 
   let searchTerm: string = "";
-  // i wanted the selected StageItem to stay selected even when searching but it's not working yet
-  let selectedId: number = -1;
 
-  $: filteredItems = searchItems.filter((item: item) => {
+  let filteredItems: item2[] = [];
+
+  $: filteredItems = searchItems.filter((item: item2) => {
     for (const key in item) {
       if (key === "isSelected") continue;
       const itemKey = key as keyof item;
@@ -54,10 +53,10 @@
         return item;
       }
     }
+    return null;
   });
 
   function handleSelectItem(item: item) {
-    selectedId = item.requestId;
     filteredItems = filteredItems.map((i) => {
       if (item === i) {
         return { ...i, isSelected: true };
@@ -66,15 +65,6 @@
       }
     });
   }
-
-  function handleKeyDown(e: KeyboardEvent) {
-    if (e.key === "k" && e.ctrlKey) {
-      e.preventDefault();
-      document.getElementById("searchBar")?.focus();
-    }
-  }
-
-  window.addEventListener("keydown", handleKeyDown);
 </script>
 
 <Resizable.PaneGroup direction="horizontal">
@@ -83,8 +73,8 @@
       class="flex flex-col items-center gap-8 p-5 bg-pale-red-100 h-screen"
     >
       <Profile
-        name={data.user.userInfo.name}
-        profileUrl={data.user.userInfo.profileUrl}
+        name={data.userInfo.name}
+        profileUrl={data.userInfo.profileUrl}
       />
 
       <!-- search -->
@@ -92,10 +82,10 @@
         class="w-[95%] h-[50px] bg-pale-red-300 rounded-xl flex flex-row items-center justify-start p-3 gap-3"
       >
         <BxSearch size="20" class="fill-pale-red-500" />
-        <input
+        <Input
           id="searchBar"
           type="search"
-          class="flex-grow text-pale-red-499 px-2 bg-transparent border-none"
+          class="flex-grow text-pale-red-499 px-2 bg-pale-red-200 border-none rounded-tl-none rounded-bl-none rounded-r-xl focus:border-"
           placeholder="Search (Ctrl + K to focus)"
           bind:value={searchTerm}
         />
@@ -139,12 +129,12 @@
           class="flex justify-center items-center gap-3 bg-pale-red-100 w-fit rounded-2xl p-2 px-4 ml-4"
         >
           <img
-            src={data.user.userInfo.profileUrl}
+            src={data.userInfo.profileUrl}
             alt="profile"
             class="object-cover w-8 h-8 rounded-full"
           />
           <div class="flex flex-col">
-            <p class="text-base text-black">{data.user.userInfo.name}</p>
+            <p class="text-base text-black">{data.userInfo.name}</p>
             <p class="text-sm font-light">March 25, 2024 7:32 AM</p>
           </div>
         </div>
@@ -170,8 +160,8 @@
 
       <div class="h-1/3 flex flex-col gap-4">
         <ChatArea
-          userId={data.user.userInfo.id}
-          sessionId={data.user.sessionId}
+          userId={data.userInfo.id}
+          sessionId={data.sessionId}
           roomId="abcd"
         />
       </div>
