@@ -13,11 +13,15 @@
   import ChevronRight from "lucide-svelte/icons/chevron-right";
   import ChevronLeft from "lucide-svelte/icons/chevron-left";
 
+  import FilePlus from "lucide-svelte/icons/file-plus";
+
   import * as Table from "$lib/components/ui/table/index.js";
   import * as Pagination from "$lib/components/ui/pagination/index.js";
   import * as Card from "$lib/components/ui/card/index.js";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   import * as Tabs from "$lib/components/ui/tabs/index.js";
+
+  import Inbox from "./Inbox.svelte";
 </script>
 
 <main
@@ -27,29 +31,13 @@
     <div
       class="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4"
     >
-      <Card.Root
-        class="sm:col-span-2"
-        data-x-chunk-name="dashboard-05-chunk-0"
-        data-x-chunk-description="A card for an orders dashboard with a description and a button to create a new order."
-      >
-        <Card.Header class="pb-3">
-          <Card.Title>Your Orders</Card.Title>
-          <Card.Description class="max-w-lg text-balance leading-relaxed">
-            Introducing Our Dynamic Orders Dashboard for Seamless Management and
-            Insightful Analysis.
-          </Card.Description>
-        </Card.Header>
-        <Card.Footer>
-          <Button>Create New Order</Button>
-        </Card.Footer>
-      </Card.Root>
+      <Button class="gap-4 p-3"><FilePlus size="20" /> Create Request</Button>
     </div>
-    <Tabs.Root value="week">
+    <Tabs.Root value="pending">
       <div class="flex items-center">
         <Tabs.List>
-          <Tabs.Trigger value="week">Week</Tabs.Trigger>
-          <Tabs.Trigger value="month">Month</Tabs.Trigger>
-          <Tabs.Trigger value="year">Year</Tabs.Trigger>
+          <Tabs.Trigger value="pending">Pending</Tabs.Trigger>
+          <Tabs.Trigger value="finished">Finished</Tabs.Trigger>
         </Tabs.List>
         <div class="ml-auto flex items-center gap-2">
           <DropdownMenu.Root>
@@ -80,166 +68,12 @@
           </Button>
         </div>
       </div>
-      <Tabs.Content value="week">
-        <Card.Root
-          data-x-chunk-name="dashboard-05-chunk-3"
-          data-x-chunk-description="A table of recent orders showing the following columns: Customer, Type, Status, Date, and Amount."
-        >
-          <Card.Header class="px-7">
-            <Card.Title>Orders</Card.Title>
-            <Card.Description>Recent orders from your store.</Card.Description>
-          </Card.Header>
-          <Card.Content>
-            <Table.Root>
-              <Table.Header>
-                <Table.Row>
-                  <Table.Head>Customer</Table.Head>
-                  <Table.Head class="hidden sm:table-cell">Type</Table.Head>
-                  <Table.Head class="hidden sm:table-cell">Status</Table.Head>
-                  <Table.Head class="hidden md:table-cell">Date</Table.Head>
-                  <Table.Head class="text-right">Amount</Table.Head>
-                </Table.Row>
-              </Table.Header>
-              <Table.Body>
-                <Table.Row class="bg-accent">
-                  <Table.Cell>
-                    <div class="font-medium">Liam Johnson</div>
-                    <div class="hidden text-sm text-muted-foreground md:inline">
-                      liam@example.com
-                    </div>
-                  </Table.Cell>
-                  <Table.Cell class="hidden sm:table-cell">Sale</Table.Cell>
-                  <Table.Cell class="hidden sm:table-cell">
-                    <Badge class="text-xs" variant="secondary">Fulfilled</Badge>
-                  </Table.Cell>
-                  <Table.Cell class="hidden md:table-cell">
-                    2023-06-23
-                  </Table.Cell>
-                  <Table.Cell class="text-right">$250.00</Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>
-                    <div class="font-medium">Olivia Smith</div>
-                    <div class="hidden text-sm text-muted-foreground md:inline">
-                      olivia@example.com
-                    </div>
-                  </Table.Cell>
-                  <Table.Cell class="hidden sm:table-cell">Refund</Table.Cell>
-                  <Table.Cell class="hidden sm:table-cell">
-                    <Badge class="text-xs" variant="outline">Declined</Badge>
-                  </Table.Cell>
-                  <Table.Cell class="hidden md:table-cell">
-                    2023-06-24
-                  </Table.Cell>
-                  <Table.Cell class="text-right">$150.00</Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>
-                    <div class="font-medium">Liam Johnson</div>
-                    <div class="hidden text-sm text-muted-foreground md:inline">
-                      liam@example.com
-                    </div>
-                  </Table.Cell>
-                  <Table.Cell class="hidden sm:table-cell">Sale</Table.Cell>
-                  <Table.Cell class="hidden sm:table-cell">
-                    <Badge class="text-xs" variant="secondary">Fulfilled</Badge>
-                  </Table.Cell>
-                  <Table.Cell class="hidden md:table-cell">
-                    2023-06-23
-                  </Table.Cell>
-                  <Table.Cell class="text-right">$250.00</Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>
-                    <div class="font-medium">Noah Williams</div>
-                    <div class="hidden text-sm text-muted-foreground md:inline">
-                      noah@example.com
-                    </div>
-                  </Table.Cell>
-                  <Table.Cell class="hidden sm:table-cell">
-                    Subscription
-                  </Table.Cell>
-                  <Table.Cell class="hidden sm:table-cell">
-                    <Badge class="text-xs" variant="secondary">Fulfilled</Badge>
-                  </Table.Cell>
-                  <Table.Cell class="hidden md:table-cell">
-                    2023-06-25
-                  </Table.Cell>
-                  <Table.Cell class="text-right">$350.00</Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>
-                    <div class="font-medium">Emma Brown</div>
-                    <div class="hidden text-sm text-muted-foreground md:inline">
-                      emma@example.com
-                    </div>
-                  </Table.Cell>
-                  <Table.Cell class="hidden sm:table-cell">
-                    Subscription
-                  </Table.Cell>
-                  <Table.Cell class="hidden sm:table-cell">
-                    <Badge class="text-xs" variant="secondary">Fulfilled</Badge>
-                  </Table.Cell>
-                  <Table.Cell class="hidden md:table-cell">
-                    2023-06-26
-                  </Table.Cell>
-                  <Table.Cell class="text-right">$450.00</Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>
-                    <div class="font-medium">Liam Johnson</div>
-                    <div class="hidden text-sm text-muted-foreground md:inline">
-                      liam@example.com
-                    </div>
-                  </Table.Cell>
-                  <Table.Cell class="hidden sm:table-cell">Sale</Table.Cell>
-                  <Table.Cell class="hidden sm:table-cell">
-                    <Badge class="text-xs" variant="secondary">Fulfilled</Badge>
-                  </Table.Cell>
-                  <Table.Cell class="hidden md:table-cell">
-                    2023-06-23
-                  </Table.Cell>
-                  <Table.Cell class="text-right">$250.00</Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>
-                    <div class="font-medium">Olivia Smith</div>
-                    <div class="hidden text-sm text-muted-foreground md:inline">
-                      olivia@example.com
-                    </div>
-                  </Table.Cell>
-                  <Table.Cell class="hidden sm:table-cell">Refund</Table.Cell>
-                  <Table.Cell class="hidden sm:table-cell">
-                    <Badge class="text-xs" variant="outline">Declined</Badge>
-                  </Table.Cell>
-                  <Table.Cell class="hidden md:table-cell">
-                    2023-06-24
-                  </Table.Cell>
-                  <Table.Cell class="text-right">$150.00</Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>
-                    <div class="font-medium">Emma Brown</div>
-                    <div class="hidden text-sm text-muted-foreground md:inline">
-                      emma@example.com
-                    </div>
-                  </Table.Cell>
-                  <Table.Cell class="hidden sm:table-cell">Sale</Table.Cell>
-                  <Table.Cell class="hidden sm:table-cell">
-                    <Badge class="text-xs" variant="secondary">Fulfilled</Badge>
-                  </Table.Cell>
-                  <Table.Cell class="hidden md:table-cell">
-                    2023-06-26
-                  </Table.Cell>
-                  <Table.Cell class="text-right">$450.00</Table.Cell>
-                </Table.Row>
-              </Table.Body>
-            </Table.Root>
-          </Card.Content>
-        </Card.Root>
+      <Tabs.Content value="pending">
+        <Inbox type="pending" />
       </Tabs.Content>
     </Tabs.Root>
   </div>
+
   <div>
     <Card.Root
       class="overflow-hidden"

@@ -10,15 +10,10 @@
 </script>
 
 <button
-  class={clsx(
-    "flex flex-row items-center w-full  rounded-xl p-4",
-    isSelected ? "bg-primary text-white pointer-events-none" : "bg-white",
-    !isSelected && "hover:drop-shadow-md",
-  )}
-  on:click
+  class={clsx("flex w-full flex-row items-center  rounded-md bg-slate-100 p-4")}
 >
-  <div class="flex flex-col w-full items-start gap-1">
-    <div class="flex flex-row w-full justify-between">
+  <div class="flex w-full flex-col items-start gap-1">
+    <div class="flex w-full flex-row justify-between">
       <p class="text-base font-semibold">{stageTitle}</p>
       <p class="text-sm font-thin">{requestId}</p>
     </div>

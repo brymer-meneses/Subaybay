@@ -17,6 +17,8 @@
   import * as Sheet from "$lib/components/ui/sheet/index.js";
 
   import { page } from "$app/stores";
+
+  $: title = $page.route.id?.toString().split("/").at(-1);
 </script>
 
 <header
@@ -78,18 +80,6 @@
       </nav>
     </Sheet.Content>
   </Sheet.Root>
-
-  <Breadcrumb.Root class="hidden md:flex">
-    <Breadcrumb.List>
-      <Breadcrumb.Item>
-        <Breadcrumb.Link href="##">Inbox</Breadcrumb.Link>
-      </Breadcrumb.Item>
-      <Breadcrumb.Separator />
-      <Breadcrumb.Item>
-        <Breadcrumb.Page>Pending Stages</Breadcrumb.Page>
-      </Breadcrumb.Item>
-    </Breadcrumb.List>
-  </Breadcrumb.Root>
 
   <div class="relative ml-auto flex-1 md:grow-0">
     <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
