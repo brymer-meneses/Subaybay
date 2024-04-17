@@ -1,12 +1,9 @@
 <script lang="ts">
     import Dropdown from "./dropdown.svelte";
-    import { height } from "./configConstants";
-    import { subBGColor, subBGHoverColor } from "./configConstants";
     import { UserData } from "./configConstants";
     import { onMount } from "svelte";
     
     export let onOptionSelected : (index : number) => void;
-    export let isLast : boolean;
     export let handlerIndex : number;
     export let users : UserData[];
 
@@ -16,8 +13,6 @@
     let dropdownButton : any;
     let rect : any;
     let isOpen : boolean;
-
-    let bgColor = subBGColor;
 
     onMount(async () => {
         rect = dropdownButton.getBoundingClientRect();
@@ -35,21 +30,11 @@
         if(!isOpen == true) rect = dropdownButton.getBoundingClientRect();
         isOpen = !isOpen;
     }
-
-    function onHoverStart() {
-        bgColor = subBGHoverColor;
-    }
-
-    function onHoverEnd() {
-        bgColor = subBGColor;
-    }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events svelte-ignore a11y-no-static-element-interactions -->
 <div bind:this={dropdownButton} class="cursor-pointer p-1" 
-    style="width: {height}px; height: {height}px; background-color:{bgColor}; margin-left:3px;
-        border-bottom-right-radius: {isLast ? '6px' : '0px'}"
-    on:click={toggleDropdown} on:mouseenter={onHoverStart} on:mouseleave={onHoverEnd}>
+    on:click={toggleDropdown}>
     <img src={imgSrc} alt="{handlerName}" 
         class="rounded-full flex"/>    
 </div>

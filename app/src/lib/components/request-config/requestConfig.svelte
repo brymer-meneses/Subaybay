@@ -1,10 +1,12 @@
 <script lang="ts">
-  import { ButtonType, UserData, SubstageData } from "./configConstants";
+  import { Button } from "$lib/components/ui/button";
+  import { UserData, SubstageData } from "./configConstants";
   import ConfigStageContainer from "./configStageContainer.svelte";
   import defaultProfilePic from "$lib/assets/defaultProfilePic.jpg";
 
   let stages: SubstageData[][] = [];
 
+  //hardcoded dummy data - to be replaced
   let users: UserData[] = [
     new UserData("-1", "None", defaultProfilePic),
     new UserData(
@@ -31,15 +33,15 @@
 
   stages = [
     [new SubstageData("Create/Submit Request", 0)],
-    [new SubstageData("New Substage (Click to Rename)", 0)],
+    [new SubstageData()],
   ];
 
   function deleteStage(index: number) {
-    stages = stages.splice(index, 1);
+    stages = stages.slice(0, index).concat(stages.slice(index + 1));
   }
 
   function addStage() {
-    stages = [...stages, new SubstageData("New Substage (Click to Rename)", 0)];
+    stages = [...stages, [new SubstageData()]];
   }
 
   function storeInDatabase() {
@@ -50,40 +52,39 @@
 {#key stages.length}
   <div
     class="justify-center flex"
-    style="overflow-y: auto; height: 100%; padding-bottom: 200px;"
-  >
-    <div style="width:600px; margin-top: 10px; margin-bottom: 100px;">
+    style="overflow-y: auto; height: 100%; padding-bottom: 200px;" 
+  > <!--todo make this use tailwind-->
+    <div class="grid grid-cols-1 gap-5" style="width:600px; margin-top: 10px; margin-bottom: 100px;"> <!--todo make this use tailwind-->
       <input placeholder="Request Name" />
       {#if stages.length > 0}
         <ConfigStageContainer
-          buttonType={ButtonType.Disabled}
-          stageNumber={1}
-          substages={stages[0]}
+          stageIndex={0}
+          {stages}
           {users}
         />
 
         {#if stages.length > 0}
-          {#each stages as substages, index}
-            {#if index > 0}
+          {#each stages as _, stageIndex}
+            {#if stageIndex > 0}
               <ConfigStageContainer
-                buttonType={ButtonType.Delete}
-                stageNumber={index + 1}
-                {substages}
-                onClick={() => deleteStage(index)}
+                stageIndex={stageIndex}
+                onClick={() => deleteStage(stageIndex)}
+                {stages}
                 {users}
               />
             {/if}
           {/each}
         {/if}
 
-        <ConfigStageContainer
-          buttonType={ButtonType.Add}
-          stageNumber={0}
-          onClick={addStage}
-          {users}
-        />
-      {/if}
-      submit button
+        {/if}
+      
+      <div>
+        <Button class="color-pale-yellow" on:click={addStage}>Add New Stage</Button>
+      </div>
+      <div>
+        <Button>Submit</Button>
+      </div>
+
       <div class="flex" style="height: 200px;"></div>
     </div>
   </div>
