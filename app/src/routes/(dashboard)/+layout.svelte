@@ -1,22 +1,15 @@
 <script lang="ts">
-  import SearchPopUp from "$lib/components/dashboard/Search/SearchPopUp.svelte";
-  import Sidebar from "$lib/components/dashboard/Sidebar/Sidebar.svelte";
-  import * as Resizable from "$lib/components/ui/resizable/index.js";
+  import Sidebar from "./Sidebar.svelte";
+  import Header from "./Header.svelte";
 </script>
 
-<Resizable.PaneGroup
-  direction="horizontal"
-  class="h-screen w-screen flex bg-background"
-  autoSaveId="sidebar"
->
+<div class="flex min-h-screen w-full flex-col bg-muted/40">
   <Sidebar />
 
-  <Resizable.Handle />
-
-  <Resizable.Pane defaultSize={90}>
-    <div class="h-screen w-full bg-pale-red-100">
+  <div class="flex min-h-screen w-full flex-col bg-muted/40">
+    <div class="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+      <Header />
       <slot />
     </div>
-  </Resizable.Pane>
-</Resizable.PaneGroup>
-<SearchPopUp />
+  </div>
+</div>
