@@ -1,10 +1,10 @@
 <script lang="ts">
-  export let roomId: string;
-
   import { onMount, tick } from "svelte";
   import ChatMessage from "./ChatMessage.svelte";
-  import { ScrollArea } from "bits-ui";
-  import { BxsSend } from "svelte-boxicons";
+  import SendHorizontal from "lucide-svelte/icons/send-horizontal";
+  import { page } from "$app/stores";
+  import { Input } from "$lib/components/ui/input";
+  import { Button } from "$lib/components/ui/button";
 
   type Message = {
     dateTime: number;
@@ -18,8 +18,10 @@
     userId: string;
   };
 
-  export let userId: string;
-  export let sessionId: string;
+  export let roomId: string;
+
+  $: userId = $page.data.userInfo.id;
+  $: sessionId = $page.data.sessionId;
 
   let messages: Array<Message> = [];
   let socket: WebSocket;
@@ -31,9 +33,7 @@
   onMount(async () => {
     // TODO: should encode roomId somehow
     // probably in this format: requestId-step
-    socket = new WebSocket(
-      `ws://localhost:8080/chat/${roomId}/ws?sessionId=${sessionId}`,
-    );
+    socket = new WebSocket(`ws://localhost:8080/chat/${roomId}/ws`);
 
     socket.onopen = () => {
       socket.send(sessionId);
@@ -75,10 +75,10 @@
 </script>
 
 <section
-  class="bg-pale-red-100 w-full h-full rounded-3xl flex flex-col p-5 gap-5"
+  class="flex w-full flex-col gap-5 rounded-md border-2 border-accent p-5"
 >
-  <div bind:this={messageContainer} class="overflow-auto h-full">
-    <div class="flex flex-col gap-3 w-[96%]">
+  <div bind:this={messageContainer} class="h-36 overflow-auto">
+    <div class="flex w-[96%] flex-col gap-3">
       {#each messages as message, _}
         <ChatMessage
           message={message.content}
@@ -90,17 +90,15 @@
     </div>
   </div>
 
-  <div
-    class="w-full h-12 rounded-2xl bg-white p-3 flex items-center drop-shadow-sm"
-  >
-    <input
-      class="w-full h-full border-none focus:ring-0 focus:ring-offset-0"
+  <div class="flex w-full items-center space-x-2">
+    <Input
+      class="border-b-1 w-full bg-accent focus:ring-0 focus:ring-offset-0"
       placeholder="Send a message ..."
       bind:value={messageContent}
     />
 
-    <button on:click={sendMessageHandler}>
-      <BxsSend class="text-primary" />
-    </button>
+    <Button on:click={sendMessageHandler}>
+      <SendHorizontal class="text-white" />
+    </Button>
   </div>
 </section>
