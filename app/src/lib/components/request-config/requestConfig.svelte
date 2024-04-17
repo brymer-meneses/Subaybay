@@ -1,10 +1,12 @@
 <script lang="ts">
+  import { Button } from "$lib/components/ui/button";
   import { ButtonType, UserData, SubstageData } from "./configConstants";
   import ConfigStageContainer from "./configStageContainer.svelte";
   import defaultProfilePic from "$lib/assets/defaultProfilePic.jpg";
 
   let stages: SubstageData[][] = [];
 
+  //hardcoded dummy data - to be replaced
   let users: UserData[] = [
     new UserData("-1", "None", defaultProfilePic),
     new UserData(
@@ -31,7 +33,7 @@
 
   stages = [
     [new SubstageData("Create/Submit Request", 0)],
-    [new SubstageData("New Substage (Click to Rename)", 0)],
+    [new SubstageData("", 0)],
   ];
 
   function deleteStage(index: number) {
@@ -39,7 +41,7 @@
   }
 
   function addStage() {
-    stages = [...stages, new SubstageData("New Substage (Click to Rename)", 0)];
+    stages = [...stages, [new SubstageData("New Substage (Click to Rename)", 0)]];
   }
 
   function storeInDatabase() {
@@ -56,7 +58,6 @@
       <input placeholder="Request Name" />
       {#if stages.length > 0}
         <ConfigStageContainer
-          buttonType={ButtonType.Disabled}
           stageNumber={1}
           substages={stages[0]}
           {users}
@@ -66,7 +67,6 @@
           {#each stages as substages, index}
             {#if index > 0}
               <ConfigStageContainer
-                buttonType={ButtonType.Delete}
                 stageNumber={index + 1}
                 {substages}
                 onClick={() => deleteStage(index)}
@@ -76,14 +76,15 @@
           {/each}
         {/if}
 
-        <ConfigStageContainer
-          buttonType={ButtonType.Add}
-          stageNumber={0}
-          onClick={addStage}
-          {users}
-        />
-      {/if}
-      submit button
+        {/if}
+      
+      <div>
+        <Button class="color-pale-yellow">Add New Stage</Button>
+      </div>
+      <div>
+        <Button>Submit</Button>
+      </div>
+
       <div class="flex" style="height: 200px;"></div>
     </div>
   </div>

@@ -1,92 +1,54 @@
 <script lang="ts">
-    import { disabledColor, deleteColor, deleteHoverColor, addColor, addHoverColor, renamableColor, subBGColor } from "./configConstants";
-    import { height, radius, buttonSize } from "./configConstants";
-    import { ButtonType, UserData } from "./configConstants";
-    import DropdownButton from "./dropdownButton.svelte";
+    import { Input } from "$lib/components/ui/input";
+    import { Avatar, AvatarFallback, AvatarImage } from "$lib/components/ui/avatar"
+    import { Button } from "$lib/components/ui/button";
+    import { UserData } from "./configConstants";
     
     export let users : UserData[];
 
+    export let isDeletable = true;
     export let isRenamable = true;
-    export let isLast = false;
-    export let stageName = "Stage Name";
+    export let stageName = "";
     export let stageIndex : number;
     
-    export let onButtonClick = () => {};
-    export let buttonType : ButtonType = ButtonType.Disabled;
-    export let onEditHandler : (stageIndex : number, handlerIndex : number) => void = (i, j) => {};
+    export let deleteFunction = () => {};
+    export let onHandlerEdited : (stageIndex : number, handlerIndex : number) => void = (i, j) => {};
 
     export let handlerIndex : number; 
 
-    let defaultColor = disabledColor;
-    let hoverColor = disabledColor;
-
-    $: switch (buttonType) {
-        case ButtonType.Delete:
-            defaultColor = deleteColor;
-            hoverColor = deleteHoverColor;
-            break;
-        case ButtonType.Disabled:
-            defaultColor = disabledColor;
-            hoverColor = disabledColor;
-            break;
-        case ButtonType.Add:
-            defaultColor = addColor;
-            hoverColor = addHoverColor;
-            break;
-    }
-
-    $: buttonColor = defaultColor;
-
-    function onOptionSelected(index : number) : void {
-        handlerIndex = index;
-        onEditHandler(stageIndex, handlerIndex);
-    }
-
-    function onButtonHoverStart() {
-        buttonColor = hoverColor;
-    }
-    function onButtonHoverEnd() {
-        buttonColor = defaultColor;
-    }
 </script>
 
-<div class="flex items-center" style="margin-top:3px">
-    <!--Button-->
-    <!-- svelte-ignore a11y-no-static-element-interactions svelte-ignore a11y-click-events-have-key-events -->
-    <div class="p-2 rounded-full" 
-        style="width: {buttonSize}px; height: {buttonSize}px; background-color: {buttonColor}; margin: 0px {radius}px 0px {radius}px;
-        cursor: {buttonType != ButtonType.Disabled ? 'pointer' : 'auto'};"
-        on:mouseenter={onButtonHoverStart} on:mouseleave={onButtonHoverEnd} on:click={onButtonClick}></div>
-    
-    <!--Renamable Input-->
-    {#if isRenamable && buttonType != ButtonType.Add}
-        <input class="p-2 flex-grow" 
-            style="height: {height}px; background-color:{renamableColor}; border:none; outline-style:none;"
-            value="{stageName}"/>
-    <!--Add-->
-    {:else if buttonType == ButtonType.Add}
-        <!-- svelte-ignore a11y-click-events-have-key-events svelte-ignore a11y-no-static-element-interactions -->
-        <div class="p-2 cursor-pointer flex-grow" 
-            style = "height: {height}px; background-color:{buttonColor}; border:none; outline-style:none; border-bottom-right-radius: 6px;" 
-            on:mouseenter={onButtonHoverStart} on:mouseleave={onButtonHoverEnd} on:click={onButtonClick}
-            >{stageName}</div>
-    <!--Non Renamable, non-button-->
-    {:else} 
-        <!-- svelte-ignore a11y-click-events-have-key-events svelte-ignore a11y-no-static-element-interactions -->
-        <div class="p-2 flex-grow" 
-            style = "height: {height}px; background-color:{subBGColor}; border:none; outline-style:none;"
-            >{stageName}</div>
-    {/if}
+<!-- svelte-ignore a11y-no-static-element-interactions svelte-ignore a11y-click-events-have-key-events -->
+<!-- <div class="p-2 rounded-full" 
+    style="width: {buttonSize}px; height: {buttonSize}px; background-color: {buttonColor}; margin: 0px {radius}px 0px {radius}px;
+    cursor: {buttonType != ButtonType.Disabled ? 'pointer' : 'auto'};"
+    on:mouseenter={onButtonHoverStart} on:mouseleave={onButtonHoverEnd} on:click={onButtonClick}></div> -->
 
-    <!--Dropdown-->
-    {#if buttonType != ButtonType.Add}
-        <DropdownButton handlerIndex={handlerIndex} onOptionSelected={onOptionSelected} users={users} isLast={isLast}/>
-    {/if}
+
+<div class="grid grid-cols-subgrid col-span-10">
+
+    <Button class="col-span-1" variant="ghost" disabled={!isDeletable} on:click={deleteFunction}>
+        {#if isDeletable}
+            <!--X-->
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.877075 7.49988C0.877075 3.84219 3.84222 0.877045 7.49991 0.877045C11.1576 0.877045 14.1227 3.84219 14.1227 7.49988C14.1227 11.1575 11.1576 14.1227 7.49991 14.1227C3.84222 14.1227 0.877075 11.1575 0.877075 7.49988ZM7.49991 1.82704C4.36689 1.82704 1.82708 4.36686 1.82708 7.49988C1.82708 10.6329 4.36689 13.1727 7.49991 13.1727C10.6329 13.1727 13.1727 10.6329 13.1727 7.49988C13.1727 4.36686 10.6329 1.82704 7.49991 1.82704ZM9.85358 5.14644C10.0488 5.3417 10.0488 5.65829 9.85358 5.85355L8.20713 7.49999L9.85358 9.14644C10.0488 9.3417 10.0488 9.65829 9.85358 9.85355C9.65832 10.0488 9.34173 10.0488 9.14647 9.85355L7.50002 8.2071L5.85358 9.85355C5.65832 10.0488 5.34173 10.0488 5.14647 9.85355C4.95121 9.65829 4.95121 9.3417 5.14647 9.14644L6.79292 7.49999L5.14647 5.85355C4.95121 5.65829 4.95121 5.3417 5.14647 5.14644C5.34173 4.95118 5.65832 4.95118 5.85358 5.14644L7.50002 6.79289L9.14647 5.14644C9.34173 4.95118 9.65832 4.95118 9.85358 5.14644Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+        {:else}  
+            <!--No-->          
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.49991 0.877075C3.84222 0.877075 0.877075 3.84222 0.877075 7.49991C0.877075 11.1576 3.84222 14.1227 7.49991 14.1227C11.1576 14.1227 14.1227 11.1576 14.1227 7.49991C14.1227 3.84222 11.1576 0.877075 7.49991 0.877075ZM3.85768 3.15057C4.84311 2.32448 6.11342 1.82708 7.49991 1.82708C10.6329 1.82708 13.1727 4.36689 13.1727 7.49991C13.1727 8.88638 12.6753 10.1567 11.8492 11.1421L3.85768 3.15057ZM3.15057 3.85768C2.32448 4.84311 1.82708 6.11342 1.82708 7.49991C1.82708 10.6329 4.36689 13.1727 7.49991 13.1727C8.88638 13.1727 10.1567 12.6753 11.1421 11.8492L3.15057 3.85768Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+        {/if}
+    </Button>
+
+    <Input class="col-span-8" placeholder="Stage Name (Click to Name)" value={stageName} disabled={!isRenamable}/>
+
+    <!--todo: Make into dropdown button-->
+    <Button class="col-span-1" variant="ghost">
+        <Avatar>
+            <AvatarImage src="https://www.mobafire.com/images/champion/square/smolder.png" alt="" />
+        </Avatar>
+    </Button>
+
 </div>
 
-<style>
-    input:focus {
-        outline-style: none;
-        border:none;
-    }
-</style>
+<!--Dropdown-->
+<!-- {#if buttonType != ButtonType.Add}
+    <DropdownButton handlerIndex={handlerIndex} onOptionSelected={onOptionSelected} users={users}/>
+{/if} -->
