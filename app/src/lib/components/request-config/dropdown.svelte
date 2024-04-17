@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { height } from "./configConstants";
-    import { headerColor, mainBGColor } from "./configConstants";
     import DropdownButton from "./dropdownItem.svelte";
     import { UserData } from "./configConstants";
     const width = 200;
@@ -33,15 +31,14 @@
     <!-- todo add scrollability -->
     <!-- svelte-ignore a11y-click-events-have-key-events svelte-ignore a11y-no-static-element-interactions svelte-ignore a11y-mouse-events-have-key-events -->
     <div class="dropdown border-black border-1 border shadow-lg"
-        style="top: {top}px; left: {left}px; width: {width}px; background-color:{mainBGColor};"
         on:mouseleave={onHoverExit}>
         
         <!--Header-->
-        <div class="flex" style="height: {height}px; background-color:{headerColor};">
-            <div class="p-1" style="width: {height}px; height: {height}px;">
+        <div class="flex" >
+            <div class="p-1">
                 <img src="{users[userIndex].imgSrc}" alt="{users[userIndex].name}" class="rounded-full flex"/>
             </div>
-            <div class="flex-grow items-center" style="height:{height}; margin-left: 5px;">
+            <div class="flex-grow items-center" >
                 {users[userIndex].name}
             </div>
         </div>
