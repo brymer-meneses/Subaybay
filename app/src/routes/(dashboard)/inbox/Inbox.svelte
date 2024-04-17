@@ -17,6 +17,13 @@
   <Card.Content>
     <ScrollArea class="h-96">
       <div class="flex w-[98%] flex-col gap-1">
+        <InboxItem
+          isSelected={true}
+          stageTitle="HD and GMC forwarded to UR for signature"
+          requestTitle="Honorable Dismissal"
+          dateSent={new Date().toDateString()}
+          requestId={1}
+        />
         {#each Array(100) as _, index (index)}
           <InboxItem
             isSelected={false}

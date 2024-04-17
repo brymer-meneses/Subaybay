@@ -10,7 +10,10 @@
 </script>
 
 <button
-  class={clsx("flex w-full flex-row items-center  rounded-md bg-slate-100 p-4")}
+  class={clsx(
+    "flex w-full flex-row items-center rounded-md  p-4",
+    isSelected ? "bg-primary text-white" : "bg-accent",
+  )}
 >
   <div class="flex w-full flex-col items-start gap-1">
     <div class="flex w-full flex-row justify-between">

@@ -1,6 +1,5 @@
 use axum::extract::ws::{Message, WebSocket};
 use axum::extract::{ConnectInfo, Path, State, WebSocketUpgrade};
-use axum::http::StatusCode;
 use axum::routing::get;
 use axum::{response::IntoResponse, Router};
 use mongodb::Collection;
@@ -14,11 +13,9 @@ use crate::database::{Chat, ChatMessage, ChatMessagePayload, Session, User};
 use super::AppState;
 
 pub fn root(state: Arc<AppState>) -> Router<Arc<AppState>> {
-    let router = Router::new()
+    Router::new()
         .route("/:chat_id/ws", get(chat_connect))
-        .with_state(state);
-
-    router
+        .with_state(state)
 }
 
 use mongodb::bson::doc;
@@ -51,12 +48,10 @@ async fn validate_session_id(sessions: Collection<Session>, session_id: &String)
         }
 
         return true;
-    } else {
-        return false;
-    }
-}
+    };
 
-struct ConnectionError;
+    false
+}
 
 async fn handle_chat_connection(
     state: Arc<AppState>,
