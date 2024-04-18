@@ -2,7 +2,6 @@ mod database;
 mod routes;
 
 use std::net::SocketAddr;
-use tokio;
 
 #[tokio::main]
 async fn main() {
