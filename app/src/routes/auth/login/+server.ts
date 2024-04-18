@@ -1,10 +1,10 @@
 import { generateCodeVerifier, generateState } from "arctic";
-import { google, lucia } from "$lib/server/auth";
-import { redirect, type RequestEvent } from "@sveltejs/kit";
+import { google } from "$lib/server/auth";
+import { redirect, type RequestEvent, type RequestHandler } from "@sveltejs/kit";
 
 import { dev } from "$app/environment";
 
-export async function GET(event: RequestEvent): Promise<Response> {
+export const GET: RequestHandler = async (event: RequestEvent) => {
 
   if (event.locals.user) {
     redirect(302, "/inbox");
