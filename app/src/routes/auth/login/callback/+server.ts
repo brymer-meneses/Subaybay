@@ -1,8 +1,10 @@
 import { OAuth2RequestError } from "arctic";
-import { type RequestEvent } from "@sveltejs/kit";
+import type { RequestHandler } from "@sveltejs/kit";
+
+import { redirect } from 'sveltekit-flash-message/server';
+
 import { google, lucia } from "$lib/server/auth";
 import { user } from "$lib/server/database";
-import { generateId } from "lucia";
 
 interface GoogleAccount {
   sub: string,
@@ -15,18 +17,16 @@ interface GoogleAccount {
   locale: string,
 }
 
-export async function GET(event: RequestEvent): Promise<Response> {
+export const GET: RequestHandler = async ({ cookies, url }) => {
 
-  const code = event.url.searchParams.get("code");
-  const state = event.url.searchParams.get("state");
+  const code = url.searchParams.get("code");
+  const state = url.searchParams.get("state");
 
-  const storedState = event.cookies.get("state");
-  const storedCodeVerifier = event.cookies.get("code_verifier");
+  const storedState = cookies.get("state");
+  const storedCodeVerifier = cookies.get("code_verifier");
 
   if (!code || !storedState || !storedCodeVerifier || state !== storedState) {
-    return new Response(null, {
-      status: 400
-    });
+    redirect('/', { type: 'error', message: "Authentication Error" }, cookies);
   }
 
   try {
@@ -54,34 +54,19 @@ export async function GET(event: RequestEvent): Promise<Response> {
     const session = await lucia.createSession(googleId, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
 
-    event.cookies.set(sessionCookie.name, sessionCookie.value, {
+    cookies.set(sessionCookie.name, sessionCookie.value, {
       path: ".",
       ...sessionCookie.attributes,
     });
 
-
-    return new Response(null, {
-      status: 302,
-      headers: {
-        Location: "/inbox"
-      }
-    });
-
   } catch (e) {
-    console.error(e);
 
     if (e instanceof OAuth2RequestError) {
-      return new Response(null, {
-        status: 302,
-        headers: {
-          Location: "/"
-        }
-      });
+      redirect('/', { type: 'error', message: "Authentication Error" }, cookies);
     }
-    return new Response(null, {
-      status: 500
-    });
+
+    redirect('/', { type: 'error', message: "Authentication Error" }, cookies);
   }
 
-
+  redirect(302, "/inbox");
 }
