@@ -1,5 +1,4 @@
 <script lang="ts">
-  // import * as React from "react";
   import { Button } from "$lib/components/ui/button";
   import {
     Card,
@@ -10,7 +9,7 @@
     CardTitle,
   } from "$lib/components/ui/card";
 
-  import { UserData, SubstageData } from "./configConstants";
+  import { UserData, SubstageData } from "./configClasses";
   import ConfigSubstage from "./configSubstage.svelte";
 
   export let stageIndex: number;

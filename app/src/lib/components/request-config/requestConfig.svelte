@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
-  import { UserData, SubstageData } from "./configConstants";
+  import { UserData, SubstageData } from "./configClasses";
   import ConfigStageContainer from "./configStageContainer.svelte";
   import defaultProfilePic from "$lib/assets/defaultProfilePic.jpg";
   import Input from "../ui/input/input.svelte";

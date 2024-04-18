@@ -2,7 +2,7 @@
     import { Input } from "$lib/components/ui/input";
     import { Avatar, AvatarFallback, AvatarImage } from "$lib/components/ui/avatar"
     import { Button } from "$lib/components/ui/button";
-    import { UserData } from "./configConstants";
+    import { UserData } from "./configClasses";
     import {
         DropdownMenu,
         DropdownMenuContent,
@@ -71,8 +71,3 @@
         </DropdownMenuContent>
     </DropdownMenu>
 </div>
-
-<!--Dropdown-->
-<!-- {#if buttonType != ButtonType.Add}
-    <DropdownButton handlerIndex={handlerIndex} onOptionSelected={onOptionSelected} users={users}/>
-{/if} -->
