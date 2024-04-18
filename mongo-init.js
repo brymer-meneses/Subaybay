@@ -27,13 +27,13 @@ db.users.insertMany([
     name: "Smolder",
     email: "smolder@lol.com",
     profileUrl: "https://www.mobafire.com/images/champion/square/smolder.png",
-    isAdmin: false
+    isAdmin: true
   },
   {
     name: "Gnar",
     email: "gnar@lol.com",
     profileUrl: "https://www.mobafire.com/images/champion/square/gnar.png",
-    isAdmin: false
+    isAdmin: true
   },
   {
     name: "Aurelion Sol",
