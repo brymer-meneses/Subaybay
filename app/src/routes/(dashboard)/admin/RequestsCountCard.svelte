@@ -17,7 +17,7 @@
   >
     <Card.Title class="text-sm font-medium">Total {s.type} Requests</Card.Title>
     {#if s.type === "Finished"}
-      <BadgeCheck class="text-muted-foreground h-6 w-6 text-green-600" />
+      <BadgeCheck class="text-muted-foreground h-6 w-6 text-green-700" />
     {:else if s.type === "Stale"}
       <CircleX class="text-muted-foreground h-6 w-6 text-red-600" />
     {:else if s.type === "Pending"}
