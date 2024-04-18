@@ -10,7 +10,7 @@ export const load: PageServerLoad = async (event) => {
   let cursor = user.find();
   let allUsers: any = [];
   for await (const doc of cursor) {
-    allUsers.push({email : doc.email, name : doc.name, imgSrc : doc.profileUrl})
+    allUsers.push({email : doc.email, name : doc.name, profileUrl : doc.profileUrl})
   }
 
   return { userInfo: event.locals.user, allUsers: allUsers };

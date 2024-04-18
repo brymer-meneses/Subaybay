@@ -12,7 +12,7 @@
 
   let users = [new UserData("-1", "None", defaultProfilePic)];
   for (const user of dbUsers) {
-    users.push(new UserData(user.email, user.name, user.profileUrl))
+    users.push(new UserData(user.email, user.name, user.profileUrl));
   }
 
   stages = [
