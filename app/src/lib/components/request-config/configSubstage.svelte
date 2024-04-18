@@ -2,7 +2,7 @@
     import { Input } from "$lib/components/ui/input";
     import { Avatar, AvatarFallback, AvatarImage } from "$lib/components/ui/avatar"
     import { Button } from "$lib/components/ui/button";
-    import { UserData } from "./configConstants";
+    import { UserData } from "./configClasses";
     import {
         DropdownMenu,
         DropdownMenuContent,
@@ -12,10 +12,10 @@
         DropdownMenuSeparator,
         DropdownMenuTrigger,
     } from "$lib/components/ui/dropdown-menu"
+    import { ScrollArea, Scrollbar } from "$lib/components/ui/scroll-area"
    
     export let users : UserData[];
     export let handlerIndex : number; 
-    let handlerIndexStr = handlerIndex.toString(); //todo: figure out a better solution
 
     export let isDeletable = true;
     export let isRenamable = true;
@@ -25,9 +25,11 @@
     export let deleteFunction = (substageIndex : number) => {};
     export let onHandlerEdited : (substageIndex : number, handlerIndex : number) => void = (i, j) => {};
 
-    function onDropdownChanged() {
-        handlerIndex = parseInt(handlerIndexStr);
-        onHandlerEdited(substageIndex, handlerIndex);
+    function onDropdownChanged(value : string | undefined) {
+        if(value) {
+            handlerIndex = parseInt(value);
+            onHandlerEdited(substageIndex, handlerIndex);
+        }
     }
 </script>
 
@@ -45,32 +47,27 @@
 
     <Input class="col-span-8" placeholder="Stage Name (Click to Name)" bind:value={substageName} disabled={!isRenamable}/>
     
-    <!--! Doesn't work-->
     <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-            <Button class="col-span-1" variant="ghost">
-                <Avatar>
-                    <AvatarImage src="https://www.mobafire.com/images/champion/square/smolder.png" alt="" />
-                </Avatar>
-            </Button>
+        <DropdownMenuTrigger class="col-span-1">
+            <Avatar>
+                <AvatarImage src={users[handlerIndex].imgSrc} alt={users[handlerIndex].name} />
+            </Avatar>
         </DropdownMenuTrigger>
-            <DropdownMenuContent class="w-56">
+        <DropdownMenuContent class="w-100">
             <DropdownMenuLabel>Default Handler</DropdownMenuLabel>
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuRadioGroup value={"0"} onValueChange={onDropdownChanged}>
-                <DropdownMenuRadioItem value={"0"}>{"Smolder's Mom"}</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value={"2"}>{"Smolder"}</DropdownMenuRadioItem>
-                {#each users as user, index}
-                    <DropdownMenuRadioItem value={index.toString()}>{user.name}</DropdownMenuRadioItem>
-                {/each}
-            </DropdownMenuRadioGroup>
+            <ScrollArea class="h-[150px]">
+                <DropdownMenuRadioGroup value={handlerIndex.toString()} onValueChange={onDropdownChanged}>
+                    {#each users as user, index}
+                        <DropdownMenuRadioItem value={index.toString()}>
+                            {user.name}
+                        </DropdownMenuRadioItem>
+                    {/each}
+                </DropdownMenuRadioGroup>
+                <Scrollbar orientation="vertical" />
+            </ScrollArea>
         </DropdownMenuContent>
-      </DropdownMenu>
+    </DropdownMenu>
 </div>
-
-<!--Dropdown-->
-<!-- {#if buttonType != ButtonType.Add}
-    <DropdownButton handlerIndex={handlerIndex} onOptionSelected={onOptionSelected} users={users}/>
-{/if} -->

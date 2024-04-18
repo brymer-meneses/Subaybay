@@ -14,3 +14,4 @@ db.cats.insertMany([
     name: 'mr. fuhrer',
   }
 ]);
+

@@ -33,19 +33,23 @@ export interface StageType {
   stageTitle: string;
   // how far along is this stage?
   stageNumber: number;
-  handler: string;
+  defaultHandler: string;
 }
 
 export interface RequestType {
   _id: string;
+  title: string;
   stages: Array<StageType>;
 }
 
 // instance of a `RequestType`
 export interface Request {
   _id: string;
-  requestType: RequestType,
-  // metadata
+  requestType: RequestType;
+  studentNumber: string;
+  studentName: string;
+  studentEmail: string;
+  purpose: string;
 }
 
 // instance of a `StageType`
