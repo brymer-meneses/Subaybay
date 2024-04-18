@@ -1,8 +1,10 @@
 <script lang="ts">
   import { onMount, tick } from "svelte";
+  import { page } from "$app/stores";
+  import { toast } from "svelte-sonner";
+
   import ChatMessage from "./ChatMessage.svelte";
   import SendHorizontal from "lucide-svelte/icons/send-horizontal";
-  import { page } from "$app/stores";
   import { Input } from "$lib/components/ui/input";
   import { Button } from "$lib/components/ui/button";
 
@@ -34,7 +36,11 @@
     // TODO: should encode roomId somehow
     // probably in this format: requestId-step
     socket = new WebSocket(`ws://localhost:8080/chat/${roomId}/ws`);
-
+    socket.onerror = () => {
+      toast.error("Failed to connect to the chat server", {
+        description: "Sending and receiving messages will not work",
+      });
+    };
     socket.onopen = () => {
       socket.send(sessionId);
     };

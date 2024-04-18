@@ -1,13 +1,9 @@
-import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { database, type User } from "$lib/server/database";
 
 
 export const load: PageServerLoad = async (event) => {
 
-  if (!event.locals.user) {
-    redirect(302, "/auth/login");
-  }
 
   //
   // if (event.locals.user && !event.locals.user.isAdmin) {

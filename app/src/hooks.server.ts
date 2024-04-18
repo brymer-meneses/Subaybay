@@ -2,36 +2,46 @@
 // Reference:
 //  https://lucia-auth.com/getting-started/sveltekit
 import { lucia } from "$lib/server/auth";
-import { redirect, type Handle } from "@sveltejs/kit";
+import { type Handle } from "@sveltejs/kit";
+import { redirect } from "sveltekit-flash-message/server";
 
 export const handle: Handle = async ({ event, resolve }) => {
   const sessionId = event.cookies.get(lucia.sessionCookieName);
   if (!sessionId) {
     event.locals.user = null;
     event.locals.session = null;
-    return resolve(event);
+  } else {
+    const { session, user } = await lucia.validateSession(sessionId);
+    if (session && session.fresh) {
+      const sessionCookie = lucia.createSessionCookie(session.id);
+      // sveltekit types deviates from the de-facto standard
+      // you can use 'as any' too
+      event.cookies.set(sessionCookie.name, sessionCookie.value, {
+        path: ".",
+        ...sessionCookie.attributes
+      });
+    }
+    if (!session) {
+      const sessionCookie = lucia.createBlankSessionCookie();
+      event.cookies.set(sessionCookie.name, sessionCookie.value, {
+        path: ".",
+        ...sessionCookie.attributes
+      });
+    }
+
+    event.locals.user = user;
+    event.locals.session = session;
   }
 
-  const { session, user } = await lucia.validateSession(sessionId);
-  if (session && session.fresh) {
-    const sessionCookie = lucia.createSessionCookie(session.id);
-    // sveltekit types deviates from the de-facto standard
-    // you can use 'as any' too
-    event.cookies.set(sessionCookie.name, sessionCookie.value, {
-      path: ".",
-      ...sessionCookie.attributes
-    });
-  }
-  if (!session) {
-    const sessionCookie = lucia.createBlankSessionCookie();
-    event.cookies.set(sessionCookie.name, sessionCookie.value, {
-      path: ".",
-      ...sessionCookie.attributes
-    });
-  }
+  const protectedPaths = ["inbox", "configuration", "admin", "requests"];
 
-  event.locals.user = user;
-  event.locals.session = session;
+  if (!event.locals.user) {
+    for (const path of protectedPaths) {
+      if (event.url.pathname.split("/").includes(path)) {
+        redirect("/", { type: "error", message: "Authentication Error", args: { description: "Login to continue" } }, event.cookies);
+      }
+    }
+  }
 
 
   return resolve(event);

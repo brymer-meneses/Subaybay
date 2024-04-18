@@ -1,14 +1,8 @@
-import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { database } from "$lib/server/database";
 
-export const load: PageServerLoad = async (event) => {
-
-  if (!event.locals.user) {
-    redirect(302, "/auth/login");
-  }
-
-  const sessionId = event.cookies.get('auth_session');
+export const load: PageServerLoad = async ({ cookies, locals }) => {
+  const sessionId = cookies.get('auth_session');
   // const requests = await database.request.find({}).toArray();
 
   // DUMMY DATA FOR NOW
@@ -24,5 +18,5 @@ export const load: PageServerLoad = async (event) => {
     });
   }
 
-  return { userInfo: event.locals.user!, sessionId: sessionId!, requests };
+  return { userInfo: locals.user!, sessionId: sessionId!, requests };
 }
