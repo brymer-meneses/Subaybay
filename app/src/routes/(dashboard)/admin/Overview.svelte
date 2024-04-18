@@ -9,8 +9,7 @@
     <Card.Title>Overview</Card.Title>
     <Card.Description>Jan 2023 - Mar 2024</Card.Description>
   </Card.Header>
-  <Card.Content
-    class=" flex grow items-center justify-center border  border-b-black border-opacity-25 text-3xl"
+  <Card.Content class=" flex grow items-center justify-center  text-3xl"
     >Graph here</Card.Content
   >
   <Card.Footer class="flex justify-end">
