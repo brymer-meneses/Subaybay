@@ -5,33 +5,15 @@
   import defaultProfilePic from "$lib/assets/defaultProfilePic.jpg";
   import Input from "../ui/input/input.svelte";
 
+  export let dbUsers: {email: string, name: string, profileUrl: string}[];
+
   let stages: SubstageData[][] = [];
   let requestType: string;
 
-  //hardcoded dummy data - to be replaced by reading from database
-  let users: UserData[] = [
-    new UserData("-1", "None", defaultProfilePic),
-    new UserData(
-      "1",
-      "Yuumi",
-      "https://www.mobafire.com/images/champion/square/yuumi.png",
-    ),
-    new UserData(
-      "2",
-      "Gnar",
-      "https://www.mobafire.com/images/champion/square/gnar.png",
-    ),
-    new UserData(
-      "3",
-      "Smolder",
-      "https://www.mobafire.com/images/champion/square/smolder.png",
-    ),
-    new UserData(
-      "4",
-      "Aurelion Sol",
-      "https://www.mobafire.com/images/champion/square/aurelion-sol.png",
-    ),
-  ];
+  let users = [new UserData("-1", "None", defaultProfilePic)];
+  for (const user of dbUsers) {
+    users.push(new UserData(user.email, user.name, user.profileUrl))
+  }
 
   stages = [
     [new SubstageData("Create/Submit Request", 0)],

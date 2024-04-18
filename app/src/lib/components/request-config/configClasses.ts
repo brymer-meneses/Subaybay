@@ -1,11 +1,11 @@
 export class UserData {
-    id: string;
+    email: string; //used like an id
     name: string;
-    imgSrc: string;
-    constructor(id: string, name: string, imgSrc: string = "") {
-        this.id = id;
+    profileUrl: string;
+    constructor(email: string, name: string, profileUrl: string = "") {
+        this.email = email;
         this.name = name;
-        this.imgSrc = imgSrc;
+        this.profileUrl = profileUrl;
     }
 }
 

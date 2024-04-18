@@ -50,7 +50,7 @@
     <DropdownMenu>
         <DropdownMenuTrigger class="col-span-1">
             <Avatar>
-                <AvatarImage src={users[handlerIndex].imgSrc} alt={users[handlerIndex].name} />
+                <AvatarImage src={users[handlerIndex].profileUrl} alt={users[handlerIndex].name} />
             </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent class="w-100">
