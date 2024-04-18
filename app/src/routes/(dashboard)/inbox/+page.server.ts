@@ -1,13 +1,7 @@
-import { redirect } from "sveltekit-flash-message/server"
 import type { PageServerLoad } from "./$types";
 import { database } from "$lib/server/database";
 
 export const load: PageServerLoad = async ({ cookies, locals }) => {
-
-  if (!locals.user) {
-    redirect("/", { type: "error", message: "Login to continue" }, cookies);
-  }
-
   const sessionId = cookies.get('auth_session');
   // const requests = await database.request.find({}).toArray();
 

@@ -20,10 +20,10 @@
 
     switch ($flash.type) {
       case "error":
-        toast.error($flash.message);
+        toast.error($flash.message, $flash.args);
         break;
       case "success":
-        toast.success($flash.success);
+        toast.success($flash.message, $flash.args);
         break;
     }
   });
