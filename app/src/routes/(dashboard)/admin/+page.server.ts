@@ -1,10 +1,7 @@
 import type { PageServerLoad } from "./$types";
 import { database, type User } from "$lib/server/database";
 
-
 export const load: PageServerLoad = async (event) => {
-
-
   //
   // if (event.locals.user && !event.locals.user.isAdmin) {
   //   redirect(302, "/");
@@ -14,7 +11,10 @@ export const load: PageServerLoad = async (event) => {
   // unauthorized access
 
   // idk whats with _id
-  const users = await database.collection<User>("users").find({},{projection: { _id:0 }}).toArray();
+  const users = await database
+    .collection<User>("users")
+    .find({}, { projection: { _id: 0 } })
+    .toArray();
 
-  return {users};
-}
+  return { users };
+};

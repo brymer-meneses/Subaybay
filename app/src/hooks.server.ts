@@ -1,4 +1,3 @@
-
 // Reference:
 //  https://lucia-auth.com/getting-started/sveltekit
 import { lucia } from "$lib/server/auth";
@@ -18,14 +17,14 @@ export const handle: Handle = async ({ event, resolve }) => {
       // you can use 'as any' too
       event.cookies.set(sessionCookie.name, sessionCookie.value, {
         path: ".",
-        ...sessionCookie.attributes
+        ...sessionCookie.attributes,
       });
     }
     if (!session) {
       const sessionCookie = lucia.createBlankSessionCookie();
       event.cookies.set(sessionCookie.name, sessionCookie.value, {
         path: ".",
-        ...sessionCookie.attributes
+        ...sessionCookie.attributes,
       });
     }
 
@@ -38,11 +37,18 @@ export const handle: Handle = async ({ event, resolve }) => {
   if (!event.locals.user) {
     for (const path of protectedPaths) {
       if (event.url.pathname.split("/").includes(path)) {
-        redirect("/", { type: "error", message: "Authentication Error", args: { description: "Login to continue" } }, event.cookies);
+        redirect(
+          "/",
+          {
+            type: "error",
+            message: "Authentication Error",
+            args: { description: "Login to continue" },
+          },
+          event.cookies,
+        );
       }
     }
   }
-
 
   return resolve(event);
 };

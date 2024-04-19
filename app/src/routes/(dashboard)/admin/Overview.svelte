@@ -14,7 +14,7 @@
   >
   <Card.Footer class="flex justify-end">
     <Button class="w-48 gap-2"
-      ><Download class="text-muted-foreground h-6 w-6 text-white" /> Download Report</Button
+      ><Download class="h-6 w-6 text-muted-foreground text-white" /> Download Report</Button
     >
   </Card.Footer>
 </Card.Root>

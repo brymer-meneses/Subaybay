@@ -17,15 +17,15 @@
   >
     <Card.Title class="text-sm font-medium">Total {s.type} Requests</Card.Title>
     {#if s.type === "Finished"}
-      <BadgeCheck class="text-muted-foreground h-6 w-6 text-green-700" />
+      <BadgeCheck class="h-6 w-6 text-green-700 text-muted-foreground" />
     {:else if s.type === "Stale"}
-      <CircleX class="text-muted-foreground h-6 w-6 text-red-600" />
+      <CircleX class="h-6 w-6 text-muted-foreground text-red-600" />
     {:else if s.type === "Pending"}
-      <Hourglass class="text-muted-foreground h-6 w-6 text-yellow-600" />
+      <Hourglass class="h-6 w-6 text-muted-foreground text-yellow-600" />
     {/if}
   </Card.Header>
   <Card.Content>
     <div class="text-2xl font-bold">{s.count}</div>
-    <p class="text-muted-foreground text-xs">+20.1% from last month</p>
+    <p class="text-xs text-muted-foreground">+20.1% from last month</p>
   </Card.Content>
 </Card.Root>
