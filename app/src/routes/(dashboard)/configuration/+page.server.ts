@@ -1,5 +1,6 @@
 import type { PageServerLoad } from "./$types";
-import { redirect } from "@sveltejs/kit";
+import type { Actions } from "./$types"
+
 import {
   type StageType,
   type RequestType,
@@ -10,7 +11,7 @@ import { ObjectId } from "mongodb";
 import {
   SubstageData,
   UserData,
-} from "$lib/components/request-config/configClasses";
+} from "./configClasses";
 
 export const load: PageServerLoad = async (event) => {
   let cursor = user.find();
@@ -22,7 +23,7 @@ export const load: PageServerLoad = async (event) => {
   return { userInfo: event.locals.user, allUsers: allUsers };
 };
 
-export const actions = {
+export const actions: Actions = {
   default: async (event) => {
     let data = await event.request.formData();
 
