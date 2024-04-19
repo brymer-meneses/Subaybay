@@ -23,6 +23,7 @@
 
   function deleteSubstage(index: number) {
     substages = substages.slice(0, index).concat(substages.slice(index + 1))
+    // stages = stages.slice(0, index).concat([substages]).concat(stages.slice(index + 1));
     stages[stageIndex] = substages;
   }
 

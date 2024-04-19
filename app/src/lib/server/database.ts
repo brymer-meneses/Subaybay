@@ -31,15 +31,13 @@ export interface Session {
 export interface StageType {
   _id: string;
   stageTitle: string;
-  // how far along is this stage?
-  stageNumber: number;
   defaultHandler: string;
 }
 
 export interface RequestType {
   _id: string;
   title: string;
-  stages: Array<StageType>;
+  stages: Array<Array<StageType>>;
 }
 
 // instance of a `RequestType`
@@ -55,6 +53,6 @@ export interface Request {
 // instance of a `StageType`
 export interface Stage {
   _id: string;
-  stageType: StageType,
-  currentHandler: string;
+  stageType: StageType;
+  handler: string;
 }
