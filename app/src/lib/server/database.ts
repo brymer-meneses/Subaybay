@@ -39,7 +39,7 @@ export interface StageType {
 export interface RequestType {
   _id: string;
   title: string;
-  stages: Array<StageType>;
+  stages: Array<Array<StageType>>;
 }
 
 // instance of a `RequestType`
@@ -55,6 +55,6 @@ export interface Request {
 // instance of a `StageType`
 export interface Stage {
   _id: string;
-  stageType: StageType,
+  stageType: StageType;
   currentHandler: string;
 }

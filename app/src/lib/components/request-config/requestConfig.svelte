@@ -5,20 +5,22 @@
   import defaultProfilePic from "$lib/assets/defaultProfilePic.jpg";
   import Input from "../ui/input/input.svelte";
 
-  export let dbUsers: {email: string, name: string, profileUrl: string}[];
+  export let dbUsers: {id: string, name: string, profileUrl: string}[];
 
   let stages: SubstageData[][] = [];
   let requestType: string;
-
-  let users = [new UserData("-1", "None", defaultProfilePic)];
+  
+  let users = [new UserData("", "None", defaultProfilePic)];
   for (const user of dbUsers) {
-    users.push(new UserData(user.email, user.name, user.profileUrl));
+    users.push(new UserData(user.id, user.name, user.profileUrl));
   }
-
+  
   stages = [
     [new SubstageData("Create/Submit Request", 0)],
     [new SubstageData()],
   ];
+
+  $: stagesJSONStr = JSON.stringify(stages);
 
   function deleteStage(index: number) {
     stages = stages.slice(0, index).concat(stages.slice(index + 1));
@@ -31,6 +33,10 @@
   function storeInDatabase() {
     //todo pass the data for validation to the server
       //+ server will convert stages into a prompt on the database; all of the information is already there
+  }
+
+  function handleSubmit() {
+    stagesJSONStr = JSON.stringify(stagesJSONStr);
   }
 </script>
 
@@ -63,7 +69,11 @@
     <Button class="border-gray-300" variant="outline" on:click={addStage}>Add New Stage</Button>
 
     <div class="justify-center flex">
-      <Button>Create</Button>
+      <form method="POST" on:submit={handleSubmit} action="?/create">
+        <input type="hidden" name="requestType" bind:value={requestType}/>
+        <input type="hidden" name="stageData" bind:value={stagesJSONStr}/>
+        <Button type="submit">Create</Button>
+      </form>
     </div>
   </div>
 </div>

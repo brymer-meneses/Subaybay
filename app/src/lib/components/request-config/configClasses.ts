@@ -1,9 +1,9 @@
 export class UserData {
-    email: string; //used like an id
+    id: string;
     name: string;
     profileUrl: string;
-    constructor(email: string, name: string, profileUrl: string = "") {
-        this.email = email;
+    constructor(id: string, name: string, profileUrl: string = "") {
+        this.id = id;
         this.name = name;
         this.profileUrl = profileUrl;
     }

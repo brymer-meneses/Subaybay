@@ -39,7 +39,7 @@
     "@fontsource/poppins": "^5.0.12",
     "@lucia-auth/adapter-mongodb": "^1.0.3",
     "arctic": "^1.5.0",
-    "bits-ui": "^0.21.3",
+    "bits-ui": "^0.21.4",
     "clsx": "^2.1.0",
     "cmdk-sv": "^0.0.17",
     "dayjs": "^1.11.10",
