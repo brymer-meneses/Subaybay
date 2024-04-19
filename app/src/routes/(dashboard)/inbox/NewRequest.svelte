@@ -16,7 +16,7 @@
     </Dialog.Header>
     <div class="grid gap-4 py-4">
       <div class="gap-cols-4 grid items-center gap-4">
-        <Label for="studentnumber">Student Name:</Label>
+        <Label for="studentnumber">Student Number:</Label>
         <Input id="studentnumber" class="col-span-3" />
       </div>
       <div class="gap-cols-4 grid items-center gap-4">
