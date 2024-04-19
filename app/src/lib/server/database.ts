@@ -31,8 +31,6 @@ export interface Session {
 export interface StageType {
   _id: string;
   stageTitle: string;
-  // how far along is this stage?
-  stageNumber: number;
   defaultHandler: string;
 }
 
@@ -56,5 +54,5 @@ export interface Request {
 export interface Stage {
   _id: string;
   stageType: StageType;
-  currentHandler: string;
+  handler: string;
 }

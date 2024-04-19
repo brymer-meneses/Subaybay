@@ -2,7 +2,7 @@
   import { Button } from "$lib/components/ui/button";
   import { UserData, SubstageData } from "./configClasses";
   import ConfigStageContainer from "./configStageContainer.svelte";
-  import defaultProfilePic from "$lib/assets/defaultProfilePic.jpg";
+  import defaultProfilePic from "$lib/assets/circle-user-round.png";
   import Input from "../ui/input/input.svelte";
 
   export let dbUsers: {id: string, name: string, profileUrl: string}[];
@@ -20,8 +20,6 @@
     [new SubstageData()],
   ];
 
-  $: stagesJSONStr = JSON.stringify(stages);
-
   function deleteStage(index: number) {
     stages = stages.slice(0, index).concat(stages.slice(index + 1));
   }
@@ -30,13 +28,17 @@
     stages = [...stages, [new SubstageData()]];
   }
 
-  function storeInDatabase() {
-    //todo pass the data for validation to the server
-      //+ server will convert stages into a prompt on the database; all of the information is already there
-  }
+  async function handleSubmit(event : any) {
+    const data = new FormData(event.currentTarget);
+    
+    data.append("stageData", JSON.stringify(stages));
+    data.append("users", JSON.stringify(users));
+    data.append("requestType", requestType);
 
-  function handleSubmit() {
-    stagesJSONStr = JSON.stringify(stagesJSONStr);
+    const response = await fetch(event.currentTarget.action, {
+			method: 'POST',
+			body: data
+		});
   }
 </script>
 
@@ -69,9 +71,7 @@
     <Button class="border-gray-300" variant="outline" on:click={addStage}>Add New Stage</Button>
 
     <div class="justify-center flex">
-      <form method="POST" on:submit={handleSubmit} action="?/create">
-        <input type="hidden" name="requestType" bind:value={requestType}/>
-        <input type="hidden" name="stageData" bind:value={stagesJSONStr}/>
+      <form method="POST" on:submit|preventDefault={handleSubmit}>
         <Button type="submit">Create</Button>
       </form>
     </div>
