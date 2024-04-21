@@ -14,7 +14,7 @@ impl AppState {
         };
 
         let host = std::env::var("DATABASE_HOSTNAME").unwrap_or("localhost".to_owned());
-        let uri = format!("mongodb://{host}:27017");
+        let uri = format!("mongodb://{host}:27017/?directConnection=true");
 
         let client = {
             let mut options = ClientOptions::parse_async(uri).await.expect("Invalid URI");

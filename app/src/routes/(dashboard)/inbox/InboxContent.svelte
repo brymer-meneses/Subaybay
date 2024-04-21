@@ -20,9 +20,9 @@
   $: info = selectedStage ? requests[selectedStage.requestId] : null;
 </script>
 
-{#if selectedStage}
+{#if info}
   <Card.Root class="overflow-hidden">
-    <Card.Header class="bg-muted/50 flex flex-row items-start">
+    <Card.Header class="flex flex-row items-start bg-muted/50">
       <div class="grid gap-0.5">
         <Card.Title class="group flex items-center gap-2 text-lg">
           {#if selectedStage}
@@ -48,6 +48,9 @@
           <Badge variant="secondary">{info.studentName}</Badge>
           <Badge variant="secondary">{info.studentEmail}</Badge>
         </div>
+        <div class="my-4 grid gap-3">
+          <ChatArea roomId="abcd" />
+        </div>
 
         {#if info.purpose !== ""}
           <Textarea disabled value={info.purpose} />
@@ -62,8 +65,7 @@
 
       <div class="flex gap-2">
         {#if !selectedStage.finished}
-          <FinishButton selectedStage={selectedStage} users={users}/>
-          
+          <FinishButton {selectedStage} {users} />
         {:else}
           <form action="?/recall_stage" method="POST">
             <input

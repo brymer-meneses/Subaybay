@@ -62,8 +62,8 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
     cookies.set(sessionCookie.name, sessionCookie.value, {
       path: ".",
       ...sessionCookie.attributes,
-      domain: 'localhost:5173'
     });
+
 
 
   } catch (e) {

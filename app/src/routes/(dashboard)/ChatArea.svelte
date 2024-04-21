@@ -8,21 +8,34 @@
   import { Input } from "$lib/components/ui/input";
   import { Button } from "$lib/components/ui/button";
 
+  import queryString from "query-string";
+
   type ServerMessage = {
     type: "previousMessages" | "reply";
-    date_time: number;
+    dateTime: number;
     content: string;
     userId: string;
     profileUrl: string;
   };
 
-  type ClientMessage = {
-    type: "reply" | "typing";
+  type Reply = {
     content: string;
+    chatId: string;
     userId: string;
   };
 
-  export let roomId: string;
+  type Event = {
+    content: string;
+    chatId: string;
+    userId: string;
+  };
+
+  type ClientMessage = {
+    type: "message" | "event";
+    content: Reply | Event;
+  };
+
+  export let chatId: string;
 
   $: userId = $page.data.userInfo.id;
   $: sessionId = $page.data.sessionId;
@@ -36,8 +49,14 @@
   onMount(async () => {
     // TODO: should encode roomId somehow
     // probably in this format: requestId-step
+    const params = {
+      session_id: sessionId,
+      user_id: userId,
+      chat_id: chatId,
+    };
+
     socket = new WebSocket(
-      `ws://localhost:8080/chat/ws?session_id=${sessionId}&chat_id=abcd&user_id=${userId}`,
+      `ws://localhost:8080/chat/ws?${queryString.stringify(params)}`,
     );
     socket.onerror = (ev) => {
       toast.error("Failed to connect to the chat server", {
@@ -71,7 +90,15 @@
   }
 
   async function sendMessageHandler() {
-    const messagePayload = { content: messageContent, userId };
+    const messagePayload: ClientMessage = {
+      type: "message",
+      content: {
+        content: messageContent,
+        userId,
+        chatId,
+      },
+    };
+
     socket.send(JSON.stringify(messagePayload));
     messageContent = "";
   }

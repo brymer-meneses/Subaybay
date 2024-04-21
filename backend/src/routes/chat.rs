@@ -5,7 +5,6 @@ use axum::{
 
 use axum_typed_websockets::{Message, WebSocket, WebSocketUpgrade};
 
-use futures::TryStreamExt;
 use mongodb::bson::{self, doc};
 use serde::{Deserialize, Serialize};
 
@@ -32,31 +31,34 @@ async fn handle_connection(
     let (mut sender, mut receiver) = socket.split();
 
     let messages_collection = state.database.collection::<db::ChatMessage>("chatMessages");
+    let users = state.database.collection::<db::User>("users");
+
     let pipeline = vec![
         doc! {
             "$lookup": {
                 "from": "users",
-                "localField": "user_id",
+                "localField": "userId",
                 "foreignField": "_id",
-                "as": "user_info"
+                "as": "userInfo"
             }
         },
         doc! {
-            "$unwind": "$user_info"
+            "$unwind": "$userInfo"
         },
         doc! {
             "$project": {
-                "chat_id": 1,
-                "user_id": 1,
+                "chatId": 1,
+                "userId": 1,
                 "content": 1,
-                "time": 1,
-                "profile_url": "$user_info.profile_url"
+                "dateTime": 1,
+                "profileUrl": "$userInfo.profileUrl"
             }
         },
     ];
 
     let mut cursor = messages_collection.aggregate(pipeline, None).await.unwrap();
     let mut messages = Vec::new();
+
     while let Some(doc) = cursor.next().await {
         if let Ok(doc) = doc {
             let chat_message: ChatMessageWithProfile = bson::from_document(doc).unwrap();
@@ -67,6 +69,81 @@ async fn handle_connection(
     let _ = sender
         .send(Message::Item(ServerMessage::PreviousMessages(messages)))
         .await;
+
+    tokio::spawn(async move {
+        let mut stream = messages_collection
+            .watch(
+                vec![doc! {
+                    "$match": doc! {
+                        "operationType": "insert",
+                        "fullDocument.chatId": params.chat_id,
+                    }
+                }],
+                None,
+            )
+            .await
+            .unwrap();
+
+        while let Some(event) = stream.next().await.transpose().unwrap() {
+            let message = event.full_document.unwrap();
+            let user = users
+                .find_one(doc! {"_id": &message.user_id}, None)
+                .await
+                .unwrap()
+                .unwrap();
+
+            let _ = sender
+                .send(Message::Item(ServerMessage::Reply(
+                    ChatMessageWithProfile {
+                        chat_id: message.chat_id,
+                        date_time: message.date_time,
+                        user_id: message.user_id,
+                        content: message.content,
+                        profile_url: user.profile_url,
+                    },
+                )))
+                .await;
+        }
+    });
+
+    let messages_collection = state.database.collection::<db::ChatMessage>("chatMessages");
+
+    tokio::spawn(async move {
+        while let Some(msg) = receiver.next().await {
+            match msg {
+                Ok(Message::Item(msg)) => match msg {
+                    ClientMessage::Message {
+                        date_time,
+                        content,
+                        user_id,
+                        chat_id,
+                    } => {
+                        let chat_message = db::ChatMessage {
+                            user_id,
+                            chat_id,
+                            date_time,
+                            content,
+                        };
+
+                        messages_collection
+                            .insert_one(&chat_message, None)
+                            .await
+                            .unwrap();
+                    }
+
+                    ClientMessage::Event { date_time, content } => {}
+                },
+
+                Ok(_) => {
+                    println!("Invalid Message");
+                }
+
+                Err(err) => {
+                    println!("{:?}", err);
+                }
+            }
+        }
+    });
 }
 
 use crate::utils::get_time;
@@ -78,17 +155,18 @@ pub struct ChatConnectionArgs {
 }
 
 #[derive(Serialize, Deserialize)]
-#[serde(tag = "type", rename_all = "camelCase")]
+#[serde(tag = "type", content = "content", rename_all = "camelCase")]
 pub enum ClientMessage {
-    #[serde(rename = "response", rename_all = "camelCase")]
-    Response {
+    #[serde(rename_all = "camelCase")]
+    Message {
         #[serde(default = "get_time")]
         date_time: u64,
         content: String,
+        chat_id: String,
         user_id: String,
     },
 
-    #[serde(rename = "event", rename_all = "camelCase")]
+    #[serde(rename_all = "camelCase")]
     Event {
         #[serde(default = "get_time")]
         date_time: u64,
@@ -97,6 +175,7 @@ pub enum ClientMessage {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct ChatMessageWithProfile {
     pub chat_id: String,
     pub user_id: String,

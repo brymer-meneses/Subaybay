@@ -14,7 +14,7 @@ pub struct ChatMessage {
     pub chat_id: String,
     pub user_id: String,
     pub content: String,
-    pub date_time: DateTime,
+    pub date_time: u64,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
