@@ -1,184 +1,113 @@
-use axum::extract::ws::{Message, WebSocket};
-use axum::extract::{ConnectInfo, Path, State, WebSocketUpgrade};
-use axum::routing::get;
-use axum::{response::IntoResponse, Router};
-use mongodb::Collection;
+use axum::{
+    extract::{Query, State},
+    response::IntoResponse,
+};
+
+use axum_typed_websockets::{Message, WebSocket, WebSocketUpgrade};
+
+use futures::TryStreamExt;
+use mongodb::bson::{self, doc};
 use serde::{Deserialize, Serialize};
 
-use std::net::SocketAddr;
+use crate::database as db;
+use crate::state::AppState;
 use std::sync::Arc;
 
-use crate::database::{Chat, ChatMessage, ChatMessagePayload, Session, User};
-
-use super::AppState;
-
-pub fn root(state: Arc<AppState>) -> Router<Arc<AppState>> {
-    Router::new()
-        .route("/:chat_id/ws", get(chat_connect))
-        .with_state(state)
-}
-
-use mongodb::bson::doc;
-
-#[derive(Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct SessionIdParam {
-    session_id: String,
-}
-
-async fn chat_connect(
-    Path(chat_id): Path<String>,
-    ws: WebSocketUpgrade,
+pub async fn websocket(
     State(state): State<Arc<AppState>>,
-    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    Query(param): Query<ChatConnectionArgs>,
+    ws: WebSocketUpgrade<ServerMessage, ClientMessage>,
 ) -> impl IntoResponse {
-    ws.on_upgrade(move |socket| handle_chat_connection(state, socket, addr, chat_id))
+    ws.on_upgrade(move |socket| handle_connection(state, socket, param))
 }
 
-async fn validate_session_id(sessions: Collection<Session>, session_id: &String) -> bool {
-    use std::time::SystemTime;
-
-    let session = sessions.find_one(doc! {"_id": session_id}, None).await;
-    if let Ok(Some(session)) = session {
-        let expires_at = session.expires_at.to_system_time();
-        let now = SystemTime::now();
-
-        if expires_at <= now {
-            return false;
-        }
-
-        return true;
-    };
-
-    false
-}
-
-async fn handle_chat_connection(
+async fn handle_connection(
     state: Arc<AppState>,
-    socket: WebSocket,
-    addr: SocketAddr,
-    chat_id: String,
+    socket: WebSocket<ServerMessage, ClientMessage>,
+    params: ChatConnectionArgs,
 ) {
     use futures::SinkExt;
     use futures::StreamExt;
 
-    let (mut ws_sender, mut ws_receiver) = socket.split();
-    let chats = state.database.collection::<Chat>("chats");
+    let (mut sender, mut receiver) = socket.split();
 
-    // the first message from the user should be the session_id
-    // we then need to validate this to make sure the user is authenticated
-    if let Some(Ok(Message::Text(session_id))) = ws_receiver.next().await {
-        let sessions = state.database.collection::<Session>("sessions");
-
-        if !validate_session_id(sessions, &session_id).await {
-            let _ = ws_sender.send(Message::Close(None)).await;
-            return;
-        }
-
-        // send in all the messages from the user
-        let chats = state.database.collection::<Chat>("chats");
-        let queried_chat = chats.find_one(doc! { "chatId": &chat_id }, None).await;
-
-        if let Ok(Some(chat)) = queried_chat {
-            // send in all the messages from the user
-            let messages = serde_json::to_string(&chat.messages).expect("Failed to serialize");
-
-            let status = ws_sender.send(Message::Text(messages)).await;
-
-            if status.is_err() {
-                return;
+    let messages_collection = state.database.collection::<db::ChatMessage>("chatMessages");
+    let pipeline = vec![
+        doc! {
+            "$lookup": {
+                "from": "users",
+                "localField": "user_id",
+                "foreignField": "_id",
+                "as": "user_info"
             }
-        } else {
-            // if queried chat is none then we make one
-            let chat = Chat {
-                chat_id: chat_id.clone(),
-                messages: vec![],
-            };
+        },
+        doc! {
+            "$unwind": "$user_info"
+        },
+        doc! {
+            "$project": {
+                "chat_id": 1,
+                "user_id": 1,
+                "content": 1,
+                "time": 1,
+                "profile_url": "$user_info.profile_url"
+            }
+        },
+    ];
 
-            let insert_status = chats.insert_one(&chat, None).await;
-            let messages = serde_json::to_string(&chat.messages).expect("Failed to serialize");
-
-            let status = ws_sender.send(Message::Text(messages)).await;
-
-            if status.is_err() || insert_status.is_err() {
-                return;
-            };
+    let mut cursor = messages_collection.aggregate(pipeline, None).await.unwrap();
+    let mut messages = Vec::new();
+    while let Some(doc) = cursor.next().await {
+        if let Ok(doc) = doc {
+            let chat_message: ChatMessageWithProfile = bson::from_document(doc).unwrap();
+            messages.push(chat_message);
         }
-    } else {
-        // the client did not send a valid message so we close
-        let _ = ws_sender.send(Message::Close(None)).await;
-        return;
     }
 
-    let mut rx = state.tx.subscribe();
-    let sender = state.tx.clone();
+    let _ = sender
+        .send(Message::Item(ServerMessage::PreviousMessages(messages)))
+        .await;
+}
 
-    let mut send_task = tokio::spawn(async move {
-        while let Ok(message_payload) = rx.recv().await {
-            let users = state.database.collection::<User>("users");
+use crate::utils::get_time;
 
-            let user = users
-                .find_one(doc! {"_id": &message_payload.user_id}, None)
-                .await;
+#[derive(Serialize, Deserialize)]
+pub struct ChatConnectionArgs {
+    chat_id: String,
+    user_id: String,
+}
 
-            if let Ok(Some(user)) = user {
-                let message = ChatMessage::Response {
-                    date_time: message_payload.date_time,
-                    content: message_payload.content.clone(),
-                    user_id: message_payload.user_id,
-                    profile_url: user.profile_url,
-                };
+#[derive(Serialize, Deserialize)]
+#[serde(tag = "type", rename_all = "camelCase")]
+pub enum ClientMessage {
+    #[serde(rename = "response", rename_all = "camelCase")]
+    Response {
+        #[serde(default = "get_time")]
+        date_time: u64,
+        content: String,
+        user_id: String,
+    },
 
-                let content = serde_json::to_string(&message);
+    #[serde(rename = "event", rename_all = "camelCase")]
+    Event {
+        #[serde(default = "get_time")]
+        date_time: u64,
+        content: String,
+    },
+}
 
-                if content.is_err() {
-                    break;
-                }
+#[derive(Serialize, Deserialize, Debug)]
+pub struct ChatMessageWithProfile {
+    pub chat_id: String,
+    pub user_id: String,
+    pub date_time: u64,
+    pub content: String,
+    pub profile_url: String,
+}
 
-                // update to the database
-                let filter = doc! { "chatId": &chat_id };
-                let update = doc! { "$push": doc! {"messages": &message} };
-                let status = chats.update_one(filter, update, None).await;
-
-                if status.is_err() {
-                    break;
-                }
-
-                if ws_sender
-                    .send(Message::Text(content.unwrap()))
-                    .await
-                    .is_err()
-                {
-                    break;
-                }
-            }
-        }
-    });
-
-    let mut receive_task = tokio::spawn(async move {
-        while let Some(Ok(msg)) = ws_receiver.next().await {
-            match msg {
-                Message::Text(msg) => {
-                    let msg = serde_json::from_str::<ChatMessagePayload>(&msg);
-
-                    if let Ok(msg) = msg {
-                        // send to all listeners
-                        let _ = sender.send(msg);
-                    }
-                }
-
-                Message::Close(_) => break,
-
-                _ => {}
-            };
-        }
-    });
-
-    // If any one of the tasks run to completion, we abort the other.
-    tokio::select! {
-        _ = (&mut send_task) => receive_task.abort(),
-        _ = (&mut receive_task) => send_task.abort(),
-    };
-
-    tracing::info!("Websocket context {addr} destroyed");
+#[derive(Serialize, Deserialize)]
+#[serde(tag = "type", content = "content", rename_all = "camelCase")]
+pub enum ServerMessage {
+    Reply(ChatMessageWithProfile),
+    PreviousMessages(Vec<ChatMessageWithProfile>),
 }

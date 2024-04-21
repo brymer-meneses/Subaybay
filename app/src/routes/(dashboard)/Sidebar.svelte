@@ -19,11 +19,13 @@
   import clsx from "clsx";
 
   export let isCollapsed: boolean;
+
+  import Notification from "./Notification.svelte";
 </script>
 
 <aside
   class={clsx(
-    "bg-background fixed inset-y-0  left-0 hidden flex-col border-r transition-all sm:flex",
+    "fixed inset-y-0 left-0  hidden flex-col border-r bg-background transition-all sm:flex",
     isCollapsed ? "w-[80px] items-center" : "w-[200px] items-start",
   )}
 >
@@ -73,13 +75,13 @@
     <Tooltip.Root>
       <Tooltip.Trigger>
         <div
-          class="text-muted-foreground hover:text-accent-foreground flex items-center"
+          class="flex items-center text-muted-foreground hover:text-accent-foreground"
         >
           <form method="post" action="/auth/logout">
             <Button
               type="submit"
               variant="link"
-              class="text-muted-foreground rounded-lg"
+              class="rounded-lg text-muted-foreground"
             >
               <LogOut class="h-5 w-5" />
             </Button>

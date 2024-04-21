@@ -1,19 +1,22 @@
-use axum::http::Method;
-use axum::response::{IntoResponse, Redirect};
-use axum::routing::get;
-use axum::Router;
+use axum::{
+    http::Method,
+    middleware,
+    response::{IntoResponse, Redirect},
+    routing::get,
+    Router,
+};
 
+use tower::{Layer, ServiceBuilder};
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace::TraceLayer;
 
-use mongodb::Database;
-
+use crate::state::AppState;
 use std::sync::Arc;
-use tokio::sync::broadcast;
-
-use crate::database::ChatMessagePayload;
 
 mod chat;
+mod notifications;
+
+use crate::middlewares::authentication;
 
 pub async fn root() -> Router {
     let cors_layer = CorsLayer::new()
@@ -21,51 +24,23 @@ pub async fn root() -> Router {
         .allow_origin(Any);
 
     let trace_layer = TraceLayer::new_for_http();
-    let app_state = Arc::new(AppState::new().await);
-
-    let chat_rout = chat::root(app_state.clone());
+    let state = Arc::new(AppState::new().await);
 
     let router = Router::new()
-        .nest("/chat", chat_rout)
+        .route("/notifications/ws", get(notifications::websocket))
+        .route("/chat/ws", get(chat::websocket))
+        .route_layer(ServiceBuilder::new().layer(middleware::from_fn_with_state(
+            state.clone(),
+            authentication,
+        )))
         .route("/status", get(status))
-        .route("/", get(|| async { Redirect::permanent("/status") }))
         .layer(cors_layer)
         .layer(trace_layer)
-        .with_state(app_state);
+        .with_state(state);
 
     router
 }
 
 async fn status() -> impl IntoResponse {
     "Everything okay ..."
-}
-
-#[derive(Clone)]
-pub struct AppState {
-    pub database: Database,
-    pub tx: broadcast::Sender<ChatMessagePayload>,
-}
-
-impl AppState {
-    pub async fn new() -> Self {
-        use mongodb::{
-            options::{ClientOptions, ServerApi, ServerApiVersion},
-            Client,
-        };
-
-        let host = std::env::var("DATABASE_HOSTNAME").unwrap_or("localhost".to_owned());
-        let uri = format!("mongodb://{host}:27017");
-
-        let client = {
-            let mut options = ClientOptions::parse_async(uri).await.expect("Invalid URI");
-            options.server_api = Some(ServerApi::builder().version(ServerApiVersion::V1).build());
-            Client::with_options(options).expect("Failed to create client")
-        };
-
-        let database = client.database("subaybay");
-
-        let (tx, _) = broadcast::channel(128);
-
-        Self { database, tx }
-    }
 }

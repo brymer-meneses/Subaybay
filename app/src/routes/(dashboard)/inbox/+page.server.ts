@@ -6,6 +6,7 @@ import { superValidate } from "sveltekit-superforms";
 import { formSchema } from "./schema";
 import { zod } from "sveltekit-superforms/adapters";
 import { fail } from "@sveltejs/kit";
+import { lucia } from "$lib/server/auth";
 
 interface InboxStageData {
   requestTitle: string;
@@ -18,7 +19,7 @@ interface InboxStageData {
   roomId: string;
 }
 export const load: PageServerLoad = async ({ cookies, locals }) => {
-  const sessionId = cookies.get("auth_session");
+  const sessionId = cookies.get(lucia.sessionCookieName);
   const userId = locals.user?.id ?? "0";
 
   const users = await getUsers();

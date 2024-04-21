@@ -130,6 +130,7 @@ dependencies = [
  "axum-core",
  "axum-macros",
  "bytes",
+ "cookie",
  "form_urlencoded",
  "futures-util",
  "headers",
@@ -160,17 +161,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "axum-typed-websockets"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "df537817c0dc8ddccc7a4d479ea5d23438baf6f7ea97c583ac2256a75ff742fd"
+dependencies = [
+ "axum",
+ "futures-util",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "backend"
 version = "0.1.0"
 dependencies = [
  "axum",
  "axum-extra",
+ "axum-macros",
+ "axum-typed-websockets",
  "futures",
  "headers",
  "mongodb",
  "serde",
  "serde_json",
  "tokio",
+ "tower",
  "tower-http",
  "trace",
  "tracing",
@@ -305,6 +321,17 @@ name = "convert_case"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6245d59a3e82a7fc217c5828a6692dbc6dfb63a0c8c90495621f7b9d79704a0e"
+
+[[package]]
+name = "cookie"
+version = "0.18.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4ddef33a339a91ea89fb53151bd0a4689cfce27055c291dfa69945475d22c747"
+dependencies = [
+ "percent-encoding",
+ "time",
+ "version_check",
+]
 
 [[package]]
 name = "core-foundation-sys"

@@ -12,6 +12,8 @@ export const google = new Google(
   "http://localhost:5173/auth/login/callback",
 );
 
+export const SESSION_COOKIE_NAME = "auth_session";
+
 const adapter = new MongodbAdapter(session, user);
 
 export const lucia = new Lucia(adapter, {
@@ -19,6 +21,7 @@ export const lucia = new Lucia(adapter, {
     attributes: {
       secure: !dev,
     },
+    name: SESSION_COOKIE_NAME
   },
 
   getUserAttributes: (attributes) => {
