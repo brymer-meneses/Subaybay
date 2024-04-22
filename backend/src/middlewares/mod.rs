@@ -15,11 +15,15 @@ use mongodb::bson::doc;
 #[derive(Serialize, Deserialize)]
 pub struct AuthParam {
     session_id: String,
+    user_id: String,
 }
 
 pub async fn authentication(
     State(state): State<Arc<AppState>>,
-    Query(AuthParam { session_id }): Query<AuthParam>,
+    Query(AuthParam {
+        session_id,
+        user_id,
+    }): Query<AuthParam>,
     request: Request,
     next: Next,
 ) -> Result<Response, (StatusCode, &'static str)> {
@@ -35,6 +39,13 @@ pub async fn authentication(
         let now = SystemTime::now();
 
         if expires_at <= now {
+            return Err((
+                StatusCode::UNAUTHORIZED,
+                "The `session_id` passed is not valid",
+            ));
+        }
+
+        if user_id != session.user_id {
             return Err((
                 StatusCode::UNAUTHORIZED,
                 "The `session_id` passed is not valid",

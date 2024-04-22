@@ -30,45 +30,78 @@ async fn handle_connection(
 
     let (mut sender, mut receiver) = socket.split();
 
+    let rooms_collection = state.database.collection::<db::ChatRoom>("chatRooms");
     let messages_collection = state.database.collection::<db::ChatMessage>("chatMessages");
     let users = state.database.collection::<db::User>("users");
 
-    let pipeline = vec![
-        doc! {
-            "$lookup": {
-                "from": "users",
-                "localField": "userId",
-                "foreignField": "_id",
-                "as": "userInfo"
-            }
-        },
-        doc! {
-            "$unwind": "$userInfo"
-        },
-        doc! {
-            "$project": {
-                "chatId": 1,
-                "userId": 1,
-                "content": 1,
-                "dateTime": 1,
-                "profileUrl": "$userInfo.profileUrl"
-            }
-        },
-    ];
+    // create room metadata if it doesn't exist yet
+    {
+        let room = rooms_collection
+            .find_one(doc! { "chatId": &params.chat_id}, None)
+            .await
+            .unwrap();
 
-    let mut cursor = messages_collection.aggregate(pipeline, None).await.unwrap();
-    let mut messages = Vec::new();
-
-    while let Some(doc) = cursor.next().await {
-        if let Ok(doc) = doc {
-            let chat_message: ChatMessageWithProfile = bson::from_document(doc).unwrap();
-            messages.push(chat_message);
+        match room {
+            Some(room) => {
+                if !room.participants.contains(&params.chat_id) {
+                    let filter = doc! { "chatId": &params.chat_id};
+                    let update = doc! { "$push": doc!{"participants": &params.user_id }};
+                    let _ = rooms_collection.update_one(filter, update, None).await;
+                }
+            }
+            None => {
+                let _ = rooms_collection
+                    .insert_one(
+                        db::ChatRoom {
+                            chat_id: params.chat_id.clone(),
+                            participants: vec![],
+                        },
+                        None,
+                    )
+                    .await;
+            }
         }
     }
 
-    let _ = sender
-        .send(Message::Item(ServerMessage::PreviousMessages(messages)))
-        .await;
+    // send previous messages to the user
+    {
+        let pipeline = vec![
+            doc! {
+                "$lookup": {
+                    "from": "users",
+                    "localField": "userId",
+                    "foreignField": "_id",
+                    "as": "userInfo"
+                }
+            },
+            doc! {
+                "$unwind": "$userInfo"
+            },
+            doc! {
+                "$project": {
+                    "chatId": 1,
+                    "userId": 1,
+                    "content": 1,
+                    "dateTime": 1,
+                    "profileUrl": "$userInfo.profileUrl"
+                }
+            },
+        ];
+
+        let mut cursor = messages_collection.aggregate(pipeline, None).await.unwrap();
+        let mut messages = Vec::new();
+
+        while let Some(doc) = cursor.next().await {
+            if let Ok(doc) = doc {
+                let chat_message: ChatMessageWithProfile = bson::from_document(doc).unwrap();
+                messages.push(chat_message);
+            }
+        }
+
+        let _ = sender
+            .send(Message::Item(ServerMessage::PreviousMessages(messages)))
+            .await;
+    }
 
     tokio::spawn(async move {
         let mut stream = messages_collection

@@ -8,6 +8,7 @@ pub struct ChatRoom {
     pub chat_id: String,
     pub participants: Vec<String>,
 }
+
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ChatMessage {
