@@ -2,19 +2,14 @@ use axum::{
     extract::{Query, State},
     response::IntoResponse,
 };
-
 use axum_typed_websockets::{Message, WebSocket, WebSocketUpgrade};
 
-use mongodb::bson::{self, doc};
-use serde::{Deserialize, Serialize};
-
-use crate::database as db;
-use crate::state::AppState;
+use crate::{database as db, state::AppState};
 use std::sync::Arc;
 
 pub async fn websocket(
     State(state): State<Arc<AppState>>,
-    Query(param): Query<ChatConnectionArgs>,
+    Query(param): Query<ConnectionArgs>,
     ws: WebSocketUpgrade<ServerMessage, ClientMessage>,
 ) -> impl IntoResponse {
     ws.on_upgrade(move |socket| handle_connection(state, socket, param))
@@ -23,10 +18,11 @@ pub async fn websocket(
 async fn handle_connection(
     state: Arc<AppState>,
     socket: WebSocket<ServerMessage, ClientMessage>,
-    params: ChatConnectionArgs,
+    params: ConnectionArgs,
 ) {
     use futures::SinkExt;
     use futures::StreamExt;
+    use mongodb::bson::{self, doc};
 
     let (mut sender, mut receiver) = socket.split();
 
@@ -43,7 +39,7 @@ async fn handle_connection(
 
         match room {
             Some(room) => {
-                if !room.participants.contains(&params.chat_id) {
+                if !room.participants.contains(&params.user_id) {
                     let filter = doc! { "chatId": &params.chat_id};
                     let update = doc! { "$push": doc!{"participants": &params.user_id }};
                     let _ = rooms_collection.update_one(filter, update, None).await;
@@ -180,9 +176,10 @@ async fn handle_connection(
 }
 
 use crate::utils::get_time;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
-pub struct ChatConnectionArgs {
+pub struct ConnectionArgs {
     chat_id: String,
     user_id: String,
 }

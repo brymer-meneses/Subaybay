@@ -36,3 +36,8 @@ pub struct Session {
     pub user_id: String,
     pub expires_at: DateTime,
 }
+
+#[derive(Deserialize, Serialize)]
+pub enum Notification {
+    Message { message_id: String },
+}
