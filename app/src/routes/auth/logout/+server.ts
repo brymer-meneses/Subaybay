@@ -13,10 +13,8 @@ export async function POST(event: RequestEvent): Promise<Response> {
   const sessionCookie = lucia.createBlankSessionCookie();
   event.cookies.set(sessionCookie.name, sessionCookie.value, {
     path: ".",
-    ...sessionCookie.attributes
+    ...sessionCookie.attributes,
   });
-
 
   redirect(302, "/");
 }
-

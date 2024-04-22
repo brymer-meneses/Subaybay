@@ -1,5 +1,9 @@
 import { MongoClient } from "mongodb";
-import { DATABASE_PORT, DATABASE_HOSTNAME, DATABASE_NAME } from "$env/static/private";
+import {
+  DATABASE_PORT,
+  DATABASE_HOSTNAME,
+  DATABASE_NAME,
+} from "$env/static/private";
 import { dev } from "$app/environment";
 
 const hostname = dev ? "localhost" : DATABASE_HOSTNAME;
@@ -15,10 +19,10 @@ export const request = database.collection<Request>("requests");
 
 export interface User {
   _id: string;
-  email: string,
-  name: string,
-  profileUrl: string,
-  isAdmin: boolean,
+  email: string;
+  name: string;
+  profileUrl: string;
+  isAdmin: boolean;
 }
 
 // camelcase needs to stay since `lucia` requires so

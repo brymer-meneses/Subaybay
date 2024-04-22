@@ -10,6 +10,9 @@ reset-database:
 	docker compose down database
 	docker volume rm subaybay_db-data
 
+format:
+	cd app && npx prettier --write .
+
 run:
 ifeq ($(MODE), dev)
 

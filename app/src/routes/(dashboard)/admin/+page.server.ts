@@ -6,8 +6,6 @@ import { formSchema } from "./schema";
 import { zod } from "sveltekit-superforms/adapters";
 
 export const load: PageServerLoad = async (event) => {
-
-
   //
   // if (event.locals.user && !event.locals.user.isAdmin) {
   //   redirect(302, "/");
@@ -17,12 +15,13 @@ export const load: PageServerLoad = async (event) => {
   // unauthorized access
 
   // idk whats with _id
-  const users = await database.collection<User>("users").find({},{projection: { _id:0 }}).toArray();
+  const users = await database
+    .collection<User>("users")
+    .find({}, { projection: { _id: 0 } })
+    .toArray();
 
-  return {users, 
-    form: await superValidate(zod(formSchema)),
-  };
-}
+  return { users};
+};
 
 export const actions: Actions = {
   default: async (event) => {

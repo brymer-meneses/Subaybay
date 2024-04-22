@@ -45,7 +45,7 @@
                   ? user.name.substring(0, 25) + "..."
                   : user.name}
               </p>
-              <p class="text-muted-foreground text-sm">
+              <p class="text-sm text-muted-foreground">
                 {user.email.length > 25
                   ? user.email.substring(0, 25) + "..."
                   : user.email}
