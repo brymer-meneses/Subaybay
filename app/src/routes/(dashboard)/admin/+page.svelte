@@ -4,12 +4,13 @@
   import Overview from "./Overview.svelte";
   import UserList from "./UserList.svelte";
   import UserTable from "./WhitelistUsers.svelte";
+  import NewUser from "./NewUser.svelte";
   import UsersRound from "lucide-svelte/icons/users-round";
-  import WhitelistForm from "./WhitelistForm.svelte";
   import * as Tabs from "$lib/components/ui/tabs/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
   import Download from "lucide-svelte/icons/download";
   import type { PageData } from "./$types.js";
+  import NewAdmin from "./NewAdmin.svelte";
 
   const summary = [
     { type: "Finished", count: 37 },
@@ -76,22 +77,12 @@
       <p>Option to mark an ongoing request as stale</p></Tabs.Content
     >
     <Tabs.Content value="admins">
-      <Tabs.Root value="list">
-        <Tabs.List>
-          <Tabs.Trigger value="list">User List</Tabs.Trigger>
-          <Tabs.Trigger value="add">Add a user</Tabs.Trigger>
-        </Tabs.List>
-        <Tabs.Content value="list">
-          <UserTable users={data.users.filter((e) => e.isAdmin)} />
-        </Tabs.Content>
-        <Tabs.Content value="add"
-          >Take the list of all users and let the admins pick who they will be
-          adding</Tabs.Content
-        >
-      </Tabs.Root>
+      <UserTable users={data.users.filter((e) => e.isAdmin)} />
+      <NewAdmin users={data.users.filter((e) => !e.isAdmin)} />
     </Tabs.Content>
     <Tabs.Content value="whitelist">
       <UserTable users={data.users} />
+      <NewUser />
     </Tabs.Content>
   </Tabs.Root>
 </main>

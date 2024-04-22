@@ -2,7 +2,6 @@
   import * as Card from "$lib/components/ui/card/index.js";
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
-  import Plus from "lucide-svelte/icons/plus";
 
   export let users: {
     name: string;
@@ -45,7 +44,7 @@
                   ? user.name.substring(0, 25) + "..."
                   : user.name}
               </p>
-              <p class="text-sm text-muted-foreground">
+              <p class="text-muted-foreground text-sm">
                 {user.email.length > 25
                   ? user.email.substring(0, 25) + "..."
                   : user.email}

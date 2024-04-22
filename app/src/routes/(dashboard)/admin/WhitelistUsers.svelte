@@ -32,7 +32,7 @@
     table.createViewModel(columns);
 </script>
 
-<div class="w-[63vw]">
+<div class="w-[720px]">
   <div class="rounded-md border">
     <ScrollArea class="relative h-96 overflow-auto">
       <Table.Root {...$tableAttrs}>
@@ -68,13 +68,6 @@
                 {/each}
               </Table.Row>
             </Subscribe>
-          {/each}
-          {#each Array(40) as _}
-            <Table.Row>
-              <Table.Cell>input Field for the form</Table.Cell>
-              <Table.Cell>input Field for the form</Table.Cell>
-              <Table.Cell>input Field for the form</Table.Cell>
-            </Table.Row>
           {/each}
         </Table.Body>
       </Table.Root>
