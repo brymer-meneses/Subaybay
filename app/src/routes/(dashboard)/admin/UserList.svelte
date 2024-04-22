@@ -11,13 +11,21 @@
     isAdmin: boolean;
   }[];
   export let admin: boolean;
+  export let tab: string;
+
+  let value: string = "whitelist";
 
   if (admin) {
+    value = "admins";
     users = users.filter((e) => e.isAdmin);
   }
+
+  const onClickHandler = (value: string) => {
+    tab = value;
+  };
 </script>
 
-<Card.Root class="h-80 w-80">
+<Card.Root class="m-0 h-80">
   <Card.Header>
     <Card.Title>{admin ? "Administrators" : "Whitelisted Users"}</Card.Title>
   </Card.Header>
@@ -49,8 +57,10 @@
     </ScrollArea>
   </Card.Content>
   <Card.Footer class="float-end">
-    <Button class="w-36 gap-1 pl-2"
-      ><Plus size="20" /> {admin ? "Add Admin" : "Whitelist"}</Button
+    <Button
+      variant="outline"
+      class="w-28 gap-1"
+      on:click={() => onClickHandler(value)}>Manage</Button
     >
   </Card.Footer>
 </Card.Root>

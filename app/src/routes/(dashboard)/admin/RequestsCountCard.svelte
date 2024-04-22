@@ -1,6 +1,6 @@
 <script lang="ts">
   import * as Card from "$lib/components/ui/card/index.js";
-  import BadgeCheck from "lucide-svelte/icons/badge-check";
+  import Check from "lucide-svelte/icons/check";
   import CircleX from "lucide-svelte/icons/circle-x";
   import Hourglass from "lucide-svelte/icons/hourglass";
 
@@ -17,11 +17,11 @@
   >
     <Card.Title class="text-sm font-medium">Total {s.type} Requests</Card.Title>
     {#if s.type === "Finished"}
-      <BadgeCheck class="text-muted-foreground h-6 w-6 text-green-700" />
+      <Check class=" h-4 w-4 text-green-700" />
     {:else if s.type === "Stale"}
-      <CircleX class="text-muted-foreground h-6 w-6 text-red-600" />
+      <CircleX class="h-4 w-4 text-red-600" />
     {:else if s.type === "Pending"}
-      <Hourglass class="text-muted-foreground h-6 w-6 text-yellow-600" />
+      <Hourglass class="h-4 w-4 text-yellow-600" />
     {/if}
   </Card.Header>
   <Card.Content>

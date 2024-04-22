@@ -1,7 +1,14 @@
 <script lang="ts">
   import * as Card from "$lib/components/ui/card/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
-  import Download from "lucide-svelte/icons/download";
+
+  export let tab: string;
+
+  let value: string = "analytics";
+
+  const onClickHandler = (value: string) => {
+    tab = value;
+  };
 </script>
 
 <Card.Root class="col-span-full flex h-full flex-col justify-between space-y-2">
@@ -12,9 +19,9 @@
   <Card.Content class=" flex grow items-center justify-center  text-3xl"
     >Graph here</Card.Content
   >
-  <Card.Footer class="flex justify-end">
-    <Button class="w-48 gap-2"
-      ><Download class="text-muted-foreground h-6 w-6 text-white" /> Download Report</Button
+  <Card.Footer class="flex justify-end gap-4">
+    <Button class="gap-1 p-4" on:click={() => onClickHandler(value)}
+      >View Analytics</Button
     >
   </Card.Footer>
 </Card.Root>
