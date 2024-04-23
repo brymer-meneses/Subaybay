@@ -51,8 +51,9 @@ export interface Request {
   studentName: string;
   studentEmail: string;
   purpose: string;
-  currentStages: Array<Stage>
-  nextStages: Array<Stage>
+  currentStages: Array<Stage>;
+  nextStages: Array<Stage>;
+  history: Array<Stage>;
 }
 
 // instance of a `StageType`
