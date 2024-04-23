@@ -12,7 +12,7 @@
   import Plus from "lucide-svelte/icons/plus";
 
   import { UserData, SubstageData } from "./configClasses";
-  import ConfigSubstage from "./configSubstage.svelte";
+  import ConfigSubstage from "./ConfigSubstage.svelte";
 
   export let stageIndex: number;
   export let stages: SubstageData[][];

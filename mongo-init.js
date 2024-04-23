@@ -2,6 +2,7 @@
 db = new Mongo().getDB("subaybay");
 db.createCollection("cats");
 db.createCollection("requestTypes");
+db.createCollection("requests");
 
 db.cats.insertMany([
   {
@@ -38,7 +39,7 @@ db.users.insertMany([
     isAdmin: true
   },
   {
-    _id: "2312378905",
+    _id: "airylionsoul",
     name: "Aurelion Sol",
     email: "sol@lol.com",
     profileUrl: "https://www.mobafire.com/images/champion/square/aurelion-sol.png",
@@ -55,6 +56,7 @@ db.users.insertMany([
 
 db.requestTypes.insertMany([
   {
+    _id: "otrId",
     title: "OTR",
     stages: [
       [
@@ -79,6 +81,24 @@ db.requestTypes.insertMany([
           defaultHandler: ""
         }
       ]
+    ]
+  },
+])
+
+db.requests.insertMany([
+  {
+    _id: "dummy",
+    requestType: "otrId",
+    studentNumber: "2020",
+    studentName: "Hello World",
+    studentEmail: "student@student.com",
+    purpose: "Purpose",
+    currentStages: [
+      {
+        stageTypeIndex: 0,
+        substageTypeIndex: 0,
+        handler: "airylionsoul"
+      }
     ]
   },
 ])

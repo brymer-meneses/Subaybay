@@ -45,7 +45,6 @@ export const actions: Actions = {
         stages.push([]);
         for (const substage of stage) {
           const stageType: StageType = {
-            _id: new ObjectId().toString(),
             stageTitle: substage.stageName,
             defaultHandler: users[substage.handlerIndex].id,
           };

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import { UserData, SubstageData } from "./configClasses";
-  import ConfigStageContainer from "./configStageContainer.svelte";
+  import ConfigStageContainer from "./ConfigStageContainer.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
   import type { PageServerData } from "./$types";
 

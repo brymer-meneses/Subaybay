@@ -33,7 +33,6 @@ export interface Session {
 }
 
 export interface StageType {
-  _id: string;
   stageTitle: string;
   defaultHandler: string;
 }
@@ -52,11 +51,12 @@ export interface Request {
   studentName: string;
   studentEmail: string;
   purpose: string;
+  currentStages: Array<Stage>
 }
 
 // instance of a `StageType`
 export interface Stage {
-  _id: string;
-  stageType: StageType;
+  stageTypeIndex: number;
+  substageTypeIndex: number;
   handler: string;
 }
