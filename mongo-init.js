@@ -97,7 +97,22 @@ db.requests.insertMany([
       {
         stageTypeIndex: 0,
         substageTypeIndex: 0,
-        handler: "airylionsoul"
+        handler: "airylionsoul",
+        finished: true
+      }
+    ],
+    nextStages: [
+      {
+        stageTypeIndex: 1,
+        substageTypeIndex: 0,
+        handler: "",
+        finished: true
+      },
+      {
+        stageTypeIndex: 1,
+        substageTypeIndex: 1,
+        handler: "",
+        finished: true
       }
     ]
   },

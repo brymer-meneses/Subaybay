@@ -52,6 +52,7 @@ export interface Request {
   studentEmail: string;
   purpose: string;
   currentStages: Array<Stage>
+  nextStages: Array<Stage>
 }
 
 // instance of a `StageType`
@@ -59,4 +60,5 @@ export interface Stage {
   stageTypeIndex: number;
   substageTypeIndex: number;
   handler: string;
+  finished: boolean;
 }
