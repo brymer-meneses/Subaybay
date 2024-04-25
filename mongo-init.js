@@ -83,6 +83,100 @@ db.requestTypes.insertMany([
       ]
     ]
   },
+  {
+    _id: "coe",
+    title: "Certificate of Enrollment",
+    stages: [
+      [
+        {
+          stageTitle: "Create Request",
+          defaultHandler: ""
+        }
+      ],
+      [
+        {
+          stageTitle: "Prepare COE",
+          defaultHandler: ""
+        }
+      ],
+      [
+        {
+          stageTitle: "University Registrar Signature",
+          defaultHandler: ""
+        }
+      ],
+      [
+        {
+          stageTitle: "Notify Requester",
+          defaultHandler: ""
+        }
+      ]
+    ]
+  },
+  {
+    _id: "otr1",
+    title: "Official Transcript of Records (OTR) - First Request",
+    stages: [
+      [
+        {
+          stageTitle: "Create Request",
+          defaultHandler: ""
+        }
+      ],
+      [
+        {
+          stageTitle: "RR and Edit of Draft",
+          defaultHandler: "" //staff 1
+        }
+      ],
+      [
+        {
+          stageTitle: "Checking and Printing of Initial Draft",
+          defaultHandler: "" //staff 2
+        }
+      ],
+      [
+        {
+          stageTitle: "Checking Printed Draft",
+          defaultHandler: "" //staff 3
+        }
+      ],
+      [
+        {
+          stageTitle: "Final Printing",
+          defaultHandler: "" //staff 2
+        }
+      ],
+      [
+        {
+          stageTitle: "Signature",
+          defaultHandler: "" //staff 1
+        },
+        {
+          stageTitle: "Signature",
+          defaultHandler: "" //staff 3
+        }
+      ],
+      [
+        {
+          stageTitle: "University Registrar Signature",
+          defaultHandler: ""
+        }
+      ],
+      [
+        {
+          stageTitle: "Prepare of final copy and CTC OTR (if applicable)",
+          defaultHandler: "" //staff 2
+        }
+      ],
+      [
+        {
+          stageTitle: "Notify Requester",
+          defaultHandler: ""
+        }
+      ],
+    ]
+  },
 ])
 
 db.requests.insertMany([
