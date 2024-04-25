@@ -25,14 +25,14 @@ db.users.insertMany([
     isAdmin: false
   },
   {
-    _id: "1782838901709",
+    _id: "mom",
     name: "Smolder",
     email: "smolder@lol.com",
     profileUrl: "https://www.mobafire.com/images/champion/square/smolder.png",
     isAdmin: true
   },
   {
-    _id: "237890847",
+    _id: "gnar",
     name: "Gnar",
     email: "gnar@lol.com",
     profileUrl: "https://www.mobafire.com/images/champion/square/gnar.png",
@@ -87,7 +87,7 @@ db.requestTypes.insertMany([
 
 db.requests.insertMany([
   {
-    _id: "dummy",
+    _id: "juststarted",
     requestType: "otrId",
     studentNumber: "2020",
     studentName: "Hello World",
@@ -97,7 +97,7 @@ db.requests.insertMany([
       {
         stageTypeIndex: 0,
         substageTypeIndex: 0,
-        handler: "airylionsoul",
+        handlerId: "airylionsoul",
         finished: false
       }
     ],
@@ -105,16 +105,54 @@ db.requests.insertMany([
       {
         stageTypeIndex: 1,
         substageTypeIndex: 0,
-        handler: "",
+        handlerId: "",
         finished: false
       },
       {
         stageTypeIndex: 1,
         substageTypeIndex: 1,
-        handler: "",
+        handlerId: "",
         finished: false
       }
     ],
     history: []
+  },
+  {
+    _id: "ongoing",
+    requestType: "otrId",
+    studentNumber: "2021",
+    studentName: "Emz",
+    studentEmail: "emz@brawl.com",
+    purpose: "only here for the trophies",
+    currentStages: [
+      {
+        stageTypeIndex: 1,
+        substageTypeIndex: 0,
+        handlerId: "mom",
+        finished: false
+      },
+      {
+        stageTypeIndex: 1,
+        substageTypeIndex: 1,
+        handlerId: "gnar",
+        finished: false
+      }
+    ],
+    nextStages: [
+      {
+        stageTypeIndex: 2,
+        substageTypeIndex: 1,
+        handler: "mom",
+        finished: false
+      }
+    ],
+    history: [
+      {
+        stageTypeIndex: 0,
+        substageTypeIndex: 0,
+        handler: "airylionsoul",
+        finished: true
+      }
+    ]
   },
 ])
