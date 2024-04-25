@@ -1,94 +1,74 @@
+<script context="module">
+</script>
+
 <script lang="ts">
   import { ScrollArea } from "$lib/components/ui/scroll-area";
-  import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-  } from "$lib/components/ui/card";
-  import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage,
-  } from "$lib/components/ui/avatar";
-  import CircleX from "lucide-svelte/icons/circle-x";
-  import CircleUserRound from "lucide-svelte/icons/circle-user-round";
-  import CircleCheck from "lucide-svelte/icons/circle-check";
-  import { Input } from "$lib/components/ui/input";
-  
+  import ProgressViewStage from "./ProgressViewStage.svelte";
+
   export let request: any;
   export let requestType: any;
   export let users: { [_id: string]: { name: string; profileUrl: string } };
 
-  //todo add type
-  let stages: any[] = [];
-  let ready = false;
+  interface SubstageData {
+    title: string;
+    handlerId: string;
+    finished: boolean;
+  }
+
+  interface StageData {
+    isHistory: boolean;
+    isCurrent: boolean;
+    substages: SubstageData[];
+  }
+
+  let stages: StageData[] = [];
 
   for (let stageArray of requestType.stages) {
-    const stage: any[] = [];
+    const stage: StageData = {
+      isHistory: false,
+      isCurrent: false,
+      substages: [],
+    };
+
     stages.push(stage);
     for (let stageType of stageArray) {
-      const substage = {
+      const substage: SubstageData = {
         title: stageType.stageTitle,
-        handler: stageType.defaultHandler,
+        handlerId: stageType.defaultHandler,
         finished: false,
       };
-      stage.push(substage);
+      stage.substages.push(substage);
     }
   }
 
   for (let storedStage of request.history) {
+    stages[storedStage.stageTypeIndex].isHistory = true;
     const substage =
-      stages[storedStage.stageTypeIndex][storedStage.substageTypeIndex];
+      stages[storedStage.stageTypeIndex].substages[
+        storedStage.substageTypeIndex
+      ];
     substage.finished = true;
-    substage.handler = storedStage.handler;
+    substage.handlerId = storedStage.handler;
   }
 
   for (let storedStage of request.currentStages) {
+    stages[storedStage.stageTypeIndex].isCurrent = true;
     const substage =
-      stages[storedStage.stageTypeIndex][storedStage.substageTypeIndex];
+      stages[storedStage.stageTypeIndex].substages[
+        storedStage.substageTypeIndex
+      ];
     substage.finished = storedStage.finished;
-    substage.handler = storedStage.handler;
-    console.log(substage);
+    substage.handlerId = storedStage.handler;
   }
-
-  console.log("hello 4");
 </script>
 
-<ScrollArea>
-  {#each stages as stage, stageIndex}
-    <Card class="flex flex-col border-gray-300">
-      <CardContent class="items-center">
-        {#each stage as substage, substageIndex}
-          <div class="flex flex-row gap-2">
-            {#if substage.finished}
-              <CircleCheck class="stroke-1"/> <!--Change color to green-->
-            {:else}
-              <CircleX class="stroke-muted-foreground stroke-1" />
-            {/if}
-
-            <!--todo change to appropriate component-->
-            <Input placeholder="No Name" disabled={true} value={substage.title} />
-
-            <div class="ml-2">
-              {#if !substage.handler}
-                <CircleUserRound
-                  class="stroke-muted-foreground h-8 w-8 stroke-1"
-                />
-              {:else}
-                <Avatar class="h-8 w-8">
-                  <AvatarImage
-                    src={users[substage.handler].profileUrl}
-                    alt={users[substage.handler].name}
-                  />
-                </Avatar>
-              {/if}
-            </div>
-          </div>
-        {/each}
-      </CardContent>
-    </Card>
-  {/each}
-</ScrollArea>
+<!--Replace this div with it's actual container if needed-->
+<div class="flex justify-center">
+  <ScrollArea class="max-w-[600px] flex-grow gap-2">
+    <div class="flex flex-col gap-2 p-2">
+      {#each stages as stage}
+        <ProgressViewStage {stage} {users} />
+      {/each}
+    </div>
+  </ScrollArea>
+</div>

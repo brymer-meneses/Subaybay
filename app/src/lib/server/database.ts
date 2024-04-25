@@ -34,7 +34,7 @@ export interface Session {
 
 export interface StageType {
   stageTitle: string;
-  defaultHandler: string;
+  defaultHandlerId: string;
 }
 
 export interface RequestType {
@@ -60,6 +60,6 @@ export interface Request {
 export interface Stage {
   stageTypeIndex: number;
   substageTypeIndex: number;
-  handler: string;
+  handlerId: string;
   finished: boolean;
 }
