@@ -34,7 +34,7 @@
     for (let stageType of stageArray) {
       const substage: SubstageData = {
         title: stageType.stageTitle,
-        handlerId: stageType.defaultHandler,
+        handlerId: stageType.defaultHandlerId,
         finished: false,
       };
       stage.substages.push(substage);
@@ -48,7 +48,7 @@
         storedStage.substageTypeIndex
       ];
     substage.finished = true;
-    substage.handlerId = storedStage.handler;
+    substage.handlerId = storedStage.handlerId;
   }
 
   for (let storedStage of request.currentStages) {
@@ -58,7 +58,15 @@
         storedStage.substageTypeIndex
       ];
     substage.finished = storedStage.finished;
-    substage.handlerId = storedStage.handler;
+    substage.handlerId = storedStage.handlerId;
+  }
+
+  for (let storedStage of request.nextStages) {
+    const substage = stages[storedStage.stageTypeIndex].substages[
+      storedStage.substageTypeIndex
+    ];
+    substage.finished = false;
+    substage.handlerId = storedStage.handlerId;
   }
 </script>
 

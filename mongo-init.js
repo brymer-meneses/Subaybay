@@ -68,25 +68,25 @@ for (const item of basicCerts) {
       [
         {
           stageTitle: "Create Request",
-          defaultHandler: "",
+          defaultHandlerId: "",
         },
       ],
       [
         {
           stageTitle: "Prepare Certification",
-          defaultHandler: "",
+          defaultHandlerId: "",
         },
       ],
       [
         {
           stageTitle: "University Registrar Signature",
-          defaultHandler: "",
+          defaultHandlerId: "",
         },
       ],
       [
         {
           stageTitle: "Notify Requester",
-          defaultHandler: "",
+          defaultHandlerId: "",
         },
       ],
     ],
@@ -102,59 +102,59 @@ db.requestTypes.insertMany([
       [
         {
           stageTitle: "Create Request",
-          defaultHandler: "",
+          defaultHandlerId: "",
         },
       ],
       [
         {
           stageTitle: "RR and Edit of Draft",
-          defaultHandler: "", //staff 1
+          defaultHandlerId: "", //staff 1
         },
       ],
       [
         {
           stageTitle: "Checking and Printing of Initial Draft",
-          defaultHandler: "", //staff 2
+          defaultHandlerId: "", //staff 2
         },
       ],
       [
         {
           stageTitle: "Checking Printed Draft",
-          defaultHandler: "", //staff 3
+          defaultHandlerId: "", //staff 3
         },
       ],
       [
         {
           stageTitle: "Final Printing",
-          defaultHandler: "", //staff 2
+          defaultHandlerId: "", //staff 2
         },
       ],
       [
         {
           stageTitle: "Signature",
-          defaultHandler: "", //staff 1
+          defaultHandlerId: "", //staff 1
         },
         {
           stageTitle: "Signature",
-          defaultHandler: "", //staff 3
+          defaultHandlerId: "", //staff 3
         },
       ],
       [
         {
           stageTitle: "University Registrar Signature",
-          defaultHandler: "",
+          defaultHandlerId: "",
         },
       ],
       [
         {
           stageTitle: "Prepare final copy and CTC OTR (if applicable)",
-          defaultHandler: "", //staff 2
+          defaultHandlerId: "", //staff 2
         },
       ],
       [
         {
           stageTitle: "Notify Requester",
-          defaultHandler: "",
+          defaultHandlerId: "",
         },
       ],
     ],
@@ -166,41 +166,41 @@ db.requestTypes.insertMany([
       [
         {
           stageTitle: "Create Request",
-          defaultHandler: ""
+          defaultHandlerId: ""
         }
       ],
       [
         {
           stageTitle: "Print and Sign OTR",
-          defaultHandler: "" //staff 2
+          defaultHandlerId: "" //staff 2
         }
       ],
       [
         {
           stageTitle: "Signature",
-          defaultHandler: "" //staff 1
+          defaultHandlerId: "" //staff 1
         },
         {
           stageTitle: "Signature",
-          defaultHandler: "" //staff 3
+          defaultHandlerId: "" //staff 3
         }
       ],
       [
         {
           stageTitle: "Signature of University Registrar",
-          defaultHandler: ""
+          defaultHandlerId: ""
         }
       ],
       [
         {
           stageTitle: "Prepare final copy and CTC OTR (if applicable)",
-          defaultHandler: "", //staff 2
+          defaultHandlerId: "", //staff 2
         },
       ],
       [
         {
           stageTitle: "Notify Requester",
-          defaultHandler: "",
+          defaultHandlerId: "",
         },
       ]
     ]
@@ -265,4 +265,49 @@ db.requests.insertMany([
       },
     ],
   },
+  {
+    _id: "parallel",
+    requestType: "otr2",
+    studentNumber: "2022",
+    studentName: "Phoenix",
+    studentEmail: "phoenix@val.com",
+    purpose: "to show you how the boss does it",
+    remarks: "Hello",
+    currentStages: [
+      {
+        stageTypeIndex: 2,
+        substageTypeIndex: 0,
+        handlerId: "mom",
+        finished: true
+      },
+      {
+        stageTypeIndex: 2,
+        substageTypeIndex: 1,
+        handlerId: "gnar",
+        finished: false
+      }
+    ],
+    nextStages: [
+      {
+        stageTypeIndex: 3,
+        substageTypeIndex: 0,
+        handlerId: "airylionsoul",
+        finished: false
+      }
+    ],
+    history: [
+      {
+        stageTypeIndex: 0,
+        substageTypeIndex: 0,
+        handlerId: "gnar",
+        finished: true
+      },
+      {
+        stageTypeIndex: 1,
+        substageTypeIndex: 0,
+        handlerId: "gnar",
+        finished: true
+      },
+    ]
+  }
 ]);
