@@ -51,6 +51,8 @@ export interface Request {
   studentName: string;
   studentEmail: string;
   purpose: string;
+  remarks: string;
+  isFinished: boolean;
   currentStages: Array<Stage>;
   nextStages: Array<Stage>;
   history: Array<Stage>;

@@ -1,20 +1,7 @@
 // https://www.mongodb.com/docs/mongodb-shell/reference/methods/
 db = new Mongo().getDB("subaybay");
-db.createCollection("cats");
 db.createCollection("requestTypes");
 db.createCollection("requests");
-
-db.cats.insertMany([
-  {
-    name: 'mr. fresh',
-  },
-  {
-    name: 'mr. grandpa',
-  },
-  {
-    name: 'mr. fuhrer',
-  }
-]);
 
 db.users.insertMany([
   {
@@ -22,97 +9,92 @@ db.users.insertMany([
     name: "Yuumi",
     email: "yuumi@lol.com",
     profileUrl: "https://www.mobafire.com/images/champion/square/yuumi.png",
-    isAdmin: false
+    isAdmin: false,
   },
   {
     _id: "mom",
     name: "Smolder",
     email: "smolder@lol.com",
     profileUrl: "https://www.mobafire.com/images/champion/square/smolder.png",
-    isAdmin: true
+    isAdmin: true,
   },
   {
     _id: "gnar",
     name: "Gnar",
     email: "gnar@lol.com",
     profileUrl: "https://www.mobafire.com/images/champion/square/gnar.png",
-    isAdmin: true
+    isAdmin: true,
   },
   {
     _id: "airylionsoul",
     name: "Aurelion Sol",
     email: "sol@lol.com",
-    profileUrl: "https://www.mobafire.com/images/champion/square/aurelion-sol.png",
-    isAdmin: false
+    profileUrl:
+      "https://www.mobafire.com/images/champion/square/aurelion-sol.png",
+    isAdmin: false,
   },
   {
     _id: "23523452345",
     name: "Kog' Maw",
     email: "kogmaw@lol.com",
     profileUrl: "https://www.mobafire.com/images/champion/square/kogmaw.png",
-    isAdmin: false
-  }
-])
-
-db.requestTypes.insertMany([
-  {
-    _id: "otrId",
-    title: "OTR",
-    stages: [
-      [
-        {
-          stageTitle: "Create Request",
-          defaultHandler: ""
-        }
-      ],
-      [
-        {
-          stageTitle: "Signature 1",
-          defaultHandler: ""
-        },
-        {
-          stageTitle: "Signature 2",
-          defaultHandler: ""
-        }
-      ],
-      [
-        {
-          stageTitle: "University Registrar Signature",
-          defaultHandler: ""
-        }
-      ]
-    ]
+    isAdmin: false,
   },
-  {
-    _id: "coe",
-    title: "Certificate of Enrollment",
+]);
+
+basicCerts = [
+  ["coe", "Certificate of Enrolment"],
+  ["cge", "Certificate of Grade Equivalence"],
+  ["cg", "Certificate of Graduation"],
+  ["cmi", "Certificate of Medium of Instruction"],
+  ["gmc", "Certificate of No Disciplinary Case (GMC)"],
+  ["cnhdg", "Certificate of Non-Issuance of Honorable Dismissal for Graduates"],
+  ["cue", "Certificate of Units Earned"],
+  ["cft", "Certificate of Free Tuition"],
+  ["cnstpsn", "Certificate of NSTP Serial No."],
+  ["cnson", "Certificate of No S.O. Number"],
+  ["ctc", "Certificate of Transfer Credential"],
+  ["tcg", "True Copy of Grades"],
+  ["cd", "Course Description"],
+];
+
+let requestTypesToAdd = [];
+
+for (const item of basicCerts) {
+  requestTypesToAdd.push({
+    _id: item[0],
+    title: item[1],
     stages: [
       [
         {
           stageTitle: "Create Request",
-          defaultHandler: ""
-        }
+          defaultHandler: "",
+        },
       ],
       [
         {
-          stageTitle: "Prepare COE",
-          defaultHandler: ""
-        }
+          stageTitle: "Prepare Certification",
+          defaultHandler: "",
+        },
       ],
       [
         {
           stageTitle: "University Registrar Signature",
-          defaultHandler: ""
-        }
+          defaultHandler: "",
+        },
       ],
       [
         {
           stageTitle: "Notify Requester",
-          defaultHandler: ""
-        }
-      ]
-    ]
-  },
+          defaultHandler: "",
+        },
+      ],
+    ],
+  });
+}
+
+db.requestTypes.insertMany([
+  ...requestTypesToAdd,
   {
     _id: "otr1",
     title: "Official Transcript of Records (OTR) - First Request",
@@ -120,30 +102,76 @@ db.requestTypes.insertMany([
       [
         {
           stageTitle: "Create Request",
+          defaultHandler: "",
+        },
+      ],
+      [
+        {
+          stageTitle: "RR and Edit of Draft",
+          defaultHandler: "", //staff 1
+        },
+      ],
+      [
+        {
+          stageTitle: "Checking and Printing of Initial Draft",
+          defaultHandler: "", //staff 2
+        },
+      ],
+      [
+        {
+          stageTitle: "Checking Printed Draft",
+          defaultHandler: "", //staff 3
+        },
+      ],
+      [
+        {
+          stageTitle: "Final Printing",
+          defaultHandler: "", //staff 2
+        },
+      ],
+      [
+        {
+          stageTitle: "Signature",
+          defaultHandler: "", //staff 1
+        },
+        {
+          stageTitle: "Signature",
+          defaultHandler: "", //staff 3
+        },
+      ],
+      [
+        {
+          stageTitle: "University Registrar Signature",
+          defaultHandler: "",
+        },
+      ],
+      [
+        {
+          stageTitle: "Prepare final copy and CTC OTR (if applicable)",
+          defaultHandler: "", //staff 2
+        },
+      ],
+      [
+        {
+          stageTitle: "Notify Requester",
+          defaultHandler: "",
+        },
+      ],
+    ],
+  },
+  {
+    _id: "otr2",
+    title: "Official Transcript of Records (OTR) - Second Request",
+    stages: [
+      [
+        {
+          stageTitle: "Create Request",
           defaultHandler: ""
         }
       ],
       [
         {
-          stageTitle: "RR and Edit of Draft",
-          defaultHandler: "" //staff 1
-        }
-      ],
-      [
-        {
-          stageTitle: "Checking and Printing of Initial Draft",
-          defaultHandler: "" //staff 2
-        }
-      ],
-      [
-        {
-          stageTitle: "Checking Printed Draft",
-          defaultHandler: "" //staff 3
-        }
-      ],
-      [
-        {
-          stageTitle: "Final Printing",
+          stageTitle: "Print and Sign OTR",
           defaultHandler: "" //staff 2
         }
       ],
@@ -159,30 +187,30 @@ db.requestTypes.insertMany([
       ],
       [
         {
-          stageTitle: "University Registrar Signature",
+          stageTitle: "Signature of University Registrar",
           defaultHandler: ""
         }
       ],
       [
         {
-          stageTitle: "Prepare of final copy and CTC OTR (if applicable)",
-          defaultHandler: "" //staff 2
-        }
+          stageTitle: "Prepare final copy and CTC OTR (if applicable)",
+          defaultHandler: "", //staff 2
+        },
       ],
       [
         {
           stageTitle: "Notify Requester",
-          defaultHandler: ""
-        }
-      ],
+          defaultHandler: "",
+        },
+      ]
     ]
-  },
-])
+  }
+]);
 
 db.requests.insertMany([
   {
     _id: "juststarted",
-    requestType: "otrId",
+    requestType: "coe",
     studentNumber: "2020",
     studentName: "Hello World",
     studentEmail: "student@student.com",
@@ -192,28 +220,22 @@ db.requests.insertMany([
         stageTypeIndex: 0,
         substageTypeIndex: 0,
         handlerId: "airylionsoul",
-        finished: false
-      }
+        finished: false,
+      },
     ],
     nextStages: [
       {
         stageTypeIndex: 1,
         substageTypeIndex: 0,
-        handlerId: "",
-        finished: false
+        handlerId: "mom",
+        finished: false,
       },
-      {
-        stageTypeIndex: 1,
-        substageTypeIndex: 1,
-        handlerId: "",
-        finished: false
-      }
     ],
-    history: []
+    history: [],
   },
   {
     _id: "ongoing",
-    requestType: "otrId",
+    requestType: "coe",
     studentNumber: "2021",
     studentName: "Emz",
     studentEmail: "emz@brawl.com",
@@ -223,30 +245,24 @@ db.requests.insertMany([
         stageTypeIndex: 1,
         substageTypeIndex: 0,
         handlerId: "mom",
-        finished: false
+        finished: false,
       },
-      {
-        stageTypeIndex: 1,
-        substageTypeIndex: 1,
-        handlerId: "gnar",
-        finished: false
-      }
     ],
     nextStages: [
       {
         stageTypeIndex: 2,
         substageTypeIndex: 1,
-        handler: "mom",
-        finished: false
-      }
+        handlerId: "mom",
+        finished: false,
+      },
     ],
     history: [
       {
         stageTypeIndex: 0,
         substageTypeIndex: 0,
-        handler: "airylionsoul",
-        finished: true
-      }
-    ]
+        handlerId: "airylionsoul",
+        finished: true,
+      },
+    ],
   },
-])
+]);
