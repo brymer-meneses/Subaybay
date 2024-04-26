@@ -9,13 +9,31 @@
   import Plus from "lucide-svelte/icons/plus";
   import Search from "lucide-svelte/icons/search";
 
-  export let users: {
+  type User = {
     _id: string;
     name: string;
     email: string;
     profileUrl: string;
     isAdmin: boolean;
-  }[];
+  };
+
+  export let users: User[];
+
+  let searchTerm: string = "";
+  let filteredUsers: User[] = [];
+
+  $: filteredUsers = users.filter((user: User) => {
+    for (const key in user) {
+      if (key === "isAdmin" || key === "profileUrl") continue;
+      const userKey = key as keyof User;
+      if (
+        String(user[userKey]).toLowerCase().includes(searchTerm.toLowerCase())
+      ) {
+        return user;
+      }
+    }
+    return null;
+  });
 </script>
 
 <Card.Root>
@@ -29,14 +47,18 @@
         type="search"
         placeholder="Search..."
         class="bg-background w-full rounded-lg pl-8"
+        bind:value={searchTerm}
       />
     </div>
   </Card.Header>
   <Card.Content>
     <Table.Root>
-      <Table.Caption>List of whitelisted users.</Table.Caption>
+      <Table.Caption
+        >Returned {filteredUsers.length}
+        {filteredUsers.length === 1 ? "result" : "results"}.</Table.Caption
+      >
       <Table.Header>
-        <Table.Row class="text-left font-semibold">
+        <Table.Row class="grid w-full grid-cols-5 text-left font-semibold">
           <Table.Cell class=" ">Name</Table.Cell>
           <Table.Cell class=" ">Email</Table.Cell>
           <Table.Cell class=" ">ID</Table.Cell>
@@ -45,8 +67,8 @@
         </Table.Row>
       </Table.Header>
       <Table.Body>
-        {#each users as user (user._id)}
-          <Table.Row class="text-left">
+        {#each filteredUsers as user (user._id)}
+          <Table.Row class="grid w-full grid-cols-5 text-left">
             <Table.Cell>
               <p>
                 {user.name}{#if user.isAdmin}

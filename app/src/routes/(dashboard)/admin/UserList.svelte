@@ -1,5 +1,7 @@
 <script lang="ts">
   import * as Card from "$lib/components/ui/card/index.js";
+  import * as HoverCard from "$lib/components/ui/hover-card/index.js";
+
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
   import UsersRoundCog from "lucide-svelte/icons/user-round-cog";
@@ -39,7 +41,15 @@
                   ? user.name.substring(0, 20) + "..."
                   : user.name}
                 {#if user.isAdmin}
-                  <UsersRoundCog class="inline h-4 w-4 opacity-60" />
+                  <HoverCard.Root>
+                    <HoverCard.Trigger>
+                      <UsersRoundCog class="inline h-4 w-4 opacity-60" />
+                    </HoverCard.Trigger>
+                    <HoverCard.Content
+                      class="w-20 p-2 text-center text-sm font-semibold"
+                      >Admin</HoverCard.Content
+                    >
+                  </HoverCard.Root>
                 {/if}
               </p>
               <p class="text-muted-foreground text-sm">
