@@ -1,12 +1,11 @@
 <script lang="ts">
   import * as Card from "$lib/components/ui/card/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
+  import { goto } from "$app/navigation";
   // import File from "lucide-svelte/icons/file-type-2";
 
-  export let tab: string;
-  let value: string = "request-types";
-  const onClickHandler = (value: string) => {
-    tab = value;
+  const onClickHandler = () => {
+    goto("../requests");
   };
 </script>
 
@@ -24,7 +23,7 @@
     <Button
       variant="outline"
       class="gap-2 text-[#112]"
-      on:click={() => onClickHandler(value)}>View</Button
+      on:click={() => onClickHandler()}>View</Button
     >
   </Card.Footer>
 </Card.Root>

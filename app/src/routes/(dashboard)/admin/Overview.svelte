@@ -4,7 +4,7 @@
 
   export let tab: string;
 
-  let value: string = "analytics";
+  let value: string = "stats";
 
   const onClickHandler = (value: string) => {
     tab = value;

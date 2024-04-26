@@ -2,6 +2,7 @@
   import * as Card from "$lib/components/ui/card/index.js";
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
+  import UsersRoundCog from "lucide-svelte/icons/user-round-cog";
 
   export let users: {
     name: string;
@@ -9,27 +10,21 @@
     profileUrl: string;
     isAdmin: boolean;
   }[];
-  export let admin: boolean;
   export let tab: string;
 
-  let value: string = "whitelist";
-
-  if (admin) {
-    value = "admins";
-    users = users.filter((e) => e.isAdmin);
-  }
+  let value: string = "users";
 
   const onClickHandler = (value: string) => {
     tab = value;
   };
 </script>
 
-<Card.Root class="m-0 h-80">
+<Card.Root class="m-0 h-full w-72">
   <Card.Header>
-    <Card.Title>{admin ? "Administrators" : "Whitelisted Users"}</Card.Title>
+    <Card.Title>Users</Card.Title>
   </Card.Header>
   <Card.Content>
-    <ScrollArea class="h-44 w-full rounded-md ">
+    <ScrollArea class="h-[500px] w-full rounded-md">
       {#each users as user}
         <div class="mb-4 flex items-center justify-between space-x-4">
           <div class="flex items-center space-x-4">
@@ -40,9 +35,12 @@
             />
             <div>
               <p class="text-sm font-medium leading-none">
-                {user.name.length > 25
-                  ? user.name.substring(0, 25) + "..."
+                {user.name.length > 20
+                  ? user.name.substring(0, 20) + "..."
                   : user.name}
+                {#if user.isAdmin}
+                  <UsersRoundCog class="inline h-4 w-4 opacity-60" />
+                {/if}
               </p>
               <p class="text-muted-foreground text-sm">
                 {user.email.length > 25
@@ -56,10 +54,8 @@
     </ScrollArea>
   </Card.Content>
   <Card.Footer class="float-end">
-    <Button
-      variant="outline"
-      class="w-28 gap-1"
-      on:click={() => onClickHandler(value)}>Manage</Button
+    <Button class="w-28 gap-1" on:click={() => onClickHandler(value)}
+      >Manage</Button
     >
   </Card.Footer>
 </Card.Root>

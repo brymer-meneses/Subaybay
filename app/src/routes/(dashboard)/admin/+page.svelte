@@ -1,9 +1,9 @@
 <script lang="ts">
   import RequestsCountCard from "./RequestsCountCard.svelte";
-  import RequestTypesCard from "./RequestTypesCard.svelte";
+  import RequestCard from "./RequestCard.svelte";
   import Overview from "./Overview.svelte";
   import UserList from "./UserList.svelte";
-  import UserTable from "./WhitelistUsers.svelte";
+  import UserTable from "./UserTable.svelte";
   import NewUser from "./NewUser.svelte";
   import UsersRound from "lucide-svelte/icons/users-round";
   import * as Tabs from "$lib/components/ui/tabs/index.js";
@@ -19,10 +19,26 @@
   ];
 
   export let data: PageData;
-  export let form;
+  export let form: PageData;
+
+  let users = data.users.sort(compare);
+  let admins = users.filter((e) => e.isAdmin);
+  $: {
+    users = form ? form.users.sort(compare) : data.users.sort(compare);
+    admins = users.filter((e) => e.isAdmin);
+  }
+
+  let dialogOpen: boolean = false;
   let value: string;
-  let tab: string = "overview";
+  let tab: string;
+
   $: tab = value;
+
+  function compare(a: any, b: any) {
+    if (a.isAdmin > b.isAdmin) return -1;
+    if (a.isAdmin < b.isAdmin) return 1;
+    return 0;
+  }
 </script>
 
 <!-- TODO but Low Priority: Fix Responsiveness of the layout -->
@@ -31,12 +47,10 @@
     Administrator <UsersRound class="inline h-6 w-6" />
   </h2>
   <Tabs.Root bind:value class="w-full space-y-4">
-    <Tabs.List class="grid w-[720px] grid-cols-5 border">
+    <Tabs.List class="grid w-[720px] grid-cols-3 border">
       <Tabs.Trigger value="overview">Overview</Tabs.Trigger>
-      <Tabs.Trigger value="analytics">Analytics</Tabs.Trigger>
-      <Tabs.Trigger value="request-types">Requests</Tabs.Trigger>
-      <Tabs.Trigger value="admins">Administrators</Tabs.Trigger>
-      <Tabs.Trigger value="whitelist">Whitelisted Users</Tabs.Trigger>
+      <Tabs.Trigger value="stats">Statistics</Tabs.Trigger>
+      <Tabs.Trigger value="users">Users</Tabs.Trigger>
     </Tabs.List>
     <Tabs.Content value="overview">
       <div class="mr-8 flex justify-between space-x-4">
@@ -45,44 +59,28 @@
             {#each summary as s}
               <RequestsCountCard {s} />
             {/each}
-            <RequestTypesCard bind:tab={value} />
+            <RequestCard />
           </div>
           <div class="grid flex-grow gap-4 md:grid-cols-2 lg:grid-cols-7">
             <Overview bind:tab={value} />
           </div>
         </div>
-        <div class="space-y-4 pt-4">
-          <div>
-            <UserList users={data.users} admin={true} bind:tab={value} />
-          </div>
-          <div>
-            <UserList users={data.users} admin={false} bind:tab={value} />
-          </div>
+        <div class="my-4 space-y-4">
+          <UserList bind:users bind:tab={value} />
         </div>
       </div>
     </Tabs.Content>
-    <Tabs.Content value="analytics"
-      ><p>
-        Do this after client confirms so that design can have statistical
-        reports or idk. Im bad at frontend
-      </p>
-      Put here the statistics that maam ash asked about
+    <Tabs.Content value="stats">
       <Button class="gap-2"
         ><Download class="text-muted-foreground h-6 w-6 text-white" /> Report</Button
       >
     </Tabs.Content>
-    <Tabs.Content value="request-types"
-      ><p>Request types + button to go to config</p>
-      <p>List all requests</p>
-      <p>Option to mark an ongoing request as stale</p></Tabs.Content
-    >
-    <Tabs.Content value="admins">
-      <UserTable users={data.users.filter((e) => e.isAdmin)} />
-      <NewAdmin users={data.users.filter((e) => !e.isAdmin)} />
-    </Tabs.Content>
-    <Tabs.Content value="whitelist">
-      <UserTable users={data.users} />
-      <NewUser />
+    <Tabs.Content value="users" class="space-y-4">
+      <UserTable bind:users />
+      <!-- <NewAdmin
+        users={users.filter((e) => !e.isAdmin)}
+        bind:open={dialogOpen}
+      /> -->
     </Tabs.Content>
   </Tabs.Root>
 </main>
