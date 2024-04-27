@@ -3,7 +3,7 @@
   import RequestCard from "./RequestCard.svelte";
   import Overview from "./Overview.svelte";
   import UserList from "./UserList.svelte";
-  import UserTable from "./UserTable.svelte";
+  import UserManagement from "./UserManagement.svelte";
   import NewUser from "./NewUser.svelte";
   import UsersRound from "lucide-svelte/icons/users-round";
   import * as Tabs from "$lib/components/ui/tabs/index.js";
@@ -76,7 +76,7 @@
       >
     </Tabs.Content>
     <Tabs.Content value="users" class="space-y-4">
-      <UserTable bind:users />
+      <UserManagement bind:users />
       <!-- <NewAdmin
         users={users.filter((e) => !e.isAdmin)}
         bind:open={dialogOpen}

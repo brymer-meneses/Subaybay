@@ -21,7 +21,7 @@
   >
   <Card.Footer class="flex justify-end gap-4">
     <Button class="gap-1 p-4" on:click={() => onClickHandler(value)}
-      >View Analytics</Button
+      >View Statistics</Button
     >
   </Card.Footer>
 </Card.Root>
