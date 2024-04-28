@@ -33,7 +33,7 @@
             <img
               src={user.profileUrl}
               alt=""
-              class="aspect-square h-12 rounded-full border border-black"
+              class="aspect-square h-12 rounded-full"
             />
             <div>
               <p class="text-sm font-medium leading-none">

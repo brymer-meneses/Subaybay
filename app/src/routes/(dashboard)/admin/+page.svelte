@@ -4,13 +4,11 @@
   import Overview from "./Overview.svelte";
   import UserList from "./UserList.svelte";
   import UserManagement from "./UserManagement.svelte";
-  import NewUser from "./NewUser.svelte";
   import UsersRound from "lucide-svelte/icons/users-round";
   import * as Tabs from "$lib/components/ui/tabs/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
   import Download from "lucide-svelte/icons/download";
   import type { PageData } from "./$types.js";
-  import NewAdmin from "./NewAdmin.svelte";
 
   const summary = [
     { type: "Finished", count: 37 },
@@ -21,10 +19,14 @@
   export let data: PageData;
   export let form: PageData;
 
-  let users = data.users.sort(compare);
+  // Safely copy and sort without mutating the original data.users
+  let users = [...data.users].sort(compare);
   let admins = users.filter((e) => e.isAdmin);
+
   $: {
-    users = form ? form.users.sort(compare) : data.users.sort(compare);
+    users = form
+      ? [...form.users].sort(compare)
+      : [...data.users].sort(compare);
     admins = users.filter((e) => e.isAdmin);
   }
 
@@ -77,10 +79,6 @@
     </Tabs.Content>
     <Tabs.Content value="users" class="space-y-4">
       <UserManagement bind:users />
-      <!-- <NewAdmin
-        users={users.filter((e) => !e.isAdmin)}
-        bind:open={dialogOpen}
-      /> -->
     </Tabs.Content>
   </Tabs.Root>
 </main>

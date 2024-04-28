@@ -21,23 +21,56 @@ export const load: PageServerLoad = async (event) => {
 };
 
 export const actions: Actions = {
-  update: async ({request}) => {
-    let data = await request.formData();
-    let selectedUsers: User[] = [];
-    
-    data.getAll('selectedUser').forEach( (u: any) => {
-      selectedUsers.push(JSON.parse(u));
-    })
+  remove_user: async({request}) => {
+    const data = await request.formData();
+    const email:string = data.get("email") as string;
+    console.log(email)
+
+    if(!email){
+      console.log("Null email.");
+      return;
+    }
+    const users = database.collection<User>("users");
+    await users.deleteOne({email});
+
+    const res = await users.find({}).toArray()
+
+    return { users: res };
+  },
+
+  remove_admin: async({request}) => {
+    const data = await request.formData();
+    const email:string = data.get("email") as string;
+    console.log(email)
+
+    if(!email){
+      console.log("Null email.");
+      return;
+    }
     
     const users = database.collection<User>("users");
-    for (const u of selectedUsers) {
-      try {
-        await users.updateOne({email: u.email}, {$set: {isAdmin: true}});
-      } catch (error) {
-        console.error("Failed to update user", error);
-      }
+    await users.updateOne({email}, {$set: {isAdmin: false}});
+
+    const res = await users.find({}).toArray()
+
+    return { users: res };
+  },
+
+  add_admin: async({request}) => {
+    const data = await request.formData();
+    const email:string = data.get("email") as string;
+    console.log(email)
+
+    if(!email){
+      console.log("Null email.");
+      return;
     }
 
-    return { users: await users.find({}).toArray()};
-  }
+    const users = database.collection<User>("users");
+    await users.updateOne({email}, {$set: {isAdmin: true}});
+
+    const res = await users.find({}).toArray()
+
+    return { users: res };
+  },
 }
