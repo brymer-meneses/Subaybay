@@ -6,6 +6,7 @@
   import Separator from "$lib/components/ui/separator/separator.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
+  import { Badge } from "$lib/components/ui/badge/index.js";
   import { Switch } from "$lib/components/ui/switch/index.js";
 
   import UsersRoundCog from "lucide-svelte/icons/user-round-cog";
@@ -72,8 +73,8 @@
           <Table.Head class=" ">Name</Table.Head>
           <Table.Head class=" ">Email</Table.Head>
           <Table.Head class=" ">ID</Table.Head>
-          <Table.Head class=" text-center ">Admin Privileges</Table.Head>
-          <Table.Head class=" "></Table.Head>
+          <Table.Head class=" text-center ">Roles</Table.Head>
+          <Table.Head class=" text-center ">Actions</Table.Head>
         </Table.Row>
       </Table.Header>
       <ScrollArea class="h-[30rem]">
@@ -95,22 +96,15 @@
               </Table.Cell>
               <Table.Cell>
                 <div class="flex justify-center">
-                  <Switch checked={user.isAdmin} />
+                  {#if user.isAdmin}
+                    <Badge>Admin</Badge>
+                  {/if}
+
+                  <Badge variant="outline">Staff</Badge>
                 </div>
               </Table.Cell>
               <Table.Cell>
-                <div class="flex justify-center">
-                  <HoverCard.Root
-                    ><HoverCard.Trigger>
-                      <Button variant="destructive" class="p-2"
-                        ><Trash2 /></Button
-                      >
-                    </HoverCard.Trigger>
-                    <HoverCard.Content class="w-28 p-0 text-center"
-                      >Remove User</HoverCard.Content
-                    >
-                  </HoverCard.Root>
-                </div>
+                <div class="flex justify-center">Dropdown here</div>
               </Table.Cell>
             </Table.Row>
           {/each}

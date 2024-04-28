@@ -1,4 +1,5 @@
 <script lang="ts">
+  // https://github.com/himynameisdave/svelte-frappe-charts
   import * as Card from "$lib/components/ui/card/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
 
@@ -14,7 +15,7 @@
 <Card.Root class="col-span-full flex h-full flex-col justify-between space-y-2">
   <Card.Header>
     <Card.Title>Overview</Card.Title>
-    <Card.Description>Jan 2023 - Mar 2024</Card.Description>
+    <Card.Description>Last 7 working days</Card.Description>
   </Card.Header>
   <Card.Content class=" flex grow items-center justify-center  text-3xl"
     >Graph here</Card.Content
