@@ -1,18 +1,16 @@
 <script lang="ts">
   import * as Table from "$lib/components/ui/table";
   import * as Card from "$lib/components/ui/card/index.js";
-  import * as HoverCard from "$lib/components/ui/hover-card/index.js";
+  import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
-  import Separator from "$lib/components/ui/separator/separator.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
   import { Badge } from "$lib/components/ui/badge/index.js";
-  import { Switch } from "$lib/components/ui/switch/index.js";
 
   import UsersRoundCog from "lucide-svelte/icons/user-round-cog";
   import Plus from "lucide-svelte/icons/plus";
-  import Trash2 from "lucide-svelte/icons/trash-2";
   import Search from "lucide-svelte/icons/search";
+  import EllipsisVertical from "lucide-svelte/icons/ellipsis-vertical";
 
   type User = {
     _id: string;
@@ -43,7 +41,7 @@
 
 <Card.Root>
   <Card.Header class="flex flex-row items-center justify-between align-middle">
-    <Card.Title class="font-bold">User Management</Card.Title>
+    <Card.Title class="text-xl font-bold">User Management</Card.Title>
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
       <div class="relative w-80">
         <Search
@@ -61,7 +59,6 @@
       </div>
     </div>
   </Card.Header>
-  <!-- <Separator /> -->
   <Card.Content>
     <Table.Root class="mt-4 ">
       <Table.Caption
@@ -95,16 +92,33 @@
                 <p>{user._id}</p>
               </Table.Cell>
               <Table.Cell>
-                <div class="flex justify-center">
+                <div class="flex justify-center gap-2">
                   {#if user.isAdmin}
                     <Badge>Admin</Badge>
                   {/if}
-
-                  <Badge variant="outline">Staff</Badge>
+                  <Badge variant="secondary">Staff</Badge>
                 </div>
               </Table.Cell>
               <Table.Cell>
-                <div class="flex justify-center">Dropdown here</div>
+                <div class="flex justify-center">
+                  <DropdownMenu.Root>
+                    <DropdownMenu.Trigger asChild let:builder>
+                      <Button builders={[builder]} variant="ghost"
+                        ><EllipsisVertical /></Button
+                      >
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Content>
+                      <DropdownMenu.Item>Remove User</DropdownMenu.Item>
+                      <DropdownMenu.Item>
+                        {#if user.isAdmin}
+                          Remove Admin Privileges
+                        {:else}
+                          Add as Admin
+                        {/if}
+                      </DropdownMenu.Item>
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Root>
+                </div>
               </Table.Cell>
             </Table.Row>
           {/each}
