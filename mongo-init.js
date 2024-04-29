@@ -1,7 +1,5 @@
 // https://www.mongodb.com/docs/mongodb-shell/reference/methods/
 db = new Mongo().getDB("subaybay");
-db.createCollection("requestTypes");
-db.createCollection("requests");
 
 db.users.insertMany([
   {
@@ -42,6 +40,7 @@ db.users.insertMany([
   },
 ]);
 
+// [id, title]
 basicCerts = [
   ["coe", "Certificate of Enrolment"],
   ["cge", "Certificate of Grade Equivalence"],
@@ -221,6 +220,8 @@ db.requests.insertMany([
         substageTypeIndex: 0,
         handlerId: "airylionsoul",
         finished: false,
+        dateStarted: new Date('2024-04-27'),
+        dateFinished: new Date('2024-04-28')
       },
     ],
     nextStages: [
@@ -229,41 +230,11 @@ db.requests.insertMany([
         substageTypeIndex: 0,
         handlerId: "mom",
         finished: false,
+        dateStarted: new Date(0),
+        dateFinished: new Date(0)
       },
     ],
     history: [],
-  },
-  {
-    _id: "ongoing",
-    requestType: "coe",
-    studentNumber: "2021",
-    studentName: "Emz",
-    studentEmail: "emz@brawl.com",
-    purpose: "only here for the trophies",
-    currentStages: [
-      {
-        stageTypeIndex: 1,
-        substageTypeIndex: 0,
-        handlerId: "mom",
-        finished: false,
-      },
-    ],
-    nextStages: [
-      {
-        stageTypeIndex: 2,
-        substageTypeIndex: 1,
-        handlerId: "mom",
-        finished: false,
-      },
-    ],
-    history: [
-      {
-        stageTypeIndex: 0,
-        substageTypeIndex: 0,
-        handlerId: "airylionsoul",
-        finished: true,
-      },
-    ],
   },
   {
     _id: "parallel",
@@ -278,13 +249,17 @@ db.requests.insertMany([
         stageTypeIndex: 2,
         substageTypeIndex: 0,
         handlerId: "mom",
-        finished: true
+        finished: true,
+        dateStarted: new Date('2024-04-29'),
+        dateFinished: new Date('2024-04-29')
       },
       {
         stageTypeIndex: 2,
         substageTypeIndex: 1,
         handlerId: "gnar",
-        finished: false
+        finished: false,
+        dateStarted: new Date('2024-04-29'),
+        dateFinished: new Date('2024-04-29'),
       }
     ],
     nextStages: [
@@ -292,7 +267,9 @@ db.requests.insertMany([
         stageTypeIndex: 3,
         substageTypeIndex: 0,
         handlerId: "airylionsoul",
-        finished: false
+        finished: false,
+        dateStarted: new Date(0),
+        dateFinished: new Date(0)
       }
     ],
     history: [
@@ -300,13 +277,17 @@ db.requests.insertMany([
         stageTypeIndex: 0,
         substageTypeIndex: 0,
         handlerId: "gnar",
-        finished: true
+        finished: true,
+        dateStarted: new Date('2024-04-28'),
+        dateFinished: new Date('2024-04-28')
       },
       {
         stageTypeIndex: 1,
         substageTypeIndex: 0,
         handlerId: "gnar",
-        finished: true
+        finished: true,
+        dateStarted: new Date('2024-04-28'),
+        dateFinished: new Date('2024-04-28')
       },
     ]
   }

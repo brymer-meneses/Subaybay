@@ -13,7 +13,7 @@
 
 <Table.Root class="mt-4">
   <Table.Caption
-    >Returned {users.length}
+    >Showing {users.length}
     {users.length === 1 ? "result" : "results"}.</Table.Caption
   >
   <Table.Header>

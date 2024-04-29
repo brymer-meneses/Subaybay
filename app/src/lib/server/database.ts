@@ -16,6 +16,7 @@ export const database = client.db(DATABASE_NAME);
 export const user = database.collection<User>("users");
 export const session = database.collection<Session>("sessions");
 export const request = database.collection<Request>("requests");
+export const requestType = database.collection<RequestType>("requestTypes");
 
 export interface User {
   _id: string;
@@ -64,4 +65,6 @@ export interface Stage {
   substageTypeIndex: number;
   handlerId: string;
   finished: boolean;
+  dateStarted: Date;
+  dateFinished: Date;
 }

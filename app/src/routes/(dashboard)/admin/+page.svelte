@@ -2,16 +2,14 @@
   import type { PageData } from "./$types.js";
 
   import * as Tabs from "$lib/components/ui/tabs/index.js";
-  import { Button } from "$lib/components/ui/button/index.js";
-
   import RequestsCountCard from "./RequestsCountCard.svelte";
   import RequestCard from "./RequestCard.svelte";
   import Overview from "./Overview.svelte";
   import UserList from "./UserList.svelte";
+  import Statistics from "./Statistics.svelte";
   import UserManagement from "./UserManagement.svelte";
 
   import UsersRound from "lucide-svelte/icons/users-round";
-  import Download from "lucide-svelte/icons/download";
 
   export let data: PageData;
   export let form: PageData;
@@ -41,6 +39,15 @@
   }
 </script>
 
+<!-- <p>
+  {JSON.stringify(data.stats.summary, null, 2)}
+</p>
+<p>
+  {JSON.stringify(data.stats.requestTypes, null, 2)}
+</p>
+<p>
+  {JSON.stringify(data.stats.requests, null, 2)}
+</p> -->
 <!-- TODO but Low Priority: Fix Responsiveness of the layout -->
 <main class="mx-8 flex flex-col space-y-4">
   <h2 class="flex items-center gap-2 text-3xl font-bold tracking-tight">
@@ -71,9 +78,7 @@
       </div>
     </Tabs.Content>
     <Tabs.Content value="stats">
-      <Button class="gap-2"
-        ><Download class="text-muted-foreground h-6 w-6 text-white" /> Report</Button
-      >
+      <Statistics />
     </Tabs.Content>
     <Tabs.Content value="users" class="space-y-4">
       <UserManagement bind:users />
