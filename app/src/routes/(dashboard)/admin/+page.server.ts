@@ -1,6 +1,6 @@
 import type { PageServerLoad, Actions } from "./$types";
 import { fail, redirect } from "@sveltejs/kit";
-import { database, type User } from "$lib/server/database";
+import { database, type User, type Request, type RequestType } from "$lib/server/database";
 import type { RequestEvent } from "../$types";
 
 export const load: PageServerLoad = async (event) => {
@@ -18,12 +18,16 @@ export const load: PageServerLoad = async (event) => {
     .toArray();
 
   // Count and Classify requests but dummy for now
+
+  const requestTypes = await database.collection<RequestType>('requestTypes').find({}).toArray();
+  const requests = await database.collection<Request>('requests').find({}).toArray();
+  // count each requests and classify each as finished|pending|stale
   const stats = {
     summary: [
       { type: "Finished", count: 37 },
       { type: "Pending", count: 154 },
       { type: "Stale", count: 7 },
-    ],
+    ], requests, requestTypes,
   };
 
   return { users, stats };
