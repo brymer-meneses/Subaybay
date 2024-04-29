@@ -3,10 +3,10 @@
   import Header from "./Header.svelte";
 </script>
 
-<div class="flex min-h-screen w-full flex-col bg-muted/40">
+<div class="bg-muted/40 flex min-h-screen w-full flex-col">
   <Sidebar />
 
-  <div class="flex min-h-screen w-full flex-col bg-muted/40">
+  <div class="bg-muted/40 flex min-h-screen flex-col sm:pl-0 md:pl-44 lg:pl-44">
     <div class="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
       <Header />
       <slot />

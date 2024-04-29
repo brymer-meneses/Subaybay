@@ -17,16 +17,18 @@
     <a
       {href}
       class={clsx(
-        "flex h-9 w-9 items-center justify-center rounded-lg  transition-colors hover:text-foreground md:h-8 md:w-8",
+        "hover:text-foreground flex h-10 items-center rounded-xl px-4",
         isSelected
-          ? "bg-accent text-accent-foreground"
+          ? "text-accent-foreground bg-slate-200"
           : "text-muted-foreground",
       )}
       use:builder.action
       {...builder}
     >
-      <svelte:component this={icon} class="h-5 w-5" />
-      <span class="sr-only">{name}</span>
+      <div class="flex items-center gap-4">
+        <svelte:component this={icon} class="h-5 w-5" />
+        <span>{name}</span>
+      </div>
     </a>
   </Tooltip.Trigger>
   <Tooltip.Content side="right">{name}</Tooltip.Content>
