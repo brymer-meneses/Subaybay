@@ -20,13 +20,13 @@
 
   type Reply = {
     content: string;
-    chatId: string;
+    roomId: string;
     userId: string;
   };
 
   type Event = {
     content: string;
-    chatId: string;
+    roomId: string;
     userId: string;
   };
 
@@ -35,7 +35,7 @@
     content: Reply | Event;
   };
 
-  export let chatId: string;
+  export let roomId: string;
 
   $: userId = $page.data.userInfo.id;
   $: sessionId = $page.data.sessionId;
@@ -50,9 +50,9 @@
     // TODO: should encode roomId somehow
     // probably in this format: requestId-step
     const params = {
-      session_id: sessionId,
-      user_id: userId,
-      chat_id: chatId,
+      sessionId,
+      userId,
+      roomId,
     };
 
     socket = new WebSocket(
@@ -95,7 +95,7 @@
       content: {
         content: messageContent,
         userId,
-        chatId,
+        roomId,
       },
     };
 

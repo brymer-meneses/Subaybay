@@ -3,6 +3,7 @@ use axum::{
     response::IntoResponse,
 };
 use axum_typed_websockets::{Message, WebSocket, WebSocketUpgrade};
+use mongodb::bson::oid::ObjectId;
 
 use crate::{database as db, state::AppState};
 use std::sync::Arc;
@@ -26,21 +27,21 @@ async fn handle_connection(
 
     let (mut sender, mut receiver) = socket.split();
 
-    let rooms_collection = state.database.collection::<db::ChatRoom>("chatRooms");
-    let messages_collection = state.database.collection::<db::ChatMessage>("chatMessages");
+    let rooms_collection = state.database.collection::<db::Room>("rooms");
+    let messages_collection = state.database.collection::<db::Message>("messages");
     let users = state.database.collection::<db::User>("users");
 
     // create room metadata if it doesn't exist yet
     {
         let room = rooms_collection
-            .find_one(doc! { "chatId": &params.chat_id}, None)
+            .find_one(doc! { "roomId": &params.room_id}, None)
             .await
             .unwrap();
 
         match room {
             Some(room) => {
                 if !room.participants.contains(&params.user_id) {
-                    let filter = doc! { "chatId": &params.chat_id};
+                    let filter = doc! { "roomId": &params.room_id};
                     let update = doc! { "$push": doc!{"participants": &params.user_id }};
                     let _ = rooms_collection.update_one(filter, update, None).await;
                 }
@@ -48,8 +49,8 @@ async fn handle_connection(
             None => {
                 let _ = rooms_collection
                     .insert_one(
-                        db::ChatRoom {
-                            chat_id: params.chat_id.clone(),
+                        db::Room {
+                            room_id: params.room_id.clone(),
                             participants: vec![],
                         },
                         None,
@@ -75,10 +76,11 @@ async fn handle_connection(
             },
             doc! {
                 "$project": {
-                    "chatId": 1,
+                    "roomId": 1,
                     "userId": 1,
                     "content": 1,
                     "dateTime": 1,
+                    "messageId": 1,
                     "profileUrl": "$userInfo.profileUrl"
                 }
             },
@@ -105,7 +107,7 @@ async fn handle_connection(
                 vec![doc! {
                     "$match": doc! {
                         "operationType": "insert",
-                        "fullDocument.chatId": params.chat_id,
+                        "fullDocument.roomId": params.room_id,
                     }
                 }],
                 None,
@@ -124,7 +126,8 @@ async fn handle_connection(
             let _ = sender
                 .send(Message::Item(ServerMessage::Reply(
                     ChatMessageWithProfile {
-                        chat_id: message.chat_id,
+                        message_id: message.message_id,
+                        room_id: message.room_id,
                         date_time: message.date_time,
                         user_id: message.user_id,
                         content: message.content,
@@ -135,7 +138,7 @@ async fn handle_connection(
         }
     });
 
-    let messages_collection = state.database.collection::<db::ChatMessage>("chatMessages");
+    let messages_collection = state.database.collection::<db::Message>("messages");
 
     tokio::spawn(async move {
         while let Some(msg) = receiver.next().await {
@@ -145,11 +148,12 @@ async fn handle_connection(
                         date_time,
                         content,
                         user_id,
-                        chat_id,
+                        room_id,
                     } => {
-                        let chat_message = db::ChatMessage {
+                        let chat_message = db::Message {
+                            message_id: ObjectId::new(),
                             user_id,
-                            chat_id,
+                            room_id,
                             date_time,
                             content,
                         };
@@ -179,8 +183,9 @@ use crate::utils::get_time;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ConnectionArgs {
-    chat_id: String,
+    room_id: String,
     user_id: String,
 }
 
@@ -192,7 +197,7 @@ pub enum ClientMessage {
         #[serde(default = "get_time")]
         date_time: u64,
         content: String,
-        chat_id: String,
+        room_id: String,
         user_id: String,
     },
 
@@ -207,7 +212,8 @@ pub enum ClientMessage {
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct ChatMessageWithProfile {
-    pub chat_id: String,
+    pub message_id: ObjectId,
+    pub room_id: String,
     pub user_id: String,
     pub date_time: u64,
     pub content: String,

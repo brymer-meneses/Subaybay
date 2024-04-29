@@ -13,6 +13,7 @@ use crate::{database::Session, state::AppState};
 use mongodb::bson::doc;
 
 #[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct AuthParam {
     session_id: String,
     user_id: String,
@@ -41,14 +42,14 @@ pub async fn authentication(
         if expires_at <= now {
             return Err((
                 StatusCode::UNAUTHORIZED,
-                "The `session_id` passed is not valid",
+                "The `sessionId` passed is not valid",
             ));
         }
 
         if user_id != session.user_id {
             return Err((
                 StatusCode::UNAUTHORIZED,
-                "The `session_id` passed is not valid",
+                "The `sessionId` passed is not valid",
             ));
         }
 
@@ -59,6 +60,6 @@ pub async fn authentication(
     println!("UNAUTHORIZED");
     return Err((
         StatusCode::UNAUTHORIZED,
-        "The `session_id` passed is not valid",
+        "The `sessionId` passed is not valid",
     ));
 }

@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 import type { PageServerLoad, Actions } from "./$types";
 import * as db from "$lib/server/database";
 import { ObjectId } from "mongodb";
+=======
+import type { PageServerLoad } from "./$types";
+import { lucia } from "$lib/server/auth";
+>>>>>>> e9453a1 (commit for now)
 
 import { superValidate } from "sveltekit-superforms";
 import { formSchema } from "./schema";
@@ -20,7 +25,11 @@ interface InboxStageData {
 }
 export const load: PageServerLoad = async ({ cookies, locals }) => {
   const sessionId = cookies.get(lucia.sessionCookieName);
+<<<<<<< HEAD
   const userId = locals.user?.id ?? "0";
+=======
+  // const requests = await database.request.find({}).toArray();
+>>>>>>> e9453a1 (commit for now)
 
   const users = await getUsers();
   const userInbox: db.Inbox = await getInbox(userId);
