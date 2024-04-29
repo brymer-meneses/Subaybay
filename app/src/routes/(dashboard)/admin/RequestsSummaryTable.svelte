@@ -4,7 +4,7 @@
 
   // everything here is for dummy data
   function createRandomRow() {
-    let result = "";
+    let result = "ReqType ";
     for (let i = 0; i < 5; i++) {
       const randomChar = Math.floor(Math.random() * (127 - 32) + 32);
       result += String.fromCharCode(randomChar);
@@ -16,7 +16,7 @@
     const total = f + p + s;
     return { type: result, f, p, s, total };
   }
-  let rows = Array.from({ length: 40 }, createRandomRow);
+  let rows = Array.from({ length: 10 }, createRandomRow);
 </script>
 
 <Table.Root class="mt-4">

@@ -39,7 +39,6 @@
     </div>
   </Card.Header>
   <Card.Content>
-    <p>{searchTerm}</p>
     <RequestsSummaryTable />
   </Card.Content>
   <Card.Footer class="">
