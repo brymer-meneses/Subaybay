@@ -3,6 +3,7 @@
   import * as Dialog from "$lib/components/ui/dialog/index.js";
   import { Input } from "$lib/components/ui/input/index.js";
   import { Label } from "$lib/components/ui/label/index.js";
+  import Plus from "lucide-svelte/icons/plus";
   import FilePlus from "lucide-svelte/icons/file-plus";
 </script>
 
@@ -33,7 +34,7 @@
       </div>
     </div>
     <Dialog.Footer>
-      <Button class="gap-4 px-10">Save</Button>
+      <Button class="gap-2 rounded-xl text-white"><Plus />Add</Button>
     </Dialog.Footer>
   </Dialog.Content>
 </Dialog.Root>
