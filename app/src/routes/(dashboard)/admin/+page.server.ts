@@ -17,14 +17,22 @@ export const load: PageServerLoad = async (event) => {
     .find({})
     .toArray();
 
-  return { users };
+  // Count and Classify requests but dummy for now
+  const requests = {
+    summary: [
+      { type: "Finished", count: 37 },
+      { type: "Pending", count: 154 },
+      { type: "Stale", count: 7 },
+    ],
+  };
+
+  return { users, requests };
 };
 
 export const actions: Actions = {
   remove_user: async({request}) => {
     const data = await request.formData();
     const email:string = data.get("email") as string;
-    console.log(email)
 
     if(!email){
       console.log("Null email.");
@@ -41,7 +49,6 @@ export const actions: Actions = {
   remove_admin: async({request}) => {
     const data = await request.formData();
     const email:string = data.get("email") as string;
-    console.log(email)
 
     if(!email){
       console.log("Null email.");
@@ -59,7 +66,6 @@ export const actions: Actions = {
   add_admin: async({request}) => {
     const data = await request.formData();
     const email:string = data.get("email") as string;
-    console.log(email)
 
     if(!email){
       console.log("Null email.");

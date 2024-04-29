@@ -2,8 +2,6 @@
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import { Button } from "$lib/components/ui/button/index.js";
 
-  import { goto } from "$app/navigation";
-
   import UserRoundMinus from "lucide-svelte/icons/user-round-minus";
 
   export let user: {
@@ -18,7 +16,7 @@
 <AlertDialog.Root>
   <AlertDialog.Trigger>
     <Button variant="link" class="gap-2 text-red-600"
-      ><UserRoundMinus />Remove Admin Privileges</Button
+      ><UserRoundMinus />Remove Admin</Button
     >
   </AlertDialog.Trigger>
   <AlertDialog.Content>

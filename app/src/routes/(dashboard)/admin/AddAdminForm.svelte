@@ -15,9 +15,7 @@
 
 <AlertDialog.Root>
   <AlertDialog.Trigger>
-    <Button variant="link" class="gap-2"
-      ><UserRoundPlus />Add Admin Privileges</Button
-    >
+    <Button variant="link" class="gap-2"><UserRoundPlus />Add Admin</Button>
   </AlertDialog.Trigger>
   <AlertDialog.Content>
     <AlertDialog.Header>

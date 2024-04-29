@@ -10,16 +10,11 @@
   import Download from "lucide-svelte/icons/download";
   import type { PageData } from "./$types.js";
 
-  const summary = [
-    { type: "Finished", count: 37 },
-    { type: "Pending", count: 154 },
-    { type: "Stale", count: 7 },
-  ];
-
   export let data: PageData;
   export let form: PageData;
 
-  // Safely copy and sort without mutating the original data.users
+  const summary = data.requests.summary;
+
   let users = [...data.users].sort(compare);
   let admins = users.filter((e) => e.isAdmin);
 
