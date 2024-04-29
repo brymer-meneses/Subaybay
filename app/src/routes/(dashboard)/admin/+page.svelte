@@ -1,19 +1,22 @@
 <script lang="ts">
+  import type { PageData } from "./$types.js";
+
+  import * as Tabs from "$lib/components/ui/tabs/index.js";
+  import { Button } from "$lib/components/ui/button/index.js";
+
   import RequestsCountCard from "./RequestsCountCard.svelte";
   import RequestCard from "./RequestCard.svelte";
   import Overview from "./Overview.svelte";
   import UserList from "./UserList.svelte";
   import UserManagement from "./UserManagement.svelte";
+
   import UsersRound from "lucide-svelte/icons/users-round";
-  import * as Tabs from "$lib/components/ui/tabs/index.js";
-  import { Button } from "$lib/components/ui/button/index.js";
   import Download from "lucide-svelte/icons/download";
-  import type { PageData } from "./$types.js";
 
   export let data: PageData;
   export let form: PageData;
 
-  const summary = data.requests.summary;
+  const summary = data.stats.summary;
 
   let users = [...data.users].sort(compare);
   let admins = users.filter((e) => e.isAdmin);

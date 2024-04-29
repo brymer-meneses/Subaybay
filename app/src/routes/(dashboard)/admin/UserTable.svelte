@@ -8,13 +8,6 @@
   import RemoveAdminForm from "./RemoveAdminForm.svelte";
   import AddAdminForm from "./AddAdminForm.svelte";
 
-  type User = {
-    _id: string;
-    name: string;
-    email: string;
-    profileUrl: string;
-    isAdmin: boolean;
-  };
   export let users: User[];
 </script>
 
@@ -26,11 +19,8 @@
   <Table.Header>
     <Table.Row class="grid w-full grid-cols-6 text-left">
       <Table.Head class="col-span-2 ">User</Table.Head>
-      <!-- <Table.Head class=" ">Email</Table.Head>
-      <Table.Head class=" ">ID</Table.Head> -->
       <Table.Head class="col-span-2 ">Roles</Table.Head>
       <Table.Head class="col-span-2 text-center ">Actions</Table.Head>
-      <!-- <Table.Head class=" text-center">Remove</Table.Head> -->
     </Table.Row>
   </Table.Header>
   {#if users.length > 0}

@@ -4,13 +4,7 @@
 
   import Trash from "lucide-svelte/icons/trash";
 
-  export let user: {
-    _id: string;
-    name: string;
-    email: string;
-    profileUrl: string;
-    isAdmin: boolean;
-  };
+  export let user: User;
 </script>
 
 <AlertDialog.Root>

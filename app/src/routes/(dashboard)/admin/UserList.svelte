@@ -1,17 +1,12 @@
 <script lang="ts">
   import * as Card from "$lib/components/ui/card/index.js";
   import * as HoverCard from "$lib/components/ui/hover-card/index.js";
-
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
+
   import UsersRoundCog from "lucide-svelte/icons/user-round-cog";
 
-  export let users: {
-    name: string;
-    email: string;
-    profileUrl: string;
-    isAdmin: boolean;
-  }[];
+  export let users: User[];
   export let tab: string;
 
   let value: string = "users";

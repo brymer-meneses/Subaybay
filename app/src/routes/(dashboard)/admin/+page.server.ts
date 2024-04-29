@@ -18,7 +18,7 @@ export const load: PageServerLoad = async (event) => {
     .toArray();
 
   // Count and Classify requests but dummy for now
-  const requests = {
+  const stats = {
     summary: [
       { type: "Finished", count: 37 },
       { type: "Pending", count: 154 },
@@ -26,7 +26,7 @@ export const load: PageServerLoad = async (event) => {
     ],
   };
 
-  return { users, requests };
+  return { users, stats };
 };
 
 export const actions: Actions = {

@@ -1,5 +1,6 @@
 <script lang="ts">
   import * as Card from "$lib/components/ui/card/index.js";
+
   import Check from "lucide-svelte/icons/check";
   import CircleX from "lucide-svelte/icons/circle-x";
   import Hourglass from "lucide-svelte/icons/hourglass";

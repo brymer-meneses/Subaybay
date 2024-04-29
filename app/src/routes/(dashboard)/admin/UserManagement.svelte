@@ -8,14 +8,6 @@
 
   import UserTable from "./UserTable.svelte";
 
-  type User = {
-    _id: string;
-    name: string;
-    email: string;
-    profileUrl: string;
-    isAdmin: boolean;
-  };
-
   export let users: User[];
 
   let searchTerm: string = "";
