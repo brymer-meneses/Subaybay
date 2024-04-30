@@ -1,6 +1,3 @@
-<script context="module">
-</script>
-
 <script lang="ts">
   import { ScrollArea } from "$lib/components/ui/scroll-area";
   import ProgressViewStage from "./ProgressViewStage.svelte";

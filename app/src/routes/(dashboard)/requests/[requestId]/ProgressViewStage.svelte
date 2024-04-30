@@ -64,8 +64,9 @@
           <Circle class="stroke-2 text-gray-400" />
         {/if}
 
-        <!--todo change to appropriate component-->
-        <Label class="flex flex-grow flex-row" placeholder="No Name">{substage.title}</Label>
+        <Label class="flex flex-grow flex-row" placeholder="No Name">
+          {substage.title}
+        </Label>
 
         <div class="ml-2">
           {#if !substage.handlerId}
