@@ -7,6 +7,8 @@
   import Inbox from "./Inbox.svelte";
   import InboxContent from "./InboxContent.svelte";
   import NewRequest from "./NewRequest.svelte";
+
+  export let data;
 </script>
 
 <main
@@ -16,7 +18,7 @@
     <div
       class="grid gap-24 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4"
     >
-      <NewRequest />
+      <NewRequest requestTypes={data.requestTypes}/>
     </div>
     <Tabs.Root value="pending">
       <div class="flex items-center">
@@ -54,7 +56,7 @@
         </div>
       </div>
       <Tabs.Content value="pending">
-        <Inbox type="pending" />
+        <Inbox type="pending" stages={data.stages} />
       </Tabs.Content>
     </Tabs.Root>
   </div>

@@ -18,10 +18,10 @@
   <div class="flex w-full flex-col items-start gap-1">
     <div class="flex w-full flex-row justify-between">
       <p class="text-base font-semibold">{stageTitle}</p>
-      <p class="text-sm font-thin">{requestId}</p>
+      <p class="text-xs font-thin text-gray-600">{requestId}</p>
     </div>
 
     <p class="text-sm">{requestTitle}</p>
-    <p class="text-sm font-thin">{dateSent}</p>
+    <p class="text-xs font-thin text-gray-600">{dateSent}</p>
   </div>
 </button>
