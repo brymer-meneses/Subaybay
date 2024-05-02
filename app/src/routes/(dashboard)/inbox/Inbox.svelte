@@ -4,6 +4,7 @@
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
 
   export let type: "pending" | "active";
+  export let stages: any[] = [];
 </script>
 
 <Card.Root
@@ -17,20 +18,13 @@
   <Card.Content>
     <ScrollArea class="h-96">
       <div class="flex w-[98%] flex-col gap-1">
-        <InboxItem
-          isSelected={true}
-          stageTitle="HD and GMC forwarded to UR for signature"
-          requestTitle="Honorable Dismissal"
-          dateSent={new Date().toDateString()}
-          requestId={1}
-        />
-        {#each Array(100) as _, index (index)}
+        {#each stages as stage, index (index)}
           <InboxItem
             isSelected={false}
-            stageTitle="HD and GMC forwarded to UR for signature"
-            requestTitle="Honorable Dismissal"
-            dateSent={new Date().toDateString()}
-            requestId={1}
+            stageTitle={stage.stageTitle}
+            requestTitle={stage.requestTitle}
+            dateSent={stage.dateSent}
+            requestId={stage.requestId}
           />
         {/each}
       </div>
