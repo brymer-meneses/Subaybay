@@ -17,6 +17,7 @@ export const user = database.collection<User>("users");
 export const session = database.collection<Session>("sessions");
 export const request = database.collection<Request>("requests");
 export const requestType = database.collection<RequestType>("requestTypes");
+export const inbox = database.collection<Inbox>("inboxes");
 
 export interface User {
   _id: string;
@@ -47,7 +48,7 @@ export interface RequestType {
 // instance of a `RequestType`
 export interface Request {
   _id: string;
-  requestType: RequestType;
+  requestTypeId: string;
   studentNumber: string;
   studentName: string;
   studentEmail: string;
@@ -67,4 +68,10 @@ export interface Stage {
   finished: boolean;
   dateStarted: Date;
   dateFinished: Date;
+}
+
+export interface Inbox {
+  userId: string;
+  recallableRequestIds: Array<string>;
+  currentRequestIds: Array<string>;
 }

@@ -28,7 +28,7 @@ const retrieveData = async (requestId: string) => {
 
   const requestType = await database
     .collection<RequestType>("requestTypes")
-    .findOne({ _id: request.requestType });
+    .findOne({ _id: request.requestTypeId });
   if (!requestType) return { users: null, request: request, requestType: null };
 
   return { users, request, requestType };

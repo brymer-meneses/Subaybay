@@ -209,7 +209,7 @@ db.requestTypes.insertMany([
 db.requests.insertMany([
   {
     _id: "juststarted",
-    requestType: "coe",
+    requestTypeId: "coe",
     studentNumber: "2020",
     studentName: "Hello World",
     studentEmail: "student@student.com",
@@ -238,7 +238,7 @@ db.requests.insertMany([
   },
   {
     _id: "parallel",
-    requestType: "otr2",
+    requestTypeId: "otr2",
     studentNumber: "2022",
     studentName: "Phoenix",
     studentEmail: "phoenix@val.com",
