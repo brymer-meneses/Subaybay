@@ -57,7 +57,7 @@
 
     <Button
       variant="secondary"
-      class="absolute bottom-1/2 right-[-10px]  h-8 w-8"
+      class="absolute bottom-1/2 right-[-10px] h-8 w-8 drop-shadow-sm"
       on:click={() => (isCollapsed = !isCollapsed)}
     >
       {#if isCollapsed}

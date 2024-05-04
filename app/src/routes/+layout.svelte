@@ -9,24 +9,21 @@
 
   import { toast } from "svelte-sonner";
   import { Toaster } from "$lib/components/ui/sonner";
-  import { onMount } from "svelte";
 
   const flash = getFlash(page);
 
-  onMount(() => {
-    if (!$flash) {
-      return;
+  $: {
+    if ($flash) {
+      switch ($flash.type) {
+        case "error":
+          toast.error($flash.message, $flash.args);
+          break;
+        case "success":
+          toast.success($flash.message, $flash.args);
+          break;
+      }
     }
-
-    switch ($flash.type) {
-      case "error":
-        toast.error($flash.message, $flash.args);
-        break;
-      case "success":
-        toast.success($flash.message, $flash.args);
-        break;
-    }
-  });
+  }
 </script>
 
 <Toaster position="top-right" closeButton />

@@ -7,8 +7,9 @@
   import Inbox from "./Inbox.svelte";
   import InboxContent from "./InboxContent.svelte";
   import NewRequest from "./NewRequest.svelte";
+  import type { PageServerData } from "./$types";
 
-  export let data;
+  export let data: PageServerData;
 
   let requestTypes = Object.keys(data.requestTypes).map((key) => {
     return data.requestTypes[key];
@@ -28,7 +29,7 @@
     <div
       class="grid gap-24 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4"
     >
-      <NewRequest {requestTypes} />
+      <NewRequest {requestTypes} data={data.form} />
     </div>
     <Tabs.Root value="pending">
       <div class="flex items-center">

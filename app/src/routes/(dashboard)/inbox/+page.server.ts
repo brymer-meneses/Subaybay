@@ -2,6 +2,11 @@ import type { PageServerLoad, Actions } from "./$types";
 import * as db from "$lib/server/database";
 import { ObjectId } from "mongodb";
 
+import { superValidate } from "sveltekit-superforms";
+import { formSchema } from "./schema";
+import { zod } from "sveltekit-superforms/adapters";
+import { fail } from "@sveltejs/kit";
+
 interface InboxStageData {
   requestTitle: string;
   stageTitle: string;
@@ -29,6 +34,7 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
   const stages = await getInboxStages(userId, currentRequests, requestTypes);
 
   return {
+    form: await superValidate(zod(formSchema)),
     userInfo: locals.user!,
     sessionId: sessionId!,
     requestTypes: requestTypes,
@@ -92,18 +98,28 @@ const getInboxStages = async (
   return stages;
 };
 
+import { setFlash } from 'sveltekit-flash-message/server';
+
 export const actions: Actions = {
-  add_request: async ({ request, locals }) => {
+  add_request: async (event) => {
+    const { request, locals, cookies } = event;
     const userId = locals.user?.id ?? "0";
 
-    const data = await request.formData();
+    const form = await superValidate(event, zod(formSchema));
+    if (!form.valid) {
+      setFlash({ type: 'error', message: 'Invalid form sent' }, cookies);
+      return fail(400, {
+        form,
+      });
+    }
 
-    const studentName: string = data.get("studentName")?.toString() || "";
-    const studentEmail = data.get("studentEmail")?.toString() ?? "";
-    const studentNumber = data.get("studentNumber")?.toString() ?? "";
-    const requestTypeId = data.get("requestTypeId")?.toString() ?? "";
-    const purpose = data.get("purpose")?.toString() ?? "";
-    const remarks = data.get("remarks")?.toString() ?? "";
+    const data = form.data;
+    const studentName = data.studentName;
+    const studentEmail = data.studentEmail;
+    const studentNumber = data.studentNumber;
+    const requestTypeId = data.requestTypeId;
+    const purpose = data.purpose;
+    const remarks = data.purpose;
 
     if (!requestTypeId) return; //todo something error
 
@@ -167,5 +183,7 @@ export const actions: Actions = {
         $set: { currentRequestIds: userInbox.currentRequestIds },
       },
     );
+
+    setFlash({ type: 'success', message: 'Added request' }, cookies);
   },
 };
