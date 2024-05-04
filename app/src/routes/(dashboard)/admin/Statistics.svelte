@@ -172,12 +172,12 @@
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
       <div class="relative w-80">
         <Search
-          class="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4"
+          class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
         />
         <Input
           type="search"
           placeholder="Search Request Types..."
-          class="bg-background w-full rounded-lg pl-8"
+          class="w-full rounded-lg bg-background pl-8"
           bind:value={searchTerm}
         />
       </div>
@@ -195,7 +195,7 @@
   </Card.Content>
   <Card.Footer class="">
     <Button variant="outline" class="gap-2" on:click={() => exportExcel()}>
-      <Download class="text-muted-foreground h-6 w-6" />
+      <Download class="h-6 w-6 text-muted-foreground" />
       Report
     </Button>
   </Card.Footer>

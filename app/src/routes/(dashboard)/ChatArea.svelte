@@ -82,7 +82,7 @@
 </script>
 
 <section
-  class="border-accent flex w-full flex-col gap-5 rounded-md border-2 p-5"
+  class="flex w-full flex-col gap-5 rounded-md border-2 border-accent p-5"
 >
   <div bind:this={messageContainer} class="h-36 overflow-auto">
     <div class="flex w-[96%] flex-col gap-3">
@@ -99,7 +99,7 @@
 
   <div class="flex w-full items-center space-x-2">
     <Input
-      class="border-b-1 bg-accent w-full focus:ring-0 focus:ring-offset-0"
+      class="border-b-1 w-full bg-accent focus:ring-0 focus:ring-offset-0"
       placeholder="Send a message ..."
       bind:value={messageContent}
     />

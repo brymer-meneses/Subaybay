@@ -58,7 +58,7 @@
               <div class="ml-2">
                 {#if !substage.handlerId}
                   <CircleUserRound
-                    class="stroke-muted-foreground h-8 w-8 stroke-1"
+                    class="h-8 w-8 stroke-muted-foreground stroke-1"
                   />
                 {:else}
                   <Avatar class="h-8 w-8">
@@ -70,15 +70,12 @@
                 {/if}
               </div>
 
-              <Label
-                class="flex flex-grow flex-row"
-                placeholder="No Name"
-              >
+              <Label class="flex flex-grow flex-row" placeholder="No Name">
                 {substage.title}
               </Label>
             </div>
           </CardContent>
-          <CardFooter class="text-gray-500 text-xs">
+          <CardFooter class="text-xs text-gray-500">
             {substage.dateFinished}
           </CardFooter>
         </Card>

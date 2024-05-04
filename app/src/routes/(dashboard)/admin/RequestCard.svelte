@@ -17,7 +17,7 @@
     <!-- <File /> -->
   </Card.Header>
   <Card.Content>
-    <p class="text-muted-foreground text-xs">View all requests</p>
+    <p class="text-xs text-muted-foreground">View all requests</p>
   </Card.Content>
   <Card.Footer class="float-end">
     <Button

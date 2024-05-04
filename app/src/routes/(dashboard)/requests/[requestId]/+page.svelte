@@ -5,5 +5,13 @@
 </script>
 
 <!--TODO add an error page?-->
-<ProgressView request={data.request} requestType={data.requestType} users={data.users} />
-<HistoryView request={data.request} requestType={data.requestType} users={data.users} />
+<ProgressView
+  request={data.request}
+  requestType={data.requestType}
+  users={data.users}
+/>
+<HistoryView
+  request={data.request}
+  requestType={data.requestType}
+  users={data.users}
+/>

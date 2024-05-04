@@ -11,7 +11,12 @@ export const load: PageServerLoad = async (event) => {
 
   const storedData = await retrieveData(requestId);
 
-  return { userInfo: event.locals.user, request: storedData.request, requestType: storedData.requestType, users: storedData.users };
+  return {
+    userInfo: event.locals.user,
+    request: storedData.request,
+    requestType: storedData.requestType,
+    users: storedData.users,
+  };
 };
 
 const retrieveData = async (requestId: string) => {

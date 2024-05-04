@@ -1,5 +1,5 @@
 import type { PageServerLoad } from "./$types";
-import type { Actions } from "./$types"
+import type { Actions } from "./$types";
 
 import {
   type StageType,
@@ -8,10 +8,7 @@ import {
   user,
 } from "$lib/server/database";
 import { ObjectId } from "mongodb";
-import {
-  SubstageData,
-  UserData,
-} from "./configClasses";
+import { SubstageData, UserData } from "./configClasses";
 
 export const load: PageServerLoad = async (event) => {
   let cursor = user.find();

@@ -60,7 +60,7 @@ const getCurrentRequests = async (
 ): Promise<{
   [key: string]: db.Request;
 }> => {
-  let currentRequests: { [key: string]: db.Request } = {}
+  let currentRequests: { [key: string]: db.Request } = {};
   for (const requestId of userInbox.currentRequestIds) {
     const req = await db.request.findOne({ _id: requestId });
     if (!req) continue;
@@ -89,7 +89,7 @@ const getInboxStages = async (
           requestType.stages[stage.stageTypeIndex][stage.substageTypeIndex]
             .stageTitle,
         dateSent: stage.dateStarted,
-        requestId: request._id
+        requestId: request._id,
       });
     }
   }
@@ -98,7 +98,7 @@ const getInboxStages = async (
   return stages;
 };
 
-import { setFlash } from 'sveltekit-flash-message/server';
+import { setFlash } from "sveltekit-flash-message/server";
 
 export const actions: Actions = {
   add_request: async (event) => {
@@ -107,7 +107,7 @@ export const actions: Actions = {
 
     const form = await superValidate(event, zod(formSchema));
     if (!form.valid) {
-      setFlash({ type: 'error', message: 'Invalid form sent' }, cookies);
+      setFlash({ type: "error", message: "Invalid form sent" }, cookies);
       return fail(400, {
         form,
       });
@@ -136,7 +136,7 @@ export const actions: Actions = {
         finished: false,
         dateStarted: new Date(0),
         dateFinished: new Date(0),
-        roomId: new ObjectId().toString()
+        roomId: new ObjectId().toString(),
       });
     });
 
@@ -157,7 +157,7 @@ export const actions: Actions = {
           finished: false,
           dateStarted: new Date(),
           dateFinished: new Date(0),
-          roomId: new ObjectId().toString()
+          roomId: new ObjectId().toString(),
         },
       ],
       nextStages: nextStages,
@@ -184,6 +184,6 @@ export const actions: Actions = {
       },
     );
 
-    setFlash({ type: 'success', message: 'Added request' }, cookies);
+    setFlash({ type: "success", message: "Added request" }, cookies);
   },
 };

@@ -40,11 +40,11 @@
                     {user.name.length > 20
                       ? user.name.substring(0, 20) + "..."
                       : user.name}
-                    <span class="text-muted-foreground font-normal">
+                    <span class="font-normal text-muted-foreground">
                       ({user._id})</span
                     >
                   </p>
-                  <p class="text-muted-foreground text-sm">
+                  <p class="text-sm text-muted-foreground">
                     {user.email.length > 25
                       ? user.email.substring(0, 25) + "..."
                       : user.email}

@@ -8,8 +8,7 @@
   export let stages: any[] = [];
   let selectedStageIndex: number = 0;
 
-  if(stages.length > 0)
-    select(0);
+  if (stages.length > 0) select(0);
 
   function select(stageIndex: number) {
     selectedStageIndex = stageIndex;

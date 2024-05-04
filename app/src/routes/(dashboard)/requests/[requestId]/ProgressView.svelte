@@ -59,9 +59,10 @@
   }
 
   for (let storedStage of request.nextStages) {
-    const substage = stages[storedStage.stageTypeIndex].substages[
-      storedStage.substageTypeIndex
-    ];
+    const substage =
+      stages[storedStage.stageTypeIndex].substages[
+        storedStage.substageTypeIndex
+      ];
     substage.finished = false;
     substage.handlerId = storedStage.handlerId;
   }

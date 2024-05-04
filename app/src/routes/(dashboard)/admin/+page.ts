@@ -1,20 +1,20 @@
 type User = {
-    _id: string;
-    name: string;
-    email: string;
-    profileUrl: string;
-    isAdmin: boolean;
-  };
+  _id: string;
+  name: string;
+  email: string;
+  profileUrl: string;
+  isAdmin: boolean;
+};
 
 type RequestTypeInstancesCount = {
-  reqType: string, 
-  reqTitle: string, 
+  reqType: string;
+  reqTitle: string;
   total: {
-    finished: number, 
-    pending: number, 
-    stale: number
-  }
-}
+    finished: number;
+    pending: number;
+    stale: number;
+  };
+};
 
 type summary = {
   type: string;
@@ -22,10 +22,10 @@ type summary = {
   countThisMonth: number;
 };
 
-type RequestType  = {
+type RequestType = {
   _id: string;
   title: string;
-}
+};
 
 type OURRequest = {
   _id: string;
@@ -35,4 +35,4 @@ type OURRequest = {
   studentEmail: string;
   purpose: string;
   remarks: string;
-}
+};
