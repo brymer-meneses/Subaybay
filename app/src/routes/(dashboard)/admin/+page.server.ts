@@ -13,6 +13,18 @@ type RequestTypeInstancesCount = {
   }
 }
 
+
+/********************************************************
+ *                                                      *
+ *                                                      *
+ *                                                      *
+ *          NOW APPROACHING SPAGHETTI ZONE              *
+ *                                                      *
+ *                                                      *
+ *                                                      *
+ *******************************************************/
+
+
 export const load: PageServerLoad = async (event) => {
   
   // if (event.locals.user && !event.locals.user.isAdmin) {
@@ -29,9 +41,9 @@ export const load: PageServerLoad = async (event) => {
   let count: RequestTypeInstancesCount[]  = [];
 
   let summary = [
-    { type: "Finished", count: 0 },
-    { type: "Pending", count: 0 },
-    { type: "Stale", count: 0 },
+    { type: "Finished", count: 0, countThisMonth: 0 },
+    { type: "Pending", count: 0, countThisMonth: -1 },
+    { type: "Stale", count: 0, countThisMonth: -1 },
   ]
 
   for (const reqType of requestTypes) {
@@ -46,28 +58,36 @@ export const load: PageServerLoad = async (event) => {
       const finalStageIndex = stages.length - 1;
       const currentStageIndex = request.currentStages[0].stageTypeIndex;
 
-      let foundIndex = count.findIndex(x => x.reqType === request.requestTypeId);
+      const foundIndex = count.findIndex(x => x.reqType === request.requestTypeId);
+      const currentStageDateFinished = new Date(request.currentStages[0].dateFinished);
 
       if (currentStageIndex === finalStageIndex && request.isFinished){
         count[foundIndex].total.finished++;
         summary[0].count++;
-      }  else if ((currentStageIndex < finalStageIndex) && !request.isFinished) {
+
+        if (isThisMonthAndYear(currentStageDateFinished)) {
+          summary[0].countThisMonth++;
+        }
+        
+      } else if ((currentStageIndex < finalStageIndex) && !request.isFinished) {
         count[foundIndex].total.pending++;
         summary[1].count++;
+
       } else if ((currentStageIndex < finalStageIndex) && request.isFinished){
         count[foundIndex].total.stale++;
         summary[2].count++;
       }
     }
   }
-
   count.sort(compare); // reqtypes with 0 instances will be put at the end of the arr.
 
-  const stats = {summary, count, requests, requestTypes};
-
-  console.log(count);
-  return { users, stats };
+  return { users, stats: {summary, count, requests, requestTypes}};
 };
+
+function isThisMonthAndYear(date: Date) {
+  const today = new Date();
+  return date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
+}
 
 function compare(a: RequestTypeInstancesCount, b: RequestTypeInstancesCount) {
   let totalA = 0;
@@ -78,6 +98,7 @@ function compare(a: RequestTypeInstancesCount, b: RequestTypeInstancesCount) {
     totalA += a.total[reqKey];
     totalB += b.total[reqKey];
   }
+  
   return totalB - totalA;
 }
 

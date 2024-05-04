@@ -27,7 +27,7 @@
           <Table.Cell>{stat.total.finished}</Table.Cell>
           <Table.Cell>{stat.total.pending}</Table.Cell>
           <Table.Cell>{stat.total.stale}</Table.Cell>
-          <Table.Cell
+          <Table.Cell class="font-semibold"
             >{stat.total.finished +
               stat.total.pending +
               stat.total.stale}</Table.Cell

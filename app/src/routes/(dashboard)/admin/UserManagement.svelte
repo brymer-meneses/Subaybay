@@ -19,7 +19,9 @@
         if (key === "isAdmin" || key === "profileUrl") continue;
         const userKey = key as keyof User;
         if (
-          String(user[userKey]).toLowerCase().includes(searchTerm.toLowerCase())
+          String(user[userKey])
+            .toLowerCase()
+            .includes(searchTerm.trim().toLowerCase())
         ) {
           return user;
         }

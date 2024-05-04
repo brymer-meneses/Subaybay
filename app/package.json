@@ -45,6 +45,7 @@
     "cmdk-sv": "^0.0.17",
     "dayjs": "^1.11.10",
     "dayjs-ext": "^2.2.0",
+    "exceljs": "^4.4.0",
     "formsnap": "^1.0.0",
     "lucia": "^3.1.1",
     "lucide-svelte": "^0.368.0",

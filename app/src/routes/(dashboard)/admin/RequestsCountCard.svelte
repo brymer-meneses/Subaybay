@@ -5,11 +5,10 @@
   import CircleX from "lucide-svelte/icons/circle-x";
   import Hourglass from "lucide-svelte/icons/hourglass";
 
-  type summary = {
-    type: string;
-    count: number;
-  };
   export let s: summary;
+
+  let percentage: number =
+    s.count === 0 ? 0 : (s.countThisMonth / (s.count - s.countThisMonth)) * 100;
 </script>
 
 <Card.Root>
@@ -27,6 +26,14 @@
   </Card.Header>
   <Card.Content>
     <div class="text-2xl font-bold">{s.count}</div>
-    <p class="text-muted-foreground text-xs">+20.1% from last month</p>
+    {#if s.type === "Finished"}
+      <p class="text-muted-foreground text-xs">
+        +{percentage === Infinity ? s.countThisMonth : percentage + "%"} this month
+      </p>
+    {:else if s.type === "Pending"}
+      <p class="text-muted-foreground text-xs">ongoing requests</p>
+    {:else if s.type === "Stale"}
+      <p class="text-muted-foreground text-xs">stale requests</p>
+    {/if}
   </Card.Content>
 </Card.Root>

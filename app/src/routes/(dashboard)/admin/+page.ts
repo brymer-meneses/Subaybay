@@ -15,3 +15,24 @@ type RequestTypeInstancesCount = {
     stale: number
   }
 }
+
+type summary = {
+  type: string;
+  count: number;
+  countThisMonth: number;
+};
+
+type RequestType  = {
+  _id: string;
+  title: string;
+}
+
+type OURRequest = {
+  _id: string;
+  requestTypeId: string;
+  studentNumber: string;
+  studentName: string;
+  studentEmail: string;
+  purpose: string;
+  remarks: string;
+}
