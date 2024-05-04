@@ -157,7 +157,7 @@
     const url = window.URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `ReqTypesStats(${new Date().toDateString().split(" ").splice(1).join(" ")}).xlsx`;
+    anchor.download = `ReqStatsReport(${new Date().toDateString().split(" ").splice(1).join(" ")}).xlsx`;
     anchor.click();
 
     // Cleanup
