@@ -120,6 +120,7 @@ export const actions: Actions = {
         finished: false,
         dateStarted: new Date(0),
         dateFinished: new Date(0),
+        roomId: new ObjectId().toString()
       });
     });
 
@@ -140,6 +141,7 @@ export const actions: Actions = {
           finished: false,
           dateStarted: new Date(),
           dateFinished: new Date(0),
+          roomId: new ObjectId().toString()
         },
       ],
       nextStages: nextStages,

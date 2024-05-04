@@ -68,6 +68,7 @@ export interface Stage {
   finished: boolean;
   dateStarted: Date;
   dateFinished: Date;
+  roomId: string;
 }
 
 export interface Inbox {

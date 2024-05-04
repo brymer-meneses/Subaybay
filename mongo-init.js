@@ -221,7 +221,8 @@ db.requests.insertMany([
         handlerId: "airylionsoul",
         finished: false,
         dateStarted: new Date('2024-04-27'),
-        dateFinished: new Date('2024-04-28')
+        dateFinished: new Date('2024-04-28'),
+        roomId: "134333412"
       },
     ],
     nextStages: [
@@ -231,7 +232,8 @@ db.requests.insertMany([
         handlerId: "mom",
         finished: false,
         dateStarted: new Date(0),
-        dateFinished: new Date(0)
+        dateFinished: new Date(0),
+        roomId: "234u1204"
       },
     ],
     history: [],
@@ -251,7 +253,8 @@ db.requests.insertMany([
         handlerId: "mom",
         finished: true,
         dateStarted: new Date('2024-04-29'),
-        dateFinished: new Date('2024-04-29')
+        dateFinished: new Date('2024-04-29'),
+        roomId: "28349184"
       },
       {
         stageTypeIndex: 2,
@@ -260,6 +263,7 @@ db.requests.insertMany([
         finished: false,
         dateStarted: new Date('2024-04-29'),
         dateFinished: new Date('2024-04-29'),
+        roomId: "78902346"
       }
     ],
     nextStages: [
@@ -269,7 +273,8 @@ db.requests.insertMany([
         handlerId: "airylionsoul",
         finished: false,
         dateStarted: new Date(0),
-        dateFinished: new Date(0)
+        dateFinished: new Date(0),
+        roomId: "823041980"
       }
     ],
     history: [
@@ -279,7 +284,8 @@ db.requests.insertMany([
         handlerId: "gnar",
         finished: true,
         dateStarted: new Date('2024-04-28'),
-        dateFinished: new Date('2024-04-28')
+        dateFinished: new Date('2024-04-28'),
+        roomId: "0928342342"
       },
       {
         stageTypeIndex: 1,
@@ -287,7 +293,8 @@ db.requests.insertMany([
         handlerId: "gnar",
         finished: true,
         dateStarted: new Date('2024-04-28'),
-        dateFinished: new Date('2024-04-28')
+        dateFinished: new Date('2024-04-28'),
+        roomId: "sdo08d2083242"
       },
     ]
   }
