@@ -2,7 +2,7 @@
   import * as Table from "$lib/components/ui/table/index";
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
 
-  export let count;
+  export let count: RequestTypeInstancesCount[];
 </script>
 
 <Table.Root class="mt-4">

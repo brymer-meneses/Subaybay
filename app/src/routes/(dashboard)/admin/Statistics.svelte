@@ -11,7 +11,8 @@
   import Plus from "lucide-svelte/icons/plus";
   import Search from "lucide-svelte/icons/search";
 
-  export let count;
+  export let count: RequestTypeInstancesCount[];
+
   let searchTerm: string = "";
   let filteredReqTypes: RequestTypeInstancesCount[] = [];
 
