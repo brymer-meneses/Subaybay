@@ -119,7 +119,7 @@ export const actions: Actions = {
     const studentNumber = data.studentNumber;
     const requestTypeId = data.requestTypeId;
     const purpose = data.purpose;
-    const remarks = data.purpose;
+    const remarks = data.remarks;
 
     if (!requestTypeId) return; //todo something error
 
