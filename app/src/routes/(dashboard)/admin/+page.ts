@@ -5,3 +5,13 @@ type User = {
     profileUrl: string;
     isAdmin: boolean;
   };
+
+type RequestTypeInstancesCount = {
+  reqType: string, 
+  reqTitle: string, 
+  total: {
+    finished: number, 
+    pending: number, 
+    stale: number
+  }
+}

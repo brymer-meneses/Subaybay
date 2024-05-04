@@ -3,6 +3,16 @@ import { fail, redirect } from "@sveltejs/kit";
 import { database, user, request, requestType, type User, type Request, type RequestType } from "$lib/server/database";
 import type { RequestEvent } from "../$types";
 
+type RequestTypeInstancesCount = {
+  reqType: string, 
+  reqTitle: string, 
+  total: {
+    finished: number, 
+    pending: number, 
+    stale: number
+  }
+}
+
 export const load: PageServerLoad = async (event) => {
   
   // if (event.locals.user && !event.locals.user.isAdmin) {
@@ -16,60 +26,60 @@ export const load: PageServerLoad = async (event) => {
   const requests: Request[] = await request.find({}).toArray();
   const requestTypes: RequestType[] = await requestType.find({}).toArray();
 
-  let finished: number = 0;
-  let pending: number = 0;
-  let stale: number = 0;
+  let count: RequestTypeInstancesCount[]  = [];
+
+  let summary = [
+    { type: "Finished", count: 0 },
+    { type: "Pending", count: 0 },
+    { type: "Stale", count: 0 },
+  ]
+
+  for (const reqType of requestTypes) {
+    count.push({ reqType: reqType._id, reqTitle: reqType.title, total: { finished: 0, pending: 0, stale: 0 } });
+  }
 
   for (const request of requests) {
-    let request = requests[0]
     const reqType = requestTypes.find(e=> e._id === request.requestTypeId);
     const stages = reqType?.stages;
-    console.log(stages)
     
     if (stages){
       const finalStageIndex = stages.length - 1;
       const currentStageIndex = request.currentStages[0].stageTypeIndex;
+
+      let foundIndex = count.findIndex(x => x.reqType === request.requestTypeId);
+
       if (currentStageIndex === finalStageIndex && request.isFinished){
-        finished++;
+        count[foundIndex].total.finished++;
+        summary[0].count++;
       }  else if ((currentStageIndex < finalStageIndex) && !request.isFinished) {
-        pending++;
+        count[foundIndex].total.pending++;
+        summary[1].count++;
       } else if ((currentStageIndex < finalStageIndex) && request.isFinished){
-        stale++;
+        count[foundIndex].total.stale++;
+        summary[2].count++;
       }
     }
   }
 
-  console.log(finished, pending, stale)
+  count.sort(compare); // reqtypes with 0 instances will be put at the end of the arr.
 
-  // TODO count the finished, pending, and stale requests for each types, then just provide a summary.
-  type RequestTypeInstancesCount = {
-    reqType: string, 
-    total: {
-      finished: number, 
-      pending: number, 
-      stale: number
-    }
-  }
-  let count: RequestTypeInstancesCount[]  = [
-    {
-      reqType: "coe", 
-      total: {
-        finished: 2, 
-        pending: 3, 
-        stale: 0
-      }
-    }
-  ];
-
-  const summary = [
-    { type: "Finished", count: finished },
-    { type: "Pending", count: pending },
-    { type: "Stale", count: stale },
-  ]
   const stats = {summary, count, requests, requestTypes};
 
+  console.log(count);
   return { users, stats };
 };
+
+function compare(a: RequestTypeInstancesCount, b: RequestTypeInstancesCount) {
+  let totalA = 0;
+  let totalB = 0;
+
+  for (const key in a.total) {
+    const reqKey = key as keyof RequestTypeInstancesCount["total"];
+    totalA += a.total[reqKey];
+    totalB += b.total[reqKey];
+  }
+  return totalB - totalA;
+}
 
 export const actions: Actions = {
   remove_user: async({request}) => {

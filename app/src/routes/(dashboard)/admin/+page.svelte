@@ -69,7 +69,7 @@
       </div>
     </Tabs.Content>
     <Tabs.Content value="stats">
-      <Statistics />
+      <Statistics count={data.stats.count} />
     </Tabs.Content>
     <Tabs.Content value="users" class="space-y-4">
       <UserManagement bind:users />

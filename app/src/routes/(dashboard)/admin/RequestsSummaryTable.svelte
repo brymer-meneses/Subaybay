@@ -2,24 +2,14 @@
   import * as Table from "$lib/components/ui/table/index";
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
 
-  // everything here is for dummy data
-  function createRandomRow() {
-    let result = "ReqType ";
-    for (let i = 0; i < 5; i++) {
-      const randomChar = Math.floor(Math.random() * (127 - 32) + 32);
-      result += String.fromCharCode(randomChar);
-    }
-
-    const f = Math.floor(Math.random() * 100);
-    const p = Math.floor(Math.random() * 100);
-    const s = Math.floor(Math.random() * 100);
-    const total = f + p + s;
-    return { type: result, f, p, s, total };
-  }
-  let rows = Array.from({ length: 10 }, createRandomRow);
+  export let count;
 </script>
 
 <Table.Root class="mt-4">
+  <Table.Caption>
+    Showing {count.length}
+    {count.length === 1 ? "result" : "results"}
+  </Table.Caption>
   <Table.Header>
     <Table.Row class="grid w-full grid-cols-5 text-left">
       <Table.Head>Request Type</Table.Head>
@@ -29,15 +19,19 @@
       <Table.Head>Total</Table.Head>
     </Table.Row>
   </Table.Header>
-  <ScrollArea class="h-[28rem]">
+  <ScrollArea class="h-[26rem]">
     <Table.Body>
-      {#each rows as row}
+      {#each count as stat}
         <Table.Row class="grid w-full grid-cols-5 text-left">
-          <Table.Cell>{row.type}</Table.Cell>
-          <Table.Cell>{row.f}</Table.Cell>
-          <Table.Cell>{row.p}</Table.Cell>
-          <Table.Cell>{row.s}</Table.Cell>
-          <Table.Cell>{row.total}</Table.Cell>
+          <Table.Cell class="font-semibold">{stat.reqTitle}</Table.Cell>
+          <Table.Cell>{stat.total.finished}</Table.Cell>
+          <Table.Cell>{stat.total.pending}</Table.Cell>
+          <Table.Cell>{stat.total.stale}</Table.Cell>
+          <Table.Cell
+            >{stat.total.finished +
+              stat.total.pending +
+              stat.total.stale}</Table.Cell
+          >
         </Table.Row>
       {/each}
     </Table.Body>

@@ -11,7 +11,20 @@
   import Plus from "lucide-svelte/icons/plus";
   import Search from "lucide-svelte/icons/search";
 
+  export let count;
   let searchTerm: string = "";
+  let filteredReqTypes: RequestTypeInstancesCount[] = [];
+
+  $: {
+    filteredReqTypes = count.filter((reqType: RequestTypeInstancesCount) => {
+      if (
+        reqType.reqTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        reqType.reqType.toLowerCase().includes(searchTerm.toLowerCase())
+      ) {
+        return reqType;
+      }
+    });
+  }
 </script>
 
 <Card.Root>
@@ -39,7 +52,7 @@
     </div>
   </Card.Header>
   <Card.Content>
-    <RequestsSummaryTable />
+    <RequestsSummaryTable count={filteredReqTypes} />
   </Card.Content>
   <Card.Footer class="">
     <Button variant="outline" class="gap-2">
