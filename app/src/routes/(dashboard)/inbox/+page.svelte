@@ -66,12 +66,16 @@
         </div>
       </div>
       <Tabs.Content value="pending">
-        <Inbox type="pending" stages={data.currentStages} onSelectStage={selectStage} />
+        <Inbox
+          type="pending"
+          stages={data.currentStages}
+          onSelectStage={selectStage}
+        />
       </Tabs.Content>
     </Tabs.Root>
   </div>
 
   <div class="lg:col-span-2">
-    <InboxContent bind:selectedStage={selectedStage} requests={data.currentRequests}/>
+    <InboxContent bind:selectedStage requests={data.currentRequests} />
   </div>
 </main>
