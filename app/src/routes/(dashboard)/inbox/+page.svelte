@@ -9,6 +9,16 @@
   import NewRequest from "./NewRequest.svelte";
 
   export let data;
+
+  let requestTypes = Object.keys(data.requestTypes).map((key) => {
+    return data.requestTypes[key];
+  });
+
+  let selectedStage: any = null;
+
+  function selectStage(stage: any) {
+    selectedStage = stage;
+  }
 </script>
 
 <main
@@ -18,7 +28,7 @@
     <div
       class="grid gap-24 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4"
     >
-      <NewRequest requestTypes={data.requestTypes}/>
+      <NewRequest {requestTypes} />
     </div>
     <Tabs.Root value="pending">
       <div class="flex items-center">
@@ -56,12 +66,12 @@
         </div>
       </div>
       <Tabs.Content value="pending">
-        <Inbox type="pending" stages={data.stages} />
+        <Inbox type="pending" stages={data.currentStages} onSelectStage={selectStage} />
       </Tabs.Content>
     </Tabs.Root>
   </div>
 
   <div class="lg:col-span-2">
-    <InboxContent />
+    <InboxContent bind:selectedStage={selectedStage} requests={data.currentRequests}/>
   </div>
 </main>

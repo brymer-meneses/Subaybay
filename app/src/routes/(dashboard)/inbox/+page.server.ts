@@ -13,24 +13,6 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
   const sessionId = cookies.get("auth_session");
   const userId = locals.user?.id ?? "0";
 
-  const requestTypes = await getRequestTypes();
-  const stages = await getInboxStages(userId);
-
-  return {
-    userInfo: locals.user!,
-    sessionId: sessionId!,
-    stages: stages,
-    requestTypes: requestTypes,
-  };
-};
-
-const getRequestTypes = async (): Promise<db.RequestType[]> => {
-  let requestTypes = await db.requestType.find().toArray();
-  if (requestTypes) return requestTypes;
-  else return [];
-};
-
-const getInboxStages = async (userId: string) => {
   let userInbox: db.Inbox | null = await db.inbox.findOne({ userId: userId });
   if (!userInbox) {
     userInbox = {
@@ -42,26 +24,70 @@ const getInboxStages = async (userId: string) => {
     db.inbox.insertOne(userInbox);
   }
 
-  let stages: InboxStageData[] = [];
+  const requestTypes = await getRequestTypes();
+  const currentRequests = await getCurrentRequests(userInbox);
+  const stages = await getInboxStages(userId, currentRequests, requestTypes);
+
+  return {
+    userInfo: locals.user!,
+    sessionId: sessionId!,
+    requestTypes: requestTypes,
+    currentRequests: currentRequests,
+    currentStages: stages,
+  };
+};
+
+const getRequestTypes = async (): Promise<{
+  [key: string]: db.RequestType;
+}> => {
+  let requestTypes: { [key: string]: db.RequestType } = {};
+  let cursor = db.requestType.find();
+  for await (const reqType of cursor) {
+    requestTypes[reqType._id] = reqType;
+  }
+
+  return requestTypes;
+};
+
+const getCurrentRequests = async (
+  userInbox: db.Inbox,
+): Promise<{
+  [key: string]: db.Request;
+}> => {
+  let currentRequests: { [key: string]: db.Request } = {}
   for (const requestId of userInbox.currentRequestIds) {
     const req = await db.request.findOne({ _id: requestId });
     if (!req) continue;
-    const reqType = await db.requestType.findOne({ _id: req.requestTypeId });
-    if (!reqType) continue;
 
-    for (const stage of req.currentStages) {
+    currentRequests[requestId] = req;
+  }
+
+  return currentRequests;
+};
+
+const getInboxStages = async (
+  userId: string,
+  currentRequests: { [key: string]: db.Request },
+  requestTypes: { [key: string]: db.RequestType },
+) => {
+  let stages: InboxStageData[] = [];
+  for (const reqId of Object.keys(currentRequests)) {
+    const request = currentRequests[reqId];
+    for (const stage of request.currentStages) {
       if (stage.handlerId != userId) continue;
+      const requestType = requestTypes[request.requestTypeId];
+
       stages.push({
-        requestTitle: reqType.title,
+        requestTitle: requestType.title,
         stageTitle:
-          reqType.stages[stage.stageTypeIndex][stage.substageTypeIndex]
+          requestType.stages[stage.stageTypeIndex][stage.substageTypeIndex]
             .stageTitle,
         dateSent: stage.dateStarted,
-        requestId: req._id,
+        requestId: request._id
       });
     }
-    // todo handle possible errors
   }
+  //todo handle possible errors
 
   return stages;
 };
