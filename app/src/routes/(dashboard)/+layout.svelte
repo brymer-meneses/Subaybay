@@ -12,7 +12,7 @@
   <div
     class={clsx(
       "flex min-h-screen flex-col bg-muted/40 sm:pl-0 md:pl-44 lg:pl-44",
-      !isSidebarCollapsed ? "md:pl-44 lg:pl-44" : "md:pl-10 lg:pl-10",
+      !isSidebarCollapsed ? "md:pl-44 lg:pl-44" : "md:pl-8 lg:pl-8",
     )}
   >
     <div class="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
