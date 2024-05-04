@@ -2,43 +2,70 @@
   import Inbox from "lucide-svelte/icons/inbox";
   import ListTodo from "lucide-svelte/icons/list-todo";
   import FileCog from "lucide-svelte/icons/file-cog";
+
+  import ChevronLeft from "lucide-svelte/icons/chevron-left";
+  import ChevronRight from "lucide-svelte/icons/chevron-right";
+
   import LogOut from "lucide-svelte/icons/log-out";
 
   import Button from "$lib/components/ui/button/button.svelte";
   import { Separator } from "$lib/components/ui/separator";
   import * as Tooltip from "$lib/components/ui/tooltip";
+  import * as Avatar from "$lib/components/ui/avatar";
   import UsersRound from "lucide-svelte/icons/users-round";
 
   import UpLogo from "$lib/assets/UP.png";
   import NavLink from "./NavLink.svelte";
+  import clsx from "clsx";
 
-  import * as Avatar from "$lib/components/ui/avatar";
+  export let isCollapsed: boolean;
 </script>
 
 <aside
-  class="bg-background fixed inset-y-0 left-0 z-10 hidden w-60 flex-col border-r sm:flex"
+  class={clsx(
+    "fixed inset-y-0 left-0  hidden flex-col border-r bg-background transition-all sm:flex",
+    isCollapsed ? "w-[80px] items-center" : "w-[200px] items-start",
+  )}
 >
-  <nav class="flex flex-col items-center gap-4 px-2 py-4">
+  <nav class="flex flex-col items-center gap-4 px-4 py-4">
     <div class="flex items-center gap-2">
       <div>
-        <Avatar.Root class="h-10 w-10">
+        <Avatar.Root class="h-8 w-8">
           <Avatar.Image src={UpLogo} alt="UP Image" />
           <Avatar.Fallback>CN</Avatar.Fallback>
         </Avatar.Root>
       </div>
-      <div class="text-2xl">UPB Subaybay</div>
+
+      {#if !isCollapsed}
+        <div class="text-2xl">
+          <p>Subaybay</p>
+        </div>
+      {/if}
     </div>
     <Separator />
-    <div class="flex flex-col gap-2">
-      <NavLink icon={Inbox} name="Inbox" href="inbox"></NavLink>
-      <NavLink icon={ListTodo} name="Requests" href="requests" />
+    <div class="flex w-full flex-col gap-2">
+      <NavLink icon={Inbox} name="Inbox" href="inbox" {isCollapsed}></NavLink>
+      <NavLink icon={ListTodo} name="Requests" href="requests" {isCollapsed} />
       <NavLink
         icon={FileCog}
-        name="Requests Configuration"
+        name="Configuration"
         href="configuration"
+        {isCollapsed}
       />
-      <NavLink icon={UsersRound} name="Admin" href="admin" />
+      <NavLink icon={UsersRound} name="Admin" href="admin" {isCollapsed} />
     </div>
+
+    <Button
+      variant="secondary"
+      class="absolute bottom-1/2 right-[-10px]  h-8 w-8"
+      on:click={() => (isCollapsed = !isCollapsed)}
+    >
+      {#if isCollapsed}
+        <ChevronRight class="min-h-8 min-w-8 stroke-1" />
+      {:else}
+        <ChevronLeft class="min-h-8 min-w-8 stroke-1" />
+      {/if}
+    </Button>
   </nav>
 
   <nav class="mt-auto flex flex-col items-start gap-4 px-2 py-4">
@@ -46,18 +73,20 @@
     <Tooltip.Root>
       <Tooltip.Trigger>
         <div
-          class="text-muted-foreground hover:text-accent-foreground flex items-center"
+          class="flex items-center text-muted-foreground hover:text-accent-foreground"
         >
           <form method="post" action="/auth/logout">
             <Button
               type="submit"
               variant="link"
-              class="text-muted-foreground rounded-lg"
+              class="rounded-lg text-muted-foreground"
             >
               <LogOut class="h-5 w-5" />
             </Button>
           </form>
-          <span>Sign Out</span>
+          {#if !isCollapsed}
+            <span>Sign Out</span>
+          {/if}
         </div>
       </Tooltip.Trigger>
       <Tooltip.Content side="right">Logout</Tooltip.Content>
