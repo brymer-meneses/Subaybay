@@ -23,7 +23,7 @@
 
 <aside
   class={clsx(
-    "fixed inset-y-0 left-0  hidden flex-col border-r bg-background transition-all sm:flex",
+    "bg-background fixed inset-y-0  left-0 hidden flex-col border-r transition-all sm:flex",
     isCollapsed ? "w-[80px] items-center" : "w-[200px] items-start",
   )}
 >
@@ -57,7 +57,7 @@
 
     <Button
       variant="secondary"
-      class="absolute bottom-1/2 right-[-10px] h-8 w-8 drop-shadow-sm"
+      class="absolute bottom-1/2 right-[-10px] hidden h-8 w-8 drop-shadow-sm md:flex"
       on:click={() => (isCollapsed = !isCollapsed)}
     >
       {#if isCollapsed}
@@ -73,13 +73,13 @@
     <Tooltip.Root>
       <Tooltip.Trigger>
         <div
-          class="flex items-center text-muted-foreground hover:text-accent-foreground"
+          class="text-muted-foreground hover:text-accent-foreground flex items-center"
         >
           <form method="post" action="/auth/logout">
             <Button
               type="submit"
               variant="link"
-              class="rounded-lg text-muted-foreground"
+              class="text-muted-foreground rounded-lg"
             >
               <LogOut class="h-5 w-5" />
             </Button>

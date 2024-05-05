@@ -2,16 +2,44 @@
   import Sidebar from "./Sidebar.svelte";
   import Header from "./Header.svelte";
   import clsx from "clsx";
+  import { onMount } from "svelte";
 
-  let isSidebarCollapsed = false;
+  let isSidebarCollapsed = true;
+  let clientWidth: number;
+
+  $: {
+    if (clientWidth < 760) {
+      isSidebarCollapsed = true;
+    } else if (typeof window !== "undefined") {
+      isSidebarCollapsed = JSON.parse(
+        sessionStorage.getItem("collapsedSidebar") ?? "true",
+      );
+    }
+  }
+
+  $: {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(
+        "collapsedSidebar",
+        JSON.stringify(isSidebarCollapsed),
+      );
+    }
+  }
+
+  onMount(() => {
+    sessionStorage.setItem(
+      "collapsedSidebar",
+      JSON.stringify(isSidebarCollapsed),
+    );
+  });
 </script>
 
-<div class="flex min-h-screen w-full flex-col bg-muted/40">
+<div class="bg-muted/40 flex min-h-screen w-full flex-col" bind:clientWidth>
   <Sidebar bind:isCollapsed={isSidebarCollapsed} />
 
   <div
     class={clsx(
-      "flex min-h-screen flex-col bg-muted/40 sm:pl-0 md:pl-44 lg:pl-44",
+      "bg-muted/40 flex min-h-screen flex-col sm:pl-0 md:pl-44 lg:pl-44",
       !isSidebarCollapsed ? "md:pl-44 lg:pl-44" : "md:pl-8 lg:pl-8",
     )}
   >
