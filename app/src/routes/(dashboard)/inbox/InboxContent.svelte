@@ -1,6 +1,5 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
-  import { Separator } from "$lib/components/ui/separator/index.js";
 
   import MoveLeft from "lucide-svelte/icons/move-left";
   import User from "lucide-svelte/icons/user";
@@ -10,12 +9,17 @@
 
   import * as Card from "$lib/components/ui/card/index.js";
   import { Badge } from "$lib/components/ui/badge";
-  import type { Request } from "$lib/server/database";
+  import type { Request, InboxStageData } from "$lib/server/database";
   import { Textarea } from "$lib/components/ui/textarea";
 
+<<<<<<< HEAD
   export let requests: { [key: string]: any };
   export let selectedStage: any;
   export let users: any;
+=======
+  export let requests: { [key: string]: Request };
+  export let selectedStage: InboxStageData;
+>>>>>>> b1188cc (draft for notifications (still not working)
 
   $: info = selectedStage ? requests[selectedStage.requestId] : null;
 </script>
@@ -53,13 +57,16 @@
         </div>
 
         {#if info.purpose !== ""}
+          <p class="font-semibold">Purpose</p>
           <Textarea disabled value={info.purpose} />
         {/if}
         {#if info.remarks !== ""}
+          <p class="font-semibold">Remarks</p>
           <Textarea disabled value={info.remarks} />
         {/if}
       </div>
       <div class="my-4 grid gap-3">
+        <p class="font-semibold">Chat</p>
         <ChatArea roomId="abcd" />
       </div>
 

@@ -47,8 +47,6 @@
   let messageContainer: HTMLDivElement;
 
   onMount(async () => {
-    // TODO: should encode roomId somehow
-    // probably in this format: requestId-step
     const params = {
       sessionId,
       userId,

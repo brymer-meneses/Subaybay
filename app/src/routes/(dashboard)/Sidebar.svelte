@@ -19,8 +19,12 @@
   import clsx from "clsx";
 
   export let isCollapsed: boolean;
+<<<<<<< HEAD
 
   import Notification from "./Notification.svelte";
+=======
+  export let notifications: { messages: number; requests: number };
+>>>>>>> b1188cc (draft for notifications (still not working)
 </script>
 
 <aside
@@ -45,8 +49,19 @@
       {/if}
     </div>
     <Separator />
+<<<<<<< HEAD
     <div class="flex w-full flex-col gap-2">
       <NavLink icon={Inbox} name="Inbox" href="inbox" {isCollapsed}></NavLink>
+=======
+    <div class="flex w-full flex-col">
+      <NavLink
+        icon={Inbox}
+        name="Inbox"
+        href="inbox"
+        {isCollapsed}
+        notifications={5}
+      ></NavLink>
+>>>>>>> b1188cc (draft for notifications (still not working)
       <NavLink icon={ListTodo} name="Requests" href="requests" {isCollapsed} />
       <NavLink
         icon={FileCog}
@@ -70,8 +85,8 @@
     </Button>
   </nav>
 
-  <nav class="mt-auto flex flex-col items-start gap-4 px-2 py-4">
-    <Separator />
+  <nav class="mt-auto flex w-full flex-col items-start p-2">
+    <Separator class="w-full" />
     <Tooltip.Root>
       <Tooltip.Trigger>
         <div
@@ -87,7 +102,7 @@
             </Button>
           </form>
           {#if !isCollapsed}
-            <span>Sign Out</span>
+            <span class="text-sm">Sign Out</span>
           {/if}
         </div>
       </Tooltip.Trigger>

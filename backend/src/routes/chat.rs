@@ -76,11 +76,11 @@ async fn handle_connection(
             },
             doc! {
                 "$project": {
+                    "_id": 1,
                     "roomId": 1,
                     "userId": 1,
                     "content": 1,
                     "dateTime": 1,
-                    "messageId": 1,
                     "profileUrl": "$userInfo.profileUrl"
                 }
             },
@@ -91,7 +91,7 @@ async fn handle_connection(
 
         while let Some(doc) = cursor.next().await {
             if let Ok(doc) = doc {
-                let chat_message: ChatMessageWithProfile = bson::from_document(doc).unwrap();
+                let chat_message: MessageWithProfile = bson::from_document(doc).unwrap();
                 messages.push(chat_message);
             }
         }
@@ -124,16 +124,14 @@ async fn handle_connection(
                 .unwrap();
 
             let _ = sender
-                .send(Message::Item(ServerMessage::Reply(
-                    ChatMessageWithProfile {
-                        message_id: message.message_id,
-                        room_id: message.room_id,
-                        date_time: message.date_time,
-                        user_id: message.user_id,
-                        content: message.content,
-                        profile_url: user.profile_url,
-                    },
-                )))
+                .send(Message::Item(ServerMessage::Reply(MessageWithProfile {
+                    _id: message._id,
+                    room_id: message.room_id,
+                    date_time: message.date_time,
+                    user_id: message.user_id,
+                    content: message.content,
+                    profile_url: user.profile_url,
+                })))
                 .await;
         }
     });
@@ -151,7 +149,7 @@ async fn handle_connection(
                         room_id,
                     } => {
                         let chat_message = db::Message {
-                            message_id: ObjectId::new(),
+                            _id: ObjectId::new(),
                             user_id,
                             room_id,
                             date_time,
@@ -211,8 +209,9 @@ pub enum ClientMessage {
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct ChatMessageWithProfile {
-    pub message_id: ObjectId,
+pub struct MessageWithProfile {
+    #[serde(rename = "_id")]
+    pub _id: ObjectId,
     pub room_id: String,
     pub user_id: String,
     pub date_time: u64,
@@ -223,6 +222,6 @@ pub struct ChatMessageWithProfile {
 #[derive(Serialize, Deserialize)]
 #[serde(tag = "type", content = "content", rename_all = "camelCase")]
 pub enum ServerMessage {
-    Reply(ChatMessageWithProfile),
-    PreviousMessages(Vec<ChatMessageWithProfile>),
+    Reply(MessageWithProfile),
+    PreviousMessages(Vec<MessageWithProfile>),
 }

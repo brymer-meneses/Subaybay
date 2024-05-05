@@ -12,8 +12,8 @@ pub struct Room {
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Message {
-    #[serde(default = "ObjectId::new")]
-    pub message_id: ObjectId,
+    #[serde(default = "ObjectId::new", rename = "_id")]
+    pub _id: ObjectId,
     pub room_id: String,
     pub user_id: String,
     pub date_time: u64,
@@ -21,14 +21,20 @@ pub struct Message {
 }
 
 #[derive(Deserialize, Serialize)]
+#[serde(rename_all = "camelCase", tag = "type", content = "content")]
 pub enum Notification {
-    Message { message_id: ObjectId },
+    #[serde(rename_all = "camelCase")]
+    Message {
+        message_id: ObjectId,
+        seen: bool,
+        user_id: String,
+    },
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct User {
-    #[serde(alias = "_id")]
+    #[serde(rename = "_id")]
     pub _id: String,
     pub name: String,
     pub email: String,

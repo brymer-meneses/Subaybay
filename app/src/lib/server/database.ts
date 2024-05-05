@@ -78,3 +78,10 @@ export interface Inbox {
   recallableRequestIds: Array<string>;
   currentRequestIds: Array<string>;
 }
+
+export interface InboxStageData {
+  requestTitle: string;
+  stageTitle: string;
+  dateSent: Date;
+  requestId: string;
+}
