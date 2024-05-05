@@ -13,22 +13,23 @@
   import type { Request } from "$lib/server/database";
   import { Textarea } from "$lib/components/ui/textarea";
 
-  export let requests: { [key: string]: Request };
+  export let type: "active" | "pending";
+  export let requests: { [key: string]: any };
   export let selectedStage: any;
 
-  $: info = requests[selectedStage.requestId];
+  $: info = selectedStage ? requests[selectedStage.requestId] : null;
 </script>
 
 {#if selectedStage}
   <Card.Root class="overflow-hidden">
-    <Card.Header class="flex flex-row items-start bg-muted/50">
+    <Card.Header class="bg-muted/50 flex flex-row items-start">
       <div class="grid gap-0.5">
         <Card.Title class="group flex items-center gap-2 text-lg">
           {#if selectedStage}
             {selectedStage.stageTitle}
           {/if}
         </Card.Title>
-        <Card.Description>#00001</Card.Description>
+        <Card.Description>{selectedStage.requestId}</Card.Description>
       </div>
 
       <div class="ml-auto flex items-center gap-2">
@@ -60,18 +61,25 @@
       </div>
 
       <div class="flex gap-2">
-        <Button class="gap-2 rounded-xl text-white">
-          <CheckCheck />
-          Finish
-        </Button>
-        <Button class="gap-2 rounded-xl text-white">
-          <MoveLeft />
-          Rollback
-        </Button>
-        <Button class="gap-2 rounded-xl text-white">
+        {#if type == "active"}
+          <Button class="gap-2 rounded-xl text-white">
+            <CheckCheck />
+            Finish
+          </Button>
+          <Button class="gap-2 rounded-xl text-white">
+            <User />
+            Set Next Handlers
+          </Button>
+        {:else}
+          <Button class="gap-2 rounded-xl text-white">
+            <MoveLeft />
+            Rollback
+          </Button>
+        {/if}
+        <!-- <Button class="gap-2 rounded-xl text-white">
           <User />
           Reassign
-        </Button>
+        </Button> -->
       </div>
     </Card.Content>
   </Card.Root>
