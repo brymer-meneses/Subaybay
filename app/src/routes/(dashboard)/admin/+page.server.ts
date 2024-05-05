@@ -31,6 +31,42 @@ type RequestTypeInstancesCount = {
  *                                                      *
  *******************************************************/
 
+/*
+* Put this in +page.server.ts (for overview data visual )
+*
+* take date today
+* let daysAgo = (date today) - (current stage date finished )
+* if request.isFinished &&  days ago <=14
+* then
+*  find data[index].daysAgo === daysAgo, then value++;
+*/
+
+// const today = new Date();
+
+// function subtractDays(date: Date, days: number) {
+//  const result = new Date(date);
+//  result.setDate(result.getDate() - days);
+//  return result;
+// }
+
+// const data = [
+//  { daysAgo: subtractDays(today, 13), value: 24 },
+//  { daysAgo: subtractDays(today, 12), value: 78 },
+//  { daysAgo: subtractDays(today, 11), value: 21 },
+//  { daysAgo: subtractDays(today, 10), value: 29 },
+//  { daysAgo: subtractDays(today, 9), value: 71 },
+//  { daysAgo: subtractDays(today, 8), value: 72 },
+//  { daysAgo: subtractDays(today, 7), value: 51 },
+//  { daysAgo: subtractDays(today, 6), value: 81 },
+//  { daysAgo: subtractDays(today, 5), value: 52 },
+//  { daysAgo: subtractDays(today, 4), value: 36 },
+//  { daysAgo: subtractDays(today, 3), value: 15 },
+//  { daysAgo: subtractDays(today, 2), value: 22 },
+//  { daysAgo: subtractDays(today, 1), value: 99 },
+//  { daysAgo: subtractDays(today, 0), value: 26 },
+// ];
+
+
 export const load: PageServerLoad = async (event) => {
   // if (event.locals.user && !event.locals.user.isAdmin) {
   //   redirect(302, "/inbox");
