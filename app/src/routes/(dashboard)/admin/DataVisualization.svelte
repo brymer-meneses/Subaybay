@@ -36,6 +36,7 @@
     { daysAgo: subtractDays(today, 0), value: 26 },
   ];
 
+  const breakPoint = 640;
   let width = 1320;
   let height = 300;
 
@@ -52,7 +53,7 @@
   }
 
   $: padding =
-    width > 540
+    width > breakPoint
       ? { top: 20, right: 15, bottom: 20, left: 45 }
       : { ...padding, right: 0, left: 0 };
 
@@ -76,7 +77,7 @@
 </script>
 
 <div
-  class="chart m-0 w-full border-b lg:-ml-2 lg:border-none"
+  class="chart m-0 w-full sm:border-b md:border-none lg:-ml-2"
   bind:clientHeight={height}
   bind:clientWidth={width}
 >
@@ -87,7 +88,7 @@
     viewBox="0 0 {width} {height}"
   >
     <!-- y-axis line -->
-    {#if width > 540}
+    {#if width > breakPoint}
       <line
         x1={padding.left}
         y1={padding.top - 25}
@@ -123,7 +124,7 @@
     </g>
 
     <!-- y-axis labels -->
-    {#if width > 540}
+    {#if width > breakPoint}
       <g class="axis y-axis">
         {#each yTicks as tick}
           <g class="text-xs" transform="translate(0, {yScale(tick)})">
@@ -146,7 +147,7 @@
     {/if}
 
     <!-- x-axis labels -->
-    {#if width > 540}
+    {#if width > breakPoint}
       <g class="axis x-axis">
         {#each data as point, i}
           <g class="text-xs" transform="translate({xScale(i)},{height + 5})">
@@ -172,10 +173,10 @@
     <!-- data -->
     <g>
       {#each data as point, i}
-        {#if width > 540}
+        {#if width > breakPoint}
           <rect
             class="bg-primary-foreground max-w-[51px]"
-            x={xScale(i) + 25}
+            x={xScale(i) + barWidth / 4}
             y={yScale(point.value)}
             width={barWidth / 2}
             height={yScale(0) - yScale(point.value)}
@@ -189,11 +190,12 @@
             orientation="bottom"
             width="531"
             height="30"
-            x={xScale(i) + 25}
+            x={xScale(i) + barWidth / 4}
             y={yScale(point.value)}
             fill="#111111"
             text-anchor="middle"
-            ><tspan x={xScale(i) + 50} dy="-1em">{point.value}</tspan></text
+            ><tspan x={xScale(i) + barWidth / 2} dy="-1em">{point.value}</tspan
+            ></text
           >
         {:else}
           <rect

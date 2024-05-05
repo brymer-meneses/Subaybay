@@ -45,13 +45,13 @@
     Administrator <UsersRound class="inline h-6 w-6" />
   </h2>
   <Tabs.Root bind:value class="w-full">
-    <Tabs.List class="grid w-[720px] grid-cols-3 border">
+    <Tabs.List class="grid w-full grid-cols-3 border lg:w-[720px]">
       <Tabs.Trigger value="overview">Overview</Tabs.Trigger>
       <Tabs.Trigger value="stats">Statistics</Tabs.Trigger>
       <Tabs.Trigger value="users">Users</Tabs.Trigger>
     </Tabs.List>
     <Tabs.Content value="overview">
-      <div class="flex justify-between space-x-4">
+      <div class="flex flex-col justify-between lg:flex-row lg:space-x-4">
         <div class="flex flex-grow flex-col space-y-4 pb-4 pt-4">
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {#each summary as s}
@@ -63,7 +63,7 @@
             <Overview bind:tab={value} />
           </div>
         </div>
-        <div class="my-4 space-y-4">
+        <div class="lg:my-4 lg:space-y-4">
           <UserList bind:users bind:tab={value} />
         </div>
       </div>

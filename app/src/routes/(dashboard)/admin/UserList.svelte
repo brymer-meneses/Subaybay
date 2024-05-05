@@ -16,12 +16,12 @@
   };
 </script>
 
-<Card.Root class="m-0 h-full w-72">
+<Card.Root class="m-0 h-full lg:w-72">
   <Card.Header>
     <Card.Title>Users</Card.Title>
   </Card.Header>
   <Card.Content>
-    <ScrollArea class="h-[500px] w-full rounded-md">
+    <ScrollArea class="h-60 w-full rounded-md lg:h-[500px]">
       {#each users as user}
         <div class="mb-4 flex items-center justify-between space-x-4">
           <div class="flex items-center space-x-4">
@@ -58,7 +58,7 @@
       {/each}
     </ScrollArea>
   </Card.Content>
-  <Card.Footer class="float-end">
+  <Card.Footer class="flex flex-row-reverse lg:float-end">
     <Button class="w-28" on:click={() => onClickHandler(value)}>Manage</Button>
   </Card.Footer>
 </Card.Root>
