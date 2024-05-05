@@ -156,7 +156,7 @@
           y={yScale(point.value)}
           width={barWidth / 2}
           height={yScale(0) - yScale(point.value)}
-          fill="currentcolor"
+          fill="currentColor"
           rx="4"
           ry="4"
         />
