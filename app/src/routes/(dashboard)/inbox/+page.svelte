@@ -31,11 +31,11 @@
     >
       <NewRequest {requestTypes} data={data.form} />
     </div>
-    <Tabs.Root value="pending">
+    <Tabs.Root value="active">
       <div class="flex items-center">
         <Tabs.List>
+          <Tabs.Trigger value="active">Active</Tabs.Trigger>
           <Tabs.Trigger value="pending">Pending</Tabs.Trigger>
-          <Tabs.Trigger value="finished">Finished</Tabs.Trigger>
         </Tabs.List>
         <div class="ml-auto flex items-center gap-2">
           <DropdownMenu.Root>
@@ -66,10 +66,10 @@
           </Button>
         </div>
       </div>
-      <Tabs.Content value="pending">
+      <Tabs.Content value="active">
         <Inbox
-          type="pending"
-          stages={data.currentStages}
+          type="active"
+          stages={data.activeStages}
           onSelectStage={selectStage}
         />
       </Tabs.Content>
@@ -77,6 +77,6 @@
   </div>
 
   <div class="lg:col-span-2">
-    <InboxContent bind:selectedStage requests={data.currentRequests} />
+    <InboxContent bind:selectedStage={selectedStage} requests={data.relevantRequests} type={selectedStage && selectedStage.handlerId == data.userInfo.id ? "active" : "pending"}/>
   </div>
 </main>
