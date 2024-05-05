@@ -19,7 +19,7 @@
       <Table.Head>Total</Table.Head>
     </Table.Row>
   </Table.Header>
-  <ScrollArea class="h-[26rem]">
+  <ScrollArea class="h-[24rem]">
     <Table.Body>
       {#each count as stat}
         <Table.Row class="grid w-full grid-cols-5 text-left">

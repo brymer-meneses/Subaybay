@@ -2,6 +2,7 @@
   // https://github.com/himynameisdave/svelte-frappe-charts
   import * as Card from "$lib/components/ui/card/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
+  import DataVisualization from "./DataVisualization.svelte";
 
   export let tab: string;
 
@@ -12,17 +13,21 @@
   };
 </script>
 
-<Card.Root class="col-span-full flex h-full flex-col justify-between space-y-2">
+<Card.Root class="col-span-full flex h-full flex-col justify-between space-y-0">
   <Card.Header>
     <Card.Title>Overview</Card.Title>
-    <Card.Description>Last 7 working days</Card.Description>
+    <Card.Description
+      >Number of Finished Requests in the last 14 days</Card.Description
+    >
   </Card.Header>
-  <Card.Content class=" flex grow items-center justify-center  text-3xl"
-    >Graph here</Card.Content
-  >
-  <Card.Footer class="flex justify-end gap-4">
-    <Button class="gap-1 p-4" on:click={() => onClickHandler(value)}
-      >View Statistics</Button
+  <Card.Content class="mt-4 flex grow">
+    <DataVisualization />
+  </Card.Content>
+  <Card.Footer class="flex justify-end gap-4 ">
+    <Button
+      class="gap-1 p-4"
+      variant="outline"
+      on:click={() => onClickHandler(value)}>View Statistics</Button
     >
   </Card.Footer>
 </Card.Root>

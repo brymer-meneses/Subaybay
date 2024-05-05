@@ -44,14 +44,14 @@
   <h2 class="flex items-center gap-2 text-3xl font-bold tracking-tight">
     Administrator <UsersRound class="inline h-6 w-6" />
   </h2>
-  <Tabs.Root bind:value class="w-full space-y-4">
+  <Tabs.Root bind:value class="w-full">
     <Tabs.List class="grid w-[720px] grid-cols-3 border">
       <Tabs.Trigger value="overview">Overview</Tabs.Trigger>
       <Tabs.Trigger value="stats">Statistics</Tabs.Trigger>
       <Tabs.Trigger value="users">Users</Tabs.Trigger>
     </Tabs.List>
     <Tabs.Content value="overview">
-      <div class="mr-8 flex justify-between space-x-4">
+      <div class="flex justify-between space-x-4">
         <div class="flex flex-grow flex-col space-y-4 pb-4 pt-4">
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {#each summary as s}
@@ -68,7 +68,7 @@
         </div>
       </div>
     </Tabs.Content>
-    <Tabs.Content value="stats">
+    <Tabs.Content value="stats" class="pt-4">
       <Statistics
         count={data.stats.count}
         summary={data.stats.summary}
@@ -76,7 +76,7 @@
         reqTypes={data.stats.requestTypes}
       />
     </Tabs.Content>
-    <Tabs.Content value="users" class="space-y-4">
+    <Tabs.Content value="users" class="pt-4">
       <UserManagement bind:users />
     </Tabs.Content>
   </Tabs.Root>

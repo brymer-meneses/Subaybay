@@ -23,7 +23,7 @@
       <Table.Head class="col-span-2 text-center ">Actions</Table.Head>
     </Table.Row>
   </Table.Header>
-  <ScrollArea class="h-[30rem]">
+  <ScrollArea class="h-[28rem]">
     <Table.Body>
       {#each users as user (user._id)}
         <Table.Row class="grid w-full grid-cols-6 text-left">
@@ -40,11 +40,11 @@
                     {user.name.length > 20
                       ? user.name.substring(0, 20) + "..."
                       : user.name}
-                    <span class="font-normal text-muted-foreground">
+                    <span class="text-muted-foreground font-normal">
                       ({user._id})</span
                     >
                   </p>
-                  <p class="text-sm text-muted-foreground">
+                  <p class="text-muted-foreground text-sm">
                     {user.email.length > 25
                       ? user.email.substring(0, 25) + "..."
                       : user.email}

@@ -47,7 +47,7 @@
                   </HoverCard.Root>
                 {/if}
               </p>
-              <p class="text-sm text-muted-foreground">
+              <p class="text-muted-foreground text-sm">
                 {user.email.length > 25
                   ? user.email.substring(0, 25) + "..."
                   : user.email}
@@ -59,8 +59,6 @@
     </ScrollArea>
   </Card.Content>
   <Card.Footer class="float-end">
-    <Button class="w-28 gap-1" on:click={() => onClickHandler(value)}
-      >Manage</Button
-    >
+    <Button class="w-28" on:click={() => onClickHandler(value)}>Manage</Button>
   </Card.Footer>
 </Card.Root>
