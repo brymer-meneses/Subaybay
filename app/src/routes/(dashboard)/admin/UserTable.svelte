@@ -29,7 +29,7 @@
         <Table.Row class="grid w-full grid-cols-6 text-left">
           <Table.Cell class="col-span-2">
             <div class="mb-4 flex items-center justify-between space-x-4">
-              <div class="flex items-center space-x-4">
+              <div class="flex items-center lg:space-x-4">
                 <img
                   src={user.profileUrl}
                   alt=""
