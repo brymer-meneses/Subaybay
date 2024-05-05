@@ -33,18 +33,22 @@
                 <img
                   src={user.profileUrl}
                   alt=""
-                  class="aspect-square h-12 rounded-full"
+                  class="hidden aspect-square h-12 rounded-full lg:block"
                 />
                 <div>
                   <p class="text-sm font-medium leading-none">
                     {user.name.length > 20
                       ? user.name.substring(0, 20) + "..."
                       : user.name}
-                    <span class="text-muted-foreground font-normal">
-                      ({user._id})</span
+                    <span
+                      class="text-muted-foreground hidden font-normal lg:block xl:inline"
                     >
+                      ({user._id})
+                    </span>
                   </p>
-                  <p class="text-muted-foreground text-sm">
+                  <p
+                    class="text-muted-foreground hidden text-sm lg:block xl:inline"
+                  >
                     {user.email.length > 25
                       ? user.email.substring(0, 25) + "..."
                       : user.email}

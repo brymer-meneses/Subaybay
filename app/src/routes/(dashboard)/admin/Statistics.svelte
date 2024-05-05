@@ -167,7 +167,9 @@
 </script>
 
 <Card.Root>
-  <Card.Header class="flex flex-row items-center justify-between align-middle">
+  <Card.Header
+    class="flex flex-col border align-middle md:flex-row md:items-center md:justify-between"
+  >
     <Card.Title class="text-xl font-bold">Requst Types Statistics</Card.Title>
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
       <div class="relative w-80">

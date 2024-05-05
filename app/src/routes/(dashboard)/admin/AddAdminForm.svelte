@@ -9,7 +9,9 @@
 
 <AlertDialog.Root>
   <AlertDialog.Trigger>
-    <Button variant="link" class="gap-2"><UserRoundPlus />Add Admin</Button>
+    <Button variant="link" class="gap-2"
+      ><UserRoundPlus /><span class="hidden lg:inline">Add Admin</span></Button
+    >
   </AlertDialog.Trigger>
   <AlertDialog.Content>
     <AlertDialog.Header>
@@ -29,9 +31,9 @@
         <div>
           <p class="text-sm font-bold leading-none">
             {user.name}
-            <span class="font-normal text-muted-foreground"> ({user._id})</span>
+            <span class="text-muted-foreground font-normal"> ({user._id})</span>
           </p>
-          <p class="text-sm text-muted-foreground">
+          <p class="text-muted-foreground text-sm">
             {user.email}
           </p>
         </div>
