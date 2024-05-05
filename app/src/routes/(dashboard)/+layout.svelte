@@ -8,7 +8,7 @@
   let clientWidth: number;
 
   $: {
-    if (clientWidth < 760) {
+    if (clientWidth < 750) {
       isSidebarCollapsed = true;
     } else if (typeof window !== "undefined") {
       isSidebarCollapsed = JSON.parse(
