@@ -1,15 +1,12 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button/index.js";
   import { Input } from "$lib/components/ui/input/index.js";
-  import { Label } from "$lib/components/ui/label/index.js";
   import { Textarea } from "$lib/components/ui/textarea/index.js";
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
 
   import * as Command from "$lib/components/ui/command/index.js";
   import * as Dialog from "$lib/components/ui/dialog/index.js";
-  import * as Select from "$lib/components/ui/select/index.js";
   import * as Form from "$lib/components/ui/form";
-  import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
   import * as Popover from "$lib/components/ui/popover/index.js";
 
   import Plus from "lucide-svelte/icons/plus";
@@ -52,16 +49,6 @@
       document.getElementById(triggerId)?.focus();
     });
   }
-
-  import { updateFlash } from "sveltekit-flash-message";
-  import { page } from "$app/stores";
-
-  async function submitForm(e: Event) {
-    const form = e.target as HTMLFormElement;
-    const body = new FormData(e.target as HTMLFormElement);
-    await fetch(form.action, { method: form.method, body });
-    await updateFlash(page);
-  }
 </script>
 
 <Dialog.Root>
@@ -69,12 +56,7 @@
     <Button class="gap-4 p-3"><FilePlus size="20" /> Create Request</Button>
   </Dialog.Trigger>
   <Dialog.Content>
-    <form
-      action="?/add_request"
-      method="POST"
-      >
-      <!-- use:enhance -->
-      <!-- on:submit|preventDefault={submitForm} -->
+    <form action="?/add_request" method="POST" use:enhance>
       <Dialog.Header>
         <Dialog.Title>Add details for new request.</Dialog.Title>
       </Dialog.Header>
