@@ -60,7 +60,7 @@
             <RequestCard />
           </div>
           <div class="grid flex-grow gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Overview bind:tab={value} />
+            <Overview bind:tab={value} overviewData={data.stats.overview} />
           </div>
         </div>
         <div class="lg:my-4 lg:space-y-4">

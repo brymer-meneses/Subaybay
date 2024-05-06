@@ -5,6 +5,7 @@
   import DataVisualization from "./DataVisualization.svelte";
 
   export let tab: string;
+  export let overviewData: { date: Date; value: number }[];
 
   let value: string = "stats";
 
@@ -21,7 +22,7 @@
     >
   </Card.Header>
   <Card.Content class="mt-4 flex grow">
-    <DataVisualization />
+    <DataVisualization data={overviewData} />
   </Card.Content>
   <Card.Footer class="flex justify-end gap-4 ">
     <Button

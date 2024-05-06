@@ -1,46 +1,38 @@
 <script lang="ts">
   import { scaleLinear } from "d3-scale";
 
-  /**
-   * Put this in +page.server.ts
-   *
-   * take date today
-   * let daysAgo = (date today) - (current stage date finished )
-   * if request.isFinished &&  days ago <=14
-   * then
-   *  find data[index].daysAgo === daysAgo, then value++;
-   */
+  export let data: { date: Date; value: number }[];
+  // dummy data
+  // const today = new Date();
 
-  const today = new Date();
+  // function subtractDays(date: Date, days: number) {
+  //   const result = new Date(date);
+  //   result.setDate(result.getDate() - days);
+  //   return result;
+  // }
 
-  function subtractDays(date: Date, days: number) {
-    const result = new Date(date);
-    result.setDate(result.getDate() - days);
-    return result;
-  }
-
-  const data = [
-    { daysAgo: subtractDays(today, 13), value: 24 },
-    { daysAgo: subtractDays(today, 12), value: 78 },
-    { daysAgo: subtractDays(today, 11), value: 21 },
-    { daysAgo: subtractDays(today, 10), value: 29 },
-    { daysAgo: subtractDays(today, 9), value: 71 },
-    { daysAgo: subtractDays(today, 8), value: 72 },
-    { daysAgo: subtractDays(today, 7), value: 51 },
-    { daysAgo: subtractDays(today, 6), value: 81 },
-    { daysAgo: subtractDays(today, 5), value: 52 },
-    { daysAgo: subtractDays(today, 4), value: 36 },
-    { daysAgo: subtractDays(today, 3), value: 15 },
-    { daysAgo: subtractDays(today, 2), value: 22 },
-    { daysAgo: subtractDays(today, 1), value: 99 },
-    { daysAgo: subtractDays(today, 0), value: 26 },
-  ];
+  // const data = [
+  //   { date: subtractDays(today, 13), value: 24 },
+  //   { date: subtractDays(today, 12), value: 78 },
+  //   { date: subtractDays(today, 11), value: 21 },
+  //   { date: subtractDays(today, 10), value: 29 },
+  //   { date: subtractDays(today, 9), value: 71 },
+  //   { date: subtractDays(today, 8), value: 72 },
+  //   { date: subtractDays(today, 7), value: 51 },
+  //   { date: subtractDays(today, 6), value: 81 },
+  //   { date: subtractDays(today, 5), value: 52 },
+  //   { date: subtractDays(today, 4), value: 36 },
+  //   { date: subtractDays(today, 3), value: 15 },
+  //   { date: subtractDays(today, 2), value: 22 },
+  //   { date: subtractDays(today, 1), value: 99 },
+  //   { date: subtractDays(today, 0), value: 26 },
+  // ];
 
   const breakPoint = 640;
   let width = 1320;
   let height = 300;
 
-  const xTicks = data.map((d) => d.daysAgo);
+  const xTicks = data.map((d) => d.date);
   let yTicks: number[] = [];
   let padding = { top: 20, right: 15, bottom: 20, left: 45 };
 
@@ -49,7 +41,7 @@
     minUB + minUB * Math.floor(Math.max(...data.map((d) => d.value)) / minUB);
 
   for (let i = 0; i < 5; i++) {
-    yTicks.push(i * (max / 4));
+    yTicks.push(Math.round(i * (max / 4)));
   }
 
   $: padding =
@@ -70,7 +62,7 @@
 
   function formatDate(date: Date) {
     return new Intl.DateTimeFormat("en-US", {
-      month: "long",
+      month: "short",
       day: "numeric",
     }).format(date);
   }
@@ -95,7 +87,7 @@
         x2={padding.left}
         y2={height - padding.bottom}
         stroke="#ccc"
-        stroke-width="2"
+        stroke-width="1"
       />
     {/if}
 
@@ -106,7 +98,7 @@
       x2={width - padding.right}
       y2={height - padding.bottom}
       stroke="#ccc"
-      stroke-width="2"
+      stroke-width="1"
     />
 
     <!--Horizontal Grid lines -->
@@ -118,7 +110,7 @@
           x2={width - padding.right}
           y2={yScale(tick)}
           stroke="#e5e5e5"
-          stroke-width="1"
+          stroke-width="0.5"
         />
       {/each}
     </g>
@@ -139,7 +131,7 @@
               fill="#111111"
               text-anchor="end"
             >
-              <tspan x="36" dy="0.355em">{tick}</tspan>
+              <tspan x="36" dy="0.355em" font-weight="bold">{tick}</tspan>
             </text>
           </g>
         {/each}
@@ -161,8 +153,8 @@
               y="-15"
               fill="#111111"
               text-anchor="middle"
-              ><tspan x={barWidth / 2} dy="0.71em"
-                >{i === 13 ? "Today" : formatDate(point.daysAgo)}</tspan
+              ><tspan x={barWidth / 2} dy="0.71em" font-weight="bold"
+                >{i === 13 ? "Today" : formatDate(point.date)}</tspan
               ></text
             >
           </g>
@@ -175,7 +167,7 @@
       {#each data as point, i}
         {#if width > breakPoint}
           <rect
-            class="bg-primary-foreground max-w-[51px]"
+            class="bg-primary-foregroundxx max-w-[51px]"
             x={xScale(i) + barWidth / 4}
             y={yScale(point.value)}
             width={barWidth / 2}
@@ -186,7 +178,7 @@
           />
           <text
             stroke="none"
-            font-size="12"
+            font-size="10"
             orientation="bottom"
             width="531"
             height="30"
@@ -194,7 +186,8 @@
             y={yScale(point.value)}
             fill="#111111"
             text-anchor="middle"
-            ><tspan x={xScale(i) + barWidth / 2} dy="-1em">{point.value}</tspan
+            ><tspan x={xScale(i) + barWidth / 2} dy="-0.5em"
+              >{point.value}</tspan
             ></text
           >
         {:else}

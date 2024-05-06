@@ -21,6 +21,7 @@ type RequestTypeInstancesCount = {
   };
 };
 
+
 /********************************************************
  *                                                      *
  *                                                      *
@@ -29,57 +30,29 @@ type RequestTypeInstancesCount = {
  *                                                      *
  *                                                      *
  *                                                      *
- *******************************************************/
-
-/*
-* Put this in +page.server.ts (for overview data visual )
-*
-* take date today
-* let daysAgo = (date today) - (current stage date finished )
-* if request.isFinished &&  days ago <=14
-* then
-*  find data[index].daysAgo === daysAgo, then value++;
-*/
-
-// const today = new Date();
-
-// function subtractDays(date: Date, days: number) {
-//  const result = new Date(date);
-//  result.setDate(result.getDate() - days);
-//  return result;
-// }
-
-// const data = [
-//  { daysAgo: subtractDays(today, 13), value: 24 },
-//  { daysAgo: subtractDays(today, 12), value: 78 },
-//  { daysAgo: subtractDays(today, 11), value: 21 },
-//  { daysAgo: subtractDays(today, 10), value: 29 },
-//  { daysAgo: subtractDays(today, 9), value: 71 },
-//  { daysAgo: subtractDays(today, 8), value: 72 },
-//  { daysAgo: subtractDays(today, 7), value: 51 },
-//  { daysAgo: subtractDays(today, 6), value: 81 },
-//  { daysAgo: subtractDays(today, 5), value: 52 },
-//  { daysAgo: subtractDays(today, 4), value: 36 },
-//  { daysAgo: subtractDays(today, 3), value: 15 },
-//  { daysAgo: subtractDays(today, 2), value: 22 },
-//  { daysAgo: subtractDays(today, 1), value: 99 },
-//  { daysAgo: subtractDays(today, 0), value: 26 },
-// ];
+ *******************************************************/  
 
 
 export const load: PageServerLoad = async (event) => {
   // if (event.locals.user && !event.locals.user.isAdmin) {
   //   redirect(302, "/inbox");
   // }
-
+  
   // NOTE: user cannot not be null here since this page won't be loaded if that's the case
   // unauthorized access
-
+  
   const users: User[] = await user.find({}).toArray();
   const requests: Request[] = await request.find({}).toArray();
   const requestTypes: RequestType[] = await requestType.find({}).toArray();
-
+  
   let count: RequestTypeInstancesCount[] = [];
+    
+  const today = new Date();
+  let overview: {date: Date, value: number}[] = [];
+
+  for (let i = 13; i >= 0; i--) {
+    overview.push({date: subtractDays(today, i), value: 0});
+  }
 
   let summary = [
     { type: "Finished", count: 0, countThisMonth: 0 },
@@ -101,18 +74,25 @@ export const load: PageServerLoad = async (event) => {
 
     if (stages) {
       const finalStageIndex = stages.length - 1;
-      const currentStageIndex = request.currentStages[0].stageTypeIndex;
+      const currentStageIndex = request.currentStage.stageTypeIndex;
 
       const foundIndex = count.findIndex(
         (x) => x.reqType === request.requestTypeId,
       );
+      
       const currentStageDateFinished = new Date(
-        request.currentStages[0].dateFinished,
+        request.currentStage.dateFinished,
       );
 
       if (currentStageIndex === finalStageIndex && request.isFinished) {
         count[foundIndex].total.finished++;
         summary[0].count++;
+        
+        const dateDiff = Math.floor((today.getTime() - currentStageDateFinished.getTime())/ (1000 * 3600 * 24));
+
+        if (dateDiff < 14) {
+          overview[overview.length - dateDiff - 1].value++;
+        }
 
         if (isThisMonthAndYear(currentStageDateFinished)) {
           summary[0].countThisMonth++;
@@ -126,10 +106,15 @@ export const load: PageServerLoad = async (event) => {
       }
     }
   }
-  count.sort(compare); // reqtypes with 0 instances will be put at the end of the arr.
-
-  return { users, stats: { summary, count, requests, requestTypes } };
+  count.sort(compare);
+  return { users, stats: { summary, count, requests, requestTypes, overview} };
 };
+
+function subtractDays(date: Date, days: number) {
+  const result = new Date(date);
+  result.setDate(result.getDate() - days);
+  return result;
+ }
 
 function isThisMonthAndYear(date: Date) {
   const today = new Date();
