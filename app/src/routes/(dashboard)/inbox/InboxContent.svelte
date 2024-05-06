@@ -72,11 +72,6 @@
               name="stageTypeIndex"
               value={selectedStage.stageTypeIndex}
             />
-            <input
-              type="hidden"
-              name="substageTypeIndex"
-              value={selectedStage.substageTypeIndex}
-            />
             <Button type="submit" class="gap-2 rounded-xl text-white">
               <CheckCheck />
               Finish
@@ -92,11 +87,6 @@
               type="hidden"
               name="stageTypeIndex"
               value={selectedStage.stageTypeIndex}
-            />
-            <input
-              type="hidden"
-              name="substageTypeIndex"
-              value={selectedStage.substageTypeIndex}
             />
             <Button class="gap-2 rounded-xl text-white">
               <User />
@@ -114,11 +104,6 @@
               type="hidden"
               name="stageTypeIndex"
               value={selectedStage.stageTypeIndex}
-            />
-            <input
-              type="hidden"
-              name="substageTypeIndex"
-              value={selectedStage.substageTypeIndex}
             />
             <Button class="gap-2 rounded-xl text-white">
               <MoveLeft />
