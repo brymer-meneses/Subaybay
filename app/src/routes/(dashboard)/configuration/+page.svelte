@@ -1,13 +1,22 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
-  import { UserData, SubstageData } from "./configClasses";
-  import ConfigStageContainer from "./ConfigStageContainer.svelte";
+  import { UserData, StageData } from "./configClasses";
   import Input from "$lib/components/ui/input/input.svelte";
   import type { PageServerData } from "./$types";
+  import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+  } from "$lib/components/ui/card";
+  import Plus from "lucide-svelte/icons/plus";
+  import ConfigStage from "./ConfigStage.svelte";
 
   export let data: PageServerData;
 
-  let stages: SubstageData[][] = [];
+  let stages: StageData[] = [];
   let requestType: string;
 
   let users = [new UserData("", "None")];
@@ -15,17 +24,18 @@
     users.push(new UserData(user.id, user.name, user.profileUrl));
   }
 
-  stages = [
-    [new SubstageData("Create/Submit Request", 0)],
-    [new SubstageData()],
-  ];
+  stages = [new StageData("Create Request", 0), new StageData()];
 
   function deleteStage(index: number) {
     stages = stages.slice(0, index).concat(stages.slice(index + 1));
   }
 
-  function addStage() {
-    stages = [...stages, [new SubstageData()]];
+  function addSubstage() {
+    stages = [...stages, new StageData()];
+  }
+
+  function editHandler(stageIndex: number, handlerIndex: number) {
+    stages[stageIndex].handlerIndex = handlerIndex;
   }
 
   async function handleSubmit(event: any) {
@@ -35,14 +45,15 @@
     data.append("users", JSON.stringify(users));
     data.append("requestType", requestType);
 
-    const response = await fetch(event.currentTarget.action, {
+    const response = await fetch(event.target.action, {
       method: "POST",
       body: data,
     });
+
+    location.reload();
   }
 </script>
 
-<!--Todo? Use <Form>-->
 <main class="flex justify-center">
   <div class="flex w-[40%] flex-col gap-4">
     <Input
@@ -51,27 +62,52 @@
       placeholder="Request Type (e.g. OTR-1)"
     />
     {#if stages.length > 0}
-      <ConfigStageContainer stageIndex={0} {stages} {users} />
-
-      {#if stages.length > 0}
-        {#each stages as _, stageIndex}
-          {#if stageIndex > 0}
-            <ConfigStageContainer
-              {stageIndex}
-              deleteStageFunction={deleteStage}
-              {stages}
+      <Card class="flex flex-col border-gray-300">
+        <CardHeader>
+          <CardTitle>Stages</CardTitle>
+          <CardDescription>
+            Note: the first stage is always the creation stage, it cannot be
+            removed
+          </CardDescription>
+        </CardHeader>
+        <CardContent class="flex flex-col gap-2">
+          {#if stages.length >= 1}
+            <ConfigStage
+              bind:substageName={stages[0].stageName}
+              stageIndex={0}
+              handlerIndex={stages[0].handlerIndex}
+              isRenamable={false}
+              isDeletable={false}
+              onHandlerEdited={editHandler}
               {users}
             />
           {/if}
-        {/each}
-      {/if}
+          {#if stages.length >= 2}
+            {#each stages as stageData, stageIndex}
+              {#if stageIndex > 0}
+                <ConfigStage
+                  bind:substageName={stageData.stageName}
+                  isDeletable={true}
+                  {stageIndex}
+                  handlerIndex={stageData.handlerIndex}
+                  deleteFunction={deleteStage}
+                  onHandlerEdited={editHandler}
+                  {users}
+                />
+              {/if}
+            {/each}
+          {/if}
+
+          <!--Button for adding new stage-->
+          <Button variant="outline" class="w-full" on:click={addSubstage}>
+            <Plus class="stroke-muted-foreground stroke-1" />
+          </Button>
+        </CardContent>
+      </Card>
     {/if}
-    <Button class="border-gray-300" variant="outline" on:click={addStage}
-      >Add New Stage</Button
-    >
 
     <div class="flex justify-center">
-      <form method="POST" on:submit|preventDefault={handleSubmit}>
+      <form action="?/create" method="POST" on:submit|preventDefault={handleSubmit}>
         <Button type="submit">Create</Button>
       </form>
     </div>

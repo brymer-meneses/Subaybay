@@ -9,7 +9,7 @@ export class UserData {
   }
 }
 
-export class SubstageData {
+export class StageData{
   stageName: string;
   handlerIndex: number;
   constructor(stageName: string = "", handlerIndex: number = 0) {
