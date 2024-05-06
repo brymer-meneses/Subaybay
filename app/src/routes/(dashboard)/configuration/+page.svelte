@@ -61,53 +61,41 @@
       class="focus-visible:ring-0"
       placeholder="Request Type (e.g. OTR-1)"
     />
-    {#if stages.length > 0}
-      <Card class="flex flex-col border-gray-300">
-        <CardHeader>
-          <CardTitle>Stages</CardTitle>
-          <CardDescription>
-            Note: the first stage is always the creation stage, it cannot be
-            removed
-          </CardDescription>
-        </CardHeader>
-        <CardContent class="flex flex-col gap-2">
-          {#if stages.length >= 1}
-            <ConfigStage
-              bind:substageName={stages[0].stageName}
-              stageIndex={0}
-              handlerIndex={stages[0].handlerIndex}
-              isRenamable={false}
-              isDeletable={false}
-              onHandlerEdited={editHandler}
-              {users}
-            />
-          {/if}
-          {#if stages.length >= 2}
-            {#each stages as stageData, stageIndex}
-              {#if stageIndex > 0}
-                <ConfigStage
-                  bind:substageName={stageData.stageName}
-                  isDeletable={true}
-                  {stageIndex}
-                  handlerIndex={stageData.handlerIndex}
-                  deleteFunction={deleteStage}
-                  onHandlerEdited={editHandler}
-                  {users}
-                />
-              {/if}
-            {/each}
-          {/if}
+    <Card class="flex flex-col border-gray-300">
+      <CardHeader>
+        <CardTitle>Stages</CardTitle>
+        <CardDescription>
+          Note: the first stage is always the creation stage, it cannot be
+          removed
+        </CardDescription>
+      </CardHeader>
+      <CardContent class="flex flex-col gap-2">
+        {#each stages as stageData, stageIndex}
+          <ConfigStage
+            bind:substageName={stageData.stageName}
+            isDeletable={stageIndex !== 0}
+            isRenamable={stageIndex !== 0}
+            {stageIndex}
+            handlerIndex={stageData.handlerIndex}
+            deleteFunction={deleteStage}
+            onHandlerEdited={editHandler}
+            {users}
+          />
+        {/each}
 
-          <!--Button for adding new stage-->
-          <Button variant="outline" class="w-full" on:click={addSubstage}>
-            <Plus class="stroke-muted-foreground stroke-1" />
-          </Button>
-        </CardContent>
-      </Card>
-    {/if}
+        <!--Button for adding new stage-->
+        <Button variant="outline" class="w-full" on:click={addSubstage}>
+          <Plus class="stroke-muted-foreground stroke-1" />
+        </Button>
+      </CardContent>
+    </Card>
 
     <div class="flex justify-center">
-      <form action="?/create" method="POST" on:submit|preventDefault={handleSubmit}>
+      <form
+        action="?/create"
+        method="POST"
+        on:submit|preventDefault={handleSubmit}
+      >
         <Button type="submit">Create</Button>
       </form>
     </div>

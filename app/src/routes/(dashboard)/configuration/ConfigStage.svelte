@@ -1,21 +1,9 @@
 <script lang="ts">
   import { Input } from "$lib/components/ui/input";
-  import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage,
-  } from "$lib/components/ui/avatar";
   import { Button } from "$lib/components/ui/button";
   import { UserData } from "./configClasses";
-  import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuLabel,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-  } from "$lib/components/ui/dropdown-menu";
+  import * as Avatar from "$lib/components/ui/avatar/index";
+  import * as DropDownMenu from "$lib/components/ui/dropdown-menu/index";
 
   import { ScrollArea, Scrollbar } from "$lib/components/ui/scroll-area";
 
@@ -64,39 +52,39 @@
     disabled={!isRenamable}
   />
 
-  <DropdownMenu>
-    <DropdownMenuTrigger>
+  <DropDownMenu.Root>
+    <DropDownMenu.Trigger>
       <div class="ml-2">
         {#if users[handlerIndex].profileUrl === ""}
           <CircleUserRound class="h-8 w-8 stroke-muted-foreground stroke-1" />
         {:else}
-          <Avatar class="h-8 w-8">
-            <AvatarImage
+          <Avatar.Root class="h-8 w-8">
+            <Avatar.Image
               src={users[handlerIndex].profileUrl}
               alt={users[handlerIndex].name}
             />
-          </Avatar>
+          </Avatar.Root>
         {/if}
       </div>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent>
-      <DropdownMenuLabel>Default Handler</DropdownMenuLabel>
+    </DropDownMenu.Trigger>
+    <DropDownMenu.Content>
+      <DropDownMenu.Label>Default Handler</DropDownMenu.Label>
 
-      <DropdownMenuSeparator />
+      <DropDownMenu.Separator />
 
       <ScrollArea class="h-[150px]">
-        <DropdownMenuRadioGroup
+        <DropDownMenu.RadioGroup
           value={handlerIndex.toString()}
           onValueChange={onDropdownChanged}
         >
           {#each users as user, index}
-            <DropdownMenuRadioItem value={index.toString()}>
+            <DropDownMenu.RadioItem value={index.toString()}>
               {user.name}
-            </DropdownMenuRadioItem>
+            </DropDownMenu.RadioItem>
           {/each}
-        </DropdownMenuRadioGroup>
+        </DropDownMenu.RadioGroup>
         <Scrollbar orientation="vertical" />
       </ScrollArea>
-    </DropdownMenuContent>
-  </DropdownMenu>
+    </DropDownMenu.Content>
+  </DropDownMenu.Root>
 </div>
