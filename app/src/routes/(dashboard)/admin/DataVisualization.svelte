@@ -11,7 +11,7 @@
   //   return result;
   // }
 
-  // const data = [
+  // data = [
   //   { date: subtractDays(today, 13), value: 24 },
   //   { date: subtractDays(today, 12), value: 78 },
   //   { date: subtractDays(today, 11), value: 21 },
@@ -40,8 +40,8 @@
   const max =
     minUB + minUB * Math.floor(Math.max(...data.map((d) => d.value)) / minUB);
 
-  for (let i = 0; i < 5; i++) {
-    yTicks.push(Math.round(i * (max / 4)));
+  for (let i = 0; i <= 5; i++) {
+    yTicks.push(Math.round(i * (max / 5)));
   }
 
   $: padding =

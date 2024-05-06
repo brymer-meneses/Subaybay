@@ -1,5 +1,6 @@
 import type { PageServerLoad, Actions } from "./$types";
 import { fail, redirect } from "@sveltejs/kit";
+import type { RequestEvent } from "./$types";
 import {
   database,
   user,
@@ -9,7 +10,6 @@ import {
   type Request,
   type RequestType,
 } from "$lib/server/database";
-import type { RequestEvent } from "../$types";
 
 type RequestTypeInstancesCount = {
   reqType: string;
