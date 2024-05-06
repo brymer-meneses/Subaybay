@@ -231,22 +231,25 @@ export const actions: Actions = {
     });
     if (!reqType) return; //todo tell error
 
+    const currentStageIndex = req.currentStage.stageTypeIndex;
+    const newCurrentStageIndex = currentStageIndex + 1;
     req.currentStage.finished = true;
+    req.currentStage.dateFinished = new Date();
 
     // Update Request
     const newHistory = [...req.history, req.currentStage];
     const newCurrentStage: db.Stage = {
-      stageTypeIndex: 0,
-      handlerId: req.nextHandlerId,
+      stageTypeIndex: newCurrentStageIndex,
+      handlerId: nextHandlerId,
       finished: false,
       dateStarted: new Date(),
       dateFinished: new Date(0),
       roomId: new ObjectId().toString(),
     };
-    const nextStageIndex = req.currentStage.stageTypeIndex + 1;
+    const newNextStageIndex = newCurrentStageIndex + 1;
     let newNextHandlerId = "";
-    if (reqType.stages.length > nextStageIndex)
-      newNextHandlerId = reqType.stages[nextStageIndex].defaultHandlerId;
+    if (reqType.stages.length > newNextStageIndex)
+      newNextHandlerId = reqType.stages[newNextStageIndex].defaultHandlerId;
 
     let requestUpdateResult = await db.request.findOneAndUpdate(
       { _id: requestId },

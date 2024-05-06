@@ -37,52 +37,65 @@
     </Button>
   </PopoverTrigger>
   <PopoverContent>
-    <DropdownMenu>
-      <DropdownMenuTrigger>
-        <div class="ml-2 items-center">
-            Click Here
-            <CircleUserRound class="stroke-muted-foreground h-8 w-8 stroke-1" />
-          </div>
-        <!-- {#if users[nextHandlerId].profileUrl === ""}
-          <CircleUserRound class="stroke-muted-foreground h-8 w-8 stroke-1" />
-        {:else}
-          <Avatar class="h-8 w-8">
-            <AvatarImage
-              src={users[nextHandlerId].profileUrl}
-              alt={users[nextHandlerId].name}
-            />
-          </Avatar>
-        {/if} -->
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuLabel>Send to</DropdownMenuLabel>
+    <div class="flex flex-col justify-center gap-4">
+      <div>Select Next Handler</div>
+      <div class="flex flex-col">
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <div
+              class="flex flex-row gap-x-4 rounded-lg border border-gray-300 p-1"
+            >
+              {#if !(nextHandlerId in users)}
+                <CircleUserRound
+                  class="stroke-muted-foreground h-8 w-8 stroke-1"
+                />
+              {:else}
+                <Avatar class="h-8 w-8">
+                  <AvatarImage
+                    src={users[nextHandlerId].profileUrl}
+                    alt={users[nextHandlerId].name}
+                  />
+                </Avatar>
+              {/if}
+              {#if !(nextHandlerId in users)}
+                None
+              {:else}
+                {users[nextHandlerId].name}
+              {/if}
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Send to</DropdownMenuLabel>
 
-        <DropdownMenuSeparator />
-        <ScrollArea class="h-[150px]">
-            <DropdownMenuRadioGroup value={nextHandlerId}>
-            {#each Object.keys(users) as userId}
-                <DropdownMenuRadioItem value={userId}>
-                {users[userId].name}
-                </DropdownMenuRadioItem>
-            {/each}
-            </DropdownMenuRadioGroup>
-        </ScrollArea>
-      </DropdownMenuContent>
-    </DropdownMenu>
+            <DropdownMenuSeparator />
+            <ScrollArea class="h-[150px]">
+              <DropdownMenuRadioGroup bind:value={nextHandlerId}>
+                {#each Object.keys(users) as userId}
+                  <DropdownMenuRadioItem value={userId}>
+                    {users[userId].name}
+                  </DropdownMenuRadioItem>
+                {/each}
+              </DropdownMenuRadioGroup>
+            </ScrollArea>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div class="padding-y-4 items-center">
+        <form action="?/finish_stage" method="POST">
+            <input
+              type="hidden"
+              name="requestId"
+              value={selectedStage.requestId}
+            />
+            <input
+              type="hidden"
+              name="stageTypeIndex"
+              value={selectedStage.stageTypeIndex}
+            />
+            <input type="hidden" name="nextHandlerId" value={nextHandlerId} />
+            <Button type="submit" disabled={nextHandlerId in users ? false : true}>Confirm</Button>
+          </form>
+      </div>
+    </div>
   </PopoverContent>
 </Popover>
-
-<!-- <form action="?/finish_stage" method="POST">
-    <input
-      type="hidden"
-      name="requestId"
-      value={selectedStage.requestId}
-    />
-    <input
-      type="hidden"
-      name="stageTypeIndex"
-      value={selectedStage.stageTypeIndex}
-    />
-    <input type="hidden" name="nextHandlerId" value={nextHandlerId} />
-    <button type="submit" class="border-none bg-none">Confirm</button>
-  </form> -->

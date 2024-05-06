@@ -47,7 +47,7 @@
   </Label>
 
   <div class="ml-2">
-    {#if !stage.handlerId}
+    {#if !(stage.handlerId in users)}
       <CircleUserRound class="stroke-muted-foreground h-8 w-8 stroke-1" />
     {:else}
       <Avatar class="h-8 w-8">
