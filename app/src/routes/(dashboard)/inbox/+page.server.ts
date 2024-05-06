@@ -15,6 +15,7 @@ interface InboxStageData {
   handlerId: string;
   stageTypeIndex: number;
   finished: boolean;
+  roomId: string;
 }
 export const load: PageServerLoad = async ({ cookies, locals }) => {
   const sessionId = cookies.get("auth_session");
@@ -123,6 +124,7 @@ const getStages = async (
       handlerId: stage.handlerId,
       stageTypeIndex: stage.stageTypeIndex,
       finished: stage.finished,
+      roomId: stage.roomId,
     });
   }
 
