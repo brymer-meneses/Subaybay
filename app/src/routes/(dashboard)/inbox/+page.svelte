@@ -73,10 +73,17 @@
           onSelectStage={selectStage}
         />
       </Tabs.Content>
+      <Tabs.Content value="pending">
+        <Inbox
+          type="pending"
+          stages={data.pendingStages}
+          onSelectStage={selectStage}
+        />
+      </Tabs.Content>
     </Tabs.Root>
   </div>
 
   <div class="lg:col-span-2">
-    <InboxContent bind:selectedStage={selectedStage} requests={data.relevantRequests} type={selectedStage && selectedStage.handlerId == data.userInfo.id ? "active" : "pending"}/>
+    <InboxContent bind:selectedStage={selectedStage} requests={data.relevantRequests}/>
   </div>
 </main>

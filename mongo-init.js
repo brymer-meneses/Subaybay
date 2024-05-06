@@ -64,30 +64,22 @@ for (const item of basicCerts) {
     _id: item[0],
     title: item[1],
     stages: [
-      [
-        {
-          stageTitle: "Create Request",
-          defaultHandlerId: "",
-        },
-      ],
-      [
-        {
-          stageTitle: "Prepare Certification",
-          defaultHandlerId: "",
-        },
-      ],
-      [
-        {
-          stageTitle: "University Registrar Signature",
-          defaultHandlerId: "",
-        },
-      ],
-      [
-        {
-          stageTitle: "Notify Requester",
-          defaultHandlerId: "",
-        },
-      ],
+      {
+        stageTitle: "Create Request",
+        defaultHandlerId: "",
+      },
+      {
+        stageTitle: "Prepare Certification",
+        defaultHandlerId: "",
+      },
+      {
+        stageTitle: "University Registrar Signature",
+        defaultHandlerId: "",
+      },
+      {
+        stageTitle: "Notify Requester",
+        defaultHandlerId: "",
+      },
     ],
   });
 }
@@ -98,37 +90,26 @@ db.requestTypes.insertMany([
     _id: "otr1",
     title: "Official Transcript of Records (OTR) - First Request",
     stages: [
-      [
         {
           stageTitle: "Create Request",
           defaultHandlerId: "",
         },
-      ],
-      [
         {
           stageTitle: "RR and Edit of Draft",
           defaultHandlerId: "", //staff 1
         },
-      ],
-      [
         {
           stageTitle: "Checking and Printing of Initial Draft",
           defaultHandlerId: "", //staff 2
         },
-      ],
-      [
         {
           stageTitle: "Checking Printed Draft",
           defaultHandlerId: "", //staff 3
         },
-      ],
-      [
         {
           stageTitle: "Final Printing",
           defaultHandlerId: "", //staff 2
         },
-      ],
-      [
         {
           stageTitle: "Signature",
           defaultHandlerId: "", //staff 1
@@ -137,44 +118,32 @@ db.requestTypes.insertMany([
           stageTitle: "Signature",
           defaultHandlerId: "", //staff 3
         },
-      ],
-      [
         {
           stageTitle: "University Registrar Signature",
           defaultHandlerId: "",
         },
-      ],
-      [
         {
           stageTitle: "Prepare final copy and CTC OTR (if applicable)",
           defaultHandlerId: "", //staff 2
         },
-      ],
-      [
         {
           stageTitle: "Notify Requester",
           defaultHandlerId: "",
         },
-      ],
-    ],
+    ]
   },
   {
     _id: "otr2",
     title: "Official Transcript of Records (OTR) - Second Request",
     stages: [
-      [
         {
           stageTitle: "Create Request",
           defaultHandlerId: ""
-        }
-      ],
-      [
+        },
         {
           stageTitle: "Print and Sign OTR",
           defaultHandlerId: "" //staff 2
-        }
-      ],
-      [
+        },
         {
           stageTitle: "Signature",
           defaultHandlerId: "" //staff 1
@@ -182,26 +151,19 @@ db.requestTypes.insertMany([
         {
           stageTitle: "Signature",
           defaultHandlerId: "" //staff 3
-        }
-      ],
-      [
+        },
         {
           stageTitle: "Signature of University Registrar",
           defaultHandlerId: ""
-        }
-      ],
-      [
+        },
         {
           stageTitle: "Prepare final copy and CTC OTR (if applicable)",
           defaultHandlerId: "", //staff 2
         },
-      ],
-      [
         {
           stageTitle: "Notify Requester",
           defaultHandlerId: "",
         },
-      ]
     ]
   }
 ]);
@@ -214,88 +176,54 @@ db.requests.insertMany([
     studentName: "Hello World",
     studentEmail: "student@student.com",
     purpose: "Purpose",
-    currentStages: [
+    remarks: "Good Morning",
+    currentStage: 
       {
         stageTypeIndex: 0,
-        substageTypeIndex: 0,
         handlerId: "airylionsoul",
         finished: false,
         dateStarted: new Date('2024-04-27'),
-        dateFinished: new Date('2024-04-28'),
+        dateFinished: new Date(0),
         roomId: "134333412"
       },
-    ],
-    nextStages: [
-      {
-        stageTypeIndex: 1,
-        substageTypeIndex: 0,
-        handlerId: "mom",
-        finished: false,
-        dateStarted: new Date(0),
-        dateFinished: new Date(0),
-        roomId: "234u1204"
-      },
-    ],
     history: [],
+    nextHandlerId: ""
   },
   {
-    _id: "parallel",
-    requestTypeId: "otr2",
-    studentNumber: "2022",
-    studentName: "Phoenix",
-    studentEmail: "phoenix@val.com",
-    purpose: "to show you how the boss does it",
+    _id: "ongoing",
+    requestTypeId: "otr1",
+    studentNumber: "2021",
+    studentName: "Hello World",
+    studentEmail: "student@student.com",
+    purpose: "Purpose",
     remarks: "Hello",
-    currentStages: [
+    currentStage: 
       {
         stageTypeIndex: 2,
-        substageTypeIndex: 0,
-        handlerId: "mom",
-        finished: true,
-        dateStarted: new Date('2024-04-29'),
-        dateFinished: new Date('2024-04-29'),
-        roomId: "28349184"
-      },
-      {
-        stageTypeIndex: 2,
-        substageTypeIndex: 1,
-        handlerId: "gnar",
-        finished: false,
-        dateStarted: new Date('2024-04-29'),
-        dateFinished: new Date('2024-04-29'),
-        roomId: "78902346"
-      }
-    ],
-    nextStages: [
-      {
-        stageTypeIndex: 3,
-        substageTypeIndex: 0,
         handlerId: "airylionsoul",
-        finished: false,
-        dateStarted: new Date(0),
+        finished: true,
+        dateStarted: new Date('2024-04-27'),
         dateFinished: new Date(0),
-        roomId: "823041980"
-      }
-    ],
+        roomId: "13212"
+      },
     history: [
       {
         stageTypeIndex: 0,
-        substageTypeIndex: 0,
         handlerId: "gnar",
         finished: true,
-        dateStarted: new Date('2024-04-28'),
-        dateFinished: new Date('2024-04-28'),
-        roomId: "0928342342"
+        dateStarted: new Date('2024-04-27'),
+        dateFinished: new Date('2024-04-27'),
+        roomId: "1231232"
       },
       {
         stageTypeIndex: 1,
-        substageTypeIndex: 0,
-        handlerId: "gnar",
-        finished: true,
-        dateStarted: new Date('2024-04-28'),
-        dateFinished: new Date('2024-04-28'),
-        roomId: "sdo08d2083242"
+        handlerId: "airylionsoul",
+        finished: false,
+        dateStarted: new Date('2024-04-27'),
+        dateFinished: new Date('2024-04-27'),
+        roomId: "453435"
       },
-    ]
-  }
+    ],
+    nextHandlerId: "mom"
+  },
 ]);

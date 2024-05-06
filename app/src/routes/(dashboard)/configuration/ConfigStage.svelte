@@ -29,7 +29,7 @@
   export let isDeletable = true;
   export let isRenamable = true;
   export let substageName = "";
-  export let substageIndex: number;
+  export let stageIndex: number;
 
   export let deleteFunction = (substageIndex: number) => {};
   export let onHandlerEdited: (
@@ -40,7 +40,7 @@
   function onDropdownChanged(value: string | undefined) {
     if (value) {
       handlerIndex = parseInt(value);
-      onHandlerEdited(substageIndex, handlerIndex);
+      onHandlerEdited(stageIndex, handlerIndex);
     }
   }
 </script>
@@ -49,7 +49,7 @@
   <Button
     variant="ghost"
     disabled={!isDeletable}
-    on:click={() => deleteFunction(substageIndex)}
+    on:click={() => deleteFunction(stageIndex)}
   >
     {#if isDeletable}
       <CircleX class="stroke-muted-foreground stroke-1" />

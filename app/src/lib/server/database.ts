@@ -42,7 +42,7 @@ export interface StageType {
 export interface RequestType {
   _id: string;
   title: string;
-  stages: Array<Array<StageType>>;
+  stages: Array<StageType>;
 }
 
 // instance of a `RequestType`
@@ -55,15 +55,14 @@ export interface Request {
   purpose: string;
   remarks: string;
   isFinished: boolean;
-  currentStages: Array<Stage>;
-  nextStages: Array<Stage>;
+  currentStage: Stage;
   history: Array<Stage>;
+  nextHandlerId: string;
 }
 
 // instance of a `StageType`
 export interface Stage {
   stageTypeIndex: number;
-  substageTypeIndex: number;
   handlerId: string;
   finished: boolean;
   dateStarted: Date;

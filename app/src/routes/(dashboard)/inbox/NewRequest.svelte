@@ -72,9 +72,9 @@
     <form
       action="?/add_request"
       method="POST"
-      use:enhance
-      on:submit|preventDefault={submitForm}
-    >
+      >
+      <!-- use:enhance -->
+      <!-- on:submit|preventDefault={submitForm} -->
       <Dialog.Header>
         <Dialog.Title>Add details for new request.</Dialog.Title>
       </Dialog.Header>
