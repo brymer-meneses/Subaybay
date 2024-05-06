@@ -6,65 +6,44 @@
   export let requestType: any;
   export let users: { [_id: string]: { name: string; profileUrl: string } };
 
-  interface SubstageData {
-    title: string;
-    handlerId: string;
-    finished: boolean;
-  }
-
   interface StageData {
     isHistory: boolean;
     isCurrent: boolean;
-    substages: SubstageData[];
+    finished: boolean;
+    title: string;
+    handlerId: string;
   }
 
   let stages: StageData[] = [];
 
-  for (let stageArray of requestType.stages) {
+  for (const stageType of requestType.stages) {
     const stage: StageData = {
       isHistory: false,
       isCurrent: false,
-      substages: [],
+      finished: false,
+      title: stageType.stageTitle,
+      handlerId: stageType.defaultHandlerId,
     };
-
     stages.push(stage);
-    for (let stageType of stageArray) {
-      const substage: SubstageData = {
-        title: stageType.stageTitle,
-        handlerId: stageType.defaultHandlerId,
-        finished: false,
-      };
-      stage.substages.push(substage);
-    }
   }
 
-  for (let storedStage of request.history) {
-    stages[storedStage.stageTypeIndex].isHistory = true;
-    const substage =
-      stages[storedStage.stageTypeIndex].substages[
-        storedStage.substageTypeIndex
-      ];
-    substage.finished = true;
-    substage.handlerId = storedStage.handlerId;
+  for (const storedStage of request.history) {
+    const stage = stages[storedStage.stageTypeIndex];
+    stage.isHistory = true;
+    stage.finished = storedStage.finished;
+    stage.handlerId = storedStage.handlerId;
   }
 
-  for (let storedStage of request.currentStages) {
-    stages[storedStage.stageTypeIndex].isCurrent = true;
-    const substage =
-      stages[storedStage.stageTypeIndex].substages[
-        storedStage.substageTypeIndex
-      ];
-    substage.finished = storedStage.finished;
-    substage.handlerId = storedStage.handlerId;
-  }
+  if(request.currentStage) {
+    const currentStage = stages[request.currentStage.stageTypeIndex];
+    currentStage.finished = request.currentStage.finished;
+    currentStage.handlerId = request.currentStage.handlerId;
+    currentStage.isCurrent = true;
+  }  
 
-  for (let storedStage of request.nextStages) {
-    const substage =
-      stages[storedStage.stageTypeIndex].substages[
-        storedStage.substageTypeIndex
-      ];
-    substage.finished = false;
-    substage.handlerId = storedStage.handlerId;
+  const nextStageIndex = request.currentStage.stageTypeIndex + 1;
+  if(stages.length > nextStageIndex) {
+    stages[nextStageIndex].handlerId = request.nextHandlerId;
   }
 </script>
 

@@ -13,17 +13,12 @@
     AvatarImage,
   } from "$lib/components/ui/avatar";
   import {
-    LoaderCircle,
-    Circle,
-    CircleCheckBig,
     CircleUserRound,
-    CircleX,
   } from "lucide-svelte";
   import { Label } from "$lib/components/ui/label";
-  import { Input } from "$lib/components/ui/input";
   import { ScrollArea } from "$lib/components/ui/scroll-area";
 
-  interface SubstageData {
+  interface StageData {
     title: string;
     handlerId: string;
     dateFinished: Date;
@@ -33,14 +28,11 @@
   export let requestType: any;
   export let users: { [_id: string]: { name: string; profileUrl: string } };
 
-  let history: SubstageData[] = [];
+  let history: StageData[] = [];
 
   for (const storedStage of request.history) {
-    const historicalStage: SubstageData = {
-      title:
-        requestType.stages[storedStage.stageTypeIndex][
-          storedStage.substageTypeIndex
-        ].stageTitle,
+    const historicalStage: StageData = {
+      title: requestType.stages[storedStage.stageTypeIndex].stageTitle,
       handlerId: storedStage.handlerId,
       dateFinished: storedStage.dateFinished,
     };

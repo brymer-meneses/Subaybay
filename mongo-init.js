@@ -176,17 +176,54 @@ db.requests.insertMany([
     studentName: "Hello World",
     studentEmail: "student@student.com",
     purpose: "Purpose",
+    remarks: "Good Morning",
     currentStage: 
       {
         stageTypeIndex: 0,
-        substageTypeIndex: 0,
         handlerId: "airylionsoul",
         finished: false,
         dateStarted: new Date('2024-04-27'),
-        dateFinished: new Date('2024-04-28'),
+        dateFinished: new Date(0),
         roomId: "134333412"
       },
     history: [],
     nextHandlerId: ""
+  },
+  {
+    _id: "ongoing",
+    requestTypeId: "otr1",
+    studentNumber: "2021",
+    studentName: "Hello World",
+    studentEmail: "student@student.com",
+    purpose: "Purpose",
+    remarks: "Hello",
+    currentStage: 
+      {
+        stageTypeIndex: 2,
+        handlerId: "airylionsoul",
+        finished: true,
+        dateStarted: new Date('2024-04-27'),
+        dateFinished: new Date(0),
+        roomId: "13212"
+      },
+    history: [
+      {
+        stageTypeIndex: 0,
+        handlerId: "gnar",
+        finished: true,
+        dateStarted: new Date('2024-04-27'),
+        dateFinished: new Date('2024-04-27'),
+        roomId: "1231232"
+      },
+      {
+        stageTypeIndex: 1,
+        handlerId: "airylionsoul",
+        finished: false,
+        dateStarted: new Date('2024-04-27'),
+        dateFinished: new Date('2024-04-27'),
+        roomId: "453435"
+      },
+    ],
+    nextHandlerId: "mom"
   },
 ]);
