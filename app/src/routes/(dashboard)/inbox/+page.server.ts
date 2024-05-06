@@ -13,24 +13,17 @@ interface InboxStageData {
   dateSent: Date;
   requestId: string;
   handlerId: string;
+  stageTypeIndex: number;
+  substageTypeIndex: number;
+  finished: boolean;
 }
-
 export const load: PageServerLoad = async ({ cookies, locals }) => {
   const sessionId = cookies.get("auth_session");
   const userId = locals.user?.id ?? "0";
 
-  let userInbox: db.Inbox | null = await db.inbox.findOne({ userId: userId });
-  if (!userInbox) {
-    userInbox = {
-      userId: userId,
-      recallableRequestIds: [],
-      currentRequestIds: [],
-    };
-
-    db.inbox.insertOne(userInbox);
-  }
-
+  const userInbox: db.Inbox = await getUserInbox(userId);
   const requestTypes = await getRequestTypes();
+
   const requests = await getRelevantRequests(userInbox);
   const stages = await getStages(userId, requests, requestTypes);
   const activeStages = stages.active;
@@ -45,6 +38,21 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
     activeStages: activeStages,
     pendingStages: pendingStages,
   };
+};
+
+const getUserInbox = async (userId: string): Promise<db.Inbox> => {
+  let userInbox: db.Inbox | null = await db.inbox.findOne({ userId: userId });
+  if (!userInbox) {
+    userInbox = {
+      userId: userId,
+      recallableRequestIds: [],
+      currentRequestIds: [],
+    };
+
+    db.inbox.insertOne(userInbox);
+  }
+
+  return userInbox;
 };
 
 const getRequestTypes = async (): Promise<{
@@ -105,12 +113,16 @@ const getStages = async (
       const stageTitle =
         requestType.stages[stage.stageTypeIndex][stage.substageTypeIndex]
           .stageTitle;
+
       activeStages.push({
         requestTitle: requestType.title,
         stageTitle: stageTitle,
         dateSent: stage.dateStarted,
         requestId: request._id,
         handlerId: stage.handlerId,
+        stageTypeIndex: stage.stageTypeIndex,
+        substageTypeIndex: stage.substageTypeIndex,
+        finished: stage.finished
       });
     }
 
@@ -131,6 +143,9 @@ const getStages = async (
           dateSent: stage.dateStarted,
           requestId: request._id,
           handlerId: stage.handlerId,
+          stageTypeIndex: stage.stageTypeIndex,
+          substageTypeIndex: stage.substageTypeIndex,
+          finished: stage.finished
         });
       }
     }
@@ -169,7 +184,6 @@ export const actions: Actions = {
     if (!reqType) return;
 
     const nextStages: db.Stage[] = [];
-    //todo handle possibility that stages.length < 2
     if (reqType.stages.length >= 2) {
       reqType.stages[1].forEach((stageType, index) => {
         nextStages.push({
@@ -208,8 +222,8 @@ export const actions: Actions = {
       history: [],
     };
 
-    await db.request.insertOne(req);
-    //todo don't do the below if unsuccessful
+    let insertionResult = await db.request.insertOne(req);
+    if (!insertionResult.acknowledged) return; //todo tell about error
 
     let userInbox: db.Inbox | null = await db.inbox.findOne({ userId: userId });
     if (!userInbox) {
@@ -230,18 +244,135 @@ export const actions: Actions = {
 
     setFlash({ type: "success", message: "Added request" }, cookies);
   },
-  set_stage_handlers: async (event) => {
+  set_stage_handlers: async (event) => {},
+  finish_stage: async ({ request }) => {
+    const data = await request.formData();
+    const requestId: string = data.get("requestId")?.toString() ?? "";
+    const stageTypeIndex: number =
+      parseInt(data.get("stageTypeIndex")?.toString() ?? "-1", 10);
+    const substageTypeIndex: number =
+      parseInt(data.get("substageTypeIndex")?.toString() ?? "-1", 10);
 
-  },
-  finish_stage: async (event) => {
-    //todo update stage finished = true
-    //todo check if all other currentStages are finished, if so, pass on to the next person
+    const req: db.Request | null = await db.request.findOne({ _id: requestId });
+    if (!req) return; //todo tell error
 
+    const reqType: db.RequestType | null = await db.requestType.findOne({
+      _id: req.requestTypeId,
+    });
+    if (!reqType) return; //todo tell error
+
+    let allFinished = true;
+    for (const stage of req.currentStages) {
+      if (
+        stage.stageTypeIndex == stageTypeIndex &&
+        stage.substageTypeIndex == substageTypeIndex
+      )
+      {
+        stage.finished = true;
+      }
+
+      if (!stage.finished) allFinished = false;
+    }
+
+    if (allFinished) {
+      // todo don't allow passing of request if any nextStage handler is still null
+      // todo handle: nextStages.Count == 0, meaning that this is the final stage
+      // Update Request - move to next superstage
+      const currentStageTypeIndex = req.currentStages[0].stageTypeIndex;
+      const history = [...req.history, ...req.currentStages];
+      const previousStages = req.currentStages;
+      const currentStages = req.nextStages;
+
+      const nextStages: db.Stage[] = [];
+      if (reqType.stages.length >= currentStageTypeIndex + 1) {
+        reqType.stages[1].forEach((stageType, index) => {
+          nextStages.push({
+            stageTypeIndex: 1,
+            substageTypeIndex: index,
+            handlerId: stageType.defaultHandlerId,
+            finished: false,
+            dateStarted: new Date(0),
+            dateFinished: new Date(0),
+            roomId: new ObjectId().toString(),
+          });
+        });
+      }
+
+      let requestUpdateResult = await db.request.findOneAndUpdate(
+        { _id: requestId },
+        {
+          $set: {
+            history: history,
+            currentStages: currentStages,
+            nextStages: nextStages,
+          },
+        },
+      );
+      if (!requestUpdateResult) return;
+
+      // Update all inboxes that had the request
+      for (const stage of previousStages) {
+        const inbox = await db.inbox.findOne({ userId: stage.handlerId });
+        if (!inbox) continue;
+
+        const newRecallableRequestIds = [...inbox.recallableRequestIds, requestId];
+        const newCurrentRequestIds = inbox.currentRequestIds.filter(reqId => reqId != requestId);
+
+        await db.inbox.updateOne(
+          { userId: stage.handlerId },
+          {
+            $set: {
+              currentRequestIds: newCurrentRequestIds,
+              recallableRequestIds: newRecallableRequestIds
+            }
+          }
+        )
+      }
+    
+      // Update all inboxes which will handle the request
+      //! this can causes duplicate instance of a request if a user is handling two stages under the same superstage
+      for (const stage of currentStages) {
+        const inbox = await db.inbox.findOne({ userId: stage.handlerId });
+        if (!inbox) continue;
+
+        await db.inbox.updateOne(
+          { userId: stage.handlerId },
+          {
+            $set: {
+              currentRequestIds: [...inbox.currentRequestIds, requestId]
+            },
+          },
+        );
+      }
+    }
+    // if !allFinished
+    else {
+      // Update this inbox, if this is the only request in 
+      for (const stage of req.currentStages) {
+        const inbox = await db.inbox.findOne({ userId: stage.handlerId });
+        if (!inbox) continue;
+
+        const newRecallableRequestIds = [...inbox.recallableRequestIds, requestId];
+        const newCurrentRequestIds = inbox.currentRequestIds.filter(reqId => reqId != requestId);
+
+        await db.inbox.updateOne(
+          { userId: stage.handlerId },
+          {
+            $set: {
+              currentRequestIds: newCurrentRequestIds,
+              recallableRequestIds: newRecallableRequestIds
+            }
+          }
+        )
+      }
+      //todo update currentStages
+      //todo move request to recallable
+    }
   },
   recall_stage: async (event) => {
-
-  },
-  reassign_stage: async (event) => {
-
+    //todo check for stage in currentStages,
+    //+ if it isn't there check if it's in history, if it's in currentStages, then that means it's partial, which is ez to send back
+    //todo when doing a full recall, gether all stages in history at currentStageTypeIndex - 1,
+    //+ but don't go futher than one leve, like once it's currentStageTypeIndex - 2, break the loop
   },
 };

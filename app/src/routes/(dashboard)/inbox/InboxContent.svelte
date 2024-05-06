@@ -13,7 +13,6 @@
   import type { Request } from "$lib/server/database";
   import { Textarea } from "$lib/components/ui/textarea";
 
-  export let type: "active" | "pending";
   export let requests: { [key: string]: any };
   export let selectedStage: any;
 
@@ -61,20 +60,71 @@
       </div>
 
       <div class="flex gap-2">
-        {#if type == "active"}
-          <Button class="gap-2 rounded-xl text-white">
-            <CheckCheck />
-            Finish
-          </Button>
-          <Button class="gap-2 rounded-xl text-white">
-            <User />
-            Set Next Handlers
-          </Button>
+        {#if !selectedStage.finished}
+          <form action="?/finish_stage" method="POST">
+            <input
+              type="hidden"
+              name="requestId"
+              value={selectedStage.requestId}
+            />
+            <input
+              type="hidden"
+              name="stageTypeIndex"
+              value={selectedStage.stageTypeIndex}
+            />
+            <input
+              type="hidden"
+              name="substageTypeIndex"
+              value={selectedStage.substageTypeIndex}
+            />
+            <Button type="submit" class="gap-2 rounded-xl text-white">
+              <CheckCheck />
+              Finish
+            </Button>
+          </form>
+          <form action="?/set_stage_handlers" method="POST">
+            <input
+              type="hidden"
+              name="requestId"
+              value={selectedStage.requestId}
+            />
+            <input
+              type="hidden"
+              name="stageTypeIndex"
+              value={selectedStage.stageTypeIndex}
+            />
+            <input
+              type="hidden"
+              name="substageTypeIndex"
+              value={selectedStage.substageTypeIndex}
+            />
+            <Button class="gap-2 rounded-xl text-white">
+              <User />
+              Set Next Handlers
+            </Button>
+          </form>
         {:else}
-          <Button class="gap-2 rounded-xl text-white">
-            <MoveLeft />
-            Rollback
-          </Button>
+          <form action="?/recall_stage" method="POST">
+            <input
+              type="hidden"
+              name="requestId"
+              value={selectedStage.requestId}
+            />
+            <input
+              type="hidden"
+              name="stageTypeIndex"
+              value={selectedStage.stageTypeIndex}
+            />
+            <input
+              type="hidden"
+              name="substageTypeIndex"
+              value={selectedStage.substageTypeIndex}
+            />
+            <Button class="gap-2 rounded-xl text-white">
+              <MoveLeft />
+              Rollback
+            </Button>
+          </form>
         {/if}
         <!-- <Button class="gap-2 rounded-xl text-white">
           <User />
