@@ -180,6 +180,7 @@ dependencies = [
  "axum-extra",
  "axum-macros",
  "axum-typed-websockets",
+ "derive_more",
  "futures",
  "headers",
  "mongodb",

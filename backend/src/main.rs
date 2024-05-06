@@ -1,4 +1,5 @@
 mod database;
+mod error;
 mod middlewares;
 mod routes;
 mod state;
