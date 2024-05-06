@@ -2,11 +2,11 @@
   import { Button } from "$lib/components/ui/button";
   import { Separator } from "$lib/components/ui/separator/index.js";
 
-  import CheckCheck from "lucide-svelte/icons/check-check";
   import MoveLeft from "lucide-svelte/icons/move-left";
   import User from "lucide-svelte/icons/user";
 
   import ChatArea from "../ChatArea.svelte";
+  import FinishButton from "./FinishButton.svelte";
 
   import * as Card from "$lib/components/ui/card/index.js";
   import { Badge } from "$lib/components/ui/badge";
@@ -15,6 +15,7 @@
 
   export let requests: { [key: string]: any };
   export let selectedStage: any;
+  export let users: any;
 
   $: info = selectedStage ? requests[selectedStage.requestId] : null;
 </script>
@@ -61,38 +62,8 @@
 
       <div class="flex gap-2">
         {#if !selectedStage.finished}
-          <form action="?/finish_stage" method="POST">
-            <input
-              type="hidden"
-              name="requestId"
-              value={selectedStage.requestId}
-            />
-            <input
-              type="hidden"
-              name="stageTypeIndex"
-              value={selectedStage.stageTypeIndex}
-            />
-            <Button type="submit" class="gap-2 rounded-xl text-white">
-              <CheckCheck />
-              Finish
-            </Button>
-          </form>
-          <form action="?/set_stage_handlers" method="POST">
-            <input
-              type="hidden"
-              name="requestId"
-              value={selectedStage.requestId}
-            />
-            <input
-              type="hidden"
-              name="stageTypeIndex"
-              value={selectedStage.stageTypeIndex}
-            />
-            <Button class="gap-2 rounded-xl text-white">
-              <User />
-              Set Next Handlers
-            </Button>
-          </form>
+          <FinishButton selectedStage={selectedStage} users={users}/>
+          
         {:else}
           <form action="?/recall_stage" method="POST">
             <input

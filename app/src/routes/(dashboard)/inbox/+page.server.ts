@@ -21,7 +21,8 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
   const sessionId = cookies.get("auth_session");
   const userId = locals.user?.id ?? "0";
 
-  const userInbox: db.Inbox = await getUserInbox(userId);
+  const users = await getUsers();
+  const userInbox: db.Inbox = await getInbox(userId);
   const requestTypes = await getRequestTypes();
 
   const requests = await getRelevantRequests(userInbox);
@@ -37,10 +38,21 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
     relevantRequests: requests,
     activeStages: activeStages,
     pendingStages: pendingStages,
+    users: users,
   };
 };
 
-const getUserInbox = async (userId: string): Promise<db.Inbox> => {
+const getUsers = async () => {
+  const cursor = db.user.find();
+  const users: { [_id: string]: { name: string; profileUrl: string } } = {};
+  for await (const user of cursor) {
+    users[user._id] = { name: user.name, profileUrl: user.profileUrl };
+  }
+
+  return users;
+}
+
+const getInbox = async (userId: string): Promise<db.Inbox> => {
   let userInbox: db.Inbox | null = await db.inbox.findOne({ userId: userId });
   if (!userInbox) {
     userInbox = {
@@ -124,7 +136,7 @@ const getStages = async (
       handlerId: stage.handlerId,
       stageTypeIndex: stage.stageTypeIndex,
       finished: stage.finished,
-      roomId: stage.roomId,
+      roomId: stage.roomId
     });
   }
 
@@ -186,7 +198,7 @@ export const actions: Actions = {
     let insertionResult = await db.request.insertOne(req);
     if (!insertionResult.acknowledged) return; //todo tell about error
 
-    const userInbox = await getUserInbox(userId);
+    const userInbox = await getInbox(userId);
     userInbox.currentRequestIds.push(req._id);
     await db.inbox.findOneAndUpdate(
       { userId: userId },
@@ -205,7 +217,13 @@ export const actions: Actions = {
       10,
     );
     const nextHandlerId: string = data.get("nextHandlerId")?.toString() ?? "0";
-    //todo ensure that nextHandler exists
+
+    // Ensure that the next handler exists
+    const nextHandler = await db.user.findOne({ _id: nextHandlerId });
+    if (!nextHandler) {
+      console.log("Invalid Next Handler");
+      return;
+    }
 
     const req: db.Request | null = await db.request.findOne({ _id: requestId });
     if (!req) return; //todo tell error
@@ -215,22 +233,25 @@ export const actions: Actions = {
     });
     if (!reqType) return; //todo tell error
 
+    const currentStageIndex = req.currentStage.stageTypeIndex;
+    const newCurrentStageIndex = currentStageIndex + 1;
     req.currentStage.finished = true;
+    req.currentStage.dateFinished = new Date();
 
     // Update Request
     const newHistory = [...req.history, req.currentStage];
     const newCurrentStage: db.Stage = {
-      stageTypeIndex: 0,
-      handlerId: req.nextHandlerId,
+      stageTypeIndex: newCurrentStageIndex,
+      handlerId: nextHandlerId,
       finished: false,
       dateStarted: new Date(),
       dateFinished: new Date(0),
       roomId: new ObjectId().toString(),
     };
-    const nextStageIndex = req.currentStage.stageTypeIndex + 1;
+    const newNextStageIndex = newCurrentStageIndex + 1;
     let newNextHandlerId = "";
-    if (reqType.stages.length > nextStageIndex)
-      newNextHandlerId = reqType.stages[nextStageIndex].defaultHandlerId;
+    if (reqType.stages.length > newNextStageIndex)
+      newNextHandlerId = reqType.stages[newNextStageIndex].defaultHandlerId;
 
     let requestUpdateResult = await db.request.findOneAndUpdate(
       { _id: requestId },
@@ -245,12 +266,12 @@ export const actions: Actions = {
     if (!requestUpdateResult) return;
 
     // Update Inbox that just sent the request - move from currentStages -> recallableStages
-    const senderInbox = await db.inbox.findOne({
-      userId: req.currentStage.handlerId,
-    });
-    if (!senderInbox) return;
+    const senderInbox = await getInbox(req.currentStage.handlerId)
 
-    const newRecallableRequestIds = [...senderInbox.recallableRequestIds, requestId];
+    const newRecallableRequestIds = [
+      ...senderInbox.recallableRequestIds,
+      requestId,
+    ];
     const newCurrentRequestIds = senderInbox.currentRequestIds.filter(
       (reqId) => reqId != requestId,
     );
@@ -260,25 +281,45 @@ export const actions: Actions = {
       {
         $set: {
           currentRequestIds: newCurrentRequestIds,
-          recallableRequestIds: newRecallableRequestIds
-        }
-      }
-    )
+          recallableRequestIds: newRecallableRequestIds,
+        },
+      },
+    );
 
     // Update inbox of user who will handle the request
-    const receiverInbox = await db.inbox.findOne({
-      userId: nextHandlerId
-    })
-    if (!receiverInbox) return;
-    
+    const receiverInbox = await getInbox(nextHandlerId);
+
     await db.inbox.updateOne(
       { userId: nextHandlerId },
       {
         $set: {
-          currentRequestIds: [...receiverInbox.currentRequestIds, requestId]
-        }
+          currentRequestIds: [...receiverInbox.currentRequestIds, requestId],
+        },
+      },
+    );
+
+    const previousIndex = req.currentStage.stageTypeIndex - 1;
+    if (previousIndex >= 0) {
+      for (let i = req.history.length - 1; i >= 0; i--) {
+        if (req.history[i].stageTypeIndex != previousIndex) continue;
+
+        const prevHandlerId = req.history[i].handlerId;
+        const prevInbox = await getInbox(prevHandlerId);
+
+        const newRecallableRequestIds = prevInbox.recallableRequestIds.filter(
+          (reqId) => reqId != requestId,
+        );
+
+        await db.inbox.updateOne(
+          { userId: prevHandlerId },
+          {
+            $set: {
+              recallableRequestIds: newRecallableRequestIds
+            }
+          }
+        )
       }
-    )
+    }
   },
   recall_stage: async (event) => {
     //todo check for stage in currentStages,
