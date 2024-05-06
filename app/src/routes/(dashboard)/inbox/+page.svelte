@@ -84,6 +84,6 @@
   </div>
 
   <div class="lg:col-span-2">
-    <InboxContent bind:selectedStage={selectedStage} requests={data.relevantRequests}/>
+    <InboxContent bind:selectedStage={selectedStage} requests={data.relevantRequests} users={data.users}/>
   </div>
 </main>
