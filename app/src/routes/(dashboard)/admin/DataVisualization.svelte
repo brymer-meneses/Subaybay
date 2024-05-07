@@ -3,30 +3,30 @@
 
   export let data: { date: Date; value: number }[];
   // dummy data
-  // const today = new Date();
+  const today = new Date();
 
-  // function subtractDays(date: Date, days: number) {
-  //   const result = new Date(date);
-  //   result.setDate(result.getDate() - days);
-  //   return result;
-  // }
+  function subtractDays(date: Date, days: number) {
+    const result = new Date(date);
+    result.setDate(result.getDate() - days);
+    return result;
+  }
 
-  // data = [
-  //   { date: subtractDays(today, 13), value: 24 },
-  //   { date: subtractDays(today, 12), value: 78 },
-  //   { date: subtractDays(today, 11), value: 21 },
-  //   { date: subtractDays(today, 10), value: 29 },
-  //   { date: subtractDays(today, 9), value: 71 },
-  //   { date: subtractDays(today, 8), value: 72 },
-  //   { date: subtractDays(today, 7), value: 51 },
-  //   { date: subtractDays(today, 6), value: 81 },
-  //   { date: subtractDays(today, 5), value: 52 },
-  //   { date: subtractDays(today, 4), value: 36 },
-  //   { date: subtractDays(today, 3), value: 15 },
-  //   { date: subtractDays(today, 2), value: 22 },
-  //   { date: subtractDays(today, 1), value: 99 },
-  //   { date: subtractDays(today, 0), value: 26 },
-  // ];
+  data = [
+    { date: subtractDays(today, 13), value: 25 },
+    { date: subtractDays(today, 12), value: 20 },
+    { date: subtractDays(today, 11), value: 15 },
+    { date: subtractDays(today, 10), value: 10 },
+    { date: subtractDays(today, 9), value: 8 },
+    { date: subtractDays(today, 8), value: 5 },
+    { date: subtractDays(today, 7), value: 4 },
+    { date: subtractDays(today, 6), value: 3 },
+    { date: subtractDays(today, 5), value: 2 },
+    { date: subtractDays(today, 4), value: 1 },
+    { date: subtractDays(today, 3), value: 0 },
+    { date: subtractDays(today, 2), value: 1 },
+    { date: subtractDays(today, 1), value: 2 },
+    { date: subtractDays(today, 0), value: 3 },
+  ];
 
   const breakPoint = 640;
   let width = 1320;
@@ -37,11 +37,11 @@
   let padding = { top: 20, right: 15, bottom: 20, left: 45 };
 
   const minUB = 25;
-  const max =
+  const UB =
     minUB + minUB * Math.floor(Math.max(...data.map((d) => d.value)) / minUB);
 
   for (let i = 0; i <= 5; i++) {
-    yTicks.push(Math.round(i * (max / 5)));
+    yTicks.push(Math.round(i * (UB / 5)));
   }
 
   $: padding =
@@ -163,6 +163,7 @@
     {/if}
 
     <!-- data -->
+
     <g>
       {#each data as point, i}
         {#if width > breakPoint}
@@ -187,7 +188,7 @@
             fill="#111111"
             text-anchor="middle"
             ><tspan x={xScale(i) + barWidth / 2} dy="-0.5em"
-              >{point.value}</tspan
+              >{point.value === 0 ? "" : point.value}</tspan
             ></text
           >
         {:else}

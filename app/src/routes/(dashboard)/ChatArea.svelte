@@ -8,16 +8,31 @@
   import { Input } from "$lib/components/ui/input";
   import { Button } from "$lib/components/ui/button";
 
-  type Message = {
+  import queryString from "query-string";
+
+  type ServerMessage = {
+    type: "previousMessages" | "reply";
     dateTime: number;
     content: string;
     userId: string;
     profileUrl: string;
   };
 
-  type MessagePayload = {
+  type Reply = {
     content: string;
+    roomId: string;
     userId: string;
+  };
+
+  type Event = {
+    content: string;
+    roomId: string;
+    userId: string;
+  };
+
+  type ClientMessage = {
+    type: "message" | "event";
+    content: Reply | Event;
   };
 
   export let roomId: string;
@@ -25,26 +40,27 @@
   $: userId = $page.data.userInfo.id;
   $: sessionId = $page.data.sessionId;
 
-  let messages: Array<Message> = [];
+  let messages: Array<ServerMessage> = [];
   let socket: WebSocket;
-  let firstTime = true;
   let messageContent: string;
 
   let messageContainer: HTMLDivElement;
 
   onMount(async () => {
-    // TODO: should encode roomId somehow
-    // probably in this format: requestId-step
-    socket = new WebSocket(`ws://localhost:8080/chat/${roomId}/ws`);
-    socket.onerror = () => {
+    const params = {
+      sessionId,
+      userId,
+      roomId,
+    };
+
+    socket = new WebSocket(
+      `ws://localhost:8080/chat/ws?${queryString.stringify(params)}`,
+    );
+    socket.onerror = (ev) => {
       toast.error("Failed to connect to the chat server", {
         description: "Sending and receiving messages will not work",
       });
     };
-    socket.onopen = () => {
-      socket.send(sessionId);
-    };
-
     socket.onmessage = receiveMessageHandler;
   });
 
@@ -53,19 +69,16 @@
   }
 
   async function receiveMessageHandler(event: any) {
-    // the first message passed by the socket is all the previous messages
-    if (firstTime) {
-      messages = JSON.parse(event.data);
-      firstTime = false;
-
-      await tick();
-      scrollToBottom(messageContainer);
-      return;
-    }
-
     try {
-      let message: Message = JSON.parse(event.data);
-      messages = [...messages, message];
+      let data = await event.data.text();
+      let message = JSON.parse(data);
+
+      if (message.type === "previousMessages") {
+        messages = message.content;
+      } else {
+        messages.push(message.content);
+        messages = messages;
+      }
     } catch (err: any) {
       console.error("Invalid data: ", err.message);
     }
@@ -75,7 +88,15 @@
   }
 
   async function sendMessageHandler() {
-    const messagePayload: MessagePayload = { content: messageContent, userId };
+    const messagePayload: ClientMessage = {
+      type: "message",
+      content: {
+        content: messageContent,
+        userId,
+        roomId,
+      },
+    };
+
     socket.send(JSON.stringify(messagePayload));
     messageContent = "";
   }

@@ -1,12 +1,11 @@
 <script lang="ts">
   import * as Card from "$lib/components/ui/card/index.js";
   import Input from "$lib/components/ui/input/input.svelte";
-  import Button from "$lib/components/ui/button/button.svelte";
 
-  import Plus from "lucide-svelte/icons/plus";
   import Search from "lucide-svelte/icons/search";
 
   import UserTable from "./UserTable.svelte";
+  import AddUserForm from "./AddUserForm.svelte";
 
   export let users: User[];
 
@@ -49,7 +48,7 @@
         />
       </div>
       <div class="w-36">
-        <Button><Plus size="20" />Add a User</Button>
+        <AddUserForm />
       </div>
     </div>
   </Card.Header>

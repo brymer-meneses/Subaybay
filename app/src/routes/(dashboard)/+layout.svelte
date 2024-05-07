@@ -3,6 +3,9 @@
   import Header from "./Header.svelte";
   import clsx from "clsx";
   import { onMount } from "svelte";
+  import type { LayoutServerData } from "./$types";
+  import queryString from "query-string";
+  import { toast } from "svelte-sonner";
 
   let isSidebarCollapsed = true;
   let clientWidth: number;
@@ -32,14 +35,51 @@
       JSON.stringify(isSidebarCollapsed),
     );
   });
+
+  export let data: LayoutServerData;
+  let socket: WebSocket;
+
+  $: userId = data.userInfo.id;
+  $: sessionId = data.sessionId;
+
+  let notifications = { messages: 0, requests: 0 };
+
+  onMount(() => {
+    const params = { userId, sessionId };
+
+    socket = new WebSocket(
+      `ws://localhost:8080/notifications/ws?${queryString.stringify(params)}`,
+    );
+    socket.onerror = (ev) => {
+      toast.error("Failed to connect to the notifications server", {
+        description: "Notifications will not work properly",
+      });
+    };
+    socket.onmessage = wsReceiveHandler;
+  });
+
+  async function wsReceiveHandler(event: any) {
+    try {
+      let data = await event.data.text();
+      let message = JSON.parse(data);
+
+      switch (message.type) {
+        case "unseenNotificationsCount": {
+          notifications = message.content;
+        }
+      }
+    } catch (err: any) {
+      console.error("Invalid data: ", err.message);
+    }
+  }
 </script>
 
-<div class="bg-muted/40 flex min-h-screen w-full flex-col" bind:clientWidth>
-  <Sidebar bind:isCollapsed={isSidebarCollapsed} />
+<div class="flex min-h-screen w-full flex-col bg-muted/40" bind:clientWidth>
+  <Sidebar bind:isCollapsed={isSidebarCollapsed} {notifications} />
 
   <div
     class={clsx(
-      "bg-muted/40 flex min-h-screen flex-col sm:pl-0 md:pl-44 lg:pl-44",
+      "flex min-h-screen flex-col bg-muted/40 sm:pl-0 md:pl-44 lg:pl-44",
       !isSidebarCollapsed ? "md:pl-44 lg:pl-44" : "md:pl-8 lg:pl-8",
     )}
   >

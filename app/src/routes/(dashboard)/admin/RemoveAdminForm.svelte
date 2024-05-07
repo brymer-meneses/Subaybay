@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { enhance, applyAction } from "$app/forms";
+  import { goto } from "$app/navigation";
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import { Button } from "$lib/components/ui/button/index.js";
 
@@ -43,7 +45,19 @@
     <AlertDialog.Footer>
       <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action>
-        <form action="?/remove_admin" method="POST">
+        <form
+          action="?/remove_admin"
+          method="POST"
+          use:enhance={() => {
+            return async ({ result }) => {
+              if (result.type === "redirect") {
+                goto(result.location);
+              } else {
+                await applyAction(result);
+              }
+            };
+          }}
+        >
           <input type="hidden" name="email" value={user.email} />
           <button type="submit" class="border-none bg-none">Remove</button>
         </form>

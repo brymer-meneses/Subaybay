@@ -63,6 +63,9 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
       path: ".",
       ...sessionCookie.attributes,
     });
+
+
+
   } catch (e) {
     if (e instanceof OAuth2RequestError) {
       redirect(

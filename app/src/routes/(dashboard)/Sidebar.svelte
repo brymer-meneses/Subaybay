@@ -19,11 +19,12 @@
   import clsx from "clsx";
 
   export let isCollapsed: boolean;
+  export let notifications: { messages: number; requests: number };
 </script>
 
 <aside
   class={clsx(
-    "bg-background fixed inset-y-0  left-0 hidden flex-col border-r transition-all sm:flex",
+    "fixed inset-y-0 left-0  hidden flex-col border-r bg-background transition-all sm:flex",
     isCollapsed ? "w-[80px] items-center" : "w-[200px] items-start",
   )}
 >
@@ -43,8 +44,14 @@
       {/if}
     </div>
     <Separator />
-    <div class="flex w-full flex-col gap-2">
-      <NavLink icon={Inbox} name="Inbox" href="inbox" {isCollapsed}></NavLink>
+    <div class="flex w-full flex-col">
+      <NavLink
+        icon={Inbox}
+        name="Inbox"
+        href="inbox"
+        {isCollapsed}
+        notifications={notifications.messages}
+      ></NavLink>
       <NavLink icon={ListTodo} name="Requests" href="requests" {isCollapsed} />
       <NavLink
         icon={FileCog}
@@ -68,24 +75,24 @@
     </Button>
   </nav>
 
-  <nav class="mt-auto flex flex-col items-start gap-4 px-2 py-4">
-    <Separator />
+  <nav class="mt-auto flex w-full flex-col items-start p-2">
+    <Separator class="w-full" />
     <Tooltip.Root>
       <Tooltip.Trigger>
         <div
-          class="text-muted-foreground hover:text-accent-foreground flex items-center"
+          class="flex items-center text-muted-foreground hover:text-accent-foreground"
         >
           <form method="post" action="/auth/logout">
             <Button
               type="submit"
               variant="link"
-              class="text-muted-foreground rounded-lg"
+              class="rounded-lg text-muted-foreground"
             >
               <LogOut class="h-5 w-5" />
             </Button>
           </form>
           {#if !isCollapsed}
-            <span>Sign Out</span>
+            <span class="text-sm">Sign Out</span>
           {/if}
         </div>
       </Tooltip.Trigger>

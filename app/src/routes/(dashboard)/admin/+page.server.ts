@@ -138,6 +138,9 @@ function compare(a: RequestTypeInstancesCount, b: RequestTypeInstancesCount) {
 }
 
 export const actions: Actions = {
+  add_user: async ({request}) => {
+    console.log(await request.formData())
+  },
   remove_user: async ({ request }) => {
     const data = await request.formData();
     const email: string = data.get("email") as string;

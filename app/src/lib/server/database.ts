@@ -8,7 +8,7 @@ import { dev } from "$app/environment";
 
 const hostname = dev ? "localhost" : DATABASE_HOSTNAME;
 
-export const client = new MongoClient(`mongodb://${hostname}:${DATABASE_PORT}`);
+export const client = new MongoClient(`mongodb://${hostname}:${DATABASE_PORT}/`);
 await client.connect();
 
 export const database = client.db(DATABASE_NAME);
@@ -79,4 +79,11 @@ export interface Inbox {
 export interface StageIdentifier {
   requestId: string;
   stageTypeIndex: number;
+}
+
+export interface InboxStageData {
+  requestTitle: string;
+  stageTitle: string;
+  dateSent: Date;
+  requestId: string;
 }
