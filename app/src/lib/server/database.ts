@@ -5,10 +5,13 @@ import {
   DATABASE_NAME,
 } from "$env/static/private";
 import { dev } from "$app/environment";
+import queryString from "query-string";
+
+const args = dev ? { directConnection: true } : { replicaSet: "rs0" };
 
 const hostname = dev ? "localhost" : DATABASE_HOSTNAME;
 
-export const client = new MongoClient(`mongodb://${hostname}:${DATABASE_PORT}`);
+export const client = new MongoClient(`mongodb://${hostname}:${DATABASE_PORT}/?${queryString.stringify(args)}`);
 await client.connect();
 
 export const database = client.db(DATABASE_NAME);
@@ -74,4 +77,11 @@ export interface Inbox {
   userId: string;
   recallableRequestIds: Array<string>;
   currentRequestIds: Array<string>;
+}
+
+export interface InboxStageData {
+  requestTitle: string;
+  stageTitle: string;
+  dateSent: Date;
+  requestId: string;
 }

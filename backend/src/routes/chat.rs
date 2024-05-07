@@ -1,184 +1,281 @@
-use axum::extract::ws::{Message, WebSocket};
-use axum::extract::{ConnectInfo, Path, State, WebSocketUpgrade};
-use axum::routing::get;
-use axum::{response::IntoResponse, Router};
-use mongodb::Collection;
-use serde::{Deserialize, Serialize};
+use axum::{
+    extract::{Query, State},
+    response::IntoResponse,
+};
+use axum_typed_websockets::{Message, WebSocket, WebSocketUpgrade};
+use mongodb::bson::oid::ObjectId;
 
-use std::net::SocketAddr;
+use crate::error::Result;
+use crate::{database as db, state::AppState};
+use mongodb::bson::{self, doc};
 use std::sync::Arc;
+use tokio::sync::broadcast::{self, Receiver, Sender};
 
-use crate::database::{Chat, ChatMessage, ChatMessagePayload, Session, User};
-
-use super::AppState;
-
-pub fn root(state: Arc<AppState>) -> Router<Arc<AppState>> {
-    Router::new()
-        .route("/:chat_id/ws", get(chat_connect))
-        .with_state(state)
-}
-
-use mongodb::bson::doc;
-
-#[derive(Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct SessionIdParam {
-    session_id: String,
-}
-
-async fn chat_connect(
-    Path(chat_id): Path<String>,
-    ws: WebSocketUpgrade,
+pub async fn websocket(
     State(state): State<Arc<AppState>>,
-    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    Query(param): Query<ConnectionArgs>,
+    ws: WebSocketUpgrade<ServerMessage, ClientMessage>,
 ) -> impl IntoResponse {
-    ws.on_upgrade(move |socket| handle_chat_connection(state, socket, addr, chat_id))
-}
+    ws.on_upgrade(move |socket| async {
+        use futures::SinkExt;
+        use futures::StreamExt;
 
-async fn validate_session_id(sessions: Collection<Session>, session_id: &String) -> bool {
-    use std::time::SystemTime;
+        let (mut sink, mut stream) = socket.split();
+        let (sender, mut receiver) = broadcast::channel::<Message<ServerMessage>>(16);
 
-    let session = sessions.find_one(doc! {"_id": session_id}, None).await;
-    if let Ok(Some(session)) = session {
-        let expires_at = session.expires_at.to_system_time();
-        let now = SystemTime::now();
+        tokio::spawn(async move {
+            while let Ok(message) = receiver.recv().await {
+                if let Err(_) = sink.send(message).await {
+                    return;
+                }
+            }
+        });
 
-        if expires_at <= now {
-            return false;
+        if let Err(_) = handle_connection(state, sender, param).await {
+            // error
         }
-
-        return true;
-    };
-
-    false
+    })
 }
 
-async fn handle_chat_connection(
+async fn handle_connection(
     state: Arc<AppState>,
-    socket: WebSocket,
-    addr: SocketAddr,
-    chat_id: String,
-) {
+    sender: Sender<Message<ServerMessage>>,
+    params: ConnectionArgs,
+) -> Result<()> {
     use futures::SinkExt;
     use futures::StreamExt;
+    // NOTE:
+    // mongodb::database::Database uses an `Arc` under the hood so we can
+    // clone it!
+    initialize_room(&params, state.database.clone()).await?;
+    send_previous_messages(sender.clone(), &params, state.database.clone()).await?;
 
-    let (mut ws_sender, mut ws_receiver) = socket.split();
-    let chats = state.database.collection::<Chat>("chats");
+    let messages_collection = state.database.collection::<db::Message>("messages");
+    let users = state.database.collection::<db::User>("users");
 
-    // the first message from the user should be the session_id
-    // we then need to validate this to make sure the user is authenticated
-    if let Some(Ok(Message::Text(session_id))) = ws_receiver.next().await {
-        let sessions = state.database.collection::<Session>("sessions");
+    // NOTE:
+    // this task looks for changes in the database and sends it through the sender
+    let mut database_task = tokio::spawn(async move {
+        let mut change_stream = messages_collection
+            .watch(
+                vec![doc! {
+                    "$match": doc! {
+                        "operationType": "insert",
+                        "fullDocument.roomId": params.room_id,
+                    }
+                }],
+                None,
+            )
+            .await
+            .unwrap();
 
-        if !validate_session_id(sessions, &session_id).await {
-            let _ = ws_sender.send(Message::Close(None)).await;
-            return;
-        }
-
-        // send in all the messages from the user
-        let chats = state.database.collection::<Chat>("chats");
-        let queried_chat = chats.find_one(doc! { "chatId": &chat_id }, None).await;
-
-        if let Ok(Some(chat)) = queried_chat {
-            // send in all the messages from the user
-            let messages = serde_json::to_string(&chat.messages).expect("Failed to serialize");
-
-            let status = ws_sender.send(Message::Text(messages)).await;
-
-            if status.is_err() {
-                return;
-            }
-        } else {
-            // if queried chat is none then we make one
-            let chat = Chat {
-                chat_id: chat_id.clone(),
-                messages: vec![],
-            };
-
-            let insert_status = chats.insert_one(&chat, None).await;
-            let messages = serde_json::to_string(&chat.messages).expect("Failed to serialize");
-
-            let status = ws_sender.send(Message::Text(messages)).await;
-
-            if status.is_err() || insert_status.is_err() {
-                return;
-            };
-        }
-    } else {
-        // the client did not send a valid message so we close
-        let _ = ws_sender.send(Message::Close(None)).await;
-        return;
-    }
-
-    let mut rx = state.tx.subscribe();
-    let sender = state.tx.clone();
-
-    let mut send_task = tokio::spawn(async move {
-        while let Ok(message_payload) = rx.recv().await {
-            let users = state.database.collection::<User>("users");
-
+        while let Some(event) = change_stream.next().await.transpose().unwrap() {
+            let message = event.full_document.unwrap();
             let user = users
-                .find_one(doc! {"_id": &message_payload.user_id}, None)
-                .await;
+                .find_one(doc! {"_id": &message.user_id}, None)
+                .await
+                .unwrap()
+                .unwrap();
 
-            if let Ok(Some(user)) = user {
-                let message = ChatMessage::Response {
-                    date_time: message_payload.date_time,
-                    content: message_payload.content.clone(),
-                    user_id: message_payload.user_id,
-                    profile_url: user.profile_url,
-                };
-
-                let content = serde_json::to_string(&message);
-
-                if content.is_err() {
-                    break;
-                }
-
-                // update to the database
-                let filter = doc! { "chatId": &chat_id };
-                let update = doc! { "$push": doc! {"messages": &message} };
-                let status = chats.update_one(filter, update, None).await;
-
-                if status.is_err() {
-                    break;
-                }
-
-                if ws_sender
-                    .send(Message::Text(content.unwrap()))
-                    .await
-                    .is_err()
-                {
-                    break;
-                }
-            }
+            sender.send(Message::Item(ServerMessage::Reply(MessageWithProfile {
+                _id: message._id,
+                room_id: message.room_id,
+                date_time: message.date_time,
+                user_id: message.user_id,
+                content: message.content,
+                profile_url: user.profile_url,
+            })));
         }
     });
 
-    let mut receive_task = tokio::spawn(async move {
-        while let Some(Ok(msg)) = ws_receiver.next().await {
-            match msg {
-                Message::Text(msg) => {
-                    let msg = serde_json::from_str::<ChatMessagePayload>(&msg);
+    let receiver = sender.subscribe();
 
-                    if let Ok(msg) = msg {
-                        // send to all listeners
-                        let _ = sender.send(msg);
+    // NOTE:
+    // this handles when the client sends a message instead of using a broadcast we make use of
+    // mongodb change streams to record the chat message into the database
+    // another task is listening to change streams and that handles sending the message to the
+    // other clients
+    let mut client_receiver_task = tokio::spawn(async move {
+        while let msg = receiver.recv().await {
+            match msg {
+                Ok(Message::Item(msg)) => match msg {
+                    ClientMessage::Message {
+                        date_time,
+                        content,
+                        user_id,
+                        room_id,
+                    } => {
+                        let chat_message = db::Message {
+                            _id: ObjectId::new(),
+                            user_id,
+                            room_id,
+                            date_time,
+                            content,
+                        };
+
+                        let messages_collection =
+                            state.database.collection::<db::Message>("messages");
+
+                        messages_collection
+                            .insert_one(&chat_message, None)
+                            .await
+                            .unwrap();
                     }
+
+                    ClientMessage::Event { date_time, content } => {}
+                },
+
+                Ok(_) => {
+                    println!("Invalid Message");
+                    return;
                 }
 
-                Message::Close(_) => break,
-
-                _ => {}
-            };
+                Err(err) => {
+                    println!("{:?}", err);
+                    return;
+                }
+            }
         }
     });
 
     // If any one of the tasks run to completion, we abort the other.
     tokio::select! {
-        _ = (&mut send_task) => receive_task.abort(),
-        _ = (&mut receive_task) => send_task.abort(),
+        _ = (&mut database_task) => client_receiver_task.abort(),
+        _ = (&mut client_receiver_task) => database_task.abort(),
     };
 
-    tracing::info!("Websocket context {addr} destroyed");
+    Ok(())
+}
+
+async fn send_previous_messages(
+    sender: Sender<Message<ServerMessage>>,
+    params: &ConnectionArgs,
+    database: mongodb::Database,
+) -> Result<()> {
+    let messages_collection = database.collection::<db::Message>("messages");
+
+    let pipeline = vec![
+        doc! {
+            "$match": {
+                "roomId": params.room_id.clone(),
+            }
+        },
+        doc! {
+            "$lookup": {
+                "from": "users",
+                "localField": "userId",
+                "foreignField": "_id",
+                "as": "userInfo"
+            }
+        },
+        doc! {
+            "$unwind": "$userInfo"
+        },
+        doc! {
+            "$project": {
+                "_id": 1,
+                "roomId": 1,
+                "userId": 1,
+                "content": 1,
+                "dateTime": 1,
+                "profileUrl": "$userInfo.profileUrl"
+            }
+        },
+    ];
+
+    let mut cursor = messages_collection.aggregate(pipeline, None).await?;
+    let mut messages = Vec::new();
+
+    use futures::StreamExt;
+
+    while let Some(doc) = cursor.next().await.transpose()? {
+        let chat_message: MessageWithProfile = bson::from_document(doc)?;
+        messages.push(chat_message);
+    }
+
+    let _ = sender
+        .send(Message::Item(ServerMessage::PreviousMessages(messages)))
+        .await?;
+
+    Ok(())
+}
+
+async fn initialize_room(params: &ConnectionArgs, database: mongodb::Database) -> Result<()> {
+    let rooms_collection = database.collection::<db::Room>("rooms");
+
+    let room = rooms_collection
+        .find_one(doc! { "roomId": &params.room_id}, None)
+        .await?;
+
+    match room {
+        Some(room) => {
+            if !room.participants.contains(&params.user_id) {
+                let filter = doc! { "roomId": &params.room_id};
+                let update = doc! { "$push": doc!{"participants": &params.user_id }};
+                let _ = rooms_collection.update_one(filter, update, None).await?;
+            }
+        }
+        None => {
+            let _ = rooms_collection
+                .insert_one(
+                    db::Room {
+                        room_id: params.room_id.clone(),
+                        participants: vec![],
+                    },
+                    None,
+                )
+                .await?;
+        }
+    }
+
+    Ok(())
+}
+
+use crate::utils::get_time;
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ConnectionArgs {
+    room_id: String,
+    user_id: String,
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(tag = "type", content = "content", rename_all = "camelCase")]
+pub enum ClientMessage {
+    #[serde(rename_all = "camelCase")]
+    Message {
+        #[serde(default = "get_time")]
+        date_time: u64,
+        content: String,
+        room_id: String,
+        user_id: String,
+    },
+
+    #[serde(rename_all = "camelCase")]
+    Event {
+        #[serde(default = "get_time")]
+        date_time: u64,
+        content: String,
+    },
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct MessageWithProfile {
+    #[serde(rename = "_id")]
+    pub _id: ObjectId,
+    pub room_id: String,
+    pub user_id: String,
+    pub date_time: u64,
+    pub content: String,
+    pub profile_url: String,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+#[serde(tag = "type", content = "content", rename_all = "camelCase")]
+pub enum ServerMessage {
+    Reply(MessageWithProfile),
+    PreviousMessages(Vec<MessageWithProfile>),
 }
