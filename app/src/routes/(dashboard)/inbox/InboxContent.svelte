@@ -47,10 +47,6 @@
           <Badge variant="secondary">{info.studentName}</Badge>
           <Badge variant="secondary">{info.studentEmail}</Badge>
         </div>
-        <div class="my-4 grid gap-3">
-          <ChatArea roomId="abcd" />
-        </div>
-
         {#if info.purpose !== ""}
           <p class="font-semibold">Purpose</p>
           <Textarea disabled value={info.purpose} />

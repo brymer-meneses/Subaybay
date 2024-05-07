@@ -16,39 +16,32 @@ pub async fn websocket(
     Query(param): Query<ConnectionArgs>,
     ws: WebSocketUpgrade<ServerMessage, ClientMessage>,
 ) -> impl IntoResponse {
-    ws.on_upgrade(move |socket| async {
-        use futures::SinkExt;
-        use futures::StreamExt;
-
-        let (mut sink, mut stream) = socket.split();
-        let (sender, mut receiver) = broadcast::channel::<Message<ServerMessage>>(16);
-
-        tokio::spawn(async move {
-            while let Ok(message) = receiver.recv().await {
-                if let Err(_) = sink.send(message).await {
-                    return;
-                }
-            }
-        });
-
-        if let Err(_) = handle_connection(state, sender, param).await {
-            // error
-        }
-    })
+    ws.on_upgrade(move |socket| handle_connection(state, socket, param))
 }
 
 async fn handle_connection(
     state: Arc<AppState>,
-    sender: Sender<Message<ServerMessage>>,
+    socket: WebSocket<ServerMessage, ClientMessage>,
     params: ConnectionArgs,
-) -> Result<()> {
+) {
     use futures::SinkExt;
     use futures::StreamExt;
+
+    let (mut sink, mut stream) = socket.split();
+
     // NOTE:
     // mongodb::database::Database uses an `Arc` under the hood so we can
     // clone it!
-    initialize_room(&params, state.database.clone()).await?;
-    send_previous_messages(sender.clone(), &params, state.database.clone()).await?;
+    if let Err(_) = initialize_room(&params, state.database.clone()).await {
+        return;
+    }
+    if let Ok(messages) = get_previous_messages(&params, state.database.clone()).await {
+        let _ = sink
+            .send(Message::Item(ServerMessage::PreviousMessages(messages)))
+            .await;
+    } else {
+        return;
+    }
 
     let messages_collection = state.database.collection::<db::Message>("messages");
     let users = state.database.collection::<db::User>("users");
@@ -77,18 +70,18 @@ async fn handle_connection(
                 .unwrap()
                 .unwrap();
 
-            sender.send(Message::Item(ServerMessage::Reply(MessageWithProfile {
-                _id: message._id,
-                room_id: message.room_id,
-                date_time: message.date_time,
-                user_id: message.user_id,
-                content: message.content,
-                profile_url: user.profile_url,
-            })));
+            let _ = sink
+                .send(Message::Item(ServerMessage::Reply(MessageWithProfile {
+                    _id: message._id,
+                    room_id: message.room_id,
+                    date_time: message.date_time,
+                    user_id: message.user_id,
+                    content: message.content,
+                    profile_url: user.profile_url,
+                })))
+                .await;
         }
     });
-
-    let receiver = sender.subscribe();
 
     // NOTE:
     // this handles when the client sends a message instead of using a broadcast we make use of
@@ -96,7 +89,7 @@ async fn handle_connection(
     // another task is listening to change streams and that handles sending the message to the
     // other clients
     let mut client_receiver_task = tokio::spawn(async move {
-        while let msg = receiver.recv().await {
+        while let Some(msg) = stream.next().await {
             match msg {
                 Ok(Message::Item(msg)) => match msg {
                     ClientMessage::Message {
@@ -143,15 +136,12 @@ async fn handle_connection(
         _ = (&mut database_task) => client_receiver_task.abort(),
         _ = (&mut client_receiver_task) => database_task.abort(),
     };
-
-    Ok(())
 }
 
-async fn send_previous_messages(
-    sender: Sender<Message<ServerMessage>>,
+async fn get_previous_messages(
     params: &ConnectionArgs,
     database: mongodb::Database,
-) -> Result<()> {
+) -> Result<Vec<MessageWithProfile>> {
     let messages_collection = database.collection::<db::Message>("messages");
 
     let pipeline = vec![
@@ -193,11 +183,7 @@ async fn send_previous_messages(
         messages.push(chat_message);
     }
 
-    let _ = sender
-        .send(Message::Item(ServerMessage::PreviousMessages(messages)))
-        .await?;
-
-    Ok(())
+    Ok(messages)
 }
 
 async fn initialize_room(params: &ConnectionArgs, database: mongodb::Database) -> Result<()> {
