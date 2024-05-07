@@ -71,21 +71,13 @@
               name="requestId"
               value={selectedStage.requestId}
             />
-            <input
-              type="hidden"
-              name="stageTypeIndex"
-              value={selectedStage.stageTypeIndex}
-            />
-            <Button class="gap-2 rounded-xl text-white">
+            <!--todo add confirmation-->
+            <Button type="submit" class="gap-2 rounded-xl text-white">
               <MoveLeft />
               Rollback
             </Button>
           </form>
         {/if}
-        <!-- <Button class="gap-2 rounded-xl text-white">
-          <User />
-          Reassign
-        </Button> -->
       </div>
     </Card.Content>
   </Card.Root>

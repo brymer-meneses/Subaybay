@@ -50,7 +50,7 @@ const getUsers = async () => {
   }
 
   return users;
-}
+};
 
 const getInbox = async (userId: string): Promise<db.Inbox> => {
   let userInbox: db.Inbox | null = await db.inbox.findOne({ userId: userId });
@@ -61,7 +61,7 @@ const getInbox = async (userId: string): Promise<db.Inbox> => {
       currentRequestIds: [],
     };
 
-    db.inbox.insertOne(userInbox);
+    await db.inbox.insertOne(userInbox);
   }
 
   return userInbox;
@@ -136,7 +136,7 @@ const getStages = async (
       handlerId: stage.handlerId,
       stageTypeIndex: stage.stageTypeIndex,
       finished: stage.finished,
-      roomId: stage.roomId
+      roomId: stage.roomId,
     });
   }
 
@@ -212,10 +212,6 @@ export const actions: Actions = {
   finish_stage: async ({ request }) => {
     const data = await request.formData();
     const requestId: string = data.get("requestId")?.toString() ?? "";
-    const stageTypeIndex: number = parseInt(
-      data.get("stageTypeIndex")?.toString() ?? "-1",
-      10,
-    );
     const nextHandlerId: string = data.get("nextHandlerId")?.toString() ?? "0";
 
     // Ensure that the next handler exists
@@ -265,8 +261,20 @@ export const actions: Actions = {
     );
     if (!requestUpdateResult) return;
 
+    // Update inbox of user who will handle the request
+    const receiverInbox = await getInbox(nextHandlerId);
+
+    await db.inbox.updateOne(
+      { userId: nextHandlerId },
+      {
+        $set: {
+          currentRequestIds: [...receiverInbox.currentRequestIds, requestId],
+        },
+      },
+    );
+
     // Update Inbox that just sent the request - move from currentStages -> recallableStages
-    const senderInbox = await getInbox(req.currentStage.handlerId)
+    const senderInbox = await getInbox(req.currentStage.handlerId);
 
     const newRecallableRequestIds = [
       ...senderInbox.recallableRequestIds,
@@ -282,18 +290,6 @@ export const actions: Actions = {
         $set: {
           currentRequestIds: newCurrentRequestIds,
           recallableRequestIds: newRecallableRequestIds,
-        },
-      },
-    );
-
-    // Update inbox of user who will handle the request
-    const receiverInbox = await getInbox(nextHandlerId);
-
-    await db.inbox.updateOne(
-      { userId: nextHandlerId },
-      {
-        $set: {
-          currentRequestIds: [...receiverInbox.currentRequestIds, requestId],
         },
       },
     );
@@ -314,17 +310,97 @@ export const actions: Actions = {
           { userId: prevHandlerId },
           {
             $set: {
-              recallableRequestIds: newRecallableRequestIds
-            }
-          }
-        )
+              recallableRequestIds: newRecallableRequestIds,
+            },
+          },
+        );
+
+        break;
       }
     }
   },
-  recall_stage: async (event) => {
-    //todo check for stage in currentStages,
-    //+ if it isn't there check if it's in history, if it's in currentStages, then that means it's partial, which is ez to send back
-    //todo when doing a full recall, gether all stages in history at currentStageTypeIndex - 1,
-    //+ but don't go futher than one leve, like once it's currentStageTypeIndex - 2, break the loop
+  recall_stage: async ({ locals, request }) => {
+    const userId = locals.user?.id ?? "0";
+    const data = await request.formData();
+    const requestId: string = data.get("requestId")?.toString() ?? "";
+
+    const req: db.Request | null = await db.request.findOne({ _id: requestId });
+    if (!req) return; //todo tell error
+
+    const reqType: db.RequestType | null = await db.requestType.findOne({
+      _id: req.requestTypeId,
+    });
+    if (!reqType) return; //todo tell error
+
+    //todo ensure that the stage being recalled has a stageTypeIndex greater than this user's stage's stageTypeIndex by exactly 1
+
+    const reqCurrentHandlerId = req.currentStage.handlerId;
+    const currentStageIndex = req.currentStage.stageTypeIndex;
+    const newCurrentStageIndex = currentStageIndex - 1;
+    req.currentStage.finished = false;
+    req.currentStage.dateFinished = new Date(0);
+
+    // Update Request
+    const newHistory = [...req.history, req.currentStage];
+    const newCurrentStage: db.Stage = {
+      stageTypeIndex: newCurrentStageIndex,
+      handlerId: userId,
+      finished: false,
+      dateStarted: new Date(),
+      dateFinished: new Date(0),
+      roomId: new ObjectId().toString(),
+    };
+    const newNextStageIndex = newCurrentStageIndex + 1;
+    let newNextHandlerId = "";
+    if (reqType.stages.length > newNextStageIndex)
+      newNextHandlerId = reqType.stages[newNextStageIndex].defaultHandlerId;
+
+    let requestUpdateResult = await db.request.findOneAndUpdate(
+      { _id: requestId },
+      {
+        $set: {
+          history: newHistory,
+          currentStage: newCurrentStage,
+          nextHandlerId: newNextHandlerId,
+        },
+      },
+    );
+    if (!requestUpdateResult) return;
+
+    // Remove from the inbox of the one handling request before recall
+    const originalInbox = await getInbox(req.currentStage.handlerId);
+
+    const newOrigCurrentRequestIds = originalInbox.currentRequestIds.filter(
+      (reqId) => reqId != requestId,
+    )
+    await db.inbox.updateOne(
+      { userId: req.currentStage.handlerId },
+      {
+        $set: {
+          currentRequestIds: newOrigCurrentRequestIds,
+        }
+      }
+    )
+
+    // Move from this inbox's pending to active
+    const recallerInbox = await getInbox(userId);
+
+    const newRecallerCurrentRequestIds = [
+      ...recallerInbox.currentRequestIds,
+      requestId,
+    ];
+    const newRecallerRecallableRequestIds = recallerInbox.recallableRequestIds.filter(
+      (reqId) => reqId != requestId,
+    );
+
+    await db.inbox.updateOne(
+      { userId: userId },
+      {
+        $set: {
+          currentRequestIds: newRecallerCurrentRequestIds,
+          recallableRequestIds: newRecallerRecallableRequestIds,
+        },
+      },
+    );
   },
 };

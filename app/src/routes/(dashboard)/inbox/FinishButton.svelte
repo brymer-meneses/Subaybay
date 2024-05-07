@@ -82,15 +82,11 @@
       </div>
       <div class="padding-y-4 items-center">
         <form action="?/finish_stage" method="POST">
+          <!--Todo use enhance?-->
             <input
               type="hidden"
               name="requestId"
               value={selectedStage.requestId}
-            />
-            <input
-              type="hidden"
-              name="stageTypeIndex"
-              value={selectedStage.stageTypeIndex}
             />
             <input type="hidden" name="nextHandlerId" value={nextHandlerId} />
             <Button type="submit" disabled={nextHandlerId in users ? false : true}>Confirm</Button>
