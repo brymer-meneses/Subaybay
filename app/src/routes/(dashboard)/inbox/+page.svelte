@@ -71,6 +71,7 @@
           type="active"
           stages={data.activeStages}
           onSelectStage={selectStage}
+          requests={data.relevantRequests}
         />
       </Tabs.Content>
       <Tabs.Content value="pending">
@@ -78,6 +79,7 @@
           type="pending"
           stages={data.pendingStages}
           onSelectStage={selectStage}
+          requests={data.relevantRequests}
         />
       </Tabs.Content>
     </Tabs.Root>

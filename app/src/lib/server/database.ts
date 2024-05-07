@@ -72,6 +72,11 @@ export interface Stage {
 
 export interface Inbox {
   userId: string;
-  recallableRequestIds: Array<string>;
-  currentRequestIds: Array<string>;
+  recallable: Array<StageIdentifier>;
+  current: Array<StageIdentifier>;
+}
+
+export interface StageIdentifier {
+  requestId: string;
+  stageTypeIndex: number;
 }

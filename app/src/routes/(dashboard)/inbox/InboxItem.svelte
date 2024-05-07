@@ -3,6 +3,8 @@
   export let requestTitle: string;
   export let requestId: string;
   export let dateSent: string;
+  export let currentStageTypeIndex: number;
+  export let inboxStageTypeIndex: number;
 
   import clsx from "clsx";
 
@@ -24,6 +26,10 @@
     </div>
 
     <p class="text-sm">{requestTitle}</p>
-    <p class="text-xs font-thin text-gray-600">{dateSent}</p>
+    <p class="text-xs font-thin text-gray-400">{dateSent}</p>
+    <p class="text-xs font-thin text-gray-400">Step: {currentStageTypeIndex}</p>
+    {#if currentStageTypeIndex != inboxStageTypeIndex}
+    <p class="text-xs font-thin text-gray-400">You handled Step: {inboxStageTypeIndex}</p>
+    {/if}
   </div>
 </button>
