@@ -26,7 +26,6 @@
     admins = users.filter((e) => e.isAdmin);
   }
 
-  let dialogOpen: boolean = false;
   let value: string;
   let tab: string;
 
@@ -39,6 +38,7 @@
   }
 </script>
 
+<!-- <p>{JSON.stringify(form) ?? ""}</p> -->
 <!-- TODO but Low Priority: Fix Responsiveness of the layout -->
 <main class="mx-8 flex flex-col space-y-4">
   <h2 class="flex items-center gap-2 text-3xl font-bold tracking-tight">
