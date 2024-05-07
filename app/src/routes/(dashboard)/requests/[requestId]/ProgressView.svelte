@@ -27,7 +27,12 @@
     stages.push(stage);
   }
 
-  for (const storedStage of request.history) {
+  let stageTypeIndex = request.history[request.history.length - 1];
+  for (let i = request.history.length - 1; i >= 0; i--) {
+    if(stageTypeIndex < 0) break;
+    if(request.history.stageTypeIndex != stageTypeIndex) continue;
+
+    const storedStage = request.history[i];
     const stage = stages[storedStage.stageTypeIndex];
     stage.isHistory = true;
     stage.finished = storedStage.finished;

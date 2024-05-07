@@ -68,18 +68,14 @@
       </div>
       <Tabs.Content value="active">
         <Inbox
-          type="active"
           stages={data.activeStages}
           onSelectStage={selectStage}
-          requests={data.relevantRequests}
         />
       </Tabs.Content>
       <Tabs.Content value="pending">
         <Inbox
-          type="pending"
           stages={data.pendingStages}
           onSelectStage={selectStage}
-          requests={data.relevantRequests}
         />
       </Tabs.Content>
     </Tabs.Root>

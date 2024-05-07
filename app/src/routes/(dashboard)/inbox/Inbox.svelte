@@ -4,9 +4,7 @@
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
 
   export let onSelectStage: (stage: any) => void;
-  export let type: "active" | "pending";
   export let stages: any[] = [];
-  export let requests: {[key: string]: any};
 
   let selectedStageIndex: number = 0;
 
