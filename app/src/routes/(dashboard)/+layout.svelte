@@ -6,6 +6,7 @@
   import type { LayoutServerData } from "./$types";
   import queryString from "query-string";
   import { toast } from "svelte-sonner";
+  import CommandBox from "./CommandBox.svelte";
 
   let isSidebarCollapsed = true;
   let clientWidth: number;

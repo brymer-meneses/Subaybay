@@ -8,6 +8,7 @@
   import PanelLeft from "lucide-svelte/icons/panel-left";
   import Search from "lucide-svelte/icons/search";
   import ShoppingCart from "lucide-svelte/icons/shopping-cart";
+  import CommandBox from "./CommandBox.svelte";
 
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
   import * as Tooltip from "$lib/components/ui/tooltip";
@@ -19,6 +20,8 @@
   import { page } from "$app/stores";
 
   $: title = $page.route.id?.toString().split("/").at(-1);
+
+  let open = false;
 </script>
 
 <header
@@ -81,13 +84,24 @@
     </Sheet.Content>
   </Sheet.Root>
 
-  <div class="relative ml-auto flex-1 md:grow-0">
-    <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-    <Input
-      type="search"
-      placeholder="Search..."
-      class="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[320px]"
-    />
+  <div class="relative ml-auto flex-1 items-center md:grow-0">
+    <Button
+      variant="ghost"
+      class="flex w-full cursor-pointer flex-row items-center justify-between rounded-lg border border-border bg-background md:w-[200px] lg:w-[320px]"
+      on:click={() => {
+        open = !open;
+      }}
+    >
+      <div class="flex flex-row gap-4">
+        <Search class="h-4 w-4 text-muted-foreground" />
+        <p class="text-xs text-muted-foreground">Click here to search ...</p>
+      </div>
+      <kbd
+        class="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 drop-shadow-sm"
+      >
+        <span class="text-xs">⌘</span>J
+      </kbd>
+    </Button>
   </div>
 
   <Tooltip.Root>
@@ -106,3 +120,5 @@
     </Tooltip.Content>
   </Tooltip.Root>
 </header>
+
+<CommandBox bind:open />

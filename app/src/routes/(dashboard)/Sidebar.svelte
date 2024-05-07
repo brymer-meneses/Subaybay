@@ -2,6 +2,7 @@
   import Inbox from "lucide-svelte/icons/inbox";
   import ListTodo from "lucide-svelte/icons/list-todo";
   import FileCog from "lucide-svelte/icons/file-cog";
+  import UsersRound from "lucide-svelte/icons/users-round";
 
   import ChevronLeft from "lucide-svelte/icons/chevron-left";
   import ChevronRight from "lucide-svelte/icons/chevron-right";
@@ -12,11 +13,12 @@
   import { Separator } from "$lib/components/ui/separator";
   import * as Tooltip from "$lib/components/ui/tooltip";
   import * as Avatar from "$lib/components/ui/avatar";
-  import UsersRound from "lucide-svelte/icons/users-round";
 
   import UpLogo from "$lib/assets/UP.png";
   import NavLink from "./NavLink.svelte";
   import clsx from "clsx";
+
+  import { page } from "$app/stores";
 
   export let isCollapsed: boolean;
   export let notifications: { messages: number; requests: number };
@@ -59,7 +61,9 @@
         href="configuration"
         {isCollapsed}
       />
-      <NavLink icon={UsersRound} name="Admin" href="admin" {isCollapsed} />
+      {#if $page.data.userInfo.isAdmin}
+        <NavLink icon={UsersRound} name="Admin" href="admin" {isCollapsed} />
+      {/if}
     </div>
 
     <Button
