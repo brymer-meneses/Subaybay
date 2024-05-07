@@ -20,7 +20,7 @@ pub struct Message {
     pub content: String,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase", tag = "type", content = "content")]
 pub enum Notification {
     #[serde(rename_all = "camelCase")]

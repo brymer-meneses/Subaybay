@@ -27,7 +27,7 @@ async fn handle_connection(
     use futures::SinkExt;
     use futures::StreamExt;
 
-    let (mut sink, mut stream) = socket.split();
+    let (mut ws_sender, mut ws_receiver) = socket.split();
 
     // NOTE:
     // mongodb::database::Database uses an `Arc` under the hood so we can
@@ -36,87 +36,93 @@ async fn handle_connection(
         return;
     }
     if let Ok(messages) = get_previous_messages(&params, state.database.clone()).await {
-        let _ = sink
+        let _ = ws_sender
             .send(Message::Item(ServerMessage::PreviousMessages(messages)))
             .await;
     } else {
         return;
     }
 
-    let messages_collection = state.database.collection::<db::Message>("messages");
     let users = state.database.collection::<db::User>("users");
 
-    // NOTE:
-    // this task looks for changes in the database and sends it through the sender
-    let mut database_task = tokio::spawn(async move {
-        let mut change_stream = messages_collection
-            .watch(
-                vec![doc! {
-                    "$match": doc! {
-                        "operationType": "insert",
-                        "fullDocument.roomId": params.room_id,
-                    }
-                }],
-                None,
-            )
-            .await
-            .unwrap();
+    let mut message_tx = state.message_tx.subscribe();
+    let sender = state.message_tx.clone();
 
-        while let Some(event) = change_stream.next().await.transpose().unwrap() {
-            let message = event.full_document.unwrap();
-            let user = users
-                .find_one(doc! {"_id": &message.user_id}, None)
-                .await
-                .unwrap()
-                .unwrap();
+    // listens to the broadcasted channels gets the complete information from the database and
+    // sends it to the client
+    let mut send_task = tokio::spawn(async move {
+        while let Ok(message) = message_tx.recv().await {
+            match message {
+                ClientMessage::Message {
+                    date_time,
+                    content,
+                    user_id,
+                    room_id,
+                } => {
+                    let user = users
+                        .find_one(doc! {"_id": &params.user_id}, None)
+                        .await
+                        .unwrap()
+                        .unwrap();
 
-            let _ = sink
-                .send(Message::Item(ServerMessage::Reply(MessageWithProfile {
-                    _id: message._id,
-                    room_id: message.room_id,
-                    date_time: message.date_time,
-                    user_id: message.user_id,
-                    content: message.content,
-                    profile_url: user.profile_url,
-                })))
-                .await;
+                    let _ = ws_sender
+                        .send(Message::Item(ServerMessage::Reply(MessageWithProfile {
+                            room_id,
+                            date_time,
+                            user_id,
+                            content,
+                            profile_url: user.profile_url,
+                        })))
+                        .await;
+                }
+
+                ClientMessage::Event { date_time, content } => {}
+            }
         }
     });
 
-    // NOTE:
-    // this handles when the client sends a message instead of using a broadcast we make use of
-    // mongodb change streams to record the chat message into the database
-    // another task is listening to change streams and that handles sending the message to the
-    // other clients
-    let mut client_receiver_task = tokio::spawn(async move {
-        while let Some(msg) = stream.next().await {
-            match msg {
-                Ok(Message::Item(msg)) => match msg {
-                    ClientMessage::Message {
-                        date_time,
-                        content,
-                        user_id,
-                        room_id,
-                    } => {
-                        let chat_message = db::Message {
-                            _id: ObjectId::new(),
-                            user_id,
-                            room_id,
+    // receives chat payload from the client and stores the message in the database and sendsit
+    // through the connected clients over the websocket
+    let mut receive_task = tokio::spawn(async move {
+        while let Some(message) = ws_receiver.next().await {
+            match message {
+                Ok(Message::Item(msg)) => {
+                    match msg {
+                        ClientMessage::Message {
                             date_time,
                             content,
-                        };
+                            user_id,
+                            room_id,
+                        } => {
+                            // we store the mesage here since if we do it in `send_task` it will be
+                            // duplicated by other threads
+                            let chat_message = db::Message {
+                                _id: ObjectId::new(),
+                                user_id,
+                                room_id,
+                                date_time,
+                                content,
+                            };
 
-                        let messages_collection =
-                            state.database.collection::<db::Message>("messages");
+                            let messages_collection =
+                                state.database.collection::<db::Message>("messages");
 
-                        messages_collection
-                            .insert_one(&chat_message, None)
-                            .await
-                            .unwrap();
+                            messages_collection
+                                .insert_one(&chat_message, None)
+                                .await
+                                .unwrap();
+
+                            let _ = sender.send(ClientMessage::Message {
+                                date_time,
+                                content: chat_message.content,
+                                user_id: chat_message.user_id,
+                                room_id: chat_message.room_id,
+                            });
+                        }
+
+                        ClientMessage::Event { date_time, content } => {}
                     }
-
-                    ClientMessage::Event { date_time, content } => {}
-                },
+                }
 
                 Ok(_) => {
                     println!("Invalid Message");
@@ -133,8 +139,8 @@ async fn handle_connection(
 
     // If any one of the tasks run to completion, we abort the other.
     tokio::select! {
-        _ = (&mut database_task) => client_receiver_task.abort(),
-        _ = (&mut client_receiver_task) => database_task.abort(),
+        _ = (&mut send_task) => receive_task.abort(),
+        _ = (&mut receive_task) => send_task.abort(),
     };
 }
 
@@ -227,7 +233,7 @@ pub struct ConnectionArgs {
     user_id: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 #[serde(tag = "type", content = "content", rename_all = "camelCase")]
 pub enum ClientMessage {
     #[serde(rename_all = "camelCase")]
@@ -250,8 +256,6 @@ pub enum ClientMessage {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct MessageWithProfile {
-    #[serde(rename = "_id")]
-    pub _id: ObjectId,
     pub room_id: String,
     pub user_id: String,
     pub date_time: u64,

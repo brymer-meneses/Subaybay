@@ -13,8 +13,8 @@ use tower_http::trace::TraceLayer;
 use crate::state::AppState;
 use std::sync::Arc;
 
-mod chat;
-mod notifications;
+pub mod chat;
+pub mod notifications;
 
 use crate::middlewares::authentication;
 

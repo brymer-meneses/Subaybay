@@ -1,9 +1,12 @@
-use axum::extract::FromRef;
+use crate::{database as db, routes::chat};
+use axum_typed_websockets::{Message, WebSocket, WebSocketUpgrade};
 use mongodb::Database;
+use tokio::sync::broadcast;
 
 #[derive(Clone)]
 pub struct AppState {
     pub database: Database,
+    pub message_tx: broadcast::Sender<chat::ClientMessage>,
 }
 
 impl AppState {
@@ -23,7 +26,12 @@ impl AppState {
         };
 
         let database = client.database("subaybay");
+        let (message_tx, _) = broadcast::channel(128);
+        // let (notification_tx, _) = broadcast::channel(128);
 
-        Self { database }
+        Self {
+            database,
+            message_tx,
+        }
     }
 }

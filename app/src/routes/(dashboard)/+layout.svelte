@@ -62,12 +62,10 @@
     try {
       let data = await event.data.text();
       let message = JSON.parse(data);
-      console.log(message);
 
       switch (message.type) {
         case "unseenNotificationsCount": {
           notifications = message.content;
-          console.log(message.content);
         }
       }
     } catch (err: any) {
@@ -77,7 +75,7 @@
 </script>
 
 <div class="flex min-h-screen w-full flex-col bg-muted/40" bind:clientWidth>
-  <Sidebar bind:isCollapsed={isSidebarCollapsed} />
+  <Sidebar bind:isCollapsed={isSidebarCollapsed} {notifications} />
 
   <div
     class={clsx(

@@ -50,7 +50,7 @@
         name="Inbox"
         href="inbox"
         {isCollapsed}
-        notifications={5}
+        notifications={notifications.messages}
       ></NavLink>
       <NavLink icon={ListTodo} name="Requests" href="requests" {isCollapsed} />
       <NavLink

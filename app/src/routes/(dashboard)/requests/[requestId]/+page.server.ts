@@ -5,7 +5,7 @@ export const load: PageServerLoad = async (event) => {
   const requestId = event.params.requestId;
 
   const storedData = await retrieveData(requestId);
-  
+
   return {
     userInfo: event.locals.user,
     request: storedData.request,
