@@ -12,14 +12,9 @@
   import type { Request, InboxStageData } from "$lib/server/database";
   import { Textarea } from "$lib/components/ui/textarea";
 
-<<<<<<< HEAD
   export let requests: { [key: string]: any };
   export let selectedStage: any;
   export let users: any;
-=======
-  export let requests: { [key: string]: Request };
-  export let selectedStage: InboxStageData;
->>>>>>> b1188cc (draft for notifications (still not working)
 
   $: info = selectedStage ? requests[selectedStage.requestId] : null;
 </script>

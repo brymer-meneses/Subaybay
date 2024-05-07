@@ -1,15 +1,6 @@
-<<<<<<< HEAD
 import type { PageServerLoad, Actions } from "./$types";
 import * as db from "$lib/server/database";
 import { ObjectId } from "mongodb";
-<<<<<<< HEAD
-=======
-import type { PageServerLoad } from "./$types";
-import { lucia } from "$lib/server/auth";
->>>>>>> e9453a1 (commit for now)
-=======
-import { lucia } from "$lib/server/auth";
->>>>>>> b1188cc (draft for notifications (still not working)
 
 import { superValidate } from "sveltekit-superforms";
 import { formSchema } from "./schema";
@@ -17,7 +8,6 @@ import { zod } from "sveltekit-superforms/adapters";
 import { fail } from "@sveltejs/kit";
 import { lucia } from "$lib/server/auth";
 
-<<<<<<< HEAD
 interface InboxStageData {
   requestTitle: string;
   stageTitle: string;
@@ -28,19 +18,11 @@ interface InboxStageData {
   finished: boolean;
   roomId: string;
 }
-export const load: PageServerLoad = async ({ cookies, locals }) => {
-  const sessionId = cookies.get(lucia.sessionCookieName);
-<<<<<<< HEAD
-=======
-import type { InboxStageData } from "$lib/server/database";
 
 export const load: PageServerLoad = async ({ cookies, locals }) => {
   const sessionId = cookies.get(lucia.sessionCookieName);
->>>>>>> b1188cc (draft for notifications (still not working)
   const userId = locals.user?.id ?? "0";
-=======
   // const requests = await database.request.find({}).toArray();
->>>>>>> e9453a1 (commit for now)
 
   const users = await getUsers();
   const userInbox: db.Inbox = await getInbox(userId);

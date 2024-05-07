@@ -19,12 +19,7 @@
   import clsx from "clsx";
 
   export let isCollapsed: boolean;
-<<<<<<< HEAD
-
-  import Notification from "./Notification.svelte";
-=======
   export let notifications: { messages: number; requests: number };
->>>>>>> b1188cc (draft for notifications (still not working)
 </script>
 
 <aside
@@ -49,10 +44,6 @@
       {/if}
     </div>
     <Separator />
-<<<<<<< HEAD
-    <div class="flex w-full flex-col gap-2">
-      <NavLink icon={Inbox} name="Inbox" href="inbox" {isCollapsed}></NavLink>
-=======
     <div class="flex w-full flex-col">
       <NavLink
         icon={Inbox}
@@ -61,7 +52,6 @@
         {isCollapsed}
         notifications={5}
       ></NavLink>
->>>>>>> b1188cc (draft for notifications (still not working)
       <NavLink icon={ListTodo} name="Requests" href="requests" {isCollapsed} />
       <NavLink
         icon={FileCog}

@@ -2,8 +2,10 @@
   import Sidebar from "./Sidebar.svelte";
   import Header from "./Header.svelte";
   import clsx from "clsx";
-<<<<<<< HEAD
   import { onMount } from "svelte";
+  import type { LayoutServerData } from "./$types";
+  import queryString from "query-string";
+  import { toast } from "svelte-sonner";
 
   let isSidebarCollapsed = true;
   let clientWidth: number;
@@ -33,18 +35,6 @@
       JSON.stringify(isSidebarCollapsed),
     );
   });
-</script>
-
-<div class="bg-muted/40 flex min-h-screen w-full flex-col" bind:clientWidth>
-  <Sidebar bind:isCollapsed={isSidebarCollapsed} />
-=======
-  import type { LayoutServerData } from "./$types";
-  import { onMount } from "svelte";
-  import queryString from "query-string";
-  import { toast } from "svelte-sonner";
-  import { browser } from "$app/environment";
-
-  let isSidebarCollapsed = false;
 
   export let data: LayoutServerData;
   let socket: WebSocket;
@@ -86,13 +76,12 @@
   }
 </script>
 
-<div class="flex min-h-screen w-full flex-col bg-muted/40">
-  <Sidebar bind:isCollapsed={isSidebarCollapsed} {notifications} />
->>>>>>> b1188cc (draft for notifications (still not working)
+<div class="flex min-h-screen w-full flex-col bg-muted/40" bind:clientWidth>
+  <Sidebar bind:isCollapsed={isSidebarCollapsed} />
 
   <div
     class={clsx(
-      "bg-muted/40 flex min-h-screen flex-col sm:pl-0 md:pl-44 lg:pl-44",
+      "flex min-h-screen flex-col bg-muted/40 sm:pl-0 md:pl-44 lg:pl-44",
       !isSidebarCollapsed ? "md:pl-44 lg:pl-44" : "md:pl-8 lg:pl-8",
     )}
   >
