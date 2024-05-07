@@ -28,7 +28,13 @@
             {selectedStage.stageTitle}
           {/if}
         </Card.Title>
-        <Card.Description>{selectedStage.requestId}</Card.Description>
+        <Card.Description>
+          {selectedStage.requestId} <br/>
+          Currently at Step: {selectedStage.currentStageTypeIndex} <br/>
+          {#if selectedStage.currentStageTypeIndex != selectedStage.inboxStageTypeIndex}
+          You handled Step: {selectedStage.inboxStageTypeIndex}
+          {/if}
+        </Card.Description>
       </div>
 
       <div class="ml-auto flex items-center gap-2">
@@ -62,14 +68,19 @@
       </div>
 
       <div class="flex gap-2">
-        {#if !selectedStage.finished}
+        {#if selectedStage.currentStageTypeIndex == selectedStage.inboxStageTypeIndex}
           <FinishButton {selectedStage} {users} />
         {:else}
-          <form action="?/recall_stage" method="POST">
+          <form action="?/rollback_stage" method="POST">
             <input
               type="hidden"
               name="requestId"
               value={selectedStage.requestId}
+            />
+            <input
+              type="hidden"
+              name="inboxStageTypeIndex"
+              value={selectedStage.inboxStageTypeIndex}
             />
             <!--todo add confirmation-->
             <Button type="submit" class="gap-2 rounded-xl text-white">

@@ -14,7 +14,8 @@ interface InboxStageData {
   dateSent: Date;
   requestId: string;
   handlerId: string;
-  stageTypeIndex: number;
+  currentStageTypeIndex: number;
+  inboxStageTypeIndex: number;
   finished: boolean;
   roomId: string;
 }
@@ -28,10 +29,10 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
   const userInbox: db.Inbox = await getInbox(userId);
   const requestTypes = await getRequestTypes();
 
-  const requests = await getRelevantRequests(userInbox);
-  const stages = await getStages(userId, requests, requestTypes);
-  const activeStages = stages.active;
-  const pendingStages = stages.pending;
+  const reqAndStages = await getRequestsAndStages(userInbox, requestTypes);
+  const requests = reqAndStages.requests;
+  const activeStages = reqAndStages.activeStages;
+  const pendingStages = reqAndStages.pendingStages;
 
   return {
     form: await superValidate(zod(formSchema)),
@@ -60,8 +61,8 @@ const getInbox = async (userId: string): Promise<db.Inbox> => {
   if (!userInbox) {
     userInbox = {
       userId: userId,
-      recallableRequestIds: [],
-      currentRequestIds: [],
+      recallable: [],
+      current: [],
     };
 
     await db.inbox.insertOne(userInbox);
@@ -83,67 +84,58 @@ const getRequestTypes = async (): Promise<{
 };
 
 // get all requests that are relevant to user - either active or pending
-const getRelevantRequests = async (
+const getRequestsAndStages = async (
   userInbox: db.Inbox,
-): Promise<{
-  [key: string]: db.Request;
-}> => {
-  let requests: { [key: string]: db.Request } = {};
-  for (const requestId of userInbox.currentRequestIds) {
-    const req = await db.request.findOne({ _id: requestId });
-    if (!req) continue;
-
-    requests[requestId] = req;
-  }
-
-  for (const requestId of userInbox.recallableRequestIds) {
-    const req = await db.request.findOne({ _id: requestId });
-    if (!req) continue;
-
-    requests[requestId] = req;
-  }
-
-  return requests;
-};
-
-const getStages = async (
-  userId: string,
-  requests: { [key: string]: db.Request },
   requestTypes: { [key: string]: db.RequestType },
-): Promise<{ active: InboxStageData[]; pending: InboxStageData[] }> => {
+) => {
   let activeStages: InboxStageData[] = [];
   let pendingStages: InboxStageData[] = [];
 
-  for (const reqId of Object.keys(requests)) {
-    const request = requests[reqId];
-    const requestType = requestTypes[request.requestTypeId];
+  let requests: { [key: string]: db.Request } = {};
+  for (const stageIdentifier of userInbox.current) {
+    const req = await db.request.findOne({ _id: stageIdentifier.requestId });
+    if (!req) continue;
 
-    let stage = request.currentStage;
-    let listToAppendTo;
-    if (stage.handlerId == userId) {
-      listToAppendTo = activeStages;
-    } else {
-      if (request.history.length == 0) continue;
-      const latestHistory = request.history[request.history.length - 1];
-      if (latestHistory.handlerId != userId) continue;
-
-      stage = request.history[request.history.length - 1];
-      listToAppendTo = pendingStages;
-    }
-
-    listToAppendTo.push({
-      requestTitle: requestType.title,
-      stageTitle: requestType.stages[stage.stageTypeIndex].stageTitle,
-      dateSent: stage.dateStarted,
-      requestId: request._id,
-      handlerId: stage.handlerId,
-      stageTypeIndex: stage.stageTypeIndex,
-      finished: stage.finished,
-      roomId: stage.roomId,
-    });
+    requests[stageIdentifier.requestId] = req;
+    const requestType = requestTypes[req.requestTypeId];
+    addStage(stageIdentifier, req, requestType, activeStages);
   }
 
-  return { active: activeStages, pending: pendingStages };
+  for (const stageIdentifier of userInbox.recallable) {
+    const req = await db.request.findOne({ _id: stageIdentifier.requestId });
+    if (!req) continue;
+
+    requests[stageIdentifier.requestId] = req;
+    const requestType = requestTypes[req.requestTypeId];
+    addStage(stageIdentifier, req, requestType, pendingStages);
+  }
+
+  return {
+    requests: requests,
+    activeStages: activeStages,
+    pendingStages: pendingStages,
+  };
+};
+
+const addStage = (
+  stageIdentifier: db.StageIdentifier,
+  request: db.Request,
+  requestType: db.RequestType,
+  listToAppendTo: InboxStageData[],
+) => {
+  const stage = request.currentStage;
+
+  listToAppendTo.push({
+    requestTitle: requestType.title,
+    stageTitle: requestType.stages[stage.stageTypeIndex].stageTitle,
+    dateSent: stage.dateStarted,
+    requestId: stageIdentifier.requestId,
+    handlerId: stage.handlerId,
+    currentStageTypeIndex: stage.stageTypeIndex,
+    inboxStageTypeIndex: stageIdentifier.stageTypeIndex,
+    finished: stage.finished,
+    roomId: stage.roomId,
+  });
 };
 
 import { setFlash } from "sveltekit-flash-message/server";
@@ -169,10 +161,11 @@ export const actions: Actions = {
     const purpose = data.purpose;
     const remarks = data.remarks;
 
-    if (!requestTypeId) return; //todo something error
-
     const reqType = await db.requestType.findOne({ _id: requestTypeId });
-    if (!reqType) return;
+    if (!reqType) {
+      setFlash({ type: "error", message: "Invalid Request Type" }, cookies);
+      return;
+    }
 
     const nextHandlerId =
       reqType.stages.length >= 2 ? reqType.stages[1].defaultHandlerId : "";
@@ -199,20 +192,26 @@ export const actions: Actions = {
     };
 
     let insertionResult = await db.request.insertOne(req);
-    if (!insertionResult.acknowledged) return; //todo tell about error
+    if (!insertionResult.acknowledged) {
+      setFlash(
+        { type: "error", message: "Database Error: Request creation failed" },
+        cookies,
+      );
+      return;
+    }
 
     const userInbox = await getInbox(userId);
-    userInbox.currentRequestIds.push(req._id);
+    userInbox.current.push({ requestId: req._id, stageTypeIndex: 0 });
     await db.inbox.findOneAndUpdate(
       { userId: userId },
       {
-        $set: { currentRequestIds: userInbox.currentRequestIds },
+        $set: { current: userInbox.current },
       },
     );
 
     setFlash({ type: "success", message: "Added request" }, cookies);
   },
-  finish_stage: async ({ request }) => {
+  finish_stage: async ({ request, locals, cookies }) => {
     const data = await request.formData();
     const requestId: string = data.get("requestId")?.toString() ?? "";
     const nextHandlerId: string = data.get("nextHandlerId")?.toString() ?? "0";
@@ -220,34 +219,54 @@ export const actions: Actions = {
     // Ensure that the next handler exists
     const nextHandler = await db.user.findOne({ _id: nextHandlerId });
     if (!nextHandler) {
-      console.log("Invalid Next Handler");
+      setFlash(
+        {
+          type: "error",
+          message: "Could not find selected handler in database",
+        },
+        cookies,
+      );
       return;
     }
 
     const req: db.Request | null = await db.request.findOne({ _id: requestId });
-    if (!req) return; //todo tell error
+    if (!req) {
+      setFlash(
+        { type: "error", message: "Could not find request in database" },
+        cookies,
+      );
+      return;
+    }
 
     const reqType: db.RequestType | null = await db.requestType.findOne({
       _id: req.requestTypeId,
     });
-    if (!reqType) return; //todo tell error
+    if (!reqType) {
+      setFlash(
+        { type: "error", message: "Could not find request type in database" },
+        cookies,
+      );
+      return;
+    }
 
-    const currentStageIndex = req.currentStage.stageTypeIndex;
-    const newCurrentStageIndex = currentStageIndex + 1;
+    const oldStageIndex = req.currentStage.stageTypeIndex;
+    const newStageIndex = oldStageIndex + 1;
     req.currentStage.finished = true;
     req.currentStage.dateFinished = new Date();
+
+    //todo handle full finish
 
     // Update Request
     const newHistory = [...req.history, req.currentStage];
     const newCurrentStage: db.Stage = {
-      stageTypeIndex: newCurrentStageIndex,
+      stageTypeIndex: newStageIndex,
       handlerId: nextHandlerId,
       finished: false,
       dateStarted: new Date(),
       dateFinished: new Date(0),
       roomId: new ObjectId().toString(),
     };
-    const newNextStageIndex = newCurrentStageIndex + 1;
+    const newNextStageIndex = newStageIndex + 1;
     let newNextHandlerId = "";
     if (reqType.stages.length > newNextStageIndex)
       newNextHandlerId = reqType.stages[newNextStageIndex].defaultHandlerId;
@@ -262,7 +281,7 @@ export const actions: Actions = {
         },
       },
     );
-    if (!requestUpdateResult) return;
+    if (!requestUpdateResult) return; //todo error
 
     // Update inbox of user who will handle the request
     const receiverInbox = await getInbox(nextHandlerId);
@@ -271,75 +290,85 @@ export const actions: Actions = {
       { userId: nextHandlerId },
       {
         $set: {
-          currentRequestIds: [...receiverInbox.currentRequestIds, requestId],
+          current: [
+            ...receiverInbox.current,
+            { requestId: requestId, stageTypeIndex: newStageIndex },
+          ],
         },
       },
     );
 
-    // Update Inbox that just sent the request - move from currentStages -> recallableStages
+    // Update Inbox that just sent the request
     const senderInbox = await getInbox(req.currentStage.handlerId);
 
-    const newRecallableRequestIds = [
-      ...senderInbox.recallableRequestIds,
-      requestId,
+    // Add the old stage to recallable
+    const newSenderRecallable: db.StageIdentifier[] = [
+      ...senderInbox.recallable,
+      { requestId: requestId, stageTypeIndex: oldStageIndex },
     ];
-    const newCurrentRequestIds = senderInbox.currentRequestIds.filter(
-      (reqId) => reqId != requestId,
+    // Remove the old stage from active
+    const newSenderCurrent = senderInbox.current.filter(
+      (item) =>
+        item.stageTypeIndex != oldStageIndex || item.requestId != requestId,
     );
-
     await db.inbox.updateOne(
       { userId: req.currentStage.handlerId },
       {
         $set: {
-          currentRequestIds: newCurrentRequestIds,
-          recallableRequestIds: newRecallableRequestIds,
+          current: newSenderCurrent,
+          recallable: newSenderRecallable,
         },
       },
     );
 
-    const previousIndex = req.currentStage.stageTypeIndex - 1;
-    if (previousIndex >= 0) {
-      for (let i = req.history.length - 1; i >= 0; i--) {
-        if (req.history[i].stageTypeIndex != previousIndex) continue;
+    // todo remove from all the pending when request is fully completed
+    // if (oldStageIndex > 0) {
+    //   for (let i = req.history.length - 1; i >= 0; i--) {
+    //     if (req.history[i].stageTypeIndex != oldStageIndex) continue;
 
-        const prevHandlerId = req.history[i].handlerId;
-        const prevInbox = await getInbox(prevHandlerId);
+    //     const prevHandlerId = req.history[i].handlerId;
+    //     const prevInbox = await getInbox(prevHandlerId);
 
-        const newRecallableRequestIds = prevInbox.recallableRequestIds.filter(
-          (reqId) => reqId != requestId,
-        );
+    //     const newRecallable = prevInbox.recallable.filter(
+    //       (item) =>
+    //         item.stageTypeIndex != oldStageIndex || item.requestId != requestId,
+    //     );
 
-        await db.inbox.updateOne(
-          { userId: prevHandlerId },
-          {
-            $set: {
-              recallableRequestIds: newRecallableRequestIds,
-            },
-          },
-        );
+    //     await db.inbox.updateOne(
+    //       { userId: prevHandlerId },
+    //       {
+    //         $set: {
+    //           recallable: newRecallable,
+    //         },
+    //       },
+    //     );
 
-        break;
-      }
-    }
+    //     break;
+    //   }
+    // }
   },
-  recall_stage: async ({ locals, request }) => {
+  rollback_stage: async ({ locals, request }) => {
     const userId = locals.user?.id ?? "0";
     const data = await request.formData();
     const requestId: string = data.get("requestId")?.toString() ?? "";
+    const rollbackStageIndex: number = parseInt(
+      data.get("inboxStageTypeIndex")?.toString() ?? "-1",
+    );
+
+    if (rollbackStageIndex < 0) return; //todo error
 
     const req: db.Request | null = await db.request.findOne({ _id: requestId });
-    if (!req) return; //todo tell error
+    if (!req) return; //todo error
 
     const reqType: db.RequestType | null = await db.requestType.findOne({
       _id: req.requestTypeId,
     });
-    if (!reqType) return; //todo tell error
+    if (!reqType) return; //todo error
 
-    //todo ensure that the stage being recalled has a stageTypeIndex greater than this user's stage's stageTypeIndex by exactly 1
-
+    
     const reqCurrentHandlerId = req.currentStage.handlerId;
     const currentStageIndex = req.currentStage.stageTypeIndex;
-    const newCurrentStageIndex = currentStageIndex - 1;
+    const newCurrentStageIndex = rollbackStageIndex;
     req.currentStage.finished = false;
     req.currentStage.dateFinished = new Date(0);
 
@@ -371,37 +400,48 @@ export const actions: Actions = {
     if (!requestUpdateResult) return;
 
     // Remove from the inbox of the one handling request before recall
-    const originalInbox = await getInbox(req.currentStage.handlerId);
-
-    const newOrigCurrentRequestIds = originalInbox.currentRequestIds.filter(
-      (reqId) => reqId != requestId,
-    )
+    const currentHandlerInbox = await getInbox(req.currentStage.handlerId);
     await db.inbox.updateOne(
       { userId: req.currentStage.handlerId },
       {
         $set: {
-          currentRequestIds: newOrigCurrentRequestIds,
-        }
-      }
-    )
-
-    // Move from this inbox's pending to active
-    const recallerInbox = await getInbox(userId);
-
-    const newRecallerCurrentRequestIds = [
-      ...recallerInbox.currentRequestIds,
-      requestId,
-    ];
-    const newRecallerRecallableRequestIds = recallerInbox.recallableRequestIds.filter(
-      (reqId) => reqId != requestId,
+          current: currentHandlerInbox.current.filter(
+            (item) =>
+              item.stageTypeIndex != currentStageIndex ||
+              item.requestId != requestId,
+          ),
+        },
+      },
     );
 
+    // Remove all stages from inboxes until (inclusive) the stage the rollback is called from
+    for (let i = req.history.length - 1; i >= 0; i--) {
+      if (req.history[i].stageTypeIndex < rollbackStageIndex) break;
+
+      const stage = req.history[i];
+      const inbox = await getInbox(stage.handlerId);
+
+      await db.inbox.updateOne(
+        { userId: inbox.userId },
+        {
+          $set: {
+            recallable: inbox.recallable.filter(
+              (item) =>
+                item.stageTypeIndex != stage.stageTypeIndex ||
+                item.requestId != requestId,
+            ),
+          },
+        },
+      );
+    }
+
+    // Add to this inbox's active
+    const recallerInbox = await getInbox(userId);
     await db.inbox.updateOne(
       { userId: userId },
       {
         $set: {
-          currentRequestIds: newRecallerCurrentRequestIds,
-          recallableRequestIds: newRecallerRecallableRequestIds,
+          current: [...recallerInbox.current, { requestId: requestId, stageTypeIndex: rollbackStageIndex }],
         },
       },
     );

@@ -4,8 +4,8 @@
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
 
   export let onSelectStage: (stage: any) => void;
-  export let type: "active" | "pending";
   export let stages: any[] = [];
+
   let selectedStageIndex: number = 0;
 
   if (stages.length > 0) select(0);
@@ -32,6 +32,8 @@
             isSelected={selectedStageIndex == index}
             stageTitle={stage.stageTitle}
             requestTitle={stage.requestTitle}
+            currentStageTypeIndex={stage.currentStageTypeIndex}
+            inboxStageTypeIndex={stage.inboxStageTypeIndex}
             dateSent={stage.dateSent}
             requestId={stage.requestId}
             onClick={() => select(index)}
