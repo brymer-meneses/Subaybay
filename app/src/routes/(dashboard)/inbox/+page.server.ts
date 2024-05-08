@@ -8,6 +8,13 @@ import { zod } from "sveltekit-superforms/adapters";
 import { fail } from "@sveltejs/kit";
 import { lucia } from "$lib/server/auth";
 
+import {
+  addToInbox,
+  getInbox,
+  moveInInbox,
+  removeFromInbox,
+} from "./inboxUtils";
+
 interface InboxStageData {
   requestTitle: string;
   stageTitle: string;
@@ -54,21 +61,6 @@ const getUsers = async () => {
   }
 
   return users;
-};
-
-const getInbox = async (userId: string): Promise<db.Inbox> => {
-  let userInbox: db.Inbox | null = await db.inbox.findOne({ userId: userId });
-  if (!userInbox) {
-    userInbox = {
-      userId: userId,
-      recallable: [],
-      current: [],
-    };
-
-    await db.inbox.insertOne(userInbox);
-  }
-
-  return userInbox;
 };
 
 const getRequestTypes = async (): Promise<{
@@ -200,14 +192,7 @@ export const actions: Actions = {
       return;
     }
 
-    const userInbox = await getInbox(userId);
-    userInbox.current.push({ requestId: req._id, stageTypeIndex: 0 });
-    await db.inbox.findOneAndUpdate(
-      { userId: userId },
-      {
-        $set: { current: userInbox.current },
-      },
-    );
+    addToInbox(userId, "current", { requestId: req._id, stageTypeIndex: 0 });
 
     setFlash({ type: "success", message: "Added request" }, cookies);
   },
@@ -283,43 +268,16 @@ export const actions: Actions = {
     );
     if (!requestUpdateResult) return; //todo error
 
-    // Update inbox of user who will handle the request
-    const receiverInbox = await getInbox(nextHandlerId);
+    await addToInbox(nextHandlerId, "current", {
+      requestId: requestId,
+      stageTypeIndex: newStageIndex,
+    });
 
-    await db.inbox.updateOne(
-      { userId: nextHandlerId },
-      {
-        $set: {
-          current: [
-            ...receiverInbox.current,
-            { requestId: requestId, stageTypeIndex: newStageIndex },
-          ],
-        },
-      },
-    );
-
-    // Update Inbox that just sent the request
-    const senderInbox = await getInbox(req.currentStage.handlerId);
-
-    // Add the old stage to recallable
-    const newSenderRecallable: db.StageIdentifier[] = [
-      ...senderInbox.recallable,
-      { requestId: requestId, stageTypeIndex: oldStageIndex },
-    ];
-    // Remove the old stage from active
-    const newSenderCurrent = senderInbox.current.filter(
-      (item) =>
-        item.stageTypeIndex != oldStageIndex || item.requestId != requestId,
-    );
-    await db.inbox.updateOne(
-      { userId: req.currentStage.handlerId },
-      {
-        $set: {
-          current: newSenderCurrent,
-          recallable: newSenderRecallable,
-        },
-      },
-    );
+    // Update Inbox that sent request - active -> pending
+    await moveInInbox(req.currentStage.handlerId, "current", {
+      requestId: requestId,
+      stageTypeIndex: oldStageIndex,
+    });
 
     // todo remove from all the pending when request is fully completed
     // if (oldStageIndex > 0) {
@@ -365,8 +323,7 @@ export const actions: Actions = {
     });
     if (!reqType) return; //todo error
 
-    
-    const reqCurrentHandlerId = req.currentStage.handlerId;
+    const currentHandlerId = req.currentStage.handlerId;
     const currentStageIndex = req.currentStage.stageTypeIndex;
     const newCurrentStageIndex = rollbackStageIndex;
     req.currentStage.finished = false;
@@ -399,51 +356,26 @@ export const actions: Actions = {
     );
     if (!requestUpdateResult) return;
 
-    // Remove from the inbox of the one handling request before recall
-    const currentHandlerInbox = await getInbox(req.currentStage.handlerId);
-    await db.inbox.updateOne(
-      { userId: req.currentStage.handlerId },
-      {
-        $set: {
-          current: currentHandlerInbox.current.filter(
-            (item) =>
-              item.stageTypeIndex != currentStageIndex ||
-              item.requestId != requestId,
-          ),
-        },
-      },
-    );
+    await removeFromInbox(currentHandlerId, "current", {
+      requestId: requestId,
+      stageTypeIndex: currentStageIndex,
+    });
 
-    // Remove all stages from inboxes until (inclusive) the stage the rollback is called from
+    // Remove all stages from pending inboxes until (inclusive) the stage the rollback is called from
     for (let i = req.history.length - 1; i >= 0; i--) {
       if (req.history[i].stageTypeIndex < rollbackStageIndex) break;
 
       const stage = req.history[i];
-      const inbox = await getInbox(stage.handlerId);
 
-      await db.inbox.updateOne(
-        { userId: inbox.userId },
-        {
-          $set: {
-            recallable: inbox.recallable.filter(
-              (item) =>
-                item.stageTypeIndex != stage.stageTypeIndex ||
-                item.requestId != requestId,
-            ),
-          },
-        },
-      );
+      await removeFromInbox(stage.handlerId, "recallable", {
+        requestId: requestId,
+        stageTypeIndex: stage.stageTypeIndex,
+      });
     }
 
-    // Add to this inbox's active
-    const recallerInbox = await getInbox(userId);
-    await db.inbox.updateOne(
-      { userId: userId },
-      {
-        $set: {
-          current: [...recallerInbox.current, { requestId: requestId, stageTypeIndex: rollbackStageIndex }],
-        },
-      },
-    );
+    await addToInbox(userId, "current", {
+      requestId: requestId,
+      stageTypeIndex: rollbackStageIndex,
+    });
   },
 };

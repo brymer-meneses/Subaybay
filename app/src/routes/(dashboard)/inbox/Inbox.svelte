@@ -14,6 +14,21 @@
     selectedStageIndex = stageIndex;
     onSelectStage(stages[selectedStageIndex]);
   }
+
+  export function getUpdatedSelection() {
+    if(stages.length == 0)
+    {
+      selectedStageIndex = 0;
+      return null;
+    } 
+    else if(selectedStageIndex >= stages.length) {
+      selectedStageIndex = 0
+      return stages[0];
+    } 
+    else { 
+      return stages[selectedStageIndex];
+    } 
+  }
 </script>
 
 <Card.Root
