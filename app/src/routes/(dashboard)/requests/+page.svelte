@@ -78,7 +78,7 @@
                       ? request.remarks.substring(0, 35) + "..."
                       : request.remarks}</Table.Cell
                   >
-                  <Table.Cell class="col-span-1 p-0">
+                  <Table.Cell class="col-span-1 py-0">
                     <!-- Button for individual request details -->
                     <Button size="icon" variant="ghost"
                       ><CircleChevronRight class="h-5 w-5" /></Button
