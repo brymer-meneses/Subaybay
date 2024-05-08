@@ -21,6 +21,7 @@
   ];
 </script>
 
+<!-- TODO: make it responsive, can also use data table component -->
 <main class="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
   <div class="grid flex-1 auto-rows-max items-start gap-4">
     <Card.Root>
@@ -28,10 +29,10 @@
         <Card.Title>Requests</Card.Title>
         <Card.Description>List of requests</Card.Description>
       </Card.Header>
-      <Card.Content class="p-6 text-sm">
+      <Card.Content class="px-6 text-sm">
         <Table.Root>
           <Table.Header>
-            <Table.Row class="grid w-full grid-cols-12 text-left">
+            <Table.Row class="auto-rows grid w-full grid-cols-12 text-left">
               <Table.Head class="col-span-1 grid items-center">ID</Table.Head>
               <Table.Head class="col-span-1 grid items-center">Type</Table.Head>
               <Table.Head class="col-span-2 grid items-center"
@@ -55,7 +56,7 @@
             <Table.Body>
               {#each requests as request (request._id)}
                 <Table.Row
-                  class="grid w-full grid-cols-12 items-center text-left"
+                  class="auto-rows grid w-full grid-cols-12 items-center text-left"
                 >
                   <Table.Cell class="col-span-1">{request._id}</Table.Cell>
                   <Table.Cell class="col-span-1"
@@ -77,7 +78,7 @@
                       ? request.remarks.substring(0, 35) + "..."
                       : request.remarks}</Table.Cell
                   >
-                  <Table.Cell class="col-span-1">
+                  <Table.Cell class="col-span-1 p-0">
                     <!-- Button for individual request details -->
                     <Button size="icon" variant="ghost"
                       ><CircleChevronRight class="h-5 w-5" /></Button
