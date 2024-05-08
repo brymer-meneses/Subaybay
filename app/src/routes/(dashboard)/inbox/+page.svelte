@@ -16,9 +16,26 @@
   });
 
   let selectedStage: any = null;
+  let inboxes: { active: any; pending: any } = {
+    active: null,
+    pending: null,
+  };
+
+  let currentStageType: "active" | "pending" = "active";
 
   function selectStage(stage: any) {
     selectedStage = stage;
+  }
+
+  function onTabChange(value: string | undefined) {
+    if(value == "active" || value == "pending") {
+      currentStageType = value;
+      updateSelectedStage()
+    }
+  }
+
+  function updateSelectedStage() {
+    selectedStage = inboxes[currentStageType].getUpdatedSelection();
   }
 </script>
 
@@ -31,7 +48,10 @@
     >
       <NewRequest {requestTypes} data={data.form} />
     </div>
-    <Tabs.Root value="active">
+    <Tabs.Root
+      value="active"
+      onValueChange={onTabChange}
+    >
       <div class="flex items-center">
         <Tabs.List>
           <Tabs.Trigger value="active">Active</Tabs.Trigger>
@@ -68,12 +88,14 @@
       </div>
       <Tabs.Content value="active">
         <Inbox
+          bind:this={inboxes.active}
           stages={data.activeStages}
           onSelectStage={selectStage}
         />
       </Tabs.Content>
       <Tabs.Content value="pending">
         <Inbox
+          bind:this={inboxes.pending}
           stages={data.pendingStages}
           onSelectStage={selectStage}
         />
@@ -82,6 +104,11 @@
   </div>
 
   <div class="lg:col-span-2">
-    <InboxContent bind:selectedStage={selectedStage} requests={data.relevantRequests} users={data.users}/>
+    <InboxContent
+      {updateSelectedStage}
+      bind:selectedStage
+      requests={data.relevantRequests}
+      users={data.users}
+    />
   </div>
 </main>

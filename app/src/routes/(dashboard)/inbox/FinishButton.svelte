@@ -20,10 +20,11 @@
     PopoverTrigger,
   } from "$lib/components/ui/popover";
   import { Button } from "$lib/components/ui/button";
-
+  
   import CheckCheck from "lucide-svelte/icons/check-check";
   import CircleUserRound from "lucide-svelte/icons/circle-user-round";
-
+  import { enhance } from '$app/forms';
+  
   export let selectedStage;
   export let users;
 
@@ -81,8 +82,7 @@
         </DropdownMenu>
       </div>
       <div class="padding-y-4 items-center">
-        <form action="?/finish_stage" method="POST">
-          <!--Todo use enhance?-->
+        <form action="?/finish_stage" method="POST" use:enhance>
             <input
               type="hidden"
               name="requestId"

@@ -12,16 +12,22 @@
   import type { Request, InboxStageData } from "$lib/server/database";
   import { Textarea } from "$lib/components/ui/textarea";
 
+  import { enhance } from "$app/forms";
+
   export let requests: { [key: string]: any };
   export let selectedStage: any;
   export let users: any;
+
+  export let updateSelectedStage: () => void;
+
+  let processing = false;
 
   $: info = selectedStage ? requests[selectedStage.requestId] : null;
 </script>
 
 {#if info}
   <Card.Root class="overflow-hidden">
-    <Card.Header class="flex flex-row items-start bg-muted/50">
+    <Card.Header class="bg-muted/50 flex flex-row items-start">
       <div class="grid gap-0.5">
         <Card.Title class="group flex items-center gap-2 text-lg">
           {#if selectedStage}
@@ -29,10 +35,10 @@
           {/if}
         </Card.Title>
         <Card.Description>
-          {selectedStage.requestId} <br/>
-          Currently at Step: {selectedStage.currentStageTypeIndex} <br/>
+          {selectedStage.requestId} <br />
+          Currently at Step: {selectedStage.currentStageTypeIndex} <br />
           {#if selectedStage.currentStageTypeIndex != selectedStage.inboxStageTypeIndex}
-          You handled Step: {selectedStage.inboxStageTypeIndex}
+            You handled Step: {selectedStage.inboxStageTypeIndex}
           {/if}
         </Card.Description>
       </div>
@@ -69,9 +75,10 @@
 
       <div class="flex gap-2">
         {#if selectedStage.currentStageTypeIndex == selectedStage.inboxStageTypeIndex}
-          <FinishButton {selectedStage} {users} />
+            <FinishButton {selectedStage} {users} />
         {:else}
-          <form action="?/rollback_stage" method="POST">
+          <form action="?/rollback_stage" method="POST" use:enhance>
+            <!--todo update the selected stage-->
             <input
               type="hidden"
               name="requestId"
