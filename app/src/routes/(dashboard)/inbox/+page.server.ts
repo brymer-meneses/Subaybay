@@ -10,6 +10,7 @@ import { lucia } from "$lib/server/auth";
 
 import {
   addToInbox,
+  existsInInbox,
   getInbox,
   moveInInbox,
   removeFromInbox,
@@ -197,6 +198,7 @@ export const actions: Actions = {
     setFlash({ type: "success", message: "Added request" }, cookies);
   },
   finish_stage: async ({ request, locals, cookies }) => {
+    const userId = locals.user?.id ?? "0";
     const data = await request.formData();
     const requestId: string = data.get("requestId")?.toString() ?? "";
     const nextHandlerId: string = data.get("nextHandlerId")?.toString() ?? "0";
@@ -207,28 +209,56 @@ export const actions: Actions = {
       setFlash(
         {
           type: "error",
-          message: "Could not find selected handler in database",
+          message:
+            "Something went wrong. Selected handler could not be found in the database.",
         },
         cookies,
       );
       return;
     }
 
+    // Get request and check if it exists
     const req: db.Request | null = await db.request.findOne({ _id: requestId });
     if (!req) {
       setFlash(
-        { type: "error", message: "Could not find request in database" },
+        {
+          type: "error",
+          message:
+            "Something went wrong. Request could not be found in the database",
+        },
         cookies,
       );
       return;
     }
 
+    // Get request type and check if it exists
     const reqType: db.RequestType | null = await db.requestType.findOne({
       _id: req.requestTypeId,
     });
     if (!reqType) {
       setFlash(
-        { type: "error", message: "Could not find request type in database" },
+        {
+          type: "error",
+          message:
+            "Something went wrong. Request Type could not be found in the database",
+        },
+        cookies,
+      );
+      return;
+    }
+
+    // Check if the request still exists in active
+    // Needed in case button is spammed
+    const requestExistsInInbox = await existsInInbox(userId, "current", {
+      requestId,
+      stageTypeIndex: req.currentStage.stageTypeIndex,
+    });
+    if (!requestExistsInInbox) {
+      setFlash(
+        {
+          type: "error",
+          message: "Something went wrong. Stage to finish not in active",
+        },
         cookies,
       );
       return;
@@ -266,7 +296,13 @@ export const actions: Actions = {
         },
       },
     );
-    if (!requestUpdateResult) return; //todo error
+    if (!requestUpdateResult) {
+      setFlash(
+        { type: "error", message: "Database Error: Request update failed" },
+        cookies,
+      );
+      return;
+    }
 
     await addToInbox(nextHandlerId, "current", {
       requestId: requestId,
@@ -305,7 +341,7 @@ export const actions: Actions = {
     //   }
     // }
   },
-  rollback_stage: async ({ locals, request }) => {
+  rollback_stage: async ({ locals, request, cookies }) => {
     const userId = locals.user?.id ?? "0";
     const data = await request.formData();
     const requestId: string = data.get("requestId")?.toString() ?? "";
@@ -313,15 +349,62 @@ export const actions: Actions = {
       data.get("inboxStageTypeIndex")?.toString() ?? "-1",
     );
 
-    if (rollbackStageIndex < 0) return; //todo error
+    // Check if request still exists in pending
+    // Needed in case button is spammed
+    if (rollbackStageIndex < 0) {
+      setFlash(
+        {
+          type: "error",
+          message: "Something went wrong. Invalid stage was selected",
+        },
+        cookies,
+      );
+      return;
+    }
 
+    const requestExistsInInbox = await existsInInbox(userId, "recallable", {
+      requestId,
+      stageTypeIndex: rollbackStageIndex,
+    });
+    if (!requestExistsInInbox) {
+      setFlash(
+        {
+          type: "error",
+          message: "Something went wrong. Stage to recall not in pending",
+        },
+        cookies,
+      );
+      return;
+    }
+
+    // Get Request and make sure it exists
     const req: db.Request | null = await db.request.findOne({ _id: requestId });
-    if (!req) return; //todo error
+    if (!req) {
+      setFlash(
+        {
+          type: "error",
+          message: "Something went wrong. Request not found in database.",
+        },
+        cookies,
+      );
+      return;
+    }
 
+    // Get Request's Request Type and make sure it exists
     const reqType: db.RequestType | null = await db.requestType.findOne({
       _id: req.requestTypeId,
     });
-    if (!reqType) return; //todo error
+    if (!reqType) {
+      setFlash(
+        {
+          type: "error",
+          message:
+            "Something went wrong. Request Type could not be found in the database.",
+        },
+        cookies,
+      );
+      return;
+    }
 
     const currentHandlerId = req.currentStage.handlerId;
     const currentStageIndex = req.currentStage.stageTypeIndex;

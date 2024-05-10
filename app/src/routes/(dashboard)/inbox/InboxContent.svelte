@@ -17,10 +17,12 @@
   export let requests: { [key: string]: any };
   export let selectedStage: any;
   export let users: any;
+  let nextHandlerId: string;
 
   export let updateSelectedStage: () => void;
 
   let processing = false;
+  //todo change display when processing is true
 
   $: info = selectedStage ? requests[selectedStage.requestId] : null;
 </script>
@@ -75,9 +77,46 @@
 
       <div class="flex gap-2">
         {#if selectedStage.currentStageTypeIndex == selectedStage.inboxStageTypeIndex}
-            <FinishButton {selectedStage} {users} />
+          <FinishButton {selectedStage} {users} {processing} bind:nextHandlerId>
+            <form
+              action="?/finish_stage"
+              method="POST"
+              use:enhance={() => {
+                processing = true;
+
+                return async ({ update }) => {
+                  await update();
+                  processing = false;
+                  updateSelectedStage();
+                };
+              }}
+            >
+              <input
+                type="hidden"
+                name="requestId"
+                value={selectedStage.requestId}
+              />
+              <input type="hidden" name="nextHandlerId" value={nextHandlerId} />
+              <Button
+                type="submit"
+                disabled={nextHandlerId in users ? false : true}>Confirm</Button
+              >
+            </form>
+          </FinishButton>
         {:else}
-          <form action="?/rollback_stage" method="POST" use:enhance>
+          <form
+            action="?/rollback_stage"
+            method="POST"
+            use:enhance={() => {
+              processing = true;
+
+              return async ({ update }) => {
+                await update();
+                processing = false;
+                updateSelectedStage();
+              };
+            }}
+          >
             <!--todo update the selected stage-->
             <input
               type="hidden"

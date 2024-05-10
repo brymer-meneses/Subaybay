@@ -74,3 +74,22 @@ export const moveInInbox = async (
     },
   );
 };
+
+export const existsInInbox = async (
+  userId: string,
+  type: "current" | "recallable",
+  stageIdentifier: db.StageIdentifier,
+) => {
+  const inbox = await getInbox(userId);
+
+  for (const item of inbox[type]) {
+    if (
+      item.requestId == stageIdentifier.requestId &&
+      item.stageTypeIndex == stageIdentifier.stageTypeIndex
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+};
