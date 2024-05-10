@@ -26,17 +26,15 @@
 
   export let selectedStage;
   export let users;
-  export let processing;
+  export let processing: boolean;
 
   export let nextHandlerId: string = selectedStage.nextHandlerId;
 
-  let popoverOpen = false;
+  $: popoverOpen = processing;
 
   function onPopoverOpenChange(value: boolean) {
-    popoverOpen = value;
+    popoverOpen = value && !processing;
   }
-
-  
 </script>
 
 <Popover open={popoverOpen && !processing} onOpenChange={onPopoverOpenChange}>
