@@ -75,6 +75,7 @@
 
       {#if !processing}
         <div class="flex gap-2">
+          <!-- todo add special button for fully finalizing stage-->
           {#if selectedStage.currentStageTypeIndex == selectedStage.inboxStageTypeIndex}
             <FinishButton
               {selectedStage}

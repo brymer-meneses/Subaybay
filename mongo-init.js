@@ -65,7 +65,7 @@ for (const item of basicCerts) {
     title: item[1],
     stages: [
       {
-        stageTitle: "Create Request",
+        stageTitle: "Newly Created Request",
         defaultHandlerId: "",
       },
       {
@@ -91,7 +91,7 @@ db.requestTypes.insertMany([
     title: "Official Transcript of Records (OTR) - First Request",
     stages: [
         {
-          stageTitle: "Create Request",
+          stageTitle: "Newly Created Request",
           defaultHandlerId: "",
         },
         {
@@ -137,7 +137,7 @@ db.requestTypes.insertMany([
     title: "Official Transcript of Records (OTR) - Second Request",
     stages: [
         {
-          stageTitle: "Create Request",
+          stageTitle: "Newly Created Request",
           defaultHandlerId: ""
         },
         {

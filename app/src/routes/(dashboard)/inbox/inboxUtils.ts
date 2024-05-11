@@ -1,5 +1,7 @@
 import * as db from "$lib/server/database";
 
+//todo add returning bool for success, so errors can be told to user
+
 export const getInbox = async (userId: string): Promise<db.Inbox> => {
   let userInbox: db.Inbox | null = await db.inbox.findOne({ userId: userId });
   if (!userInbox) {
