@@ -20,18 +20,24 @@
     PopoverTrigger,
   } from "$lib/components/ui/popover";
   import { Button } from "$lib/components/ui/button";
-  
+
   import CheckCheck from "lucide-svelte/icons/check-check";
   import CircleUserRound from "lucide-svelte/icons/circle-user-round";
-  import { enhance } from '$app/forms';
-  
+
   export let selectedStage;
   export let users;
+  export let processing: boolean;
 
-  let nextHandlerId: string = selectedStage.nextHandlerId;
+  export let nextHandlerId: string = selectedStage.nextHandlerId;
+
+  $: popoverOpen = processing;
+
+  function onPopoverOpenChange(value: boolean) {
+    popoverOpen = value && !processing;
+  }
 </script>
 
-<Popover>
+<Popover open={popoverOpen && !processing} onOpenChange={onPopoverOpenChange}>
   <PopoverTrigger>
     <Button class="gap-2 rounded-xl text-white">
       <CheckCheck />Finish
@@ -82,15 +88,7 @@
         </DropdownMenu>
       </div>
       <div class="padding-y-4 items-center">
-        <form action="?/finish_stage" method="POST" use:enhance>
-            <input
-              type="hidden"
-              name="requestId"
-              value={selectedStage.requestId}
-            />
-            <input type="hidden" name="nextHandlerId" value={nextHandlerId} />
-            <Button type="submit" disabled={nextHandlerId in users ? false : true}>Confirm</Button>
-          </form>
+        <slot></slot>
       </div>
     </div>
   </PopoverContent>

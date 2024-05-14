@@ -1,5 +1,7 @@
 import * as db from "$lib/server/database";
 
+//todo add returning bool for success, so errors can be told to user
+
 export const getInbox = async (userId: string): Promise<db.Inbox> => {
   let userInbox: db.Inbox | null = await db.inbox.findOne({ userId: userId });
   if (!userInbox) {
@@ -73,4 +75,23 @@ export const moveInInbox = async (
       },
     },
   );
+};
+
+export const existsInInbox = async (
+  userId: string,
+  type: "current" | "recallable",
+  stageIdentifier: db.StageIdentifier,
+) => {
+  const inbox = await getInbox(userId);
+
+  for (const item of inbox[type]) {
+    if (
+      item.requestId == stageIdentifier.requestId &&
+      item.stageTypeIndex == stageIdentifier.stageTypeIndex
+    ) {
+      return true;
+    }
+  }
+
+  return false;
 };

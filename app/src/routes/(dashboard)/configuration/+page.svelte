@@ -24,7 +24,7 @@
     users.push(new UserData(user.id, user.name, user.profileUrl));
   }
 
-  stages = [new StageData("Create Request", 0), new StageData()];
+  stages = [new StageData("Newly Created Request", 0), new StageData()];
 
   function deleteStage(index: number) {
     stages = stages.slice(0, index).concat(stages.slice(index + 1));
