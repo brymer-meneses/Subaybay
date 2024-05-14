@@ -1,7 +1,7 @@
 <script lang="ts">
   import { enhance, applyAction } from "$app/forms";
   import { goto } from "$app/navigation";
-  import * as AlertDialog from "$lib/components/ui/alert-dialog";
+  import * as Dialog from "$lib/components/ui/dialog";
   import { Button } from "$lib/components/ui/button/index.js";
 
   import UserRoundPlus from "lucide-svelte/icons/user-round-plus";
@@ -9,20 +9,20 @@
   export let user: User;
 </script>
 
-<AlertDialog.Root>
-  <AlertDialog.Trigger>
+<Dialog.Root>
+  <Dialog.Trigger>
     <Button variant="link" class="gap-2"
       ><UserRoundPlus /><span class="hidden lg:inline">Add Admin</span></Button
     >
-  </AlertDialog.Trigger>
-  <AlertDialog.Content>
-    <AlertDialog.Header>
-      <AlertDialog.Title>Are you sure?</AlertDialog.Title>
-      <AlertDialog.Description>
+  </Dialog.Trigger>
+  <Dialog.Content>
+    <Dialog.Header>
+      <Dialog.Title>Are you sure?</Dialog.Title>
+      <Dialog.Description>
         This user will get administrative privileges. Are you sure you want to
         continue?
-      </AlertDialog.Description>
-    </AlertDialog.Header>
+      </Dialog.Description>
+    </Dialog.Header>
     <div class="flex h-20 items-center space-x-4">
       <div class="flex items-center space-x-4">
         <img
@@ -41,26 +41,31 @@
         </div>
       </div>
     </div>
-    <AlertDialog.Footer>
-      <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-      <AlertDialog.Action>
-        <form
-          action="?/add_admin"
-          method="POST"
-          use:enhance={() => {
-            return async ({ result }) => {
-              if (result.type === "redirect") {
-                goto(result.location);
-              } else {
-                await applyAction(result);
-              }
-            };
-          }}
+    <Dialog.Footer>
+      <form
+        action="?/add_admin"
+        method="POST"
+        use:enhance={() => {
+          return async ({ result }) => {
+            if (result.type === "redirect") {
+              goto(result.location);
+            } else {
+              await applyAction(result);
+            }
+          };
+        }}
+        on:submit={() => {
+          console.log("submitted" + new Date());
+        }}
+      >
+        <input type="hidden" name="email" value={user.email} />
+        <Button
+          type="submit"
+          on:click={() => {
+            console.log("submit button clicked" + new Date());
+          }}>Continue</Button
         >
-          <input type="hidden" name="email" value={user.email} />
-          <button type="submit" class="border-none bg-none">Continue</button>
-        </form>
-      </AlertDialog.Action>
-    </AlertDialog.Footer>
-  </AlertDialog.Content>
-</AlertDialog.Root>
+      </form>
+    </Dialog.Footer>
+  </Dialog.Content>
+</Dialog.Root>

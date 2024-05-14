@@ -4,7 +4,7 @@ import type { RequestHandler } from "@sveltejs/kit";
 import { redirect } from "sveltekit-flash-message/server";
 
 import { google, lucia } from "$lib/server/auth";
-import { user } from "$lib/server/database";
+import { user, whitelistedEmail } from "$lib/server/database";
 
 interface GoogleAccount {
   sub: string;
@@ -43,10 +43,14 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
     );
 
     const account: GoogleAccount = await response.json();
-    const googleId = account.sub;
+    const isWhitelisted = await whitelistedEmail.findOne({ email: account.email });
+    if (!isWhitelisted) {
+      throw new Error(`${account.email} is not waitlisted.` );
+    }
 
+    const googleId = account.sub;
     const existingAccount = await user.findOne({ _id: googleId });
-    if (!existingAccount) {
+    if (!existingAccount ) {
       await user.insertOne({
         _id: account.sub,
         name: account.name,
@@ -75,7 +79,9 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
       );
     }
 
-    redirect("/", { type: "error", message: "Authentication Error" }, cookies);
+    const errorMessage: string = e.message?? "Authentication Error";
+    console.log(errorMessage)
+    redirect("/", { type: "error", message: errorMessage }, cookies);
   }
 
   redirect(302, "/inbox");

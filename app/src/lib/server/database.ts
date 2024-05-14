@@ -18,6 +18,7 @@ export const session = database.collection<Session>("sessions");
 export const request = database.collection<Request>("requests");
 export const requestType = database.collection<RequestType>("requestTypes");
 export const inbox = database.collection<Inbox>("inboxes");
+export const whitelistedEmail = database.collection<WhitelistedEmail>("whitelistedEmails");
 
 export interface User {
   _id: string;
@@ -25,6 +26,10 @@ export interface User {
   name: string;
   profileUrl: string;
   isAdmin: boolean;
+}
+
+export interface WhitelistedEmail {
+  email: string;
 }
 
 // camelcase needs to stay since `lucia` requires so

@@ -9,7 +9,13 @@ import {
   type User,
   type Request,
   type RequestType,
+  whitelistedEmail,
 } from "$lib/server/database";
+import { superValidate } from "sveltekit-superforms";
+import { formSchema } from "./schema";
+import { zod } from "sveltekit-superforms/adapters";
+import { setFlash } from "sveltekit-flash-message/server";
+
 
 type RequestTypeInstancesCount = {
   reqType: string;
@@ -34,9 +40,9 @@ type RequestTypeInstancesCount = {
 
 
 export const load: PageServerLoad = async (event) => {
-  // if (event.locals.user && !event.locals.user.isAdmin) {
-  //   redirect(302, "/inbox");
-  // }
+  if (event.locals.user && !event.locals.user.isAdmin) {
+    redirect(302, "/inbox");
+  }
   
   // NOTE: user cannot not be null here since this page won't be loaded if that's the case
   // unauthorized access
@@ -107,7 +113,7 @@ export const load: PageServerLoad = async (event) => {
     }
   }
   count.sort(compare);
-  return { users, stats: { summary, count, requests, requestTypes, overview} };
+  return { users, stats: { summary, count, requests, requestTypes, overview}, form: await superValidate(zod(formSchema)) };
 };
 
 function subtractDays(date: Date, days: number) {
@@ -138,56 +144,84 @@ function compare(a: RequestTypeInstancesCount, b: RequestTypeInstancesCount) {
 }
 
 export const actions: Actions = {
-  add_user: async ({request}) => {
-    console.log(await request.formData())
+  add_user: async (event) => {
+    const { request, cookies } = event;
+
+    const form = await superValidate(event, zod(formSchema));
+    if (!form.valid){
+      return fail(400, {
+        form,
+      });
+    }
+
+    const data = form.data;
+    const email = data.email;
+
+    const existingEmail = await whitelistedEmail.findOne({email: email});
+
+    if (existingEmail) {
+      setFlash({type: "error", message: "User is already whitelisted."}, cookies);
+      return;
+    } else {
+      await whitelistedEmail.insertOne({email});
+      setFlash({ type: "success", message: "Added User" }, cookies);
+    }
+    
+    return {
+      form,
+    }
   },
-  remove_user: async ({ request }) => {
+  remove_user: async ({ cookies,request }) => {
     const data = await request.formData();
     const email: string = data.get("email") as string;
-
+    
     if (!email) {
       console.log("Null email.");
       return;
     }
-    const users = database.collection<User>("users");
-    await users.deleteOne({ email });
 
-    const res = await users.find({}).toArray();
-
+    await user.deleteOne({ email });
+    await whitelistedEmail.deleteOne({ email });
+    
+    const res = await user.find({}).toArray();
+    setFlash({ type: "success", message: "User removed" }, cookies);
+    
     return { users: res };
   },
-
-  remove_admin: async ({ request }) => {
+  
+  remove_admin: async ({ cookies, request }) => {
     const data = await request.formData();
     const email: string = data.get("email") as string;
-
+    
     if (!email) {
       console.log("Null email.");
       return;
     }
-
-    const users = database.collection<User>("users");
-    await users.updateOne({ email }, { $set: { isAdmin: false } });
-
-    const res = await users.find({}).toArray();
-
+    
+    await user.updateOne({ email }, { $set: { isAdmin: false } });
+    const staff = await user.findOne({email: email});
+    
+    const res = await user.find({}).toArray();
+    setFlash({ type: "success", message: `${staff?.name} has been removed as admin.` }, cookies);
+    
     return { users: res };
   },
-
-  add_admin: async ({ request }) => {
+  
+  add_admin: async ({ cookies, request }) => {
     const data = await request.formData();
     const email: string = data.get("email") as string;
-
+    
     if (!email) {
       console.log("Null email.");
       return;
     }
-
-    const users = database.collection<User>("users");
-    await users.updateOne({ email }, { $set: { isAdmin: true } });
-
-    const res = await users.find({}).toArray();
-
+    
+    await user.updateOne({ email }, { $set: { isAdmin: true } });
+    const staff = await user.findOne({email: email});
+    
+    const res = await user.find({}).toArray();
+    setFlash({ type: "success", message: `${staff?.name} is now an admin.` }, cookies);
+    
     return { users: res };
   },
 };

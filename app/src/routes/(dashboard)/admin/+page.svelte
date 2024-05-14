@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { PageData } from "./$types.js";
+  import type { PageData, PageServerData } from "./$types.js";
 
   import * as Tabs from "$lib/components/ui/tabs/index.js";
   import RequestsCountCard from "./RequestsCountCard.svelte";
@@ -11,7 +11,7 @@
 
   import UsersRound from "lucide-svelte/icons/users-round";
 
-  export let data: PageData;
+  export let data: PageServerData;
   export let form: PageData;
 
   const summary = data.stats.summary;
@@ -77,7 +77,7 @@
       />
     </Tabs.Content>
     <Tabs.Content value="users" class="pt-4">
-      <UserManagement bind:users />
+      <UserManagement bind:users {data} />
     </Tabs.Content>
   </Tabs.Root>
 </main>

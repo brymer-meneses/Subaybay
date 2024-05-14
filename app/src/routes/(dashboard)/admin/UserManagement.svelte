@@ -5,9 +5,11 @@
   import Search from "lucide-svelte/icons/search";
 
   import UserTable from "./UserTable.svelte";
-  import AddUserForm from "./AddUserForm.svelte";
+  import AddUser from "./AddUser.svelte";
+  import type { PageServerData } from "./$types";
 
   export let users: User[];
+  export let data: PageServerData;
 
   let searchTerm: string = "";
   let filteredUsers: User[] = [];
@@ -48,7 +50,7 @@
         />
       </div>
       <div class="w-36">
-        <AddUserForm />
+        <AddUser data={data.form} />
       </div>
     </div>
   </Card.Header>
