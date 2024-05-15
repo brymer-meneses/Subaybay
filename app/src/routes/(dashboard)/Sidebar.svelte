@@ -50,19 +50,19 @@
       <NavLink
         icon={Inbox}
         name="Inbox"
-        href="inbox"
+        href="/inbox"
         {isCollapsed}
         notifications={notifications.messages}
       ></NavLink>
-      <NavLink icon={ListTodo} name="Requests" href="requests" {isCollapsed} />
+      <NavLink icon={ListTodo} name="Requests" href="/requests" {isCollapsed} />
       <NavLink
         icon={FileCog}
         name="Configuration"
-        href="configuration"
+        href="/configuration"
         {isCollapsed}
       />
       {#if $page.data.userInfo.isAdmin}
-        <NavLink icon={UsersRound} name="Admin" href="admin" {isCollapsed} />
+        <NavLink icon={UsersRound} name="Admin" href="/admin" {isCollapsed} />
       {/if}
     </div>
 
