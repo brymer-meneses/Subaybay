@@ -19,7 +19,7 @@ export const request = database.collection<Request>("requests");
 export const requestType = database.collection<RequestType>("requestTypes");
 export const inbox = database.collection<Inbox>("inboxes");
 export const archive = database.collection<Archive>("archive");
-export const permittedEmail = database.collection<permittedEmail>("permittedEmails");
+export const permittedEmail = database.collection<PermittedEmail>("permittedEmails");
 
 export interface User {
   _id: string;
@@ -29,7 +29,7 @@ export interface User {
   isAdmin: boolean;
 }
 
-export interface permittedEmail {
+export interface PermittedEmail {
   email: string;
 }
 

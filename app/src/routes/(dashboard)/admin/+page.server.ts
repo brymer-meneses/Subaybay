@@ -6,10 +6,11 @@ import {
   user,
   request,
   requestType,
+  permittedEmail,
   type User,
   type Request,
   type RequestType,
-  permittedEmail,
+  type PermittedEmail,
 } from "$lib/server/database";
 import { superValidate } from "sveltekit-superforms";
 import { formSchema } from "./schema";
@@ -47,6 +48,7 @@ export const load: PageServerLoad = async (event) => {
   // unauthorized access
   
   const users: User[] = await user.find({}).toArray();
+  const permittedEmails: PermittedEmail[] = await permittedEmail.find({}, { projection: { _id: 0 } }).toArray();
   const requests: Request[] = await request.find({}).toArray();
   const requestTypes: RequestType[] = await requestType.find({}).toArray();
   
@@ -115,7 +117,7 @@ export const load: PageServerLoad = async (event) => {
     }
   }
   count.sort(compare);
-  return { users, stats: { summary, count, requests, requestTypes, overview}, form: await superValidate(zod(formSchema)) };
+  return { users, permittedEmails, stats: { summary, count, requests, requestTypes, overview}, form: await superValidate(zod(formSchema)) };
 };
 
 function subtractDays(date: Date, days: number) {
