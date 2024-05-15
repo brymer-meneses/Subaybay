@@ -1,5 +1,6 @@
 import type { PageServerLoad, Actions } from "./$types";
 import * as db from "$lib/server/database";
+import * as dbUtils from "$lib/server/dbUtils";
 import { ObjectId } from "mongodb";
 
 import { superValidate } from "sveltekit-superforms";
@@ -8,13 +9,7 @@ import { zod } from "sveltekit-superforms/adapters";
 import { fail } from "@sveltejs/kit";
 import { lucia } from "$lib/server/auth";
 
-import {
-  addToInbox,
-  existsInInbox,
-  getInbox,
-  moveInInbox,
-  removeFromInbox,
-} from "./inboxUtils";
+import { addToInbox, existsInInbox, getInbox } from "./inboxUtils";
 import {
   fullyFinishRequest,
   getRequestAndType,
@@ -31,17 +26,18 @@ interface InboxStageData {
   currentStageTypeIndex: number;
   inboxStageTypeIndex: number;
   finished: boolean;
-  roomId: string;
 }
 
 export const load: PageServerLoad = async ({ cookies, locals }) => {
   const sessionId = cookies.get(lucia.sessionCookieName);
   const userId = locals.user?.id ?? "0";
-  // const requests = await database.request.find({}).toArray();
 
   const users = await getUsers();
   const userInbox: db.Inbox = await getInbox(userId);
-  const requestTypes = await getRequestTypes();
+  const requestTypes = await dbUtils.getRequestTypes();
+  const latestRequestTypes = await dbUtils.getLatestRequestTypes();
+
+  console.log(latestRequestTypes);
 
   const reqAndStages = await getRequestsAndStages(userInbox, requestTypes);
   const requests = reqAndStages.requests;
@@ -52,7 +48,7 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
     form: await superValidate(zod(formSchema)),
     userInfo: locals.user!,
     sessionId: sessionId!,
-    requestTypes: requestTypes,
+    latestRequestTypes: latestRequestTypes,
     relevantRequests: requests,
     activeStages: activeStages,
     pendingStages: pendingStages,
@@ -68,18 +64,6 @@ const getUsers = async () => {
   }
 
   return users;
-};
-
-const getRequestTypes = async (): Promise<{
-  [key: string]: db.RequestType;
-}> => {
-  let requestTypes: { [key: string]: db.RequestType } = {};
-  let cursor = db.requestType.find();
-  for await (const reqType of cursor) {
-    requestTypes[reqType._id] = reqType;
-  }
-
-  return requestTypes;
 };
 
 // get all requests that are relevant to user - either active or pending
@@ -133,7 +117,6 @@ const addStage = (
     currentStageTypeIndex: stage.stageTypeIndex,
     inboxStageTypeIndex: stageIdentifier.stageTypeIndex,
     finished: stage.finished,
-    roomId: stage.roomId,
   });
 };
 
@@ -178,13 +161,13 @@ export const actions: Actions = {
       purpose: purpose,
       remarks: remarks,
       isFinished: false,
+      roomId: new ObjectId().toString(),
       currentStage: {
         stageTypeIndex: 0,
         handlerId: userId,
         finished: false,
         dateStarted: new Date(),
         dateFinished: new Date(0),
-        roomId: new ObjectId().toString(),
       },
       history: [],
       nextHandlerId: nextHandlerId,
@@ -210,7 +193,11 @@ export const actions: Actions = {
     const nextHandlerId: string = data.get("nextHandlerId")?.toString() ?? "0";
 
     // Get Request and its RequestType
-    const { req: req, reqType: reqType, error: reqError } = await getRequestAndType(requestId);
+    const {
+      req: req,
+      reqType: reqType,
+      error: reqError,
+    } = await getRequestAndType(requestId);
     if (!req || !reqType) {
       setFlash(reqError, cookies);
       return;
@@ -251,7 +238,7 @@ export const actions: Actions = {
     const rollbackStageIndex: number = parseInt(
       data.get("inboxStageTypeIndex")?.toString() ?? "-1",
     );
-    
+
     if (rollbackStageIndex < 0) {
       setFlash(
         {
@@ -281,13 +268,22 @@ export const actions: Actions = {
     }
 
     // Get Request and its RequestType
-    const { req: req, reqType: reqType, error: reqError } = await getRequestAndType(requestId);
+    const {
+      req: req,
+      reqType: reqType,
+      error: reqError,
+    } = await getRequestAndType(requestId);
     if (!req || !reqType) {
       setFlash(reqError, cookies);
       return;
     }
 
-    const result = await rollbackStage(req, reqType, userId, rollbackStageIndex);
+    const result = await rollbackStage(
+      req,
+      reqType,
+      userId,
+      rollbackStageIndex,
+    );
     setFlash(result, cookies);
   },
 };

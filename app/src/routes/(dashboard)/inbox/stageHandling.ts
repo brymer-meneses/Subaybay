@@ -67,7 +67,6 @@ export const passRequest = async (
     finished: false,
     dateStarted: new Date(),
     dateFinished: new Date(0),
-    roomId: new ObjectId().toString(),
   };
   const newNextHandlerId =
     requestType.stages[newNextStageIndex]?.defaultHandlerId ?? "";
@@ -195,7 +194,6 @@ export const rollbackStage = async (
     finished: false,
     dateStarted: new Date(),
     dateFinished: new Date(0),
-    roomId: new ObjectId().toString(),
   };
   const newNextStageIndex = newCurrentStageIndex + 1;
   let newNextHandlerId = "";

@@ -41,6 +41,7 @@ export const actions: Actions = {
       _id: new ObjectId().toString(),
       title: title,
       stages: stages,
+      version: 1,
     };
 
     await db.requestType.insertOne(newRequestType);

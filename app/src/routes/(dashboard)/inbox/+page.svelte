@@ -11,9 +11,7 @@
 
   export let data: PageServerData;
 
-  let requestTypes = Object.keys(data.requestTypes).map((key) => {
-    return data.requestTypes[key];
-  });
+  let requestTypes = data.latestRequestTypes;
 
   let selectedStage: any = null;
   let inboxes: { active: any; pending: any } = {

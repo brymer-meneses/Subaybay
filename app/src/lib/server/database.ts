@@ -48,6 +48,7 @@ export interface StageType {
 export interface RequestType {
   _id: string;
   title: string;
+  version: number;
   stages: Array<StageType>;
 }
 
@@ -64,6 +65,7 @@ export interface Request {
   currentStage: Stage;
   history: Array<Stage>;
   nextHandlerId: string;
+  roomId: string;
 }
 
 // instance of a `StageType`
@@ -73,7 +75,6 @@ export interface Stage {
   finished: boolean;
   dateStarted: Date;
   dateFinished: Date;
-  roomId: string;
 }
 
 export interface Inbox {
