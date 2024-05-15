@@ -6,10 +6,9 @@
 
   import UserTable from "./UserTable.svelte";
   import AddUser from "./AddUser.svelte";
-  import type { PageData } from "./$types";
+  import { page } from "$app/stores";
 
   export let users: User[];
-  export let data: PageData;
 
   let searchTerm: string = "";
   let filteredUsers: User[] = [];
@@ -40,17 +39,17 @@
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
       <div class="relative w-80">
         <Search
-          class="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4"
+          class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
         />
         <Input
           type="search"
           placeholder="Search User"
-          class="bg-background w-full rounded-lg pl-8"
+          class="w-full rounded-lg bg-background pl-8"
           bind:value={searchTerm}
         />
       </div>
       <div class="w-36">
-        <AddUser data={data.form} />
+        <AddUser data={$page.data.form} />
       </div>
     </div>
   </Card.Header>
