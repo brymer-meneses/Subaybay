@@ -7,7 +7,6 @@ db.whitelistedEmails.insertMany([
   { email:"gnar@lol.com" },
   { email:"sol@lol.com" },
   { email:"kogmaw@lol.com" },
-  { email:"andre2002bagalso@gmail.com" },
 ])
 
 db.users.insertMany([

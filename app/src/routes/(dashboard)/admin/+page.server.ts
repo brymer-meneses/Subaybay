@@ -156,20 +156,16 @@ export const actions: Actions = {
 
     const data = form.data;
     const email = data.email;
-
     const existingEmail = await whitelistedEmail.findOne({email: email});
 
     if (existingEmail) {
       setFlash({type: "error", message: "User is already whitelisted."}, cookies);
-      return;
     } else {
       await whitelistedEmail.insertOne({email});
       setFlash({ type: "success", message: "Added User" }, cookies);
     }
-    
-    return {
-      form,
-    }
+
+    return;
   },
   remove_user: async ({ cookies,request }) => {
     const data = await request.formData();
@@ -180,11 +176,12 @@ export const actions: Actions = {
       return;
     }
 
+    const staff = await user.findOne({email: email});
     await user.deleteOne({ email });
     await whitelistedEmail.deleteOne({ email });
     
     const res = await user.find({}).toArray();
-    setFlash({ type: "success", message: "User removed" }, cookies);
+    setFlash({ type: "success", message: `${staff?.name} removed` }, cookies);
     
     return { users: res };
   },

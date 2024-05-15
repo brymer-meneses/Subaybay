@@ -31,7 +31,6 @@
     <Dialog.Header>
       <Dialog.Title>Add a user</Dialog.Title>
     </Dialog.Header>
-
     <form method="POST" action="?/add_user" use:enhance>
       <Form.Field {form} name="email">
         <Form.Control let:attrs>

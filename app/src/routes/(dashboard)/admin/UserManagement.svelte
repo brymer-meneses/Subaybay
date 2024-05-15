@@ -6,10 +6,10 @@
 
   import UserTable from "./UserTable.svelte";
   import AddUser from "./AddUser.svelte";
-  import type { PageServerData } from "./$types";
+  import type { PageData } from "./$types";
 
   export let users: User[];
-  export let data: PageServerData;
+  export let data: PageData;
 
   let searchTerm: string = "";
   let filteredUsers: User[] = [];
