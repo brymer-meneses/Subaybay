@@ -35,6 +35,11 @@
     await fetch("/auth/logout", { method: "POST" });
     goto("/");
   }
+
+  function handleOnSelect(page: string) {
+    goto(`/${page}`);
+    open = false;
+  }
 </script>
 
 <Command.Dialog bind:open>
@@ -43,16 +48,22 @@
     <Command.Empty>No results found.</Command.Empty>
 
     <Command.Group heading="Go to">
-      <Command.Item onSelect={() => goto("/inbox")} class="cursor-pointer">
+      <Command.Item
+        onSelect={() => handleOnSelect("inbox")}
+        class="cursor-pointer"
+      >
         <Inbox class="mr-2 h-4 w-4" />
         <span>Inbox</span>
       </Command.Item>
-      <Command.Item onSelect={() => goto("/requests")} class="cursor-pointer">
-        <ListTodo class="mr-2 h-4 w-4" />
+      <Command.Item
+        onSelect={() => handleOnSelect("requests")}
+        class="cursor-pointer"
+      >
+        <ListTodo class="mr-2 inline h-4 w-4" />
         <span>Requests</span>
       </Command.Item>
       <Command.Item
-        onSelect={() => goto("/configuration")}
+        onSelect={() => handleOnSelect("configuration")}
         class="cursor-pointer"
       >
         <FileCog class="mr-2 h-4 w-4" />
@@ -60,7 +71,10 @@
       </Command.Item>
 
       {#if $page.data.userInfo.isAdmin}
-        <Command.Item onSelect={() => goto("/admin")} class="cursor-pointer">
+        <Command.Item
+          onSelect={() => handleOnSelect("admin")}
+          class="cursor-pointer"
+        >
           <UsersRound class="mr-2 h-4 w-4" />
           <span>Admin</span>
         </Command.Item>
