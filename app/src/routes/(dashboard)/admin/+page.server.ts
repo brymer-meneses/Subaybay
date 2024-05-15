@@ -18,7 +18,6 @@ import { setFlash } from "sveltekit-flash-message/server";
 
 
 type RequestTypeInstancesCount = {
-  reqType: string;
   reqTitle: string;
   total: {
     finished: number;
@@ -68,14 +67,16 @@ export const load: PageServerLoad = async (event) => {
 
   for (const reqType of requestTypes) {
     count.push({
-      reqType: reqType._id,
       reqTitle: reqType.title,
       total: { finished: 0, pending: 0, stale: 0 },
     });
   }
+  count = Array.from(new Set(count)); //remove duplicates
 
   for (const request of requests) {
+    const requestTypeTitle = requestTypes.find(e => request.requestTypeId === e._id)?.title;
     const reqType = requestTypes.find((e) => e._id === request.requestTypeId);
+
     const stages = reqType?.stages;
 
     if (stages) {
@@ -83,8 +84,9 @@ export const load: PageServerLoad = async (event) => {
       const currentStageIndex = request.currentStage.stageTypeIndex;
 
       const foundIndex = count.findIndex(
-        (x) => x.reqType === request.requestTypeId,
+        (x) => x.reqTitle === requestTypeTitle,
       );
+      console.log("foundIndex", foundIndex)
       
       const currentStageDateFinished = new Date(
         request.currentStage.dateFinished,

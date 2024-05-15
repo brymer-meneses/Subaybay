@@ -97,7 +97,13 @@
     });
 
     reqTypes.forEach((reqType: RequestType) => {
-      const worksheet = workbook.addWorksheet(reqType._id);
+      let reqTitle = reqType.title
+        .replace(/[^A-Z0-9]/g, "")
+        .split(" ")
+        .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
+        .join("");
+
+      const worksheet = workbook.addWorksheet(reqTitle);
       worksheet.state = "visible";
 
       worksheet.columns = [
