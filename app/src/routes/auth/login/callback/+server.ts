@@ -4,7 +4,7 @@ import type { RequestHandler } from "@sveltejs/kit";
 import { redirect } from "sveltekit-flash-message/server";
 
 import { google, lucia } from "$lib/server/auth";
-import { user, whitelistedEmail } from "$lib/server/database";
+import { user, permittedEmail } from "$lib/server/database";
 
 interface GoogleAccount {
   sub: string;
@@ -43,7 +43,7 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
     );
 
     const account: GoogleAccount = await response.json();
-    const isWhitelisted = await whitelistedEmail.findOne({ email: account.email });
+    const isWhitelisted = await permittedEmail.findOne({ email: account.email });
     if (!isWhitelisted) {
       throw new Error(`${account.email} is not waitlisted.` );
     }

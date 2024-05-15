@@ -1,7 +1,7 @@
 // https://www.mongodb.com/docs/mongodb-shell/reference/methods/
 db = new Mongo().getDB("subaybay");
 
-db.whitelistedEmails.insertMany([
+db.permittedEmails.insertMany([
   { email:"yuumi@lol.com" },
   { email:"smolder@lol.com" },
   { email:"gnar@lol.com" },

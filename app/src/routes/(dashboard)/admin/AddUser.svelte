@@ -28,10 +28,10 @@
     <Button><Plus size="20" />Add a User</Button>
   </Dialog.Trigger>
   <Dialog.Content>
-    <Dialog.Header>
-      <Dialog.Title>Add a user</Dialog.Title>
-    </Dialog.Header>
     <form method="POST" action="?/add_user" use:enhance>
+      <Dialog.Header>
+        <Dialog.Title>Add a user</Dialog.Title>
+      </Dialog.Header>
       <Form.Field {form} name="email">
         <Form.Control let:attrs>
           <Form.Label>Email</Form.Label>

@@ -9,7 +9,7 @@ import {
   type User,
   type Request,
   type RequestType,
-  whitelistedEmail,
+  permittedEmail,
 } from "$lib/server/database";
 import { superValidate } from "sveltekit-superforms";
 import { formSchema } from "./schema";
@@ -156,12 +156,12 @@ export const actions: Actions = {
 
     const data = form.data;
     const email = data.email;
-    const existingEmail = await whitelistedEmail.findOne({email: email});
+    const existingEmail = await permittedEmail.findOne({email: email});
 
     if (existingEmail) {
-      setFlash({type: "error", message: "User is already whitelisted."}, cookies);
+      setFlash({type: "error", message: "User is already in the list of permitted emails."}, cookies);
     } else {
-      await whitelistedEmail.insertOne({email});
+      await permittedEmail.insertOne({email});
       setFlash({ type: "success", message: "Added User" }, cookies);
     }
 
@@ -178,7 +178,7 @@ export const actions: Actions = {
 
     const staff = await user.findOne({email: email});
     await user.deleteOne({ email });
-    await whitelistedEmail.deleteOne({ email });
+    await permittedEmail.deleteOne({ email });
     
     const res = await user.find({}).toArray();
     setFlash({ type: "success", message: `${staff?.name} removed` }, cookies);

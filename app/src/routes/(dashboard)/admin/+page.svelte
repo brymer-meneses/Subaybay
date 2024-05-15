@@ -77,7 +77,7 @@
       />
     </Tabs.Content>
     <Tabs.Content value="users" class="pt-4">
-      <UserManagement bind:users {data} />
+      <UserManagement bind:users />
     </Tabs.Content>
   </Tabs.Root>
 </main>
