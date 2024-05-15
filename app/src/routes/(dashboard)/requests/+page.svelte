@@ -4,21 +4,13 @@
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
   import { Button } from "$lib/components/ui/button/index.js";
   import { CircleChevronRight } from "lucide-svelte";
+    import { goto } from "$app/navigation";
 
   export let user: User[];
-  //export let requests: OURRequest[];
-  // For testing
-  const requests = [
-    {
-      _id: "juststarted",
-      requestTypeId: "coe",
-      studentNumber: "2020-35221",
-      studentName: "Hello World",
-      studentEmail: "zddeguzman1@up.edu.ph",
-      purpose: "Lorem ipsum dolor sit amet, consectetur.",
-      remarks: "Lorem ipsum dolor sit amet, consectetur.",
-    },
-  ];
+  export let data;
+
+  const activeRequests = data.activeRequests;
+  const archivedRequets = data.archivedRequests;
 </script>
 
 <!-- TODO: make it responsive, can also use data table component -->
@@ -54,7 +46,7 @@
           </Table.Header>
           <ScrollArea class="h-[28rem]">
             <Table.Body>
-              {#each requests as request (request._id)}
+              {#each activeRequests as request (request._id)}
                 <Table.Row
                   class="auto-rows grid w-full grid-cols-12 items-center text-left"
                 >
@@ -80,7 +72,7 @@
                   >
                   <Table.Cell class="col-span-1 py-0">
                     <!-- Button for individual request details -->
-                    <Button size="icon" variant="ghost"
+                    <Button size="icon" variant="ghost" on:click={()=>{goto("./requests/" + request._id)}}
                       ><CircleChevronRight class="h-5 w-5" /></Button
                     >
                   </Table.Cell>

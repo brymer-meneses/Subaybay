@@ -1,20 +1,8 @@
 <script lang="ts">
-  import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-  } from "$lib/components/ui/card";
-  import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage,
-  } from "$lib/components/ui/avatar";
-  import {
-    CircleUserRound,
-  } from "lucide-svelte";
+  import * as Card from "$lib/components/ui/card";
+  import * as Avatar from "$lib/components/ui/avatar";
+
+  import { CircleUserRound } from "lucide-svelte";
   import { Label } from "$lib/components/ui/label";
   import { ScrollArea } from "$lib/components/ui/scroll-area";
 
@@ -44,8 +32,8 @@
   <ScrollArea class="max-w-[600px] flex-grow gap-2">
     <div class="flex flex-col gap-2 p-2">
       {#each history as substage}
-        <Card>
-          <CardContent class="flex flex-col gap-2 p-2">
+        <Card.Card>
+          <Card.CardContent class="flex flex-col gap-2 p-2">
             <div class="margin-top-1 flex flex-row items-center gap-2">
               <div class="ml-2">
                 {#if !substage.handlerId}
@@ -53,12 +41,12 @@
                     class="h-8 w-8 stroke-muted-foreground stroke-1"
                   />
                 {:else}
-                  <Avatar class="h-8 w-8">
-                    <AvatarImage
+                  <Avatar.Avatar class="h-8 w-8">
+                    <Avatar.AvatarImage
                       src={users[substage.handlerId].profileUrl}
                       alt={users[substage.handlerId].name}
                     />
-                  </Avatar>
+                  </Avatar.Avatar>
                 {/if}
               </div>
 
@@ -66,11 +54,11 @@
                 {substage.title}
               </Label>
             </div>
-          </CardContent>
-          <CardFooter class="text-xs text-gray-500">
+          </Card.CardContent>
+          <Card.CardFooter class="text-xs text-gray-500">
             {substage.dateFinished}
-          </CardFooter>
-        </Card>
+          </Card.CardFooter>
+        </Card.Card>
       {/each}
     </div>
   </ScrollArea>

@@ -27,22 +27,25 @@
     stages.push(stage);
   }
 
-  let stageTypeIndex = request.history[request.history.length - 1];
+  let stageTypeIndex = request.history[request.history.length - 1].stageTypeIndex;
   for (let i = request.history.length - 1; i >= 0; i--) {
     if(stageTypeIndex < 0) break;
-    if(request.history.stageTypeIndex != stageTypeIndex) continue;
+    if(request.history[i].stageTypeIndex != stageTypeIndex) continue;
 
     const storedStage = request.history[i];
     const stage = stages[storedStage.stageTypeIndex];
     stage.isHistory = true;
     stage.finished = storedStage.finished;
     stage.handlerId = storedStage.handlerId;
+
+    stageTypeIndex--;
   }
 
   if(request.currentStage) {
     const currentStage = stages[request.currentStage.stageTypeIndex];
     currentStage.finished = request.currentStage.finished;
     currentStage.handlerId = request.currentStage.handlerId;
+    currentStage.isHistory = false;
     currentStage.isCurrent = true;
   }  
 
