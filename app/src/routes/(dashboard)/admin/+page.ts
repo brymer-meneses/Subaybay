@@ -6,6 +6,10 @@ type User = {
   isAdmin: boolean;
 };
 
+type PermittedEmail = {
+  email: string;
+}
+
 type RequestTypeInstancesCount = {
   reqType: string;
   reqTitle: string;

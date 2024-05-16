@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from "$app/stores";
   import * as Table from "$lib/components/ui/table";
 
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
@@ -9,6 +10,7 @@
   import AddAdminForm from "./AddAdminForm.svelte";
 
   export let users: User[];
+  export let emails: PermittedEmail[];
 </script>
 
 <Table.Root class="mt-4">
@@ -72,6 +74,21 @@
           </Table.Cell>
           <Table.Cell class="flex justify-center">
             <RemoveUserForm {user} />
+          </Table.Cell>
+        </Table.Row>
+      {/each}
+      {#each emails as email}
+        <Table.Row class="grid w-full grid-cols-6 text-left">
+          <Table.Cell class="col-span-2">
+            <div class="mb-4 flex items-center justify-between space-x-4">
+              {email.email}
+            </div>
+          </Table.Cell>
+          <Table.Cell class="col-span-2">
+            <Badge variant="outline">Permitted Email</Badge>
+          </Table.Cell>
+          <Table.Cell class="flex justify-center">
+            <!-- <RemoveUserForm /> -->
           </Table.Cell>
         </Table.Row>
       {/each}

@@ -9,9 +9,11 @@
   import { page } from "$app/stores";
 
   export let users: User[];
+  export let permittedEmails: PermittedEmail[];
 
   let searchTerm: string = "";
   let filteredUsers: User[] = [];
+  let filteredEmails: PermittedEmail[] = [];
 
   $: {
     filteredUsers = users.filter((user: User) => {
@@ -28,6 +30,10 @@
       }
       return null;
     });
+
+    filteredEmails = permittedEmails.filter((email: PermittedEmail) => {
+      return email.email.toLowerCase().includes(searchTerm.toLowerCase());
+    });
   }
 </script>
 
@@ -39,12 +45,12 @@
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
       <div class="relative w-80">
         <Search
-          class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
+          class="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4"
         />
         <Input
           type="search"
           placeholder="Search User"
-          class="w-full rounded-lg bg-background pl-8"
+          class="bg-background w-full rounded-lg pl-8"
           bind:value={searchTerm}
         />
       </div>
@@ -54,6 +60,6 @@
     </div>
   </Card.Header>
   <Card.Content>
-    <UserTable bind:users={filteredUsers} />
+    <UserTable bind:users={filteredUsers} bind:emails={filteredEmails} />
   </Card.Content>
 </Card.Root>

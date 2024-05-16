@@ -77,7 +77,7 @@
       />
     </Tabs.Content>
     <Tabs.Content value="users" class="pt-4">
-      <UserManagement bind:users />
+      <UserManagement bind:users bind:permittedEmails={data.permittedEmails} />
     </Tabs.Content>
   </Tabs.Root>
 </main>

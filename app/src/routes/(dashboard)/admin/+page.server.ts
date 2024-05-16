@@ -88,7 +88,6 @@ export const load: PageServerLoad = async (event) => {
       const foundIndex = count.findIndex(
         (x) => x.reqTitle === requestTypeTitle,
       );
-      console.log("foundIndex", foundIndex)
       
       const currentStageDateFinished = new Date(
         request.currentStage.dateFinished,
@@ -180,12 +179,11 @@ export const actions: Actions = {
       return;
     }
 
-    const staff = await user.findOne({email: email});
     await user.deleteOne({ email });
     await permittedEmail.deleteOne({ email });
+    setFlash({ type: "success", message: `${email} removed` }, cookies);
     
     const res = await user.find({}).toArray();
-    setFlash({ type: "success", message: `${staff?.name} removed` }, cookies);
     
     return { users: res };
   },
