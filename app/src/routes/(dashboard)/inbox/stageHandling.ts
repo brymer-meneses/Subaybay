@@ -64,6 +64,7 @@ export const passRequest = async (
   const newCurrentStage: db.Stage = {
     stageTypeIndex: newStageIndex,
     handlerId: nextHandlerId,
+    prevHandlerId: request.currentStage.handlerId,
     finished: false,
     dateStarted: new Date(),
     dateFinished: new Date(0),
@@ -191,6 +192,7 @@ export const rollbackStage = async (
   const newCurrentStage: db.Stage = {
     stageTypeIndex: newCurrentStageIndex,
     handlerId: userId,
+    prevHandlerId: request.currentStage.handlerId,
     finished: false,
     dateStarted: new Date(),
     dateFinished: new Date(0),

@@ -39,6 +39,9 @@
         <Card.Description>
           {selectedStage.requestId} <br />
           Currently at Step: {selectedStage.currentStageTypeIndex} <br />
+          {#if selectedStage.prevHandlerId in users}
+            From: {users[selectedStage.prevHandlerId].name} <br />
+          {/if}
           {#if selectedStage.currentStageTypeIndex != selectedStage.inboxStageTypeIndex}
             You handled Step: {selectedStage.inboxStageTypeIndex}
           {/if}

@@ -192,6 +192,7 @@ db.requests.insertMany([
       {
         stageTypeIndex: 0,
         handlerId: "airylionsoul",
+        prevHandlerId: "",
         finished: false,
         dateStarted: new Date('2024-04-27'),
         dateFinished: new Date(0),
@@ -212,6 +213,7 @@ db.requests.insertMany([
       {
         stageTypeIndex: 2,
         handlerId: "airylionsoul",
+        prevHandlerId: "airylionsoul",
         finished: true,
         dateStarted: new Date('2024-04-27'),
         dateFinished: new Date(0),
@@ -221,6 +223,7 @@ db.requests.insertMany([
       {
         stageTypeIndex: 0,
         handlerId: "gnar",
+        prevHandlerId: "",
         finished: true,
         dateStarted: new Date('2024-04-27'),
         dateFinished: new Date('2024-04-27'),
@@ -229,6 +232,7 @@ db.requests.insertMany([
       {
         stageTypeIndex: 1,
         handlerId: "airylionsoul",
+        prevHandlerId: "gnar",
         finished: false,
         dateStarted: new Date('2024-04-27'),
         dateFinished: new Date('2024-04-27'),

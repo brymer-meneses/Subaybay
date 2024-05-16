@@ -23,6 +23,7 @@ interface InboxStageData {
   dateSent: Date;
   requestId: string;
   handlerId: string;
+  prevHandlerId: string;
   currentStageTypeIndex: number;
   inboxStageTypeIndex: number;
   finished: boolean;
@@ -112,6 +113,7 @@ const addStage = (
     dateSent: stage.dateStarted,
     requestId: stageIdentifier.requestId,
     handlerId: stage.handlerId,
+    prevHandlerId: stage.prevHandlerId,
     currentStageTypeIndex: stage.stageTypeIndex,
     inboxStageTypeIndex: stageIdentifier.stageTypeIndex,
     finished: stage.finished,
@@ -163,6 +165,7 @@ export const actions: Actions = {
       currentStage: {
         stageTypeIndex: 0,
         handlerId: userId,
+        prevHandlerId: "",
         finished: false,
         dateStarted: new Date(),
         dateFinished: new Date(0),
