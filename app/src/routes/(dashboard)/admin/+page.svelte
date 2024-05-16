@@ -41,9 +41,6 @@
 <!-- <p>{JSON.stringify(form) ?? ""}</p> -->
 <!-- TODO but Low Priority: Fix Responsiveness of the layout -->
 <main class="mx-8 flex flex-col space-y-4">
-  <h2 class="flex items-center gap-2 text-3xl font-bold tracking-tight">
-    Administrator <UsersRound class="inline h-6 w-6" />
-  </h2>
   <Tabs.Root bind:value class="w-full">
     <Tabs.List class="grid w-full grid-cols-3 border lg:w-[720px]">
       <Tabs.Trigger value="overview">Overview</Tabs.Trigger>
