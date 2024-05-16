@@ -28,6 +28,8 @@
   //   { date: subtractDays(today, 0), value: 3 },
   // ];
 
+  // data = data2;
+
   const breakPoint = 640;
   let width = 1320;
   let height = 300;

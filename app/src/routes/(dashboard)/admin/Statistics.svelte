@@ -24,10 +24,7 @@
   $: {
     filteredReqTypes = count.filter((reqType: RequestTypeInstancesCount) => {
       if (
-        reqType.reqTitle
-          .toLowerCase()
-          .includes(searchTerm.trim().toLowerCase()) ||
-        reqType.reqType.toLowerCase().includes(searchTerm.trim().toLowerCase())
+        reqType.reqTitle.toLowerCase().includes(searchTerm.trim().toLowerCase())
       ) {
         return reqType;
       }

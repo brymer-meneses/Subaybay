@@ -73,7 +73,7 @@ export const load: PageServerLoad = async (event) => {
       total: { finished: 0, pending: 0, stale: 0 },
     });
   }
-  count = Array.from(new Set(count)); //remove duplicates
+  count= Array.from(new Set(count)) as RequestTypeInstancesCount[]; //remove duplicates
 
   for (const request of requests) {
     const requestTypeTitle = requestTypes.find(e => request.requestTypeId === e._id)?.title;
@@ -92,8 +92,9 @@ export const load: PageServerLoad = async (event) => {
       const currentStageDateFinished = new Date(
         request.currentStage.dateFinished,
       );
+      const epochDate = new Date(0);
 
-      if (currentStageIndex === finalStageIndex && request.isFinished) {
+      if (currentStageIndex === finalStageIndex && request.isFinished && currentStageDateFinished.getTime() !== epochDate.getTime()) {
         count[foundIndex].total.finished++;
         summary[0].count++;
         
@@ -106,10 +107,10 @@ export const load: PageServerLoad = async (event) => {
         if (isThisMonthAndYear(currentStageDateFinished)) {
           summary[0].countThisMonth++;
         }
-      } else if (currentStageIndex < finalStageIndex && !request.isFinished) {
+      } else if (currentStageIndex <= finalStageIndex && !request.isFinished) {
         count[foundIndex].total.pending++;
         summary[1].count++;
-      } else if (currentStageIndex < finalStageIndex && request.isFinished) {
+      } else if (currentStageIndex <= finalStageIndex && request.isFinished) {
         count[foundIndex].total.stale++;
         summary[2].count++;
       }
@@ -168,8 +169,9 @@ export const actions: Actions = {
       setFlash({ type: "success", message: "Added User" }, cookies);
     }
 
-    return;
+    return {form};
   },
+
   remove_user: async ({ cookies,request }) => {
     const data = await request.formData();
     const email: string = data.get("email") as string;
@@ -179,13 +181,19 @@ export const actions: Actions = {
       return;
     }
 
-    await user.deleteOne({ email });
+    const staff = await user.findOne({ email });
+
+    if (staff) {
+      await user.deleteOne({ email });
+    }
+
     await permittedEmail.deleteOne({ email });
     setFlash({ type: "success", message: `${email} removed` }, cookies);
     
-    const res = await user.find({}).toArray();
+    const res1 = await user.find({}).toArray();
+    const res2 = await permittedEmail.find({}, { projection: { _id: 0 } }).toArray();
     
-    return { users: res };
+    return { users: res1, emails: res2 };
   },
   
   remove_admin: async ({ cookies, request }) => {

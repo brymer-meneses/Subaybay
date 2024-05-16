@@ -21,7 +21,7 @@
 </script>
 
 <header
-  class="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6"
+  class="bg-background sticky top-0 z-30 flex h-14 items-center gap-4 border-b px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6"
 >
   <Sheet.Root>
     <Sheet.Trigger asChild let:builder>
@@ -83,17 +83,17 @@
   <div class="relative ml-auto flex-1 items-center md:grow-0">
     <Button
       variant="ghost"
-      class="flex w-full cursor-pointer flex-row items-center justify-between rounded-lg border border-border bg-background md:w-[200px] lg:w-[320px]"
+      class="border-border bg-background flex w-full cursor-pointer flex-row items-center justify-between rounded-lg border md:w-[200px] lg:w-[320px]"
       on:click={() => {
         open = !open;
       }}
     >
       <div class="flex flex-row gap-4">
-        <Search class="h-4 w-4 text-muted-foreground" />
-        <p class="text-xs text-muted-foreground">Click here to search ...</p>
+        <Search class="text-muted-foreground h-4 w-4" />
+        <p class="text-muted-foreground text-md">Search...</p>
       </div>
       <kbd
-        class="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 drop-shadow-sm"
+        class="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 drop-shadow-sm"
       >
         <span class="text-xs">⌘</span>J
       </kbd>

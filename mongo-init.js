@@ -237,4 +237,44 @@ db.requests.insertMany([
     ],
     nextHandlerId: "mom"
   },
+  {
+    _id: "stale",
+    requestTypeId: "coe",
+    studentNumber: "2020",
+    studentName: "Hello World",
+    studentEmail: "student@student.com",
+    purpose: "Purpose",
+    remarks: "Good Morning",
+    isFinished: true,
+    currentStage: {
+      stageTypeIndex: 3,
+      handlerId: "airylionsoul",
+      finished: false,
+      dateStarted: new Date("2024-04-27T00:00:00.000Z"),
+      dateFinished: new Date("1970-01-01T00:00:00.000Z"),
+      roomId: "134333412"
+    },
+    history: [],
+    nextHandlerId: ""
+  },
+  {
+    _id: "finished",
+    requestTypeId: "coe",
+    studentNumber: "2020",
+    studentName: "Hello World",
+    studentEmail: "student@student.com",
+    purpose: "Purpose",
+    remarks: "Good Morning",
+    isFinished: true,
+    currentStage: {
+      stageTypeIndex: 3,
+      handlerId: "airylionsoul",
+      finished: false,
+      dateStarted: new Date("2024-04-27T00:00:00.000Z"),
+      dateFinished: new Date("2024-05-13T08:00:00.000Z"),
+      roomId: "134333412"
+    },
+    history: [],
+    nextHandlerId: ""
+  }
 ]);

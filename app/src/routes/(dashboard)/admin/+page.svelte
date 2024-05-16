@@ -8,8 +8,7 @@
   import UserList from "./UserList.svelte";
   import Statistics from "./Statistics.svelte";
   import UserManagement from "./UserManagement.svelte";
-
-  import UsersRound from "lucide-svelte/icons/users-round";
+  import EmailManagement from "./EmailManagement.svelte";
 
   export let data: PageServerData;
   export let form: PageData;
@@ -18,12 +17,15 @@
 
   let users = [...data.users].sort(compare);
   let admins = users.filter((e) => e.isAdmin);
+  let permittedEmails: PermittedEmail[] = [];
 
   $: {
     users = form
       ? [...form.users].sort(compare)
       : [...data.users].sort(compare);
     admins = users.filter((e) => e.isAdmin);
+
+    permittedEmails = form ? form.emails : data.permittedEmails;
   }
 
   let value: string;
@@ -39,13 +41,13 @@
 </script>
 
 <!-- <p>{JSON.stringify(form) ?? ""}</p> -->
-<!-- TODO but Low Priority: Fix Responsiveness of the layout -->
 <main class="mx-8 flex flex-col space-y-4">
   <Tabs.Root bind:value class="w-full">
-    <Tabs.List class="grid w-full grid-cols-3 border lg:w-[720px]">
+    <Tabs.List class="grid w-full grid-cols-4 border lg:w-[720px]">
       <Tabs.Trigger value="overview">Overview</Tabs.Trigger>
       <Tabs.Trigger value="stats">Statistics</Tabs.Trigger>
       <Tabs.Trigger value="users">Users</Tabs.Trigger>
+      <Tabs.Trigger value="emails">Emails</Tabs.Trigger>
     </Tabs.List>
     <Tabs.Content value="overview">
       <div class="flex flex-col justify-between lg:flex-row lg:space-x-4">
@@ -74,7 +76,10 @@
       />
     </Tabs.Content>
     <Tabs.Content value="users" class="pt-4">
-      <UserManagement bind:users bind:permittedEmails={data.permittedEmails} />
+      <UserManagement bind:users />
+    </Tabs.Content>
+    <Tabs.Content value="emails" class="pt-4">
+      <EmailManagement bind:emails={permittedEmails} />
     </Tabs.Content>
   </Tabs.Root>
 </main>

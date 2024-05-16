@@ -1,36 +1,32 @@
 <script lang="ts">
+  import { page } from "$app/stores";
   import * as Card from "$lib/components/ui/card/index.js";
   import Input from "$lib/components/ui/input/input.svelte";
 
   import Search from "lucide-svelte/icons/search";
 
-  import UserTable from "./UserTable.svelte";
+  import EmailTable from "./EmailTable.svelte";
   import AddUser from "./AddUser.svelte";
-  import { page } from "$app/stores";
 
-  export let users: User[];
+  export let emails: PermittedEmail[];
 
   let searchTerm: string = "";
-  let filteredUsers: User[] = [];
+  let filteredEmails: PermittedEmail[] = [];
 
   $: {
-    filteredUsers = users.filter((user: User) => {
-      for (const key in user) {
-        if (key === "isAdmin" || key === "profileUrl") continue;
-        const userKey = key as keyof User;
-        if (
-          String(user[userKey])
-            .toLowerCase()
-            .includes(searchTerm.trim().toLowerCase())
-        ) {
-          return user;
-        }
+    filteredEmails = emails.filter((email: PermittedEmail) => {
+      if (
+        String(email.email)
+          .toLowerCase()
+          .includes(searchTerm.trim().toLowerCase())
+      ) {
+        return email;
       }
-      return null;
     });
   }
 </script>
 
+<!-- <p>{JSON.stringify($page.form, null, 2) ?? "no form"}</p> -->
 <Card.Root>
   <Card.Header
     class="flex flex-col align-middle md:flex-row md:items-center md:justify-between"
@@ -48,9 +44,12 @@
           bind:value={searchTerm}
         />
       </div>
+      <div class="w-36">
+        <AddUser data={$page.data.form} />
+      </div>
     </div>
   </Card.Header>
   <Card.Content>
-    <UserTable bind:users={filteredUsers} />
+    <EmailTable bind:emails={filteredEmails} />
   </Card.Content>
 </Card.Root>

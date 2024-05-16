@@ -11,7 +11,6 @@ type PermittedEmail = {
 }
 
 type RequestTypeInstancesCount = {
-  reqType: string;
   reqTitle: string;
   total: {
     finished: number;
