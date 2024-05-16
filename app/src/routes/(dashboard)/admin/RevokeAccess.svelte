@@ -10,7 +10,7 @@
   let dialogOpened = false;
 </script>
 
-<Dialog.Root bind:dialogOpened>
+<Dialog.Root bind:open={dialogOpened}>
   <Dialog.Trigger>
     <Button variant="link" class="gap-2 text-red-600"
       ><CircleMinus /><span class="hidden lg:inline">Revoke Access</span
