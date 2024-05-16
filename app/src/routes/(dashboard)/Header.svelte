@@ -17,13 +17,6 @@
 
   import { page } from "$app/stores";
 
-  console.log($page.data.headerData);
-
-  let requestId = $page.route.id?.includes("requests")
-    ? !$page.route.id?.endsWith("requests")
-      ? $page.url.pathname.split("/").at(-1)
-      : undefined
-    : undefined;
   let open = false;
 </script>
 
@@ -74,7 +67,11 @@
     <Breadcrumb.List>
       {#each $page.data.headerData as data, index}
         <Breadcrumb.Item>
-          <Breadcrumb.Link href={data.href}>{data.content}</Breadcrumb.Link>
+          {#if data.href !== undefined}
+            <Breadcrumb.Link href={data.href}>{data.content}</Breadcrumb.Link>
+          {:else}
+            <Breadcrumb.Page>{data.content}</Breadcrumb.Page>
+          {/if}
         </Breadcrumb.Item>
         {#if index !== $page.data.headerData.length - 1}
           <Breadcrumb.Separator />
