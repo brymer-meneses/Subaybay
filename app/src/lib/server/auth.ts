@@ -1,4 +1,4 @@
-import { Lucia } from "lucia";
+import { Lucia, TimeSpan } from "lucia";
 import { MongodbAdapter } from "@lucia-auth/adapter-mongodb";
 import { Google } from "arctic";
 
@@ -17,6 +17,7 @@ const SESSION_COOKIE_NAME = "auth_session";
 const adapter = new MongodbAdapter(session, user);
 
 export const lucia = new Lucia(adapter, {
+  sessionExpiresIn: new TimeSpan(1, "d"),
   sessionCookie: {
     attributes: {
       secure: !dev,
