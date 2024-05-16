@@ -44,13 +44,13 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 
     const account: GoogleAccount = await response.json();
     const isWhitelisted = await permittedEmail.findOne({ email: account.email });
-    if (!isWhitelisted) {
-      throw new Error(`${account.email} is not waitlisted.` );
-    }
+    // if (!isWhitelisted) {
+    //   throw new Error(`${account.email} is not waitlisted.` );
+    // }
 
     const googleId = account.sub;
     const existingAccount = await user.findOne({ _id: googleId });
-    if (!existingAccount ) {
+    if (!existingAccount) {
       await user.insertOne({
         _id: account.sub,
         name: account.name,
@@ -79,7 +79,7 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
       );
     }
 
-    const errorMessage: string = e.message?? "Authentication Error";
+    const errorMessage: string = e.message ?? "Authentication Error";
     console.log(errorMessage)
     redirect("/", { type: "error", message: errorMessage }, cookies);
   }

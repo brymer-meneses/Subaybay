@@ -2,7 +2,7 @@
 //  https://lucia-auth.com/getting-started/sveltekit
 import { lucia } from "$lib/server/auth";
 import { type Handle } from "@sveltejs/kit";
-import { redirect } from "sveltekit-flash-message/server";
+import { redirect, setFlash } from "sveltekit-flash-message/server";
 
 export const handle: Handle = async ({ event, resolve }) => {
   const sessionId = event.cookies.get(lucia.sessionCookieName);
