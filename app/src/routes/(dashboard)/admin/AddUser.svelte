@@ -21,9 +21,11 @@
   });
 
   const { form: formData, enhance } = form;
+
+  let addUserDialogOpen = false;
 </script>
 
-<Dialog.Root>
+<Dialog.Root bind:open={addUserDialogOpen}>
   <Dialog.Trigger>
     <Button><Plus size="20" />Add a User</Button>
   </Dialog.Trigger>
@@ -32,15 +34,15 @@
       <Dialog.Header>
         <Dialog.Title>Add a user</Dialog.Title>
       </Dialog.Header>
-      <Form.Field {form} name="email">
-        <Form.Control let:attrs>
-          <Form.Label>Email</Form.Label>
-          <Input {...attrs} bind:value={$formData.email} />
-        </Form.Control>
-        <Form.Description>Enter a valid email.</Form.Description>
-        <Form.FieldErrors />
-      </Form.Field>
-
+      <div class="grid gap-4 py-4">
+        <Form.Field {form} name="email">
+          <Form.Control let:attrs>
+            <Form.Label>Email</Form.Label>
+            <Input {...attrs} bind:value={$formData.email} />
+          </Form.Control>
+          <Form.FieldErrors />
+        </Form.Field>
+      </div>
       <Dialog.Footer>
         <Button type="submit">Add User</Button>
       </Dialog.Footer>

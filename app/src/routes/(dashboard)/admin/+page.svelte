@@ -40,7 +40,6 @@
   }
 </script>
 
-<!-- <p>{JSON.stringify(form) ?? ""}</p> -->
 <main class="mx-8 flex flex-col space-y-4">
   <Tabs.Root bind:value class="w-full">
     <Tabs.List class="grid w-full grid-cols-4 border lg:w-[720px]">

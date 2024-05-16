@@ -16,6 +16,7 @@ import { superValidate } from "sveltekit-superforms";
 import { formSchema } from "./schema";
 import { zod } from "sveltekit-superforms/adapters";
 import { setFlash } from "sveltekit-flash-message/server";
+import { Users } from "lucide-svelte";
 
 
 type RequestTypeInstancesCount = {
@@ -150,11 +151,12 @@ function compare(a: RequestTypeInstancesCount, b: RequestTypeInstancesCount) {
 export const actions: Actions = {
   add_user: async (event) => {
     const { request, cookies } = event;
+    const people = await user.find({}).toArray();
 
     const form = await superValidate(event, zod(formSchema));
     if (!form.valid){
       return fail(400, {
-        form,
+        form, 
       });
     }
 
@@ -169,7 +171,7 @@ export const actions: Actions = {
       setFlash({ type: "success", message: "Added User" }, cookies);
     }
 
-    return {form};
+    return;
   },
 
   remove_user: async ({ cookies,request }) => {

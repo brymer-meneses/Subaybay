@@ -26,12 +26,11 @@
   }
 </script>
 
-<!-- <p>{JSON.stringify($page.form, null, 2) ?? "no form"}</p> -->
 <Card.Root>
   <Card.Header
     class="flex flex-col align-middle md:flex-row md:items-center md:justify-between"
   >
-    <Card.Title class="text-xl font-bold">User Management</Card.Title>
+    <Card.Title class="text-xl font-bold">Manage Emails</Card.Title>
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
       <div class="relative w-80">
         <Search
