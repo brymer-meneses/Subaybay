@@ -72,6 +72,7 @@ export interface Request {
 export interface Stage {
   stageTypeIndex: number;
   handlerId: string;
+  prevHandlerId: string;
   finished: boolean;
   dateStarted: Date;
   dateFinished: Date;

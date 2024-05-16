@@ -15,11 +15,15 @@
 
   let selectedStage: any = null;
   let inboxes: { active: any; pending: any } = {
-    active: null,
-    pending: null,
+    active: [],
+    pending: [],
   };
-
+  
   let currentStageType: "active" | "pending" = "active";
+
+  if(inboxes[currentStageType].length > 0) {
+    selectedStage = inboxes[currentStageType]
+  }
 
   function selectStage(stage: any) {
     selectedStage = stage;
@@ -89,6 +93,7 @@
           bind:this={inboxes.active}
           stages={data.activeStages}
           onSelectStage={selectStage}
+          isShown={currentStageType === "active"}
         />
       </Tabs.Content>
       <Tabs.Content value="pending">
@@ -96,6 +101,7 @@
           bind:this={inboxes.pending}
           stages={data.pendingStages}
           onSelectStage={selectStage}
+          isShown={currentStageType === "pending"}
         />
       </Tabs.Content>
     </Tabs.Root>

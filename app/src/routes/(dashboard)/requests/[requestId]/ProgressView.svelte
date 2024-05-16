@@ -29,6 +29,11 @@
 
   if (request.history.length > 0) {
     let stageTypeIndex = request.history[request.history.length - 1].stageTypeIndex;
+    
+    // Don't mark stages past the current stage as finished
+    if(request.currentStage)
+      stageTypeIndex = Math.min(request.currentStage.stageTypeIndex - 1, stageTypeIndex);
+
     for (let i = request.history.length - 1; i >= 0; i--) {
       if(stageTypeIndex < 0) break;
       if(request.history[i].stageTypeIndex != stageTypeIndex) continue;

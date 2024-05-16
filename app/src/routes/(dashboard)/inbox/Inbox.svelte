@@ -5,10 +5,11 @@
 
   export let onSelectStage: (stage: any) => void;
   export let stages: any[] = [];
+  export let isShown;
 
   let selectedStageIndex: number = 0;
 
-  if (stages.length > 0) select(0);
+  if (isShown && stages.length > 0) select(0);
 
   function select(stageIndex: number) {
     selectedStageIndex = stageIndex;
