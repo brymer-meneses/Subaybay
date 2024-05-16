@@ -13,11 +13,13 @@
   } from "$lib/components/ui/card";
   import Plus from "lucide-svelte/icons/plus";
   import ConfigStage from "./ConfigStage.svelte";
+  import { enhance } from "$app/forms";
 
   export let data: PageServerData;
 
   let stages: StageData[] = [];
   let requestType: string;
+  let processing: boolean = false;
 
   let users = [new UserData("", "None")];
   for (const user of data.allUsers) {
@@ -38,19 +40,21 @@
     stages[stageIndex].handlerIndex = handlerIndex;
   }
 
-  async function handleSubmit(event: any) {
-    const data = new FormData(event.currentTarget);
+  async function handleSubmit(e: any) {
+    const data = new FormData(e.formElement);
 
     data.append("stageData", JSON.stringify(stages));
     data.append("users", JSON.stringify(users));
     data.append("requestType", requestType);
 
-    const response = await fetch(event.target.action, {
+    processing = true;
+
+    const response = await fetch(e.action, {
       method: "POST",
       body: data,
     });
 
-    location.reload();
+    processing = false;
   }
 </script>
 
@@ -59,8 +63,9 @@
     <Input
       bind:value={requestType}
       class="focus-visible:ring-0"
-      placeholder="Request Type (e.g. OTR-1)"
+      placeholder="Request Type Title (e.g. OTR-1)"
     />
+    <span>{requestType}</span>
     <Card class="flex flex-col border-gray-300">
       <CardHeader>
         <CardTitle>Stages</CardTitle>
@@ -94,9 +99,13 @@
       <form
         action="?/create"
         method="POST"
-        on:submit|preventDefault={handleSubmit}
+        use:enhance={(event) => handleSubmit}
       >
-        <Button type="submit">Create</Button>
+        {#if !processing}
+          <Button type="submit">Create</Button>
+        {:else}
+          Processing... Please Wait
+        {/if}
       </form>
     </div>
   </div>
