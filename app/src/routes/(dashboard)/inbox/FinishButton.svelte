@@ -39,7 +39,7 @@
 
 <Popover open={popoverOpen && !processing} onOpenChange={onPopoverOpenChange}>
   <PopoverTrigger>
-    <Button class="gap-2 rounded-xl text-white">
+    <Button class="gap-2 rounded-md">
       <CheckCheck />Finish
     </Button>
   </PopoverTrigger>
@@ -50,11 +50,11 @@
         <DropdownMenu>
           <DropdownMenuTrigger>
             <div
-              class="flex flex-row gap-x-4 rounded-lg border border-gray-300 p-1"
+              class="flex flex-row items-center gap-x-4 rounded-lg border border-gray-300 p-1"
             >
               {#if !(nextHandlerId in users)}
                 <CircleUserRound
-                  class="stroke-muted-foreground h-8 w-8 stroke-1"
+                  class="h-8 w-8 stroke-muted-foreground stroke-1"
                 />
               {:else}
                 <Avatar class="h-8 w-8">

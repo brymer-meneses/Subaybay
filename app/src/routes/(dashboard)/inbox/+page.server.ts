@@ -37,8 +37,6 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
   const requestTypes = await dbUtils.getRequestTypes();
   const latestRequestTypes = await dbUtils.getLatestRequestTypes();
 
-  console.log(latestRequestTypes);
-
   const reqAndStages = await getRequestsAndStages(userInbox, requestTypes);
   const requests = reqAndStages.requests;
   const activeStages = reqAndStages.activeStages;

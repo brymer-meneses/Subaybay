@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
+  import { goto } from "$app/navigation";
   import { enhance } from "$app/forms";
-  
+
   import { Button } from "$lib/components/ui/button";
   import * as Card from "$lib/components/ui/card/index.js";
   import { Badge } from "$lib/components/ui/badge";
@@ -10,6 +10,8 @@
 
   import MoveLeft from "lucide-svelte/icons/move-left";
   import User from "lucide-svelte/icons/user";
+
+  import * as Tabs from "$lib/components/ui/tabs";
 
   import ChatArea from "../ChatArea.svelte";
   import FinishButton from "./FinishButton.svelte";
@@ -29,10 +31,10 @@
 
 {#if info}
   <Card.Root class="overflow-hidden">
-    <Card.Header class="bg-muted/50 flex flex-row items-start">
+    <Card.Header class="flex flex-row items-start bg-muted/50">
       <div class="grid gap-0.5">
         <Card.Title class="group flex items-center gap-2 text-lg">
-            {selectedStage.stageTitle}
+          {selectedStage.stageTitle}
         </Card.Title>
         <Card.Description>
           {selectedStage.requestId} <br />
@@ -44,34 +46,56 @@
       </div>
 
       <div class="ml-auto flex items-center gap-2">
-        <Button size="sm" variant="outline" class="h-8 gap-1" on:click={()=>{goto("/requests/" + selectedStage.requestId)}}>
+        <Button
+          size="sm"
+          variant="outline"
+          class="h-8 gap-1"
+          on:click={() => {
+            goto("/requests/" + selectedStage.requestId);
+          }}
+        >
           <span class="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
             View Progress
           </span>
         </Button>
       </div>
     </Card.Header>
-    <Card.Content class="p-6 text-sm">
-      <div class="grid gap-3">
-        <p class="font-semibold">Request Details</p>
-        <div class="flex flex-row gap-2">
-          <Badge>{info.studentNumber}</Badge>
-          <Badge variant="secondary">{info.studentName}</Badge>
-          <Badge variant="secondary">{info.studentEmail}</Badge>
-        </div>
-        {#if info.purpose !== ""}
-          <p class="font-semibold">Purpose</p>
-          <Textarea disabled value={info.purpose} />
-        {/if}
-        {#if info.remarks !== ""}
-          <p class="font-semibold">Remarks</p>
-          <Textarea disabled value={info.remarks} />
-        {/if}
-      </div>
-      <div class="my-4 grid gap-3">
-        <p class="font-semibold">Chat</p>
-        <ChatArea roomId="abcd" />
-      </div>
+    <Card.Content class="flex flex-col gap-4 p-6 text-sm">
+      <Tabs.Root value="details">
+        <Tabs.List>
+          <Tabs.Trigger value="details">Details</Tabs.Trigger>
+          <Tabs.Trigger value="chat">Chat</Tabs.Trigger>
+        </Tabs.List>
+
+        <Tabs.Content value="details">
+          <Card.Root>
+            <Card.Content class="p-4">
+              <div class="flex flex-col gap-4">
+                <p class="text-xs font-semibold">Student Information</p>
+                <div class="flex flex-wrap gap-4">
+                  <Badge variant="secondary" class="font-normal"
+                    >{info.studentNumber}</Badge
+                  >
+                  <Badge variant="secondary" class="font-normal"
+                    >{info.studentName}</Badge
+                  >
+                  <Badge variant="secondary" class="font-normal"
+                    >{info.studentEmail}</Badge
+                  >
+                </div>
+                <p class="text-xs font-semibold">Purpose</p>
+                <Textarea disabled value={info.purpose} />
+                <p class="text-xs font-semibold">Remarks</p>
+                <Textarea disabled value={info.remarks} />
+              </div>
+            </Card.Content>
+          </Card.Root>
+        </Tabs.Content>
+
+        <Tabs.Content value="chat">
+          <ChatArea roomId="abcd" />
+        </Tabs.Content>
+      </Tabs.Root>
 
       {#if !processing}
         <div class="flex gap-2">
@@ -138,7 +162,11 @@
                 value={selectedStage.inboxStageTypeIndex}
               />
               <!--todo add confirmation-->
-              <Button type="submit" class="gap-2 rounded-xl text-white">
+              <Button
+                type="submit"
+                class="gap-2 rounded-md"
+                variant="destructive"
+              >
                 <MoveLeft />
                 Rollback
               </Button>

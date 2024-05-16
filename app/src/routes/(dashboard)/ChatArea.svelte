@@ -2,6 +2,7 @@
   import { onMount, tick } from "svelte";
   import { page } from "$app/stores";
   import { toast } from "svelte-sonner";
+  import * as Card from "$lib/components/ui/card/index.js";
 
   import ChatMessage from "./ChatMessage.svelte";
   import SendHorizontal from "lucide-svelte/icons/send-horizontal";
@@ -60,6 +61,7 @@
       toast.error("Failed to connect to the chat server", {
         description: "Sending and receiving messages will not work",
       });
+      socket = null;
     };
     socket.onmessage = receiveMessageHandler;
   });
@@ -102,31 +104,35 @@
   }
 </script>
 
-<section
-  class="flex w-full flex-col gap-5 rounded-md border-2 border-accent p-5"
->
-  <div bind:this={messageContainer} class="h-36 overflow-auto">
-    <div class="flex w-[96%] flex-col gap-3">
-      {#each messages as message, _}
-        <ChatMessage
-          message={message.content}
-          byYou={message.userId == userId ? true : false}
-          dateTime={message.dateTime}
-          profileUrl={message.profileUrl}
-        />
-      {/each}
+<Card.Root>
+  <Card.Content class="flex w-full flex-col gap-5 rounded-md  p-5">
+    <div bind:this={messageContainer} class="h-36 overflow-auto">
+      <div class="flex w-[96%] flex-col gap-3">
+        {#each messages as message, _}
+          <ChatMessage
+            message={message.content}
+            byYou={message.userId == userId ? true : false}
+            dateTime={message.dateTime}
+            profileUrl={message.profileUrl}
+          />
+        {/each}
+      </div>
     </div>
-  </div>
 
-  <div class="flex w-full items-center space-x-2">
-    <Input
-      class="border-b-1 w-full bg-accent focus:ring-0 focus:ring-offset-0"
-      placeholder="Send a message ..."
-      bind:value={messageContent}
-    />
+    <div class="flex w-full items-center space-x-2">
+      <Input
+        class="border-b-1 w-full bg-accent focus:ring-0 focus:ring-offset-0"
+        placeholder="Send a message ..."
+        bind:value={messageContent}
+      />
 
-    <Button on:click={sendMessageHandler}>
-      <SendHorizontal class="text-white" />
-    </Button>
-  </div>
-</section>
+      <Button
+        on:click={sendMessageHandler}
+        variant="outline"
+        disabled={socket === null}
+      >
+        <SendHorizontal />
+      </Button>
+    </div>
+  </Card.Content>
+</Card.Root>
