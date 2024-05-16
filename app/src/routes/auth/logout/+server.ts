@@ -1,4 +1,4 @@
-import { redirect } from "@sveltejs/kit";
+import { redirect } from "sveltekit-flash-message/server";
 import { lucia } from "$lib/server/auth";
 import { session } from "$lib/server/database";
 
@@ -16,5 +16,12 @@ export async function POST(event: RequestEvent): Promise<Response> {
     ...sessionCookie.attributes,
   });
 
-  redirect(302, "/");
+  redirect(
+    "/",
+    {
+      type: "success",
+      message: "Logged out successfully",
+    },
+    event.cookies,
+  );
 }
