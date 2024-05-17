@@ -11,6 +11,7 @@
     CardHeader,
     CardTitle,
   } from "$lib/components/ui/card";
+  import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
   import Plus from "lucide-svelte/icons/plus";
   import ConfigStage from "./ConfigStage.svelte";
   import { enhance } from "$app/forms";
@@ -79,8 +80,8 @@
   }
 </script>
 
-<main class="flex justify-center">
-  <div class="flex w-[40%] flex-col gap-4">
+<main class="mx-8 flex flex-row space-x-4">
+  <div class="flex w-[40%] flex-grow flex-col gap-4">
     <Input
       bind:value={title}
       class="focus-visible:ring-0"
@@ -95,44 +96,46 @@
         </CardDescription>
       </CardHeader>
       <CardContent class="flex flex-col gap-2">
-        {#each stages as stageType, stageIndex}
-          <ConfigStage
-            bind:stageTitle={stageType.stageTitle}
-            isDeletable={stageIndex !== 0}
-            isRenamable={stageIndex !== 0}
-            {stageIndex}
-            handlerId={stageType.defaultHandlerId}
-            deleteFunction={deleteStage}
-            onHandlerEdited={editHandler}
-            users={data.users}
-            {handlerOptions}
-          />
-        {/each}
-
+        <ScrollArea class="h-[30rem] px-4">
+          {#each stages as stageType, stageIndex}
+            <div class="mb-4">
+              <ConfigStage
+                bind:stageTitle={stageType.stageTitle}
+                isDeletable={stageIndex !== 0}
+                isRenamable={stageIndex !== 0}
+                {stageIndex}
+                handlerId={stageType.defaultHandlerId}
+                deleteFunction={deleteStage}
+                onHandlerEdited={editHandler}
+                users={data.users}
+                {handlerOptions}
+              />
+            </div>
+          {/each}
+        </ScrollArea>
         <!--Button for adding new stage-->
         <Button variant="outline" class="w-full" on:click={addSubstage}>
           <Plus class="stroke-muted-foreground stroke-1" />
         </Button>
       </CardContent>
+      <CardFooter>
+        <form
+          action="?/create"
+          method="POST"
+          use:enhance={(event) => {
+            return handleSubmit(event);
+          }}
+        >
+          {#if !processing}
+            <Button type="submit">Create</Button>
+          {:else}
+            Processing... Please Wait
+          {/if}
+        </form>
+      </CardFooter>
     </Card>
-
-    <div class="flex justify-center">
-      <form
-        action="?/create"
-        method="POST"
-        use:enhance={(event) => {
-          return handleSubmit(event);
-        }}
-      >
-        {#if !processing}
-          <Button type="submit">Create</Button>
-        {:else}
-          Processing... Please Wait
-        {/if}
-      </form>
-    </div>
+  </div>
+  <div class="flex">
+    <RequestTypeList requestTypes={data.requestTypes} />
   </div>
 </main>
-<div class="flex flex-col">
-  <RequestTypeList requestTypes={data.requestTypes} />
-</div>
