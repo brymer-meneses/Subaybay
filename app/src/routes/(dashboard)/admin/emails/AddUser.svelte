@@ -1,34 +1,10 @@
 <script lang="ts">
+  import { enhance, applyAction } from "$app/forms";
+  import { goto } from "$app/navigation";
   import * as Dialog from "$lib/components/ui/dialog";
   import Input from "$lib/components/ui/input/input.svelte";
   import Label from "$lib/components/ui/label/label.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
-  import { writable } from "svelte/store";
-
-  let email: string = "";
-  let errorMessage = writable("");
-
-  async function handleSubmit(e: Event) {
-    // This is the email submit handling for now, i dont know whats happening witht zod and superforms
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
-    const emailValue = formData.get("email") as string;
-
-    if (!emailValue) {
-      errorMessage.set("Required.");
-      return;
-    }
-
-    email = "";
-    errorMessage.set("");
-    console.log(Object.fromEntries(formData.entries()));
-
-    const response = await fetch("?/add_user", {
-      method: "POST",
-      body: formData,
-    });
-    console.log("addUser.svelte response: ", response);
-  }
 </script>
 
 <Dialog.Root>
@@ -42,7 +18,15 @@
     <form
       action="?/add_user"
       method="POST"
-      on:submit|preventDefault={handleSubmit}
+      use:enhance={() => {
+        return async ({ result }) => {
+          if (result.type === "redirect") {
+            goto(result.location);
+          } else {
+            await applyAction(result);
+          }
+        };
+      }}
     >
       <div class="h-28 w-full space-y-4">
         <Label for="email">Email</Label>
@@ -51,11 +35,7 @@
           id="email"
           name="email"
           placeholder="Example@university.ph"
-          bind:value={email}
         />
-        {#if $errorMessage}
-          <span class="text-sm text-red-600">{$errorMessage}</span>
-        {/if}
       </div>
       <Dialog.Footer>
         <Button type="submit">Continue</Button>
