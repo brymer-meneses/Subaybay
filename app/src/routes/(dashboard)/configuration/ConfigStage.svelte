@@ -11,24 +11,26 @@
   import Ban from "lucide-svelte/icons/ban";
   import CircleX from "lucide-svelte/icons/circle-x";
 
-  export let users: UserData[];
-  export let handlerIndex: number;
+  export let users: {[key: string]: UserData}
+  export let handlerOptions: UserData[];
+  export let handlerId: string;
 
   export let isDeletable = true;
   export let isRenamable = true;
-  export let substageName = "";
+  export let stageTitle = "";
   export let stageIndex: number;
 
-  export let deleteFunction = (substageIndex: number) => {};
+  export let deleteFunction = (stageIndex: number) => {};
   export let onHandlerEdited: (
-    substageIndex: number,
-    handlerIndex: number,
-  ) => void = (i, j) => {};
+    stageIndex: number,
+    handlerId: string,
+  ) => void;
 
   function onDropdownChanged(value: string | undefined) {
+    console.log(value)
     if (value) {
-      handlerIndex = parseInt(value);
-      onHandlerEdited(stageIndex, handlerIndex);
+      handlerId = value;
+      onHandlerEdited(stageIndex, handlerId);
     }
   }
 </script>
@@ -48,20 +50,20 @@
 
   <Input
     placeholder="Stage Name (Click to Name)"
-    bind:value={substageName}
+    bind:value={stageTitle}
     disabled={!isRenamable}
   />
 
   <DropDownMenu.Root>
     <DropDownMenu.Trigger>
       <div class="ml-2">
-        {#if users[handlerIndex].profileUrl === ""}
+        {#if !(handlerId in users) || users[handlerId].profileUrl === ""}
           <CircleUserRound class="h-8 w-8 stroke-muted-foreground stroke-1" />
         {:else}
           <Avatar.Root class="h-8 w-8">
             <Avatar.Image
-              src={users[handlerIndex].profileUrl}
-              alt={users[handlerIndex].name}
+              src={users[handlerId].profileUrl}
+              alt={users[handlerId].name}
             />
           </Avatar.Root>
         {/if}
@@ -74,11 +76,11 @@
 
       <ScrollArea class="h-[150px]">
         <DropDownMenu.RadioGroup
-          value={handlerIndex.toString()}
+          value={handlerId}
           onValueChange={onDropdownChanged}
         >
-          {#each users as user, index}
-            <DropDownMenu.RadioItem value={index.toString()}>
+          {#each handlerOptions as user}
+            <DropDownMenu.RadioItem value={user.id}>
               {user.name}
             </DropDownMenu.RadioItem>
           {/each}

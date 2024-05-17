@@ -3,18 +3,18 @@ import type { Actions } from "./$types";
 
 import * as db from "$lib/server/database";
 import { ObjectId } from "mongodb";
-import { StageData, UserData } from "./configClasses";
+import type { UserData } from "./configClasses";
 import { setFlash } from "sveltekit-flash-message/server";
 import { fail } from "@sveltejs/kit";
 
 export const load: PageServerLoad = async (event) => {
   let cursor = db.user.find();
-  let allUsers: any = [];
+  let users: { [key: string]: UserData } = {};
   for await (const doc of cursor) {
-    allUsers.push({ id: doc._id, name: doc.name, profileUrl: doc.profileUrl });
+    users[doc._id] = { id:doc._id, name:doc.name, profileUrl:doc.profileUrl };
   }
 
-  return { userInfo: event.locals.user, allUsers: allUsers };
+  return { userInfo: event.locals.user, users };
 };
 
 export const actions: Actions = {
@@ -22,18 +22,15 @@ export const actions: Actions = {
     const { request, locals, cookies } = event;
     const form = await request.formData();
 
-    const requestType = form.get("requestType")?.toString() ?? "";
+    const title = form.get("title")?.toString() ?? "";
     let stagesJSONStr = form.get("stageData")?.toString() ?? "";
-    let usersJSONStr = form.get("users")?.toString() ?? "";
 
-    console.log(requestType);
-
-    if (requestType == "undefined" || requestType == "") {
+    if (title == "undefined" || title == "") {
       setFlash({ type: "error", message: "Invalid Title" }, cookies);
       return fail(400);
     }
 
-    const duplicate = await db.requestType.findOne({ title: requestType });
+    const duplicate = await db.requestType.findOne({ title: title });
     if (duplicate) {
       setFlash(
         {
@@ -46,20 +43,14 @@ export const actions: Actions = {
       return fail(400);
     }
 
-    let users: UserData[] = JSON.parse(usersJSONStr);
-    const formStages: StageData[] = JSON.parse(stagesJSONStr);
+    const stages: db.StageType[] = JSON.parse(stagesJSONStr);
 
     let allValid = true;
-    const stages: db.StageType[] = [];
-    for (const stage of formStages) {
-      if (stage.stageName === "") {
+    for (const stage of stages) {
+      if (stage.stageTitle === "") {
         allValid = false;
         break;
       }
-      stages.push({
-        stageTitle: stage.stageName,
-        defaultHandlerId: users[stage.handlerIndex].id,
-      });
     }
 
     if (!allValid) {
@@ -72,7 +63,7 @@ export const actions: Actions = {
 
     let newRequestType: db.RequestType = {
       _id: new ObjectId().toString(),
-      title: requestType,
+      title: title,
       stages: stages,
       version: 1,
     };

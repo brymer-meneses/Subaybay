@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
-  import { UserData, StageData } from "./configClasses";
+  import { UserData, StageType } from "./configClasses";
   import Input from "$lib/components/ui/input/input.svelte";
   import type { PageServerData } from "./$types";
   import {
@@ -17,29 +17,32 @@
 
   export let data: PageServerData;
 
-  const defaultStages: StageData[] = [new StageData("Newly Created Request", 0), new StageData()];
+  const defaultStages: StageType[] = [new StageType("Newly Created Request", ""), new StageType()];
 
-  let stages: StageData[] = [];
-  let requestType: string;
+  let stages: StageType[] = [];
+  let title: string;
   let processing: boolean = false;
 
-  let users = [new UserData("", "None")];
-  for (const user of data.allUsers) {
-    users.push(new UserData(user.id, user.name, user.profileUrl));
+  let handlerOptions = [new UserData("", "None")];
+  for (const [id, user] of Object.entries(data.users)) {
+    handlerOptions.push(new UserData(user.id, user.name, user.profileUrl));
+
   }
 
-  stages = defaultStages.map(stageData => stageData.clone());
+  stages = defaultStages.map(stage => new StageType(stage.stageTitle, stage.defaultHandlerId));
 
   function deleteStage(index: number) {
     stages = stages.slice(0, index).concat(stages.slice(index + 1));
   }
 
   function addSubstage() {
-    stages = [...stages, new StageData()];
+    stages = [...stages, new StageType()];
   }
 
-  function editHandler(stageIndex: number, handlerIndex: number) {
-    stages[stageIndex].handlerIndex = handlerIndex;
+  function editHandler(stageIndex: number, defaultHandlerId: string) {
+    console.log("Updated");
+    stages[stageIndex].defaultHandlerId = defaultHandlerId;
+    stages = stages;
   }
 
   async function handleSubmit(e: {
@@ -50,11 +53,10 @@
     submitter: HTMLElement | null;
     cancel(): void;
   }) {
-    const data = e.formData;
+    const formData = e.formData;
 
-    data.append("stageData", JSON.stringify(stages));
-    data.append("users", JSON.stringify(users));
-    data.append("requestType", requestType);
+    formData.append("stageData", JSON.stringify(stages));
+    formData.append("title", title);
 
     processing = true;
 
@@ -62,8 +64,8 @@
       await update();
 
       if(result.type === "success") {
-        requestType = "";
-        stages = defaultStages.map(stageData => stageData.clone());;
+        title = "";
+        stages = defaultStages.map(stage => new StageType(stage.stageTitle, stage.defaultHandlerId));
       }
 
       processing = false;
@@ -74,7 +76,7 @@
 <main class="flex justify-center">
   <div class="flex w-[40%] flex-col gap-4">
     <Input
-      bind:value={requestType}
+      bind:value={title}
       class="focus-visible:ring-0"
       placeholder="Request Type Title (e.g. OTR-1)"
     />
@@ -87,16 +89,17 @@
         </CardDescription>
       </CardHeader>
       <CardContent class="flex flex-col gap-2">
-        {#each stages as stageData, stageIndex}
+        {#each stages as stageType, stageIndex}
           <ConfigStage
-            bind:substageName={stageData.stageName}
+            bind:stageTitle={stageType.stageTitle}
             isDeletable={stageIndex !== 0}
             isRenamable={stageIndex !== 0}
             {stageIndex}
-            handlerIndex={stageData.handlerIndex}
+            handlerId={stageType.defaultHandlerId}
             deleteFunction={deleteStage}
             onHandlerEdited={editHandler}
-            {users}
+            users={data.users}
+            {handlerOptions}
           />
         {/each}
 

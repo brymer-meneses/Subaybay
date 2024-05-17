@@ -9,15 +9,11 @@ export class UserData {
   }
 }
 
-export class StageData{
-  stageName: string;
-  handlerIndex: number;
-  constructor(stageName: string = "", handlerIndex: number = 0) {
-    this.stageName = stageName;
-    this.handlerIndex = handlerIndex;
-  }
-
-  clone() {
-    return new StageData(this.stageName, this.handlerIndex);
+export class StageType {
+  stageTitle: string;
+  defaultHandlerId: string;
+  constructor(stageTitle: string = "", defaultHandlerId: string = "") {
+    this.stageTitle = stageTitle;
+    this.defaultHandlerId = defaultHandlerId;
   }
 }
