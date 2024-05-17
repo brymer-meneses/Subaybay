@@ -1,4 +1,7 @@
 <script lang="ts">
+  /**
+   * TODO: Reactive Components. Form (returned object) is not being retrieved by admin/emails
+   */
   import { goto } from "$app/navigation";
   import type { PageData, PageServerData } from "./$types.js";
 
