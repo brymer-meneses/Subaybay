@@ -1,20 +1,23 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
 
-  import { Button } from "$lib/components/ui/button";
   import * as Card from "$lib/components/ui/card/index.js";
-  import { Badge } from "$lib/components/ui/badge";
-  import type { Request } from "$lib/server/database";
-  import { Textarea } from "$lib/components/ui/textarea";
+  import * as Avatar from "$lib/components/ui/avatar";
   import * as Tabs from "$lib/components/ui/tabs";
+  import { Button } from "$lib/components/ui/button";
+  import { Badge } from "$lib/components/ui/badge";
+  import { Textarea } from "$lib/components/ui/textarea";
 
+  import Forward from "lucide-svelte/icons/forward";
+
+  import type { Request } from "$lib/server/database";
   import type { InboxStageData, UserInfo } from "./inboxTypes";
   import ChatArea from "../ChatArea.svelte";
   import InboxContentButtons from "./buttonComponents/InboxContentButtons.svelte";
 
-  export let requests: { [key: string]: Request};
+  export let requests: { [key: string]: Request };
   export let stage: InboxStageData | null;
-  export let users: { [key: string]: UserInfo};
+  export let users: { [key: string]: UserInfo };
 
   export let updateSelectedStage: () => void;
 
@@ -26,20 +29,35 @@
 
 {#if stage && info}
   <Card.Root class="overflow-hidden">
-    <Card.Header class="bg-muted/50 flex flex-row items-start">
+    <Card.Header class="flex flex-row items-start bg-muted/50">
       <div class="grid gap-0.5">
         <Card.Title class="group flex items-center gap-2 text-lg">
           {stage.stageTitle}
         </Card.Title>
-        <Card.Description>
-          {stage.requestId} <br />
-          Currently at Stage {stage.currentStageTypeIndex}: {stage.stageTitle} <br />
-          {#if stage.inboxType === "pending"}
-            You handled Stage {stage.inboxStageTypeIndex}: {stage.inboxStageTitle}
-          {:else if stage.prevHandlerId in users}
-            From: {users[stage.prevHandlerId].name} <br />
-          {/if}
-          
+        <Card.Description class="flex flex-col gap-2">
+          <p class="text-bg-muted text-xs font-extralight">{stage.requestId}</p>
+
+          <div>
+            {#if stage.inboxType === "pending"}
+              You handled Stage {stage.inboxStageTypeIndex}: {stage.inboxStageTitle}
+            {:else if stage.prevHandlerId in users}
+              <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1">
+                  <Forward size={10} />
+                  <Avatar.Root class="h-4 w-4">
+                    <Avatar.Image
+                      src={users[stage.prevHandlerId].profileUrl}
+                      alt="profile-url"
+                    />
+                    <Avatar.Fallback>CN</Avatar.Fallback>
+                  </Avatar.Root>
+                </div>
+                <p>{users[stage.prevHandlerId].name}</p>
+                <p />
+              </div>
+            {/if}
+            Currently at Stage {stage.currentStageTypeIndex}: {stage.stageTitle}
+          </div>
         </Card.Description>
       </div>
 
@@ -95,8 +113,13 @@
         </Tabs.Content>
       </Tabs.Root>
 
-      <InboxContentButtons request={requests[stage.requestId]} {stage} {users} {updateSelectedStage} bind:processing={processing}/>
-      
+      <InboxContentButtons
+        request={requests[stage.requestId]}
+        {stage}
+        {users}
+        {updateSelectedStage}
+        bind:processing
+      />
     </Card.Content>
   </Card.Root>
 {/if}

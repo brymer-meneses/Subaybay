@@ -69,7 +69,6 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
     });
 
 
-
   } catch (e) {
     if (e instanceof OAuth2RequestError) {
       redirect(
