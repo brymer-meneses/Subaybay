@@ -19,8 +19,8 @@
     <Dialog.Header>
       <Dialog.Title>Are you sure?</Dialog.Title>
       <Dialog.Description>
-        This user will get administrative privileges. Are you sure you want to
-        continue?
+        The user below will be given administrative privileges. Are you sure you
+        want to continue?
       </Dialog.Description>
     </Dialog.Header>
     <div class="flex h-20 items-center space-x-4">
@@ -54,18 +54,10 @@
             }
           };
         }}
-        on:submit={() => {
-          console.log("submitted" + new Date());
-        }}
       >
         <input type="hidden" name="email" value={user.email} />
-        <Button
-          type="submit"
-          on:click={() => {
-            console.log("submit button clicked" + new Date());
-          }}>Continue</Button
-        >
+        <Button type="submit">Continue</Button>
       </form>
-    </Dialog.Footer>
-  </Dialog.Content>
-</Dialog.Root>
+    </Dialog.Footer></Dialog.Content
+  ></Dialog.Root
+>

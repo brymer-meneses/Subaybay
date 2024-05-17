@@ -1,30 +1,31 @@
 import type { PageServerLoad } from "./$types";
 import { redirect } from "@sveltejs/kit";
 import {
-  user,
   request,
   requestType,
-  type User,
   type Request,
   type RequestType,
 } from "$lib/server/database";
 
 
+type RequestTypeInstancesCount = {
+  reqTitle: string;
+  total: {
+    finished: number;
+    pending: number;
+    stale: number;
+  };
+};
+
 export const load: PageServerLoad = async (event) => {
   if (event.locals.user && !event.locals.user.isAdmin) {
     redirect(302, "/inbox");
   }
-  
-  const users: User[] = await user.find({}).toArray();
+
   const requests: Request[] = await request.find({}).toArray();
   const requestTypes: RequestType[] = await requestType.find({}).toArray();
- 
-  const today = new Date();
-  let overview: {date: Date, value: number}[] = [];
-
-  for (let i = 13; i >= 0; i--) {
-    overview.push({date: subtractDays(today, i), value: 0});
-  }
+  
+  let count: RequestTypeInstancesCount[] = [];
 
   let summary = [
     { type: "Finished", count: 0, countThisMonth: 0 },
@@ -32,7 +33,16 @@ export const load: PageServerLoad = async (event) => {
     { type: "Stale", count: 0, countThisMonth: -1 },
   ];
 
+  for (const reqType of requestTypes) {
+    count.push({
+      reqTitle: reqType.title,
+      total: { finished: 0, pending: 0, stale: 0 },
+    });
+  }
+  count= Array.from(new Set(count)) as RequestTypeInstancesCount[]; //remove duplicates
+
   for (const request of requests) {
+    const requestTypeTitle = requestTypes.find(e => request.requestTypeId === e._id)?.title;
     const reqType = requestTypes.find((e) => e._id === request.requestTypeId);
 
     const stages = reqType?.stages;
@@ -41,38 +51,35 @@ export const load: PageServerLoad = async (event) => {
       const finalStageIndex = stages.length - 1;
       const currentStageIndex = request.currentStage.stageTypeIndex;
 
+      const foundIndex = count.findIndex(
+        (x) => x.reqTitle === requestTypeTitle,
+      );
+      
       const currentStageDateFinished = new Date(
         request.currentStage.dateFinished,
       );
       const epochDate = new Date(0);
 
       if (currentStageIndex === finalStageIndex && request.isFinished && currentStageDateFinished.getTime() !== epochDate.getTime()) {
+        count[foundIndex].total.finished++;
         summary[0].count++;
         
-        const dateDiff = Math.floor((today.getTime() - currentStageDateFinished.getTime())/ (1000 * 3600 * 24));
-
-        if (dateDiff < 14) {
-          overview[overview.length - dateDiff - 1].value++;
-        }
-
         if (isThisMonthAndYear(currentStageDateFinished)) {
           summary[0].countThisMonth++;
         }
       } else if (currentStageIndex <= finalStageIndex && !request.isFinished) {
+        count[foundIndex].total.pending++;
         summary[1].count++;
       } else if (currentStageIndex <= finalStageIndex && request.isFinished) {
+        count[foundIndex].total.stale++;
         summary[2].count++;
       }
     }
   }
-  return { users, stats: { summary, overview},};
+  count.sort(compare);
+  return {stats: { summary, count, requests, requestTypes}};
 };
 
-function subtractDays(date: Date, days: number) {
-  const result = new Date(date);
-  result.setDate(result.getDate() - days);
-  return result;
- }
 
 function isThisMonthAndYear(date: Date) {
   const today = new Date();
@@ -80,4 +87,17 @@ function isThisMonthAndYear(date: Date) {
     date.getMonth() === today.getMonth() &&
     date.getFullYear() === today.getFullYear()
   );
+}
+
+function compare(a: RequestTypeInstancesCount, b: RequestTypeInstancesCount) {
+  let totalA = 0;
+  let totalB = 0;
+
+  for (const key in a.total) {
+    const reqKey = key as keyof RequestTypeInstancesCount["total"];
+    totalA += a.total[reqKey];
+    totalB += b.total[reqKey];
+  }
+
+  return totalB - totalA;
 }

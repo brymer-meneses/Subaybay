@@ -1,7 +1,7 @@
 <script lang="ts">
+  import * as Dialog from "$lib/components/ui/dialog";
   import { enhance, applyAction } from "$app/forms";
   import { goto } from "$app/navigation";
-  import * as Dialog from "$lib/components/ui/dialog";
   import { Button } from "$lib/components/ui/button/index.js";
 
   import UserRoundMinus from "lucide-svelte/icons/user-round-minus";
@@ -20,8 +20,8 @@
     <Dialog.Header>
       <Dialog.Title>Are you sure?</Dialog.Title>
       <Dialog.Description>
-        The user's administrative privileges will be removed. An administrator
-        can add them back later. Are you sure you want to remove?
+        The user below will have their administrative privileges removed. Are
+        you sure you want to continue?
       </Dialog.Description>
     </Dialog.Header>
     <div class="flex h-20 items-center space-x-4">
@@ -57,8 +57,8 @@
         }}
       >
         <input type="hidden" name="email" value={user.email} />
-        <Button type="submit">Remove</Button>
+        <Button type="submit">Remove Admin</Button>
       </form>
-    </Dialog.Footer>
-  </Dialog.Content>
-</Dialog.Root>
+    </Dialog.Footer></Dialog.Content
+  ></Dialog.Root
+>

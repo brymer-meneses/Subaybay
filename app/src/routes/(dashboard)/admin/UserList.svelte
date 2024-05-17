@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import * as Card from "$lib/components/ui/card/index.js";
   import * as HoverCard from "$lib/components/ui/hover-card/index.js";
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
@@ -7,13 +8,6 @@
   import UsersRoundCog from "lucide-svelte/icons/user-round-cog";
 
   export let users: User[];
-  export let tab: string;
-
-  let value: string = "users";
-
-  const onClickHandler = (value: string) => {
-    tab = value;
-  };
 </script>
 
 <Card.Root class="m-0 h-full lg:w-72">
@@ -59,6 +53,6 @@
     </ScrollArea>
   </Card.Content>
   <Card.Footer class="flex flex-row-reverse lg:float-end">
-    <Button class="w-28" on:click={() => onClickHandler(value)}>Manage</Button>
+    <Button class="w-28" on:click={() => goto("/admin/users")}>Manage</Button>
   </Card.Footer>
 </Card.Root>

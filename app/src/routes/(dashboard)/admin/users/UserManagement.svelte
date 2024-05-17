@@ -1,27 +1,30 @@
 <script lang="ts">
-  import { page } from "$app/stores";
   import * as Card from "$lib/components/ui/card/index.js";
   import Input from "$lib/components/ui/input/input.svelte";
 
   import Search from "lucide-svelte/icons/search";
 
-  import EmailTable from "./EmailTable.svelte";
-  import AddUser from "./AddUser.svelte";
+  import UserTable from "./UserTable.svelte";
 
-  export let emails: PermittedEmail[];
+  export let users: User[];
 
   let searchTerm: string = "";
-  let filteredEmails: PermittedEmail[] = [];
+  let filteredUsers: User[] = [];
 
   $: {
-    filteredEmails = emails.filter((email: PermittedEmail) => {
-      if (
-        String(email.email)
-          .toLowerCase()
-          .includes(searchTerm.trim().toLowerCase())
-      ) {
-        return email;
+    filteredUsers = users.filter((user: User) => {
+      for (const key in user) {
+        if (key === "isAdmin" || key === "profileUrl") continue;
+        const userKey = key as keyof User;
+        if (
+          String(user[userKey])
+            .toLowerCase()
+            .includes(searchTerm.trim().toLowerCase())
+        ) {
+          return user;
+        }
       }
+      return null;
     });
   }
 </script>
@@ -30,7 +33,7 @@
   <Card.Header
     class="flex flex-col align-middle md:flex-row md:items-center md:justify-between"
   >
-    <Card.Title class="text-xl font-bold">Manage Emails</Card.Title>
+    <Card.Title class="text-xl font-bold">User Management</Card.Title>
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
       <div class="relative w-80">
         <Search
@@ -43,12 +46,9 @@
           bind:value={searchTerm}
         />
       </div>
-      <div class="w-36">
-        <AddUser data={$page.data.form} />
-      </div>
     </div>
   </Card.Header>
   <Card.Content>
-    <EmailTable bind:emails={filteredEmails} />
+    <UserTable bind:users={filteredUsers} />
   </Card.Content>
 </Card.Root>
