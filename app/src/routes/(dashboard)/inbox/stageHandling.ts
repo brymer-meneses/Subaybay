@@ -244,11 +244,15 @@ export async function rollbackStage(
 
 export async function reassign(
   request: db.Request,
-  userId: string,
-  newUserId: string,
+  newHandlerId: string,
 ) {
-  // update request
-  request.currentStage.handlerId = newUserId;
+  // Ensure the selected handler is valid
+  const nextHandler = await db.user.findOne({ _id: newHandlerId});
+  if (!nextHandler)
+    return new Result("error", "Selected handler not found in database.");
+
+  const oldHandlerId = request.currentStage.handlerId;
+  request.currentStage.handlerId = newHandlerId;
   await db.request.updateOne(
     { _id: request._id },
     { $set: { currentStage: request.currentStage } },
@@ -259,9 +263,9 @@ export async function reassign(
     stageTypeIndex: request.currentStage.stageTypeIndex,
   };
 
-  await addToInbox(newUserId, "current", stageIdentifier);
+  await addToInbox(newHandlerId, "current", stageIdentifier);
 
-  await removeFromInbox(userId, "current", stageIdentifier);
+  await removeFromInbox(oldHandlerId, "current", stageIdentifier);
 
   return new Result("success", "Reassigned request");
 }

@@ -9,12 +9,13 @@ import { zod } from "sveltekit-superforms/adapters";
 import { fail } from "@sveltejs/kit";
 import { lucia } from "$lib/server/auth";
 
-import type { InboxStageData } from "./inboxTypes";
+import type { InboxStageData, UserInfo } from "./inboxTypes";
 import { addToInbox, existsInInbox, getInbox } from "./inboxUtils";
 import {
   fullyFinishRequest,
   getRequestAndType,
   passRequest,
+  reassign,
   rollbackStage,
 } from "./stageHandling";
 
@@ -46,7 +47,7 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
 
 const getUsers = async () => {
   const cursor = db.user.find();
-  const users: { [_id: string]: { name: string; profileUrl: string } } = {};
+  const users: { [_id: string]: UserInfo } = {};
   for await (const user of cursor) {
     users[user._id] = { name: user.name, profileUrl: user.profileUrl };
   }
@@ -275,6 +276,21 @@ export const actions: Actions = {
       userId,
       rollbackStageIndex,
     );
+    setFlash(result, cookies);
+  },
+  reassign_stage: async ({ locals, request, cookies }) => {
+    const data = await request.formData();
+    const requestId: string = data.get("requestId")?.toString() ?? "";
+    const nextHandlerId: string = data.get("nextHandlerId")?.toString() ?? "";
+
+    const req = await db.request.findOne({ _id: requestId });
+    if (!req) {
+      setFlash("Error. Request not found in database.", cookies);
+      return;
+    }
+
+    const result = await reassign(req, nextHandlerId);
+
     setFlash(result, cookies);
   },
 };

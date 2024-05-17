@@ -4,41 +4,41 @@
   import { Button } from "$lib/components/ui/button";
   import * as Card from "$lib/components/ui/card/index.js";
   import { Badge } from "$lib/components/ui/badge";
-  import type { Request, User } from "$lib/server/database";
+  import type { Request } from "$lib/server/database";
   import { Textarea } from "$lib/components/ui/textarea";
   import * as Tabs from "$lib/components/ui/tabs";
 
-  import type { InboxStageData } from "./inboxTypes";
+  import type { InboxStageData, UserInfo } from "./inboxTypes";
   import ChatArea from "../ChatArea.svelte";
   import InboxContentButtons from "./InboxContentButtons.svelte";
 
   export let requests: { [key: string]: Request};
-  export let selectedStage: InboxStageData;
-  export let users: { [key: string]: User};
+  export let stage: InboxStageData | null;
+  export let users: { [key: string]: UserInfo};
 
   export let updateSelectedStage: () => void;
 
   let processing = false;
   //todo change display when processing is true
 
-  $: info = selectedStage ? requests[selectedStage.requestId] : null;
+  $: info = stage ? requests[stage.requestId] : null;
 </script>
 
-{#if info}
+{#if stage && info}
   <Card.Root class="overflow-hidden">
     <Card.Header class="bg-muted/50 flex flex-row items-start">
       <div class="grid gap-0.5">
         <Card.Title class="group flex items-center gap-2 text-lg">
-          {selectedStage.stageTitle}
+          {stage.stageTitle}
         </Card.Title>
         <Card.Description>
-          {selectedStage.requestId} <br />
-          Currently at Step: {selectedStage.currentStageTypeIndex} <br />
-          {#if selectedStage.prevHandlerId in users}
-            From: {users[selectedStage.prevHandlerId].name} <br />
+          {stage.requestId} <br />
+          Currently at Step: {stage.currentStageTypeIndex} <br />
+          {#if stage.prevHandlerId in users}
+            From: {users[stage.prevHandlerId].name} <br />
           {/if}
-          {#if selectedStage.currentStageTypeIndex != selectedStage.inboxStageTypeIndex}
-            You handled Step: {selectedStage.inboxStageTypeIndex}
+          {#if stage.currentStageTypeIndex != stage.inboxStageTypeIndex}
+            You handled Step: {stage.inboxStageTypeIndex}
           {/if}
         </Card.Description>
       </div>
@@ -49,7 +49,7 @@
           variant="outline"
           class="h-8 gap-1"
           on:click={() => {
-            goto("/requests/" + selectedStage.requestId);
+            goto("/requests/" + stage.requestId);
           }}
         >
           <span class="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
@@ -95,7 +95,7 @@
         </Tabs.Content>
       </Tabs.Root>
 
-      <InboxContentButtons {selectedStage} {users} {updateSelectedStage} bind:processing={processing}/>
+      <InboxContentButtons stage={stage} {users} {updateSelectedStage} bind:processing={processing}/>
       
     </Card.Content>
   </Card.Root>

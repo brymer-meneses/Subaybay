@@ -8,12 +8,13 @@
   import InboxContent from "./InboxContent.svelte";
   import NewRequest from "./NewRequest.svelte";
   import type { PageServerData } from "./$types";
+    import type { InboxStageData } from "./inboxTypes";
 
   export let data: PageServerData;
 
   let requestTypes = data.latestRequestTypes;
 
-  let selectedStage: any = null;
+  let selectedStage: InboxStageData  | null = null;
   let inboxes: { active: any; pending: any } = {
     active: [],
     pending: [],
@@ -110,7 +111,7 @@
   <div class="lg:col-span-2">
     <InboxContent
       {updateSelectedStage}
-      bind:selectedStage
+      bind:stage={selectedStage}
       requests={data.relevantRequests}
       users={data.users}
     />
