@@ -2,10 +2,11 @@ use axum::{
     http::Method,
     middleware,
     response::{IntoResponse, Redirect},
-    routing::get,
+    routing::{get, post},
     Router,
 };
 
+use axum_extra::middleware;
 use tower::{Layer, ServiceBuilder};
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace::TraceLayer;
@@ -28,11 +29,12 @@ pub async fn root() -> Router {
 
     let router = Router::new()
         .route("/notifications/ws", get(notifications::websocket))
+        .route("/notifications/events", post(notifications::event))
         .route("/chat/ws", get(chat::websocket))
-        .route_layer(ServiceBuilder::new().layer(middleware::from_fn_with_state(
+        .route_layer(middleware::from_fn_with_state(
             state.clone(),
             authentication,
-        )))
+        ))
         .route("/status", get(status))
         .layer(cors_layer)
         .layer(trace_layer)

@@ -8,7 +8,6 @@
   export let icon: ComponentType;
   export let name: string;
   export let href: string;
-  export let notifications: number = 0;
 
   export let isCollapsed: boolean;
 
@@ -26,16 +25,7 @@
     )}
   >
     <div class="flex items-center gap-3">
-      <div class="relative h-5 w-5">
-        <svelte:component this={icon} class="h-5 w-5" />
-        {#if notifications !== 0}
-          <div
-            class="absolute right-[-10px] top-[-10px] flex w-[15px] items-center justify-center rounded-full bg-red-500 p-[3px] text-xs text-white drop-shadow-sm"
-          >
-            {notifications}
-          </div>
-        {/if}
-      </div>
+      <svelte:component this={icon} class="h-5 w-5" />
       <span class="text-sm">{name}</span>
     </div>
   </a>
@@ -54,16 +44,7 @@
         {...builder}
       >
         <div class="flex items-center gap-4">
-          <div class="relative h-5 w-5">
-            <svelte:component this={icon} class="h-5 w-5" />
-            {#if notifications !== 0}
-              <div
-                class="absolute right-[-10px] top-[-10px] flex w-[15px] items-center justify-center rounded-full bg-red-500 p-[2px] text-xs text-white drop-shadow-sm"
-              >
-                {notifications}
-              </div>
-            {/if}
-          </div>
+          <svelte:component this={icon} class="h-5 w-5" />
         </div>
       </a>
     </Tooltip.Trigger>

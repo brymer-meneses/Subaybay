@@ -20,6 +20,8 @@
 
   import { page } from "$app/stores";
 
+  import Notifiable from "./Notifiable.svelte";
+
   export let isCollapsed: boolean;
   export let notifications: { messages: number; requests: number };
 </script>
@@ -47,22 +49,29 @@
     </div>
     <Separator />
     <div class="flex w-full flex-col">
-      <NavLink
-        icon={Inbox}
-        name="Inbox"
-        href="/inbox"
-        {isCollapsed}
-        notifications={notifications.messages}
-      ></NavLink>
-      <NavLink icon={ListTodo} name="Requests" href="/requests" {isCollapsed} />
-      <NavLink
-        icon={FileCog}
-        name="Configuration"
-        href="/configuration"
-        {isCollapsed}
-      />
+      <Notifiable count={1}>
+        <NavLink icon={Inbox} name="Inbox" href="/inbox" {isCollapsed} />
+      </Notifiable>
+      <Notifiable count={10}>
+        <NavLink
+          icon={ListTodo}
+          name="Requests"
+          href="/requests"
+          {isCollapsed}
+        />
+      </Notifiable>
+      <Notifiable>
+        <NavLink
+          icon={FileCog}
+          name="Configuration"
+          href="/configuration"
+          {isCollapsed}
+        />
+      </Notifiable>
       {#if $page.data.userInfo.isAdmin}
-        <NavLink icon={UsersRound} name="Admin" href="/admin" {isCollapsed} />
+        <Notifiable>
+          <NavLink icon={UsersRound} name="Admin" href="/admin" {isCollapsed} />
+        </Notifiable>
       {/if}
     </div>
 

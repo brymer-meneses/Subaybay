@@ -24,11 +24,25 @@ pub struct Message {
 #[serde(rename_all = "camelCase", tag = "type", content = "content")]
 pub enum Notification {
     #[serde(rename_all = "camelCase")]
-    Message {
+    PendingInboxItemMessage {
         message_id: ObjectId,
-        seen: bool,
         user_id: String,
     },
+
+    #[serde(rename_all = "camelCase")]
+    ActiveInboxItemMessage {
+        message_id: ObjectId,
+        user_id: String,
+    },
+
+    #[serde(rename_all = "camelCase")]
+    ActiveInboxItem(InboxItemIdentifier),
+
+    #[serde(rename_all = "camelCase")]
+    PendingInboxItem(InboxItemIdentifier),
+
+    #[serde(rename_all = "camelCase")]
+    RecalledInboxItem(InboxItemIdentifier),
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -48,4 +62,13 @@ pub struct Session {
     pub _id: String,
     pub user_id: String,
     pub expires_at: DateTime,
+}
+
+/// What is needed to query the inbox
+#[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct InboxItemIdentifier {
+    #[serde(alias = "_id")]
+    pub _id: ObjectId,
+    pub stage_type_index: u64,
 }

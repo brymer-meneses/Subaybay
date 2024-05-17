@@ -1,4 +1,7 @@
-use crate::{database as db, routes::chat};
+use crate::{
+    database as db,
+    routes::{chat, notifications},
+};
 use axum_typed_websockets::{Message, WebSocket, WebSocketUpgrade};
 use mongodb::Database;
 use tokio::sync::broadcast;
@@ -7,6 +10,7 @@ use tokio::sync::broadcast;
 pub struct AppState {
     pub database: Database,
     pub message_tx: broadcast::Sender<chat::ClientMessage>,
+    pub notification_tx: broadcast::Sender<notifications::ClientMessage>,
 }
 
 impl AppState {
@@ -27,11 +31,13 @@ impl AppState {
 
         let database = client.database("subaybay");
         let (message_tx, _) = broadcast::channel(128);
+        let (notification_tx, _) = broadcast::channel(128);
         // let (notification_tx, _) = broadcast::channel(128);
 
         Self {
             database,
             message_tx,
+            notification_tx,
         }
     }
 }
