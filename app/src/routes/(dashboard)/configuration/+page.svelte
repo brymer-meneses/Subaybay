@@ -80,6 +80,7 @@
   }
 </script>
 
+<!-- TODO add Responsive layout -->
 <main class="mx-8 flex flex-row space-x-4">
   <div class="flex w-[40%] flex-grow flex-col gap-4">
     <Input
