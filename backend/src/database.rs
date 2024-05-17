@@ -21,28 +21,20 @@ pub struct Message {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct Notification {
+    #[serde(rename = "_id")]
+    pub _id: ObjectId,
+    pub seen: bool,
+    pub user_id: String,
+    pub body: NotificationBody,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase", tag = "type", content = "content")]
-pub enum Notification {
+pub enum NotificationBody {
     #[serde(rename_all = "camelCase")]
-    PendingInboxItemMessage {
-        message_id: ObjectId,
-        user_id: String,
-    },
-
-    #[serde(rename_all = "camelCase")]
-    ActiveInboxItemMessage {
-        message_id: ObjectId,
-        user_id: String,
-    },
-
-    #[serde(rename_all = "camelCase")]
-    ActiveInboxItem(InboxItemIdentifier),
-
-    #[serde(rename_all = "camelCase")]
-    PendingInboxItem(InboxItemIdentifier),
-
-    #[serde(rename_all = "camelCase")]
-    RecalledInboxItem(InboxItemIdentifier),
+    Message { message_id: ObjectId },
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]

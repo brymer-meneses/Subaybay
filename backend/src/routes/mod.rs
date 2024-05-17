@@ -6,7 +6,6 @@ use axum::{
     Router,
 };
 
-use axum_extra::middleware;
 use tower::{Layer, ServiceBuilder};
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace::TraceLayer;

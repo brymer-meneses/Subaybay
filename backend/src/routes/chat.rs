@@ -5,10 +5,13 @@ use axum::{
 use axum_typed_websockets::{Message, WebSocket, WebSocketUpgrade};
 use mongodb::bson::oid::ObjectId;
 
-use crate::error::Result;
-use crate::{database as db, state::AppState};
+use crate::{
+    database::{self as db, Notification},
+    state::AppState,
+};
+use crate::{error::Result, routes::notifications};
 use mongodb::bson::{self, doc};
-use std::sync::Arc;
+use std::{ops::Not, sync::Arc};
 use tokio::sync::broadcast::{self, Receiver, Sender};
 
 pub async fn websocket(
@@ -60,20 +63,24 @@ async fn handle_connection(
                     room_id,
                 } => {
                     let user = users
-                        .find_one(doc! {"_id": &params.user_id}, None)
+                        .find_one(doc! {"_id": &user_id}, None)
                         .await
-                        .unwrap()
-                        .unwrap();
+                        .ok()
+                        .flatten();
 
-                    let _ = ws_sender
-                        .send(Message::Item(ServerMessage::Reply(MessageWithProfile {
-                            room_id,
-                            date_time,
-                            user_id,
-                            content,
-                            profile_url: user.profile_url,
-                        })))
-                        .await;
+                    if let Some(user) = user {
+                        let _ = ws_sender
+                            .send(Message::Item(ServerMessage::Reply(MessageWithProfile {
+                                room_id,
+                                date_time,
+                                user_id,
+                                content,
+                                profile_url: user.profile_url,
+                            })))
+                            .await;
+                    } else {
+                        tracing::error!("Got an invalid user_id `{}`", &user_id);
+                    }
                 }
 
                 ClientMessage::Event { date_time, content } => {}
@@ -112,6 +119,13 @@ async fn handle_connection(
                                 .await
                                 .unwrap();
 
+                            process_notifications(
+                                state.database.clone(),
+                                &chat_message,
+                                state.notification_tx.clone(),
+                            )
+                            .await;
+
                             let _ = sender.send(ClientMessage::Message {
                                 date_time,
                                 content: chat_message.content,
@@ -142,6 +156,61 @@ async fn handle_connection(
         _ = (&mut send_task) => receive_task.abort(),
         _ = (&mut receive_task) => send_task.abort(),
     };
+}
+
+async fn process_notifications(
+    database: mongodb::Database,
+    message: &db::Message,
+    sender: broadcast::Sender<db::Notification>,
+) {
+    let notifications_collection = database.collection::<db::Notification>("notifications");
+    let rooms_collection = database.collection::<db::Room>("rooms");
+    let room = rooms_collection
+        .find_one(doc! { "roomId": &message.room_id}, None)
+        .await
+        .ok()
+        .flatten();
+
+    match room {
+        Some(room) => {
+            // we're the only participant in this room so we return
+            if room.participants.len() == 1 {
+                return;
+            }
+
+            let notifications = room
+                .participants
+                .iter()
+                .map(|participant| Notification {
+                    _id: ObjectId::new(),
+                    seen: false,
+                    body: db::NotificationBody::Message {
+                        message_id: message._id,
+                    },
+                    user_id: participant.clone(),
+                })
+                .filter(|notification| notification.user_id != message.user_id)
+                .collect::<Vec<Notification>>();
+
+            for notification in notifications.iter() {
+                if let Err(err) = sender.send(notification.clone()) {
+                    tracing::error!("{}", err);
+                }
+            }
+
+            let result = notifications_collection
+                .insert_many(notifications, None)
+                .await;
+
+            if let Err(err) = result {
+                tracing::error!("Insertion error: {}", err);
+            }
+        }
+
+        None => {
+            tracing::error!("User passed an invalid room_id {}", &message.room_id);
+        }
+    }
 }
 
 async fn get_previous_messages(

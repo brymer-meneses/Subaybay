@@ -3,13 +3,14 @@ use axum::{
     response::IntoResponse,
 };
 use axum_typed_websockets::{Message, WebSocket, WebSocketUpgrade};
-use futures::{StreamExt, TryStreamExt};
+use futures::{SinkExt, StreamExt, TryStreamExt};
 
-use crate::{database::InboxItemIdentifier, error::Result};
+use crate::state::AppState;
 use crate::{
-    database::{self as db, Notification},
-    state::AppState,
+    database::{self as db, InboxItemIdentifier, Notification, NotificationBody},
+    error::Result,
 };
+use mongodb::bson::doc;
 use std::{collections::HashMap, sync::Arc};
 
 pub async fn event() -> impl IntoResponse {
@@ -30,6 +31,82 @@ async fn handle_connection(
     socket: WebSocket<ServerMessage, ClientMessage>,
 ) {
     let (mut ws_sender, mut ws_receiver) = socket.split();
+
+    let mut notification_tx = state.notification_tx.subscribe();
+
+    match get_unseen_notifications(state.database.clone(), &args.user_id).await {
+        Ok(notifications) => {
+            // TODO: process this and send to the user
+        }
+        Err(err) => {
+            tracing::error!("{err}");
+        }
+    };
+
+    let receive_task = tokio::spawn(async move {
+        while let Ok(notification) = notification_tx.recv().await {
+            let notifications_collection = state
+                .database
+                .collection::<db::Notification>("notifications");
+
+            let update_result = notifications_collection
+                .update_one(
+                    doc! { "_id": notification._id},
+                    doc! {"$set": doc! {
+                        "seen": true,
+                    } },
+                    None,
+                )
+                .await;
+
+            if let Err(err) = update_result {
+                tracing::error!("{err}");
+            }
+
+            match notification.body {
+                NotificationBody::Message { message_id } => {
+                    let message_collection = state.database.collection::<db::Message>("messages");
+                    let message = message_collection
+                        .find_one(doc! {"_id": message_id}, None)
+                        .await
+                        .ok()
+                        .flatten();
+
+                    if let Some(message) = message {
+                        if message.user_id == args.user_id {
+                            continue;
+                        }
+
+                        let _ = ws_sender
+                            .send(Message::Item(ServerMessage::NewMessage(message)))
+                            .await;
+                    } else {
+                        tracing::error!("Failed to get the message_id: `{}`", message_id);
+                    }
+                }
+            }
+            // ws_sender.send(Message::Item(ServerMessage::NewMessage()))
+        }
+    });
+}
+
+async fn get_unseen_notifications(
+    database: mongodb::Database,
+    user_id: &String,
+) -> mongodb::error::Result<Vec<Notification>> {
+    let notifications_collection = database.collection::<db::Notification>("notifications");
+
+    notifications_collection
+        .find(
+            doc! {
+                "userId": user_id,
+                "seen": false,
+            },
+            None,
+        )
+        .await?
+        .try_collect::<Vec<Notification>>()
+        .await
 }
 
 use serde::{Deserialize, Serialize};
@@ -50,7 +127,7 @@ pub enum ServerMessage {
     NewInboxItem(db::InboxItemIdentifier),
 
     #[serde(rename_all = "camelCase")]
-    NotificationsCount(NotificationsCount),
+    UnseenNotificationsCount(NotificationsCount),
 }
 
 #[derive(Serialize, Deserialize)]

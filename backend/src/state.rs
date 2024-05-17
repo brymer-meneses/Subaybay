@@ -10,7 +10,7 @@ use tokio::sync::broadcast;
 pub struct AppState {
     pub database: Database,
     pub message_tx: broadcast::Sender<chat::ClientMessage>,
-    pub notification_tx: broadcast::Sender<notifications::ClientMessage>,
+    pub notification_tx: broadcast::Sender<db::Notification>,
 }
 
 impl AppState {
