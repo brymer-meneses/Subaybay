@@ -20,7 +20,7 @@ export const getLatestRequestTypes = async (): Promise<db.RequestType[]> => {
   for await (const reqType of cursor) {
     if (!(reqType.title in requestTypes)) {
       requestTypes[reqType.title] = reqType;
-    } else if (reqType.version > requestTypes[reqType._id].version) {
+    } else if (reqType.version > requestTypes[reqType.title].version) {
       requestTypes[reqType.title] = reqType;
     }
   }

@@ -2,6 +2,7 @@ import type { PageServerLoad } from "./$types";
 import type { Actions } from "./$types";
 
 import * as db from "$lib/server/database";
+import { getLatestRequestTypes } from "$lib/server/dbUtils";
 import { ObjectId } from "mongodb";
 import type { UserData } from "./configClasses";
 import { setFlash } from "sveltekit-flash-message/server";
@@ -11,10 +12,16 @@ export const load: PageServerLoad = async (event) => {
   let cursor = db.user.find();
   let users: { [key: string]: UserData } = {};
   for await (const doc of cursor) {
-    users[doc._id] = { id:doc._id, name:doc.name, profileUrl:doc.profileUrl };
+    users[doc._id] = {
+      id: doc._id,
+      name: doc.name,
+      profileUrl: doc.profileUrl,
+    };
   }
 
-  return { userInfo: event.locals.user, users };
+  const requestTypes = await getLatestRequestTypes();
+
+  return { userInfo: event.locals.user, users, requestTypes };
 };
 
 export const actions: Actions = {

@@ -14,10 +14,14 @@
   import Plus from "lucide-svelte/icons/plus";
   import ConfigStage from "./ConfigStage.svelte";
   import { enhance } from "$app/forms";
+  import RequestTypeList from "./RequestTypeList.svelte";
 
   export let data: PageServerData;
 
-  const defaultStages: StageType[] = [new StageType("Newly Created Request", ""), new StageType()];
+  const defaultStages: StageType[] = [
+    new StageType("Newly Created Request", ""),
+    new StageType(),
+  ];
 
   let stages: StageType[] = [];
   let title: string;
@@ -26,10 +30,11 @@
   let handlerOptions = [new UserData("", "None")];
   for (const [id, user] of Object.entries(data.users)) {
     handlerOptions.push(new UserData(user.id, user.name, user.profileUrl));
-
   }
 
-  stages = defaultStages.map(stage => new StageType(stage.stageTitle, stage.defaultHandlerId));
+  stages = defaultStages.map(
+    (stage) => new StageType(stage.stageTitle, stage.defaultHandlerId),
+  );
 
   function deleteStage(index: number) {
     stages = stages.slice(0, index).concat(stages.slice(index + 1));
@@ -62,9 +67,11 @@
     return async ({ update, result }: any) => {
       await update();
 
-      if(result.type === "success") {
+      if (result.type === "success") {
         title = "";
-        stages = defaultStages.map(stage => new StageType(stage.stageTitle, stage.defaultHandlerId));
+        stages = defaultStages.map(
+          (stage) => new StageType(stage.stageTitle, stage.defaultHandlerId),
+        );
       }
 
       processing = false;
@@ -113,7 +120,9 @@
       <form
         action="?/create"
         method="POST"
-        use:enhance={(event) => {return handleSubmit(event)}}
+        use:enhance={(event) => {
+          return handleSubmit(event);
+        }}
       >
         {#if !processing}
           <Button type="submit">Create</Button>
@@ -124,3 +133,6 @@
     </div>
   </div>
 </main>
+<div class="flex flex-col">
+  <RequestTypeList requestTypes={data.requestTypes} />
+</div>

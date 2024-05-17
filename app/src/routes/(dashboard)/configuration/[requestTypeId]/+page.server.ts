@@ -88,12 +88,12 @@ export const actions: Actions = {
       }
     }
 
-    if (createNewVersion) {
+    if (createNewVersion && await isUsedByAnyRequest(requestTypeId)) {
       const newVersion: db.RequestType = {
         _id: new ObjectId().toString(),
         title: requestType.title,
         version: requestType.version + 1,
-        stages: requestType.stages,
+        stages: newStages,
       };
       db.requestType.insertOne(newVersion);
     } else {
@@ -109,3 +109,8 @@ export const actions: Actions = {
     );
   },
 };
+
+async function isUsedByAnyRequest(requestTypeId: string) {
+  const first = await db.request.findOne({ requestTypeId: requestTypeId });
+  return first ? true : false;
+}
