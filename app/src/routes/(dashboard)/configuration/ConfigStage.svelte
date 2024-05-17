@@ -11,7 +11,7 @@
   import Ban from "lucide-svelte/icons/ban";
   import CircleX from "lucide-svelte/icons/circle-x";
 
-  export let users: {[key: string]: UserData}
+  export let users: { [key: string]: UserData };
   export let handlerOptions: UserData[];
   export let handlerId: string;
 
@@ -21,17 +21,13 @@
   export let stageIndex: number;
 
   export let deleteFunction = (stageIndex: number) => {};
-  export let onHandlerEdited: (
-    stageIndex: number,
-    handlerId: string,
-  ) => void;
+  export let onHandlerEdited: (stageIndex: number, handlerId: string) => void;
 
   function onDropdownChanged(value: string | undefined) {
-    console.log(value)
-    if (value) {
-      handlerId = value;
-      onHandlerEdited(stageIndex, handlerId);
-    }
+    if (!value) value = "";
+
+    handlerId = value;
+    onHandlerEdited(stageIndex, handlerId);
   }
 </script>
 
@@ -58,7 +54,7 @@
     <DropDownMenu.Trigger>
       <div class="ml-2">
         {#if !(handlerId in users) || users[handlerId].profileUrl === ""}
-          <CircleUserRound class="h-8 w-8 stroke-muted-foreground stroke-1" />
+          <CircleUserRound class="stroke-muted-foreground h-8 w-8 stroke-1" />
         {:else}
           <Avatar.Root class="h-8 w-8">
             <Avatar.Image

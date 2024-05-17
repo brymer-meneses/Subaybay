@@ -1,35 +1,37 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
-  import { UserData, StageType } from "./configClasses";
   import Input from "$lib/components/ui/input/input.svelte";
   import type { PageServerData } from "./$types";
   import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
   } from "$lib/components/ui/card";
   import Plus from "lucide-svelte/icons/plus";
-  import ConfigStage from "./ConfigStage.svelte";
   import { enhance } from "$app/forms";
+  import { UserData, StageType } from "../configClasses";
+  import ConfigStage from "../ConfigStage.svelte";
+    import Label from "$lib/components/ui/label/label.svelte";
 
   export let data: PageServerData;
 
-  const defaultStages: StageType[] = [new StageType("Newly Created Request", ""), new StageType()];
-
   let stages: StageType[] = [];
-  let title: string;
   let processing: boolean = false;
+
+  let requestType = data.requestType;
+
+  let existingStages: StageType[] = [];
 
   let handlerOptions = [new UserData("", "None")];
   for (const [id, user] of Object.entries(data.users)) {
     handlerOptions.push(new UserData(user.id, user.name, user.profileUrl));
-
   }
 
-  stages = defaultStages.map(stage => new StageType(stage.stageTitle, stage.defaultHandlerId));
+  existingStages = requestType.stages;
+  
+  stages = existingStages.map(stage => new StageType(stage.stageTitle, stage.defaultHandlerId));
 
   function deleteStage(index: number) {
     stages = stages.slice(0, index).concat(stages.slice(index + 1));
@@ -55,18 +57,12 @@
     const formData = e.formData;
 
     formData.append("stageData", JSON.stringify(stages));
-    formData.append("title", title);
+    formData.append("requestTypeId", data.requestType._id);
 
     processing = true;
 
     return async ({ update, result }: any) => {
       await update();
-
-      if(result.type === "success") {
-        title = "";
-        stages = defaultStages.map(stage => new StageType(stage.stageTitle, stage.defaultHandlerId));
-      }
-
       processing = false;
     };
   }
@@ -74,11 +70,9 @@
 
 <main class="flex justify-center">
   <div class="flex w-[40%] flex-col gap-4">
-    <Input
-      bind:value={title}
-      class="focus-visible:ring-0"
-      placeholder="Request Type Title (e.g. OTR-1)"
-    />
+    <Label>
+      {requestType.title}
+    </Label>
     <Card class="flex flex-col border-gray-300">
       <CardHeader>
         <CardTitle>Stages</CardTitle>
@@ -111,12 +105,13 @@
 
     <div class="flex justify-center">
       <form
-        action="?/create"
+        action="?/edit"
         method="POST"
         use:enhance={(event) => {return handleSubmit(event)}}
       >
         {#if !processing}
-          <Button type="submit">Create</Button>
+        <!--Todo add confirmation-->
+          <Button type="submit">Accept Changes</Button>
         {:else}
           Processing... Please Wait
         {/if}
