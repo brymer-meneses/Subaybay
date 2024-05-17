@@ -70,7 +70,7 @@ const getRequestsAndStages = async (
 
     requests[stageIdentifier.requestId] = req;
     const requestType = requestTypes[req.requestTypeId];
-    addStage(stageIdentifier, req, requestType, activeStages);
+    addStage(stageIdentifier, req, requestType, activeStages, "active");
   }
 
   for (const stageIdentifier of userInbox.recallable) {
@@ -79,7 +79,7 @@ const getRequestsAndStages = async (
 
     requests[stageIdentifier.requestId] = req;
     const requestType = requestTypes[req.requestTypeId];
-    addStage(stageIdentifier, req, requestType, pendingStages);
+    addStage(stageIdentifier, req, requestType, pendingStages, "pending");
   }
 
   return {
@@ -94,6 +94,7 @@ const addStage = (
   request: db.Request,
   requestType: db.RequestType,
   listToAppendTo: InboxStageData[],
+  inboxType: "active" | "pending",
 ) => {
   const stage = request.currentStage;
 
@@ -107,6 +108,7 @@ const addStage = (
     prevHandlerId: stage.prevHandlerId,
     currentStageTypeIndex: stage.stageTypeIndex,
     inboxStageTypeIndex: stageIdentifier.stageTypeIndex,
+    inboxType: inboxType,
     final: stage.stageTypeIndex == requestType.stages.length - 1,
     finished: stage.finished,
   });

@@ -56,15 +56,17 @@ export async function passRequest(
   const oldStageIndex = request.currentStage.stageTypeIndex;
   const newStageIndex = oldStageIndex + 1;
   const newNextStageIndex = newStageIndex + 1;
-  request.currentStage.finished = true;
-  request.currentStage.dateFinished = new Date();
+
+  const oldStage = { ...request.currentStage };
+  oldStage.finished = true;
+  oldStage.dateFinished = new Date();
 
   // Update request
-  const newHistory = [...request.history, request.currentStage];
+  const newHistory = [...request.history, oldStage];
   const newCurrentStage: db.Stage = {
     stageTypeIndex: newStageIndex,
     handlerId: nextHandlerId,
-    prevHandlerId: request.currentStage.handlerId,
+    prevHandlerId: oldStage.handlerId,
     finished: false,
     dateStarted: new Date(),
     dateFinished: new Date(0),
@@ -184,11 +186,13 @@ export async function rollbackStage(
   const currentHandlerId = request.currentStage.handlerId;
   const currentStageIndex = request.currentStage.stageTypeIndex;
   const newCurrentStageIndex = rollbackStageIndex;
-  request.currentStage.finished = false;
-  request.currentStage.dateFinished = new Date(0);
+
+  const oldStage = { ...request.currentStage };
+  oldStage.finished = false;
+  oldStage.dateFinished = new Date();
 
   // Update Request
-  const newHistory = [...request.history, request.currentStage];
+  const newHistory = [...request.history, oldStage];
   const newCurrentStage: db.Stage = {
     stageTypeIndex: newCurrentStageIndex,
     handlerId: userId,
@@ -242,22 +246,42 @@ export async function rollbackStage(
   );
 }
 
-export async function reassign(
-  request: db.Request,
-  newHandlerId: string,
-) {
+export async function reassign(request: db.Request, newHandlerId: string) {
   // Ensure the selected handler is valid
-  const nextHandler = await db.user.findOne({ _id: newHandlerId});
-  if (!nextHandler)
+  const newHandler = await db.user.findOne({ _id: newHandlerId });
+  if (!newHandler)
     return new Result("error", "Selected handler not found in database.");
 
   const oldHandlerId = request.currentStage.handlerId;
-  request.currentStage.handlerId = newHandlerId;
+
+  // Don't allow reassigning to self
+  if (oldHandlerId === newHandlerId)
+    return new Result(
+      "error",
+      "Selected handler is already handling this stage",
+    );
+
+  const oldStage = { ...request.currentStage };
+  oldStage.dateFinished = new Date();
+
+  const newCurrentStage: db.Stage = {
+    stageTypeIndex: request.currentStage.stageTypeIndex,
+    handlerId: newHandlerId,
+    prevHandlerId: oldHandlerId,
+    finished: false,
+    dateStarted: new Date(),
+    dateFinished: new Date(0),
+  };
+
+  const newHistory = [...request.history, oldStage];
+
+  // Update request's currentStage and history.
   await db.request.updateOne(
     { _id: request._id },
-    { $set: { currentStage: request.currentStage } },
+    { $set: { currentStage: newCurrentStage, history: newHistory } },
   );
 
+  // Add and remove from inboxes
   const stageIdentifier: db.StageIdentifier = {
     requestId: request._id,
     stageTypeIndex: request.currentStage.stageTypeIndex,

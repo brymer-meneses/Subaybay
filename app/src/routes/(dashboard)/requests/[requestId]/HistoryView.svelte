@@ -1,10 +1,12 @@
 <script lang="ts">
   import * as Card from "$lib/components/ui/card";
   import * as Avatar from "$lib/components/ui/avatar";
-
-  import { CircleUserRound } from "lucide-svelte";
   import { Label } from "$lib/components/ui/label";
   import { ScrollArea } from "$lib/components/ui/scroll-area";
+ 
+  import { CircleUserRound } from "lucide-svelte";
+
+  import type { Request, RequestType } from "$lib/server/database";
 
   interface StageData {
     title: string;
@@ -12,8 +14,8 @@
     dateFinished: Date;
   }
 
-  export let request: any;
-  export let requestType: any;
+  export let request: Request;
+  export let requestType: RequestType;
   export let users: { [_id: string]: { name: string; profileUrl: string } };
 
   let history: StageData[] = [];
