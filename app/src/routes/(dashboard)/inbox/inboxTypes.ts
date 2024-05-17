@@ -8,6 +8,7 @@ export interface InboxStageData {
   prevHandlerId: string;
   currentStageTypeIndex: number;
   inboxStageTypeIndex: number;
+  inboxType: "active" | "pending";
   final: boolean;
   finished: boolean;
 }

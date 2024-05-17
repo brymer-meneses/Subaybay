@@ -34,12 +34,11 @@
         <Card.Description>
           {stage.requestId} <br />
           Currently at Stage {stage.currentStageTypeIndex}: {stage.stageTitle} <br />
-          {#if stage.currentStageTypeIndex != stage.inboxStageTypeIndex}
+          {#if stage.inboxType === "pending"}
             You handled Stage {stage.inboxStageTypeIndex}: {stage.inboxStageTitle}
           {:else if stage.prevHandlerId in users}
             From: {users[stage.prevHandlerId].name} <br />
           {/if}
-          
           
         </Card.Description>
       </div>
