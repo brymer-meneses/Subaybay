@@ -34,11 +34,10 @@ export const load: LayoutServerLoad = async (event) => {
     case "configuration":
       headerData = [
         { href: "/configuration", content: "Configuration" },
+        { href: undefined, content: "Create New Request" }
       ]
       if (routes.length > 1) {
         headerData.push({ href: undefined, content: "Edit a Request Type" })
-      } else if (routes.length <= 1) {
-        headerData.push({ href: undefined, content: "Create New Request" })
       }
       break;
     case "admin":
