@@ -11,7 +11,6 @@ export const load: LayoutServerLoad = async (event) => {
 
   const routes = event.url.pathname.split('/').filter((s) => s !== "");
   const currentRoute = event.url.pathname.split('/').filter((s) => s !== "").at(0);
-
   let headerData: Array<HeaderData> = [];
 
   switch (currentRoute) {
@@ -41,8 +40,9 @@ export const load: LayoutServerLoad = async (event) => {
     case "admin":
       headerData = [
         { href: "/admin", content: "Administrator" },
-        { href: undefined, content: "Manage Administrator Settings" }
+        { href: undefined, content: routes[1]? routes[1][0].toUpperCase()+routes[1].substring(1): "Overview" },
       ]
+      
       break;
   }
 
