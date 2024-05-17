@@ -1,10 +1,7 @@
 <script lang="ts">
-  export let stageTitle: string;
-  export let requestTitle: string;
-  export let requestId: string;
-  export let dateSent: string;
-  export let currentStageTypeIndex: number;
-  export let inboxStageTypeIndex: number;
+  import type { InboxStageData } from "./inboxTypes";
+
+  export let stage: InboxStageData;
 
   import clsx from "clsx";
 
@@ -21,15 +18,15 @@
 >
   <div class="flex w-full flex-col items-start gap-1">
     <div class="flex w-full flex-row justify-between">
-      <p class="text-base font-semibold">{stageTitle}</p>
-      <p class="text-xs font-thin text-gray-600">{requestId}</p>
+      <p class="text-base font-semibold">{stage.stageTitle}</p>
+      <p class="text-xs font-thin text-gray-600">{stage.requestId}</p>
     </div>
 
-    <p class="text-sm">{requestTitle}</p>
-    <p class="text-xs font-thin text-gray-400">{dateSent}</p>
-    <p class="text-xs font-thin text-gray-400">Step: {currentStageTypeIndex}</p>
-    {#if currentStageTypeIndex != inboxStageTypeIndex}
-    <p class="text-xs font-thin text-gray-400">You handled Step: {inboxStageTypeIndex}</p>
+    <p class="text-sm">{stage.requestTitle}</p>
+    <p class="text-xs font-thin text-gray-400">{stage.dateSent}</p>
+    <p class="text-xs font-thin text-gray-400">Step: {stage.currentStageTypeIndex}</p>
+    {#if stage.currentStageTypeIndex != stage.inboxStageTypeIndex}
+    <p class="text-xs font-thin text-gray-400">You handled Step: {stage.inboxStageTypeIndex}</p>
     {/if}
   </div>
 </button>

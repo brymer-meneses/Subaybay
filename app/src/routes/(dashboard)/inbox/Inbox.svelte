@@ -2,9 +2,10 @@
   import * as Card from "$lib/components/ui/card/index.js";
   import InboxItem from "./InboxItem.svelte";
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
+  import type { InboxStageData } from "./inboxTypes";
 
   export let onSelectStage: (stage: any) => void;
-  export let stages: any[] = [];
+  export let stages: InboxStageData[] = [];
   export let isShown;
 
   let selectedStageIndex: number = 0;
@@ -45,13 +46,8 @@
       <div class="flex w-[98%] flex-col gap-1">
         {#each stages as stage, index}
           <InboxItem
+            {stage}
             isSelected={selectedStageIndex == index}
-            stageTitle={stage.stageTitle}
-            requestTitle={stage.requestTitle}
-            currentStageTypeIndex={stage.currentStageTypeIndex}
-            inboxStageTypeIndex={stage.inboxStageTypeIndex}
-            dateSent={stage.dateSent}
-            requestId={stage.requestId}
             onClick={() => select(index)}
           />
         {/each}

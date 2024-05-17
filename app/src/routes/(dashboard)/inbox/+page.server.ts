@@ -9,6 +9,7 @@ import { zod } from "sveltekit-superforms/adapters";
 import { fail } from "@sveltejs/kit";
 import { lucia } from "$lib/server/auth";
 
+import type { InboxStageData } from "./inboxTypes";
 import { addToInbox, existsInInbox, getInbox } from "./inboxUtils";
 import {
   fullyFinishRequest,
@@ -16,18 +17,6 @@ import {
   passRequest,
   rollbackStage,
 } from "./stageHandling";
-
-interface InboxStageData {
-  requestTitle: string;
-  stageTitle: string;
-  dateSent: Date;
-  requestId: string;
-  handlerId: string;
-  prevHandlerId: string;
-  currentStageTypeIndex: number;
-  inboxStageTypeIndex: number;
-  finished: boolean;
-}
 
 export const load: PageServerLoad = async ({ cookies, locals }) => {
   const sessionId = cookies.get(lucia.sessionCookieName);
@@ -116,6 +105,7 @@ const addStage = (
     prevHandlerId: stage.prevHandlerId,
     currentStageTypeIndex: stage.stageTypeIndex,
     inboxStageTypeIndex: stageIdentifier.stageTypeIndex,
+    final: stage.stageTypeIndex == requestType.stages.length - 1,
     finished: stage.finished,
   });
 };

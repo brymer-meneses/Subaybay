@@ -13,7 +13,7 @@ class Result {
   }
 }
 
-export const getRequestAndType = async (requestId: string) => {
+export async function getRequestAndType(requestId: string) {
   const req: db.Request | null = await db.request.findOne({ _id: requestId });
   if (!req) {
     return {
@@ -41,13 +41,13 @@ export const getRequestAndType = async (requestId: string) => {
   }
 
   return { req: req, reqType: reqType, error: null };
-};
+}
 
-export const passRequest = async (
+export async function passRequest(
   request: db.Request,
   requestType: db.RequestType,
   nextHandlerId: string,
-) => {
+) {
   // Ensure that the next handler exists
   const nextHandler = await db.user.findOne({ _id: nextHandlerId });
   if (!nextHandler)
@@ -98,9 +98,9 @@ export const passRequest = async (
   });
 
   return new Result("success", "Request passed to next handler");
-};
+}
 
-export const fullyFinishRequest = async (request: db.Request) => {
+export async function fullyFinishRequest(request: db.Request) {
   // Update request
   request.currentStage.finished = true;
   request.currentStage.dateFinished = new Date();
@@ -148,9 +148,9 @@ export const fullyFinishRequest = async (request: db.Request) => {
   });
 
   return new Result("success", "Request moved to archive");
-};
+}
 
-const addToArchive = async (requestId: string) => {
+async function addToArchive(requestId: string) {
   let archive: db.Archive | null = await db.archive.findOne();
   if (!archive) {
     archive = {
@@ -173,14 +173,14 @@ const addToArchive = async (requestId: string) => {
   if (!updateResult.acknowledged)
     return new Result("error", "Database failed to update archive");
   else return new Result("success", "Successfully updated archive");
-};
+}
 
-export const rollbackStage = async (
+export async function rollbackStage(
   request: db.Request,
   requestType: db.RequestType,
   userId: string,
   rollbackStageIndex: number,
-) => {
+) {
   const currentHandlerId = request.currentStage.handlerId;
   const currentStageIndex = request.currentStage.stageTypeIndex;
   const newCurrentStageIndex = rollbackStageIndex;
@@ -236,5 +236,32 @@ export const rollbackStage = async (
     stageTypeIndex: rollbackStageIndex,
   });
 
-  return new Result("success", "Rolled back stage");
-};
+  return new Result(
+    "success",
+    `Rolled back request to stage ${rollbackStageIndex}`,
+  );
+}
+
+export async function reassign(
+  request: db.Request,
+  userId: string,
+  newUserId: string,
+) {
+  // update request
+  request.currentStage.handlerId = newUserId;
+  await db.request.updateOne(
+    { _id: request._id },
+    { $set: { currentStage: request.currentStage } },
+  );
+
+  const stageIdentifier: db.StageIdentifier = {
+    requestId: request._id,
+    stageTypeIndex: request.currentStage.stageTypeIndex,
+  };
+
+  await addToInbox(newUserId, "current", stageIdentifier);
+
+  await removeFromInbox(userId, "current", stageIdentifier);
+
+  return new Result("success", "Reassigned request");
+}

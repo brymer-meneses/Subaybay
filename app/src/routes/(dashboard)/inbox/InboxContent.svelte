@@ -1,25 +1,20 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { enhance } from "$app/forms";
 
   import { Button } from "$lib/components/ui/button";
   import * as Card from "$lib/components/ui/card/index.js";
   import { Badge } from "$lib/components/ui/badge";
-  import type { Request, InboxStageData } from "$lib/server/database";
+  import type { Request, User } from "$lib/server/database";
   import { Textarea } from "$lib/components/ui/textarea";
-
-  import MoveLeft from "lucide-svelte/icons/move-left";
-  import User from "lucide-svelte/icons/user";
-
   import * as Tabs from "$lib/components/ui/tabs";
 
+  import type { InboxStageData } from "./inboxTypes";
   import ChatArea from "../ChatArea.svelte";
-  import FinishButton from "./FinishButton.svelte";
+  import InboxContentButtons from "./InboxContentButtons.svelte";
 
-  export let requests: { [key: string]: any };
-  export let selectedStage: any;
-  export let users: any;
-  let nextHandlerId: string;
+  export let requests: { [key: string]: Request};
+  export let selectedStage: InboxStageData;
+  export let users: { [key: string]: User};
 
   export let updateSelectedStage: () => void;
 
@@ -31,7 +26,7 @@
 
 {#if info}
   <Card.Root class="overflow-hidden">
-    <Card.Header class="flex flex-row items-start bg-muted/50">
+    <Card.Header class="bg-muted/50 flex flex-row items-start">
       <div class="grid gap-0.5">
         <Card.Title class="group flex items-center gap-2 text-lg">
           {selectedStage.stageTitle}
@@ -100,85 +95,8 @@
         </Tabs.Content>
       </Tabs.Root>
 
-      {#if !processing}
-        <div class="flex gap-2">
-          <!-- todo add special button for fully finalizing stage-->
-          {#if selectedStage.currentStageTypeIndex == selectedStage.inboxStageTypeIndex}
-            <FinishButton
-              {selectedStage}
-              {users}
-              {processing}
-              bind:nextHandlerId
-            >
-              <form
-                action="?/finish_stage"
-                method="POST"
-                use:enhance={() => {
-                  processing = true;
-
-                  return async ({ update }) => {
-                    await update();
-                    processing = false;
-                    updateSelectedStage();
-                  };
-                }}
-              >
-                <input
-                  type="hidden"
-                  name="requestId"
-                  value={selectedStage.requestId}
-                />
-                <input
-                  type="hidden"
-                  name="nextHandlerId"
-                  value={nextHandlerId}
-                />
-                <Button
-                  type="submit"
-                  disabled={nextHandlerId in users ? false : true}
-                  >Confirm</Button
-                >
-              </form>
-            </FinishButton>
-          {:else}
-            <form
-              action="?/rollback_stage"
-              method="POST"
-              use:enhance={() => {
-                processing = true;
-
-                return async ({ update }) => {
-                  await update();
-                  processing = false;
-                  updateSelectedStage();
-                };
-              }}
-            >
-              <input
-                type="hidden"
-                name="requestId"
-                value={selectedStage.requestId}
-              />
-              <input
-                type="hidden"
-                name="inboxStageTypeIndex"
-                value={selectedStage.inboxStageTypeIndex}
-              />
-              <!--todo add confirmation-->
-              <Button
-                type="submit"
-                class="gap-2 rounded-md"
-                variant="destructive"
-              >
-                <MoveLeft />
-                Rollback
-              </Button>
-            </form>
-          {/if}
-        </div>
-      {:else}
-        Processing... Please Wait...
-      {/if}
+      <InboxContentButtons {selectedStage} {users} {updateSelectedStage} bind:processing={processing}/>
+      
     </Card.Content>
   </Card.Root>
 {/if}
