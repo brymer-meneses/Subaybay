@@ -21,7 +21,9 @@
 <Card.Root class="w-[30rem] border ">
   <Card.Header>
     <Card.Title>Request Types</Card.Title>
-    <Card.Description>Click on any type to view details.</Card.Description>
+    <Card.Description
+      >Click on any request type to view details.</Card.Description
+    >
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
       <div class="relative w-full">
         <Search
