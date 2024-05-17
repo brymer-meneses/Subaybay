@@ -100,6 +100,7 @@ const addStage = (
   listToAppendTo.push({
     requestTitle: requestType.title,
     stageTitle: requestType.stages[stage.stageTypeIndex].stageTitle,
+    inboxStageTitle: requestType.stages[stageIdentifier.stageTypeIndex].stageTitle,
     dateSent: stage.dateStarted,
     requestId: stageIdentifier.requestId,
     handlerId: stage.handlerId,

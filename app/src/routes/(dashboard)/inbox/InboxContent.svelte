@@ -10,7 +10,7 @@
 
   import type { InboxStageData, UserInfo } from "./inboxTypes";
   import ChatArea from "../ChatArea.svelte";
-  import InboxContentButtons from "./InboxContentButtons.svelte";
+  import InboxContentButtons from "./buttonComponents/InboxContentButtons.svelte";
 
   export let requests: { [key: string]: Request};
   export let stage: InboxStageData | null;
@@ -95,7 +95,7 @@
         </Tabs.Content>
       </Tabs.Root>
 
-      <InboxContentButtons stage={stage} {users} {updateSelectedStage} bind:processing={processing}/>
+      <InboxContentButtons request={requests[stage.requestId]} {stage} {users} {updateSelectedStage} bind:processing={processing}/>
       
     </Card.Content>
   </Card.Root>
