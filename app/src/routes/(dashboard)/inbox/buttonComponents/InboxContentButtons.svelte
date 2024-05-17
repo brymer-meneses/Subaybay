@@ -6,10 +6,10 @@
   import { enhance } from "$app/forms";
 
   import FinishButton from "./FinishButton.svelte";
-  import PopoverButton from "./PopoverButton.svelte";
-  import RollbackButton from "./RollbackButton.svelte";
-
   import ReassignButton from "./ReassignButton.svelte";
+  import RollbackButton from "./RollbackButton.svelte";
+  import ArchiveButton from "./ArchiveButton.svelte";
+
   import type { InboxStageData } from "../inboxTypes";
   import type { Request } from "$lib/server/database";
 
@@ -32,16 +32,16 @@
 
 {#if !processing}
   <div class="flex gap-2">
-    <!--todo extract some of this stuff to other files-->
     <!--If in active inbox-->
     {#if stage.currentStageTypeIndex == stage.inboxStageTypeIndex}
       {#if stage.final}
-        <!--Todo add confirmation-->
-        <Button type="submit">Archive</Button>
+        <ArchiveButton {stage} {enhanceFunc} />
       {:else}
         <FinishButton {users} {stage} {request} {enhanceFunc} />
       {/if}
       <ReassignButton {users} {stage} {request} {enhanceFunc} />
+
+    <!--If in pending inbox-->
     {:else}
       <RollbackButton {stage} {enhanceFunc} />
     {/if}

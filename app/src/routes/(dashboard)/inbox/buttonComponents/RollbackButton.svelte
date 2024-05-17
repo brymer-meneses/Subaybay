@@ -1,47 +1,54 @@
 <script lang="ts">
-    import * as Dialog from "$lib/components/ui/dialog";
-    import {Button} from "$lib/components/ui/button";
-    import {MoveLeft} from "lucide-svelte/icons";
-    import { enhance } from "$app/forms";
-    import type { InboxStageData } from "../inboxTypes";
+  import * as Dialog from "$lib/components/ui/dialog";
+  import { Button } from "$lib/components/ui/button";
+  import { MoveLeft } from "lucide-svelte/icons";
+  import { enhance } from "$app/forms";
+  import type { InboxStageData } from "../inboxTypes";
 
-    export let stage: InboxStageData;
-    export let enhanceFunc;
+  export let stage: InboxStageData;
+  export let enhanceFunc;
 </script>
 
 <Dialog.Root>
   <Dialog.Trigger>
     <Button variant="destructive" class="gap-2 text-red-600 text-white">
-        <MoveLeft />
-        Rollback
+      <MoveLeft />
+      Rollback
     </Button>
   </Dialog.Trigger>
   <Dialog.Content>
     <Dialog.Header>
       <Dialog.Title>Are you sure?</Dialog.Title>
       <Dialog.Description>
-        This will rollback the request to <strong>Stage {stage.inboxStageTypeIndex}: {stage.inboxStageTitle}</strong>. <br />
-        It is currently at <strong>Stage {stage.currentStageTypeIndex}: {stage.stageTitle}</strong>. <br />
-        It will have to pass through all of the in-between stages again. <br />
-        
+        This will rollback the request to
+        <strong>
+          Stage {stage.inboxStageTypeIndex}: {stage.inboxStageTitle}
+        </strong>. <br />
+        It is currently at
+        <strong>
+          Stage {stage.currentStageTypeIndex}: {stage.stageTitle}
+        </strong>. <br />
+        It will have to pass through all of the in-between stages again.
+        <br />
+        <br />
         This cannot be undone.
+        <br />
+        Are you sure?
       </Dialog.Description>
     </Dialog.Header>
-   
+
     <Dialog.Footer>
-        <form action="?/rollback_stage" method="POST" use:enhance={enhanceFunc}>
-            <input type="hidden" name="requestId" value={stage.requestId} />
-            <input
-              type="hidden"
-              name="inboxStageTypeIndex"
-              value={stage.inboxStageTypeIndex}
-            />
-            <!--todo add confirmation-->
-            <Button type="submit" class="gap-2 rounded-md" variant="destructive">
-              I'm sure. Rollback.
-            </Button>
-          </form>
-      
+      <form action="?/rollback_stage" method="POST" use:enhance={enhanceFunc}>
+        <input type="hidden" name="requestId" value={stage.requestId} />
+        <input
+          type="hidden"
+          name="inboxStageTypeIndex"
+          value={stage.inboxStageTypeIndex}
+        />
+        <Button type="submit" class="gap-2 rounded-md" variant="destructive">
+          I'm sure. Rollback.
+        </Button>
+      </form>
     </Dialog.Footer>
   </Dialog.Content>
 </Dialog.Root>

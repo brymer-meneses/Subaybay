@@ -3,6 +3,7 @@
   import type { InboxStageData, UserInfo } from "../inboxTypes";
   import type { Request } from "$lib/server/database";
 
+  import * as Dialog from "$lib/components/ui/dialog";
   import { Button } from "$lib/components/ui/button";
   import PopoverButton from "./PopoverButton.svelte";
 
@@ -18,15 +19,46 @@
 </script>
 
 <PopoverButton {users} {processing} bind:nextHandlerId>
-  <!--Todo add confirmation, informing them that it will not be moved to their pending? or should this just be recorded in history-->
-  <Button slot="button" class="gap-2 rounded-md">
+  <Button variant="outline" slot="button" class="gap-2 rounded-md">
     <User /> Reassign
   </Button>
-  <form action="?/reassign_stage" method="POST" use:enhance={enhanceFunc}>
-    <input type="hidden" name="requestId" value={stage.requestId} />
-    <input type="hidden" name="nextHandlerId" value={nextHandlerId} />
-    <Button type="submit" disabled={nextHandlerId in users ? false : true}>
-      Confirm
-    </Button>
-  </form>
+
+  <Dialog.Root>
+    <Dialog.Trigger disabled={nextHandlerId in users ? false : true}>
+      <Button
+        class="gap-2 text-red-600 text-white"
+        disabled={nextHandlerId in users ? false : true}
+      >
+        Reassign
+      </Button>
+    </Dialog.Trigger>
+    <Dialog.Content>
+      <Dialog.Header>
+        <Dialog.Title>Are you sure?</Dialog.Title>
+        <Dialog.Description>
+          This will reassign this stage to
+          <strong>
+            {users[nextHandlerId].name}
+          </strong>. <br />
+          It will NOT be moved to your pending inbox.
+          <br />
+          <br />
+          To get the stage back, {users[nextHandlerId].name} will have to reassign
+          the stage to you.
+          <br />
+          This cannot be undone.
+          <br />
+          Are you sure?
+        </Dialog.Description>
+      </Dialog.Header>
+
+      <Dialog.Footer>
+        <form action="?/reassign_stage" method="POST" use:enhance={enhanceFunc}>
+          <input type="hidden" name="requestId" value={stage.requestId} />
+          <input type="hidden" name="nextHandlerId" value={nextHandlerId} />
+          <Button type="submit">I'm Sure. Reassign.</Button>
+        </form>
+      </Dialog.Footer>
+    </Dialog.Content>
+  </Dialog.Root>
 </PopoverButton>
