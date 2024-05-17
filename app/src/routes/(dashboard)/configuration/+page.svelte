@@ -17,6 +17,8 @@
 
   export let data: PageServerData;
 
+  const defaultStages: StageData[] = [new StageData("Newly Created Request", 0), new StageData()];
+
   let stages: StageData[] = [];
   let requestType: string;
   let processing: boolean = false;
@@ -26,7 +28,7 @@
     users.push(new UserData(user.id, user.name, user.profileUrl));
   }
 
-  stages = [new StageData("Newly Created Request", 0), new StageData()];
+  stages = defaultStages.map(stageData => stageData.clone());
 
   function deleteStage(index: number) {
     stages = stages.slice(0, index).concat(stages.slice(index + 1));
@@ -40,8 +42,15 @@
     stages[stageIndex].handlerIndex = handlerIndex;
   }
 
-  async function handleSubmit(e: any) {
-    const data = new FormData(e.formElement);
+  async function handleSubmit(e: {
+    action: URL;
+    formData: FormData;
+    formElement: HTMLFormElement;
+    controller: AbortController;
+    submitter: HTMLElement | null;
+    cancel(): void;
+  }) {
+    const data = e.formData;
 
     data.append("stageData", JSON.stringify(stages));
     data.append("users", JSON.stringify(users));
@@ -49,12 +58,16 @@
 
     processing = true;
 
-    const response = await fetch(e.action, {
-      method: "POST",
-      body: data,
-    });
+    return async ({ update, result }: any) => {
+      await update();
 
-    processing = false;
+      if(result.type === "success") {
+        requestType = "";
+        stages = defaultStages.map(stageData => stageData.clone());;
+      }
+
+      processing = false;
+    };
   }
 </script>
 
@@ -65,7 +78,6 @@
       class="focus-visible:ring-0"
       placeholder="Request Type Title (e.g. OTR-1)"
     />
-    <span>{requestType}</span>
     <Card class="flex flex-col border-gray-300">
       <CardHeader>
         <CardTitle>Stages</CardTitle>
@@ -99,7 +111,7 @@
       <form
         action="?/create"
         method="POST"
-        use:enhance={(event) => handleSubmit}
+        use:enhance={(event) => {return handleSubmit(event)}}
       >
         {#if !processing}
           <Button type="submit">Create</Button>

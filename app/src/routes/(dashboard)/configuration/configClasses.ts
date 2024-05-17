@@ -16,4 +16,8 @@ export class StageData{
     this.stageName = stageName;
     this.handlerIndex = handlerIndex;
   }
+
+  clone() {
+    return new StageData(this.stageName, this.handlerIndex);
+  }
 }
