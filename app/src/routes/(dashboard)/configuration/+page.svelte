@@ -82,6 +82,9 @@
 
 <!-- TODO add Responsive layout -->
 <main class="mx-8 flex flex-row space-x-4">
+  <div class="flex">
+    <RequestTypeList requestTypes={data.requestTypes} />
+  </div>
   <div class="flex w-[40%] flex-grow flex-col gap-4">
     <Input
       bind:value={title}
@@ -135,8 +138,5 @@
         </form>
       </CardFooter>
     </Card>
-  </div>
-  <div class="flex">
-    <RequestTypeList requestTypes={data.requestTypes} />
   </div>
 </main>
