@@ -9,6 +9,12 @@
   import { Textarea } from "$lib/components/ui/textarea";
 
   import Forward from "lucide-svelte/icons/forward";
+  import MessageCircle from "lucide-svelte/icons/message-circle";
+  import ReceiptText from "lucide-svelte/icons/receipt-text";
+  import GraduationCap from "lucide-svelte/icons/graduation-cap";
+  import UserRound from "lucide-svelte/icons/user-round";
+  import Mail from "lucide-svelte/icons/mail";
+  import Locate from "lucide-svelte/icons/locate";
 
   import type { Request } from "$lib/server/database";
   import type { InboxStageData, UserInfo } from "./inboxTypes";
@@ -70,8 +76,10 @@
             goto("/requests/" + stage.requestId);
           }}
         >
-          <span class="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-            View Progress
+          <span
+            class="flex items-center justify-center gap-2 lg:sr-only xl:not-sr-only xl:whitespace-nowrap"
+          >
+            <Locate size={15} /> View Progress
           </span>
         </Button>
       </div>
@@ -79,8 +87,12 @@
     <Card.Content class="flex flex-col gap-4 p-6 text-sm">
       <Tabs.Root value="details">
         <Tabs.List>
-          <Tabs.Trigger value="details">Details</Tabs.Trigger>
-          <Tabs.Trigger value="chat">Chat</Tabs.Trigger>
+          <Tabs.Trigger value="details" class="flex gap-2"
+            ><ReceiptText size={15} />Details</Tabs.Trigger
+          >
+          <Tabs.Trigger value="chat" class="flex gap-2"
+            ><MessageCircle size={15} />Chat</Tabs.Trigger
+          >
         </Tabs.List>
 
         <Tabs.Content value="details">
@@ -89,15 +101,18 @@
               <div class="flex flex-col gap-4">
                 <p class="text-xs font-semibold">Student Information</p>
                 <div class="flex flex-wrap gap-4">
-                  <Badge variant="secondary" class="font-normal"
-                    >{info.studentNumber}</Badge
-                  >
-                  <Badge variant="secondary" class="font-normal"
-                    >{info.studentName}</Badge
-                  >
-                  <Badge variant="secondary" class="font-normal"
-                    >{info.studentEmail}</Badge
-                  >
+                  <Badge variant="secondary" class="flex gap-2 font-normal">
+                    <GraduationCap size={15} />
+                    {info.studentNumber}
+                  </Badge>
+                  <Badge variant="secondary" class="flex gap-2 font-normal">
+                    <UserRound size={15} />
+                    {info.studentName}
+                  </Badge>
+                  <Badge variant="secondary" class="flex gap-2 font-normal">
+                    <Mail size={15} />
+                    {info.studentEmail}
+                  </Badge>
                 </div>
                 <p class="text-xs font-semibold">Purpose</p>
                 <Textarea disabled value={info.purpose} />

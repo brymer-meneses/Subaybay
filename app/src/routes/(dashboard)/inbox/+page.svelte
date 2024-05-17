@@ -8,22 +8,22 @@
   import InboxContent from "./InboxContent.svelte";
   import NewRequest from "./NewRequest.svelte";
   import type { PageServerData } from "./$types";
-    import type { InboxStageData } from "./inboxTypes";
+  import type { InboxStageData } from "./inboxTypes";
 
   export let data: PageServerData;
 
   let requestTypes = data.latestRequestTypes;
 
-  let selectedStage: InboxStageData  | null = null;
+  let selectedStage: InboxStageData | null = null;
   let inboxes: { active: any; pending: any } = {
     active: [],
     pending: [],
   };
-  
+
   let currentStageType: "active" | "pending" = "active";
 
-  if(inboxes[currentStageType].length > 0) {
-    selectedStage = inboxes[currentStageType]
+  if (inboxes[currentStageType].length > 0) {
+    selectedStage = inboxes[currentStageType];
   }
 
   function selectStage(stage: any) {
@@ -31,9 +31,9 @@
   }
 
   function onTabChange(value: string | undefined) {
-    if(value == "active" || value == "pending") {
+    if (value == "active" || value == "pending") {
       currentStageType = value;
-      updateSelectedStage()
+      updateSelectedStage();
     }
   }
 
@@ -51,10 +51,7 @@
     >
       <NewRequest {requestTypes} data={data.form} />
     </div>
-    <Tabs.Root
-      value="active"
-      onValueChange={onTabChange}
-    >
+    <Tabs.Root value="active" onValueChange={onTabChange}>
       <div class="flex items-center">
         <Tabs.List>
           <Tabs.Trigger value="active">Active</Tabs.Trigger>

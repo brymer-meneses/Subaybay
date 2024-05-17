@@ -64,11 +64,13 @@
       let data = await event.data.text();
       let message = JSON.parse(data);
 
-      switch (message.type) {
-        case "unseenNotificationsCount": {
-          notifications = message.content;
-        }
-      }
+      console.log(message);
+
+      // switch (message.type) {
+      //   case "unseenNotificationsCount": {
+      //     notifications = message.content;
+      //   }
+      // }
     } catch (err: any) {
       console.error("Invalid data: ", err.message);
     }
