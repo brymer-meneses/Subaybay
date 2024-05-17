@@ -33,13 +33,14 @@
         </Card.Title>
         <Card.Description>
           {stage.requestId} <br />
-          Currently at Step: {stage.currentStageTypeIndex} <br />
-          {#if stage.prevHandlerId in users}
+          Currently at Stage {stage.currentStageTypeIndex}: {stage.stageTitle} <br />
+          {#if stage.currentStageTypeIndex != stage.inboxStageTypeIndex}
+            You handled Stage {stage.inboxStageTypeIndex}: {stage.inboxStageTitle}
+          {:else if stage.prevHandlerId in users}
             From: {users[stage.prevHandlerId].name} <br />
           {/if}
-          {#if stage.currentStageTypeIndex != stage.inboxStageTypeIndex}
-            You handled Step: {stage.inboxStageTypeIndex}
-          {/if}
+          
+          
         </Card.Description>
       </div>
 
