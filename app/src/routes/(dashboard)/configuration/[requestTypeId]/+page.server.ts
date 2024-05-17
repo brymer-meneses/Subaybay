@@ -88,13 +88,20 @@ export const actions: Actions = {
       }
     }
 
-    let version = requestType.version;
-    if (createNewVersion) version++;
-
-    db.requestType.updateOne(
-      { _id: requestTypeId },
-      { $set: { stages: newStages, version: version } },
-    );
+    if (createNewVersion) {
+      const newVersion: db.RequestType = {
+        _id: new ObjectId().toString(),
+        title: requestType.title,
+        version: requestType.version + 1,
+        stages: requestType.stages,
+      };
+      db.requestType.insertOne(newVersion);
+    } else {
+      db.requestType.updateOne(
+        { _id: requestTypeId },
+        { $set: { stages: newStages } },
+      );
+    }
 
     setFlash(
       { type: "error", message: "Successfully edited request." },
