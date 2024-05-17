@@ -1,6 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
 
+  import * as Tooltip from "$lib/components/ui/tooltip";
   import * as Card from "$lib/components/ui/card/index.js";
   import * as Avatar from "$lib/components/ui/avatar";
   import * as Tabs from "$lib/components/ui/tabs";
@@ -101,18 +102,41 @@
               <div class="flex flex-col gap-4">
                 <p class="text-xs font-semibold">Student Information</p>
                 <div class="flex flex-wrap gap-4">
-                  <Badge variant="secondary" class="flex gap-2 font-normal">
-                    <GraduationCap size={15} />
-                    {info.studentNumber}
-                  </Badge>
-                  <Badge variant="secondary" class="flex gap-2 font-normal">
-                    <UserRound size={15} />
-                    {info.studentName}
-                  </Badge>
-                  <Badge variant="secondary" class="flex gap-2 font-normal">
-                    <Mail size={15} />
-                    {info.studentEmail}
-                  </Badge>
+                  <Tooltip.Root>
+                    <Tooltip.Trigger>
+                      <Badge variant="secondary" class="flex gap-2 font-normal">
+                        <GraduationCap size={15} />
+                        {info.studentNumber}
+                      </Badge>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                      <p>Student Number</p>
+                    </Tooltip.Content>
+                  </Tooltip.Root>
+
+                  <Tooltip.Root>
+                    <Tooltip.Trigger>
+                      <Badge variant="secondary" class="flex gap-2 font-normal">
+                        <UserRound size={15} />
+                        {info.studentName}
+                      </Badge>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                      <p>Student Name</p>
+                    </Tooltip.Content>
+                  </Tooltip.Root>
+
+                  <Tooltip.Root>
+                    <Tooltip.Trigger>
+                      <Badge variant="secondary" class="flex gap-2 font-normal">
+                        <Mail size={15} />
+                        {info.studentEmail}
+                      </Badge>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                      <p>Student Email</p>
+                    </Tooltip.Content>
+                  </Tooltip.Root>
                 </div>
                 <p class="text-xs font-semibold">Purpose</p>
                 <Textarea disabled value={info.purpose} />
