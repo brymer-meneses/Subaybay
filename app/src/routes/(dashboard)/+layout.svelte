@@ -8,15 +8,13 @@
   import { toast } from "svelte-sonner";
   import CommandBox from "./CommandBox.svelte";
 
-  let isSidebarCollapsed = true;
+  let isSidebarCollapsed = false;
   let clientWidth: number;
 
   $: {
-    if (clientWidth < 765) {
-      isSidebarCollapsed = true;
-    } else if (typeof window !== "undefined") {
+    if (typeof window !== "undefined") {
       isSidebarCollapsed = JSON.parse(
-        sessionStorage.getItem("collapsedSidebar") ?? "true",
+        sessionStorage.getItem("collapsedSidebar") ?? "false",
       );
     }
   }
@@ -77,12 +75,12 @@
   }
 </script>
 
-<div class="flex min-h-screen w-full flex-col bg-muted/40" bind:clientWidth>
+<div class="bg-muted/40 flex min-h-screen w-full flex-col" bind:clientWidth>
   <Sidebar bind:isCollapsed={isSidebarCollapsed} {notifications} />
 
   <div
     class={clsx(
-      "flex min-h-screen flex-col bg-muted/40 sm:pl-0 md:pl-44 lg:pl-44",
+      "bg-muted/40 flex min-h-screen flex-col sm:pl-0 md:pl-44 lg:pl-44",
       !isSidebarCollapsed ? "md:pl-44 lg:pl-44" : "md:pl-8 lg:pl-8",
     )}
   >
