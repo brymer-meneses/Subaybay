@@ -1,5 +1,4 @@
 <script lang="ts">
-  
   import {
     Avatar,
     AvatarFallback,
@@ -28,12 +27,13 @@
 
 <div
   class="margin-top-1 flex flex-row items-center gap-2
-    rounded-lg border border-2 p-2
+    rounded-lg border-2 p-2
     {stage.isHistory
     ? 'border-emerald-600'
     : stage.isCurrent
       ? 'border-sky-600'
-      : 'border-gray-400'}">
+      : 'border-gray-400'}"
+>
   {#if stage.finished}
     <CircleCheckBig class="stroke-2 text-emerald-600" />
   {:else if stage.isCurrent}
