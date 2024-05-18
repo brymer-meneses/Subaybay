@@ -67,10 +67,8 @@
   }
 </script>
 
-<ScrollArea class="max-w-[600px] flex-grow gap-2">
-  <div class="flex flex-col gap-2 p-2">
-    {#each stages as stage}
-      <ProgressViewStage {stage} {users} />
-    {/each}
-  </div>
-</ScrollArea>
+<div class="flex flex-col gap-2 p-2">
+  {#each stages as stage}
+    <ProgressViewStage {stage} {users} />
+  {/each}
+</div>
