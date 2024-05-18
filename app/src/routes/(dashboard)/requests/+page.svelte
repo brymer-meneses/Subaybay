@@ -8,14 +8,12 @@
   import { CircleChevronRight } from "lucide-svelte";
   import { goto } from "$app/navigation";
 
-  export let user: User[];
   export let data;
 
   const activeRequests = data.activeRequests;
   const archivedRequets = data.archivedRequests;
 </script>
 
-<!-- TODO: make it responsive, can also use data table component -->
 <main class="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
   <div class="grid flex-1 auto-rows-max items-start gap-4">
     <Tabs.Root value="pending">
@@ -64,7 +62,11 @@
                     <Table.Row
                       class="auto-rows grid w-full grid-cols-12 items-center text-left"
                     >
-                      <Table.Cell class="col-span-1">{request._id}</Table.Cell>
+                      <Table.Cell class="col-span-1"
+                        >{request._id.length > 12
+                          ? request._id.substring(0, 12) + "..."
+                          : request._id}</Table.Cell
+                      >
                       <Table.Cell class="col-span-1"
                         >{request.requestTypeId}</Table.Cell
                       >
