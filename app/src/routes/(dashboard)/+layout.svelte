@@ -2,11 +2,14 @@
   import Sidebar from "./Sidebar.svelte";
   import Header from "./Header.svelte";
   import clsx from "clsx";
-  import { onMount, setContext } from "svelte";
+  import { onMount } from "svelte";
   import type { LayoutServerData } from "./$types";
   import queryString from "query-string";
   import { toast } from "svelte-sonner";
   import { notifications } from "$lib/notifications";
+
+  import type { Message, Request, User } from "$lib/server/database";
+  import NewMessageNotification from "$lib/components/notifications/NewMessageNotification.svelte";
 
   let isSidebarCollapsed = false;
   let clientWidth: number;
@@ -60,11 +63,38 @@
   async function wsReceiveHandler(event: any) {
     try {
       let data = await event.data.text();
-      let message = JSON.parse(data);
+      let payload = JSON.parse(data);
 
-      switch (message.type) {
+      switch (payload.type) {
         case "unseenNotificationsCount": {
-          $notifications = message.content;
+          $notifications = payload.content;
+          break;
+        }
+
+        case "newMessage": {
+          interface NewMessage {
+            request: Request;
+            message: Message;
+            from: User;
+          }
+
+          // TODO: create a custom component for new message notification
+          let { request, message, from }: NewMessage = payload.content;
+          toast.custom(NewMessageNotification, {
+            componentProps: {
+              from,
+              request,
+              message,
+            },
+            duration: 10000000, // TODO: remove this
+            classes: {
+              toast: "rounded-lg",
+            },
+          });
+        }
+
+        // TODO: implement this
+        case "newInboxItem": {
         }
       }
     } catch (err: any) {

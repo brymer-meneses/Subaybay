@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import {
   DATABASE_PORT,
   DATABASE_HOSTNAME,
@@ -76,6 +76,16 @@ export interface Stage {
   finished: boolean;
   dateStarted: Date;
   dateFinished: Date;
+}
+
+export interface Message {
+  _id: ObjectId,
+  requestId: string,
+  userId: string,
+
+  // seconds since the unix epoch
+  dateTime: number,
+  content: string,
 }
 
 export interface Inbox {

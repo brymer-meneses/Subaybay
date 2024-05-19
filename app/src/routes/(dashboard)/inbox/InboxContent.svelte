@@ -19,6 +19,7 @@
 
   import type { Request } from "$lib/server/database";
   import type { InboxStageData, UserInfo } from "./inboxTypes";
+
   import ChatArea from "../ChatArea.svelte";
   import InboxContentButtons from "./buttonComponents/InboxContentButtons.svelte";
 
@@ -149,7 +150,7 @@
         </Tabs.Content>
 
         <Tabs.Content value="chat">
-          <ChatArea requestId={info.requestTypeId} />
+          <ChatArea requestId={stage.requestId} />
         </Tabs.Content>
       </Tabs.Root>
 

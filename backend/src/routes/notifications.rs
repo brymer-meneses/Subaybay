@@ -42,6 +42,10 @@ async fn handle_connection(
                     notifications,
                 )))
                 .await;
+
+            if let Err(err) = status {
+                tracing::error!("{err}");
+            }
         }
         Err(err) => {
             tracing::error!("{err}");
@@ -105,7 +109,28 @@ async fn handle_connection(
                                 }
                             };
 
-                            let server_message = ServerMessage::NewMessage { message, request };
+                            let users_collection = state.database.collection::<db::User>("users");
+
+                            let user = match users_collection
+                                .find_one(doc! {"_id": &message.user_id}, None)
+                                .await
+                            {
+                                Ok(Some(user)) => user,
+                                Ok(None) => {
+                                    tracing::error!("Invalid user_id `{}`", message.user_id);
+                                    continue;
+                                }
+                                Err(err) => {
+                                    tracing::error!("{err}");
+                                    continue;
+                                }
+                            };
+
+                            let server_message = ServerMessage::NewMessage {
+                                message,
+                                request,
+                                from: user,
+                            };
 
                             let _ = ws_sender.send(Message::Item(server_message)).await;
                         }
@@ -214,6 +239,7 @@ pub enum ServerMessage {
     NewMessage {
         message: db::Message,
         request: db::Request,
+        from: db::User,
     },
 
     NewInboxItem {
