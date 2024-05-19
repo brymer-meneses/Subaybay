@@ -1,7 +1,5 @@
 <script lang="ts">
-  import * as Card from "$lib/components/ui/card/index.js";
   import * as Tabs from "$lib/components/ui/tabs";
-
   import RequestsTable from "./RequestsTable.svelte";
 
   export let data;
@@ -19,39 +17,14 @@
         <Tabs.Trigger value="finished">Finished</Tabs.Trigger>
         <Tabs.Trigger value="discontinued">Discontinued</Tabs.Trigger>
       </Tabs.List>
-
       <Tabs.Content value="pending">
-        <Card.Root>
-          <Card.Header class="px-7">
-            <Card.Title>Requests</Card.Title>
-            <Card.Description>List of pending requests</Card.Description>
-          </Card.Header>
-          <Card.Content class="px-6 text-sm">
-            <RequestsTable requests={activeRequests} />
-          </Card.Content>
-        </Card.Root>
+        <RequestsTable requests={activeRequests} />
       </Tabs.Content>
       <Tabs.Content value="finished">
-        <Card.Root>
-          <Card.Header class="px-7">
-            <Card.Title>Requests</Card.Title>
-            <Card.Description>List of finished requests</Card.Description>
-          </Card.Header>
-          <Card.Content class="px-6 text-sm">
-            <RequestsTable requests={finishedRequests} />
-          </Card.Content>
-        </Card.Root>
+        <RequestsTable requests={finishedRequests} />
       </Tabs.Content>
       <Tabs.Content value="discontinued">
-        <Card.Root>
-          <Card.Header class="px-7">
-            <Card.Title>Requests</Card.Title>
-            <Card.Description>List of discontinued requests</Card.Description>
-          </Card.Header>
-          <Card.Content class="px-6 text-sm">
-            <RequestsTable requests={staleRequests} />
-          </Card.Content>
-        </Card.Root>
+        <RequestsTable requests={staleRequests} />
       </Tabs.Content>
     </Tabs.Root>
   </div>
