@@ -32,6 +32,7 @@ export const load: PageServerLoad = async (event) => {
     { type: "Stale", count: 0, countThisMonth: -1 },
   ];
 
+  // TODO: Refactor this. Ugly code
   for (const request of requests) {
     const reqType = requestTypes.find((e) => e._id === request.requestTypeId);
 
@@ -44,9 +45,8 @@ export const load: PageServerLoad = async (event) => {
       const currentStageDateFinished = new Date(
         request.currentStage.dateFinished,
       );
-      const epochDate = new Date(0);
 
-      if (currentStageIndex === finalStageIndex && request.isFinished && currentStageDateFinished.getTime() !== epochDate.getTime()) {
+      if (currentStageIndex === finalStageIndex && request.isFinished && request.currentStage.finished) {
         summary[0].count++;
         
         const dateDiff = Math.floor((today.getTime() - currentStageDateFinished.getTime())/ (1000 * 3600 * 24));
