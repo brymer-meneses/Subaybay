@@ -251,7 +251,7 @@ db.requests.insertMany([
     remarks: "Good Morning",
     isFinished: true,
     currentStage: {
-      stageTypeIndex: 3,
+      stageTypeIndex: 0,
       handlerId: "airylionsoul",
       finished: false,
       dateStarted: new Date("2024-04-27T00:00:00.000Z"),
@@ -261,7 +261,7 @@ db.requests.insertMany([
     history: [],
     nextHandlerId: ""
   },
-  {
+  { //This should be modified to have all the stages in the history completed or delete this dummy data
     _id: "finished",
     requestTypeId: "coe",
     studentNumber: "2020",
