@@ -273,12 +273,49 @@ db.requests.insertMany([
     currentStage: {
       stageTypeIndex: 3,
       handlerId: "airylionsoul",
-      finished: false,
+      finished: true,
       dateStarted: new Date("2024-04-27T00:00:00.000Z"),
       dateFinished: new Date("2024-05-13T08:00:00.000Z"),
       roomId: "134333412"
     },
-    history: [],
+    history: [
+      {
+        stageTypeIndex: 0,
+        handlerId: "airylionsoul",
+        prevHandlerId: "gnar",
+        finished: true,
+        dateStarted: new Date('2024-04-27'),
+        dateFinished: new Date('2024-04-27'),
+        roomId: "453435"
+      },
+      {
+        stageTypeIndex: 1,
+        handlerId: "airylionsoul",
+        prevHandlerId: "gnar",
+        finished: true,
+        dateStarted: new Date('2024-04-27'),
+        dateFinished: new Date('2024-04-27'),
+        roomId: "453435"
+      },
+      {
+        stageTypeIndex: 2,
+        handlerId: "airylionsoul",
+        prevHandlerId: "gnar",
+        finished: true,
+        dateStarted: new Date('2024-04-27'),
+        dateFinished: new Date('2024-04-27'),
+        roomId: "453435"
+      },
+      {
+        stageTypeIndex: 3,
+        handlerId: "airylionsoul",
+        prevHandlerId: "gnar",
+        finished: true,
+        dateStarted: new Date('2024-04-27'),
+        dateFinished: new Date('2024-04-27'),
+        roomId: "453435"
+      }
+    ],
     nextHandlerId: ""
   }
 ]);
