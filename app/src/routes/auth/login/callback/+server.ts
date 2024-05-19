@@ -43,7 +43,9 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
     );
 
     const account: GoogleAccount = await response.json();
-    const isWhitelisted = await permittedEmail.findOne({ email: account.email });
+    const isWhitelisted = await permittedEmail.findOne({
+      email: account.email,
+    });
     // if (!isWhitelisted) {
     //   throw new Error(`${account.email} is not waitlisted.` );
     // }
@@ -67,8 +69,6 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
       path: ".",
       ...sessionCookie.attributes,
     });
-
-
   } catch (e) {
     if (e instanceof OAuth2RequestError) {
       redirect(
@@ -79,7 +79,7 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
     }
 
     const errorMessage: string = e.message ?? "Authentication Error";
-    console.log(errorMessage)
+    console.log(errorMessage);
     redirect("/", { type: "error", message: errorMessage }, cookies);
   }
 

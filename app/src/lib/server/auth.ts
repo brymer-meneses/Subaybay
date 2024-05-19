@@ -22,7 +22,7 @@ export const lucia = new Lucia(adapter, {
     attributes: {
       secure: !dev,
     },
-    name: SESSION_COOKIE_NAME
+    name: SESSION_COOKIE_NAME,
   },
 
   getUserAttributes: (attributes) => {

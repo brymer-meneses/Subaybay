@@ -13,7 +13,7 @@
   import { enhance } from "$app/forms";
   import { UserData, StageType } from "../configClasses";
   import ConfigStage from "../ConfigStage.svelte";
-    import Label from "$lib/components/ui/label/label.svelte";
+  import Label from "$lib/components/ui/label/label.svelte";
 
   export let data: PageServerData;
 
@@ -30,8 +30,10 @@
   }
 
   existingStages = requestType.stages;
-  
-  stages = existingStages.map(stage => new StageType(stage.stageTitle, stage.defaultHandlerId));
+
+  stages = existingStages.map(
+    (stage) => new StageType(stage.stageTitle, stage.defaultHandlerId),
+  );
 
   function deleteStage(index: number) {
     stages = stages.slice(0, index).concat(stages.slice(index + 1));
@@ -107,10 +109,12 @@
       <form
         action="?/edit"
         method="POST"
-        use:enhance={(event) => {return handleSubmit(event)}}
+        use:enhance={(event) => {
+          return handleSubmit(event);
+        }}
       >
         {#if !processing}
-        <!--Todo add confirmation-->
+          <!--Todo add confirmation-->
           <Button type="submit">Accept Changes</Button>
         {:else}
           Processing... Please Wait

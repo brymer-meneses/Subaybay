@@ -22,10 +22,11 @@
     <Dialog.Header>
       <Dialog.Title>Are you sure?</Dialog.Title>
       <Dialog.Description>
-        This will mark the request as finished and remove it from all inboxes. <br />
+        This will mark the request as finished and remove it from all inboxes. <br
+        />
         It will still be accessible from the archives page. <br />
         <br />
-        This cannot be undone. 
+        This cannot be undone.
         <br />
         Are you sure?
       </Dialog.Description>

@@ -10,11 +10,15 @@ declare global {
       session: import("lucia").Session | null;
     }
     interface PageData {
-      flash?: { type: 'success' | 'error'; message: string, args: ExternalToast };
+      flash?: {
+        type: "success" | "error";
+        message: string;
+        args: ExternalToast;
+      };
     }
     // interface PageState {}
     // interface Platform {}
   }
 }
 
-export { };
+export {};

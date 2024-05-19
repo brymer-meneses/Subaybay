@@ -54,7 +54,7 @@
     <DropDownMenu.Trigger>
       <div class="ml-2">
         {#if !(handlerId in users) || users[handlerId].profileUrl === ""}
-          <CircleUserRound class="stroke-muted-foreground h-8 w-8 stroke-1" />
+          <CircleUserRound class="h-8 w-8 stroke-muted-foreground stroke-1" />
         {:else}
           <Avatar.Root class="h-8 w-8">
             <Avatar.Image

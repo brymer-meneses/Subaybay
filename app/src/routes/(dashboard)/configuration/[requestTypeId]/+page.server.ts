@@ -88,7 +88,7 @@ export const actions: Actions = {
       }
     }
 
-    if (createNewVersion && await isUsedByAnyRequest(requestTypeId)) {
+    if (createNewVersion && (await isUsedByAnyRequest(requestTypeId))) {
       const newVersion: db.RequestType = {
         _id: new ObjectId().toString(),
         title: requestType.title,

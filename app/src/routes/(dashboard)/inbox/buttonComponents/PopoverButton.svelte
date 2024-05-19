@@ -3,7 +3,6 @@
   import { Button } from "$lib/components/ui/button";
   import HandlerSelect from "./HandlerSelect.svelte";
 
-
   export let users;
   export let processing: boolean;
 

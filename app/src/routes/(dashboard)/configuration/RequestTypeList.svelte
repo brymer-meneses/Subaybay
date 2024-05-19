@@ -27,19 +27,19 @@
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
       <div class="relative w-full">
         <Search
-          class="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4"
+          class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
         />
         <Input
           type="search"
           placeholder="Search..."
-          class="bg-background w-full rounded-lg pl-8"
+          class="w-full rounded-lg bg-background pl-8"
           bind:value={searchTerm}
         />
       </div>
     </div>
   </Card.Header>
   <Card.Content>
-    <p class="text-muted-foreground mb-4 text-sm">
+    <p class="mb-4 text-sm text-muted-foreground">
       Returned {filteredRequestTypes.length}
       {filteredRequestTypes.length <= 1 ? "result" : "results"}.
     </p>

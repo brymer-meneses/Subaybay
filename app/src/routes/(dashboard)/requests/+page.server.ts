@@ -11,11 +11,16 @@ export const load: PageServerLoad = async (event) => {
   for (const request of allReq) {
     if (!request.isFinished) {
       activeRequests.push(request);
-    } else if (request.currentStage.finished) { 
+    } else if (request.currentStage.finished) {
       finishedRequests.push(request);
     } else {
       staleRequests.push(request);
     }
   }
-  return { userInfo: event.locals.user, activeRequests, finishedRequests, staleRequests };
+  return {
+    userInfo: event.locals.user,
+    activeRequests,
+    finishedRequests,
+    staleRequests,
+  };
 };

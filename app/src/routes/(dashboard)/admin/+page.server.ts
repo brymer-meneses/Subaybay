@@ -9,21 +9,20 @@ import {
   type RequestType,
 } from "$lib/server/database";
 
-
 export const load: PageServerLoad = async (event) => {
   if (event.locals.user && !event.locals.user.isAdmin) {
     redirect(302, "/inbox");
   }
-  
+
   const users: User[] = await user.find({}).toArray();
   const requests: Request[] = await request.find({}).toArray();
   const requestTypes: RequestType[] = await requestType.find({}).toArray();
- 
+
   const today = new Date();
-  let overview: {date: Date, value: number}[] = [];
+  let overview: { date: Date; value: number }[] = [];
 
   for (let i = 13; i >= 0; i--) {
-    overview.push({date: subtractDays(today, i), value: 0});
+    overview.push({ date: subtractDays(today, i), value: 0 });
   }
 
   let summary = [
@@ -46,10 +45,17 @@ export const load: PageServerLoad = async (event) => {
         request.currentStage.dateFinished,
       );
 
-      if (currentStageIndex === finalStageIndex && request.isFinished && request.currentStage.finished) {
+      if (
+        currentStageIndex === finalStageIndex &&
+        request.isFinished &&
+        request.currentStage.finished
+      ) {
         summary[0].count++;
-        
-        const dateDiff = Math.floor((today.getTime() - currentStageDateFinished.getTime())/ (1000 * 3600 * 24));
+
+        const dateDiff = Math.floor(
+          (today.getTime() - currentStageDateFinished.getTime()) /
+            (1000 * 3600 * 24),
+        );
 
         if (dateDiff < 14) {
           overview[overview.length - dateDiff - 1].value++;
@@ -65,14 +71,14 @@ export const load: PageServerLoad = async (event) => {
       }
     }
   }
-  return { users, stats: { summary, overview},};
+  return { users, stats: { summary, overview } };
 };
 
 function subtractDays(date: Date, days: number) {
   const result = new Date(date);
   result.setDate(result.getDate() - days);
   return result;
- }
+}
 
 function isThisMonthAndYear(date: Date) {
   const today = new Date();

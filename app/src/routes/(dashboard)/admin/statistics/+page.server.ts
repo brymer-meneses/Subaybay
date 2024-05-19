@@ -7,7 +7,6 @@ import {
   type RequestType,
 } from "$lib/server/database";
 
-
 type RequestTypeInstancesCount = {
   reqTitle: string;
   total: {
@@ -24,7 +23,7 @@ export const load: PageServerLoad = async (event) => {
 
   const requests: Request[] = await request.find({}).toArray();
   const requestTypes: RequestType[] = await requestType.find({}).toArray();
-  
+
   let count: RequestTypeInstancesCount[] = [];
 
   let summary = [
@@ -39,10 +38,12 @@ export const load: PageServerLoad = async (event) => {
       total: { finished: 0, pending: 0, stale: 0 },
     });
   }
-  count= Array.from(new Set(count)) as RequestTypeInstancesCount[]; //remove duplicates
+  count = Array.from(new Set(count)) as RequestTypeInstancesCount[]; //remove duplicates
 
   for (const request of requests) {
-    const requestTypeTitle = requestTypes.find(e => request.requestTypeId === e._id)?.title;
+    const requestTypeTitle = requestTypes.find(
+      (e) => request.requestTypeId === e._id,
+    )?.title;
     const reqType = requestTypes.find((e) => e._id === request.requestTypeId);
 
     const stages = reqType?.stages;
@@ -54,16 +55,20 @@ export const load: PageServerLoad = async (event) => {
       const foundIndex = count.findIndex(
         (x) => x.reqTitle === requestTypeTitle,
       );
-      
+
       const currentStageDateFinished = new Date(
         request.currentStage.dateFinished,
       );
       const epochDate = new Date(0);
 
-      if (currentStageIndex === finalStageIndex && request.isFinished && currentStageDateFinished.getTime() !== epochDate.getTime()) {
+      if (
+        currentStageIndex === finalStageIndex &&
+        request.isFinished &&
+        currentStageDateFinished.getTime() !== epochDate.getTime()
+      ) {
         count[foundIndex].total.finished++;
         summary[0].count++;
-        
+
         if (isThisMonthAndYear(currentStageDateFinished)) {
           summary[0].countThisMonth++;
         }
@@ -77,9 +82,8 @@ export const load: PageServerLoad = async (event) => {
     }
   }
   count.sort(compare);
-  return {stats: { summary, count, requests, requestTypes}};
+  return { stats: { summary, count, requests, requestTypes } };
 };
-
 
 function isThisMonthAndYear(date: Date) {
   const today = new Date();

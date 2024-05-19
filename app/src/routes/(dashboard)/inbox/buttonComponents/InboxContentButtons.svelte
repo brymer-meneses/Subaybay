@@ -41,7 +41,7 @@
       {/if}
       <ReassignButton {users} {stage} {request} {enhanceFunc} />
 
-    <!--If in pending inbox-->
+      <!--If in pending inbox-->
     {:else}
       <RollbackButton {stage} {enhanceFunc} />
     {/if}

@@ -8,7 +8,9 @@ import { dev } from "$app/environment";
 
 const hostname = dev ? "localhost" : DATABASE_HOSTNAME;
 
-export const client = new MongoClient(`mongodb://${hostname}:${DATABASE_PORT}/`);
+export const client = new MongoClient(
+  `mongodb://${hostname}:${DATABASE_PORT}/`,
+);
 await client.connect();
 
 export const database = client.db(DATABASE_NAME);
@@ -19,7 +21,8 @@ export const request = database.collection<Request>("requests");
 export const requestType = database.collection<RequestType>("requestTypes");
 export const inbox = database.collection<Inbox>("inboxes");
 export const archive = database.collection<Archive>("archive");
-export const permittedEmail = database.collection<PermittedEmail>("permittedEmails");
+export const permittedEmail =
+  database.collection<PermittedEmail>("permittedEmails");
 
 export interface User {
   _id: string;
@@ -79,13 +82,13 @@ export interface Stage {
 }
 
 export interface Message {
-  _id: ObjectId,
-  requestId: string,
-  userId: string,
+  _id: ObjectId;
+  requestId: string;
+  userId: string;
 
   // seconds since the unix epoch
-  dateTime: number,
-  content: string,
+  dateTime: number;
+  content: string;
 }
 
 export interface Inbox {

@@ -24,9 +24,13 @@
 
     <p class="text-sm">{stage.requestTitle}</p>
     <p class="text-xs font-thin text-gray-400">{stage.dateSent}</p>
-    <p class="text-xs font-thin text-gray-400">Step: {stage.currentStageTypeIndex}</p>
+    <p class="text-xs font-thin text-gray-400">
+      Step: {stage.currentStageTypeIndex}
+    </p>
     {#if stage.currentStageTypeIndex != stage.inboxStageTypeIndex}
-    <p class="text-xs font-thin text-gray-400">You handled Step: {stage.inboxStageTypeIndex}</p>
+      <p class="text-xs font-thin text-gray-400">
+        You handled Step: {stage.inboxStageTypeIndex}
+      </p>
     {/if}
   </div>
 </button>

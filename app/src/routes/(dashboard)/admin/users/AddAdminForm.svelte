@@ -33,9 +33,9 @@
         <div>
           <p class="text-sm font-bold leading-none">
             {user.name}
-            <span class="text-muted-foreground font-normal"> ({user._id})</span>
+            <span class="font-normal text-muted-foreground"> ({user._id})</span>
           </p>
-          <p class="text-muted-foreground text-sm">
+          <p class="text-sm text-muted-foreground">
             {user.email}
           </p>
         </div>
