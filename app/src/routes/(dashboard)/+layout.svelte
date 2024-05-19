@@ -2,11 +2,11 @@
   import Sidebar from "./Sidebar.svelte";
   import Header from "./Header.svelte";
   import clsx from "clsx";
-  import { onMount } from "svelte";
+  import { onMount, setContext } from "svelte";
   import type { LayoutServerData } from "./$types";
   import queryString from "query-string";
   import { toast } from "svelte-sonner";
-  import CommandBox from "./CommandBox.svelte";
+  import { notifications } from "$lib/notifications";
 
   let isSidebarCollapsed = false;
   let clientWidth: number;
@@ -43,8 +43,6 @@
   $: userId = data.userInfo.id;
   $: sessionId = data.sessionId;
 
-  let notifications = { messages: 0, requests: 0 };
-
   onMount(() => {
     const params = { userId, sessionId };
 
@@ -64,25 +62,23 @@
       let data = await event.data.text();
       let message = JSON.parse(data);
 
-      console.log(message);
-
-      // switch (message.type) {
-      //   case "unseenNotificationsCount": {
-      //     notifications = message.content;
-      //   }
-      // }
+      switch (message.type) {
+        case "unseenNotificationsCount": {
+          $notifications = message.content;
+        }
+      }
     } catch (err: any) {
       console.error("Invalid data: ", err.message);
     }
   }
 </script>
 
-<div class="bg-muted/40 flex min-h-screen w-full flex-col" bind:clientWidth>
-  <Sidebar bind:isCollapsed={isSidebarCollapsed} {notifications} />
+<div class="flex min-h-screen w-full flex-col bg-muted/40" bind:clientWidth>
+  <Sidebar bind:isCollapsed={isSidebarCollapsed} />
 
   <div
     class={clsx(
-      "bg-muted/40 flex min-h-screen flex-col sm:pl-0 md:pl-44 lg:pl-44",
+      "flex min-h-screen flex-col bg-muted/40 sm:pl-0 md:pl-44 lg:pl-44",
       !isSidebarCollapsed ? "md:pl-44 lg:pl-44" : "md:pl-8 lg:pl-8",
     )}
   >

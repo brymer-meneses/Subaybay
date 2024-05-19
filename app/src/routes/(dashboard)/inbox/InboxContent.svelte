@@ -88,8 +88,9 @@
     <Card.Content class="flex flex-col gap-4 p-6 text-sm">
       <Tabs.Root value="details">
         <Tabs.List>
-          <Tabs.Trigger value="details" class="flex gap-2"
-            ><ReceiptText size={15} />Details</Tabs.Trigger
+          <Tabs.Trigger value="details" class="flex gap-2">
+            <ReceiptText size={15} />
+            Details</Tabs.Trigger
           >
           <Tabs.Trigger value="chat" class="flex gap-2"
             ><MessageCircle size={15} />Chat</Tabs.Trigger
@@ -148,7 +149,7 @@
         </Tabs.Content>
 
         <Tabs.Content value="chat">
-          <ChatArea roomId="abcd" />
+          <ChatArea requestId={info.requestTypeId} />
         </Tabs.Content>
       </Tabs.Root>
 

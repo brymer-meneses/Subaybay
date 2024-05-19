@@ -1,4 +1,17 @@
 import type { ObjectId } from "mongodb";
+import { writable } from "svelte/store";
+
+export interface InboxItemIdentifier {
+  requestId: string,
+  stageTypeIndex: string,
+}
+
+export interface Notifications {
+  inbox: {
+    pending: Array<[InboxItemIdentifier, number]>,
+    active: Array<[InboxItemIdentifier, number]>,
+  }
+}
 
 export interface InboxNotification {
   type: "NewInboxItem" | "RecalledInboxItem" | "ReassignedInboxItem",
@@ -13,3 +26,5 @@ export async function sendInboxNotification(notification: InboxNotification) {
   }
 }
 
+
+export const notifications = writable<Notifications>({ inbox: { pending: [], active: [] } });

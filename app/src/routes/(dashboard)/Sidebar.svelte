@@ -21,9 +21,22 @@
   import { page } from "$app/stores";
 
   import Notifiable from "./Notifiable.svelte";
+  import { notifications, type Notifications } from "$lib/notifications";
 
   export let isCollapsed: boolean;
-  export let notifications: { messages: number; requests: number };
+
+  $: totalCount = getTotalCount($notifications);
+
+  function getTotalCount(content: Notifications) {
+    let totalCount = 0;
+    for (const [key, count] of content.inbox.pending) {
+      totalCount += count;
+    }
+    for (const [key, count] of content.inbox.active) {
+      totalCount += count;
+    }
+    return { inbox: totalCount };
+  }
 </script>
 
 <aside
@@ -49,17 +62,10 @@
     </div>
     <Separator />
     <div class="flex w-full flex-col">
-      <Notifiable count={1}>
+      <Notifiable count={totalCount.inbox}>
         <NavLink icon={Inbox} name="Inbox" href="/inbox" {isCollapsed} />
       </Notifiable>
-      <Notifiable count={10}>
-        <NavLink
-          icon={ListTodo}
-          name="Requests"
-          href="/requests"
-          {isCollapsed}
-        />
-      </Notifiable>
+      <NavLink icon={ListTodo} name="Requests" href="/requests" {isCollapsed} />
       <Notifiable>
         <NavLink
           icon={FileCog}

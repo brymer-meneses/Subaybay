@@ -21,7 +21,6 @@
 
   type Reply = {
     content: string;
-    roomId: string;
     userId: string;
   };
 
@@ -36,7 +35,7 @@
     content: Reply | Event;
   };
 
-  export let roomId: string;
+  export let requestId: string;
   export let height: string = "h-36";
 
   $: userId = $page.data.userInfo.id;
@@ -52,7 +51,7 @@
     const params = {
       sessionId,
       userId,
-      roomId,
+      requestId,
     };
 
     socket = new WebSocket(
@@ -62,7 +61,7 @@
       toast.error("Failed to connect to the chat server", {
         description: "Sending and receiving messages will not work",
       });
-      socket = null;
+      // socket = null;
     };
     socket.onmessage = receiveMessageHandler;
   });
@@ -96,7 +95,6 @@
       content: {
         content: messageContent,
         userId,
-        roomId,
       },
     };
 
@@ -122,7 +120,7 @@
 
     <div class="flex w-full items-center space-x-2">
       <Input
-        class="border-b-1 bg-accent w-full focus:ring-0 focus:ring-offset-0"
+        class="border-b-1 w-full bg-accent focus:ring-0 focus:ring-offset-0"
         placeholder="Send a message ..."
         bind:value={messageContent}
       />

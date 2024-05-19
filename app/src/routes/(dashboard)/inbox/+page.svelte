@@ -10,6 +10,9 @@
   import type { PageServerData } from "./$types";
   import type { InboxStageData } from "./inboxTypes";
 
+  import { notifications } from "$lib/notifications";
+  import Notifiable from "../Notifiable.svelte";
+
   export let data: PageServerData;
 
   let requestTypes = data.latestRequestTypes;
@@ -40,6 +43,16 @@
   function updateSelectedStage() {
     selectedStage = inboxes[currentStageType].getUpdatedSelection();
   }
+
+  $: totalPending = $notifications.inbox.pending.reduce((accumulator, item) => {
+    const [_, count] = item;
+    return accumulator + count;
+  }, 0);
+
+  $: totalActive = $notifications.inbox.active.reduce((accumulator, item) => {
+    const [_, count] = item;
+    return accumulator + count;
+  }, 0);
 </script>
 
 <main
@@ -54,8 +67,12 @@
     <Tabs.Root value="active" onValueChange={onTabChange}>
       <div class="flex items-center">
         <Tabs.List>
-          <Tabs.Trigger value="active">Active</Tabs.Trigger>
-          <Tabs.Trigger value="pending">Pending</Tabs.Trigger>
+          <Tabs.Trigger value="active">
+            <Notifiable count={totalActive}>Active</Notifiable>
+          </Tabs.Trigger>
+          <Tabs.Trigger value="pending">
+            <Notifiable count={totalPending}>Pending</Notifiable>
+          </Tabs.Trigger>
         </Tabs.List>
         <div class="ml-auto flex items-center gap-2">
           <DropdownMenu.Root>

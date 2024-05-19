@@ -3,23 +3,21 @@ use axum::{
     response::IntoResponse,
 };
 use axum_typed_websockets::{Message, WebSocket, WebSocketUpgrade};
+use futures::{stream::SplitSink, SinkExt, StreamExt};
 use mongodb::bson::oid::ObjectId;
 
-use crate::{
-    database::{self as db, Notification},
-    state::AppState,
-};
-use crate::{error::Result, routes::notifications};
+use crate::error::Result;
+use crate::{database as db, state::AppState};
 use mongodb::bson::{self, doc};
-use std::{ops::Not, sync::Arc};
-use tokio::sync::broadcast::{self, Receiver, Sender};
+use std::sync::Arc;
+use tokio::sync::broadcast;
 
 pub async fn websocket(
     State(state): State<Arc<AppState>>,
-    Query(param): Query<ConnectionArgs>,
+    Query(params): Query<ConnectionArgs>,
     ws: WebSocketUpgrade<ServerMessage, ClientMessage>,
 ) -> impl IntoResponse {
-    ws.on_upgrade(move |socket| handle_connection(state, socket, param))
+    ws.on_upgrade(move |socket| handle_connection(state, socket, params))
 }
 
 async fn handle_connection(
@@ -27,124 +25,62 @@ async fn handle_connection(
     socket: WebSocket<ServerMessage, ClientMessage>,
     params: ConnectionArgs,
 ) {
-    use futures::SinkExt;
-    use futures::StreamExt;
-
     let (mut ws_sender, mut ws_receiver) = socket.split();
 
-    // NOTE:
-    // mongodb::database::Database uses an `Arc` under the hood so we can
-    // clone it!
-    if let Err(_) = initialize_room(&params, state.database.clone()).await {
-        return;
-    }
-    if let Ok(messages) = get_previous_messages(&params, state.database.clone()).await {
-        let _ = ws_sender
-            .send(Message::Item(ServerMessage::PreviousMessages(messages)))
-            .await;
-    } else {
-        return;
-    }
+    match get_previous_messages(&params, state.database.clone()).await {
+        Ok(messages) => {
+            let _ = ws_sender
+                .send(Message::Item(ServerMessage::PreviousMessages(messages)))
+                .await;
+        }
 
-    let users = state.database.collection::<db::User>("users");
+        Err(err) => {
+            tracing::error!("Failed to send previous messages: {err}");
+        }
+    }
 
     let mut message_tx = state.message_tx.subscribe();
     let sender = state.message_tx.clone();
+
+    let database = state.database.clone();
 
     // listens to the broadcasted channels gets the complete information from the database and
     // sends it to the client
     let mut send_task = tokio::spawn(async move {
         while let Ok(message) = message_tx.recv().await {
-            match message {
-                ClientMessage::Message {
-                    date_time,
-                    content,
-                    user_id,
-                    room_id,
-                } => {
-                    let user = users
-                        .find_one(doc! {"_id": &user_id}, None)
-                        .await
-                        .ok()
-                        .flatten();
-
-                    if let Some(user) = user {
-                        let _ = ws_sender
-                            .send(Message::Item(ServerMessage::Reply(MessageWithProfile {
-                                room_id,
-                                date_time,
-                                user_id,
-                                content,
-                                profile_url: user.profile_url,
-                            })))
-                            .await;
-                    } else {
-                        tracing::error!("Got an invalid user_id `{}`", &user_id);
-                    }
-                }
-
-                ClientMessage::Event { date_time, content } => {}
-            }
+            send_server_message(message, &database, &mut ws_sender).await;
         }
     });
 
     // receives chat payload from the client and stores the message in the database and sendsit
     // through the connected clients over the websocket
     let mut receive_task = tokio::spawn(async move {
+        let database = state.database.clone();
+        let notification_tx = &state.notification_tx;
+        let request_id = params.request_id;
         while let Some(message) = ws_receiver.next().await {
             match message {
-                Ok(Message::Item(msg)) => {
-                    match msg {
-                        ClientMessage::Message {
-                            date_time,
-                            content,
-                            user_id,
-                            room_id,
-                        } => {
-                            // we store the mesage here since if we do it in `send_task` it will be
-                            // duplicated by other threads
-                            let chat_message = db::Message {
-                                _id: ObjectId::new(),
-                                user_id,
-                                room_id,
-                                date_time,
-                                content,
-                            };
-
-                            let messages_collection =
-                                state.database.collection::<db::Message>("messages");
-
-                            messages_collection
-                                .insert_one(&chat_message, None)
-                                .await
-                                .unwrap();
-
-                            process_notifications(
-                                state.database.clone(),
-                                &chat_message,
-                                state.notification_tx.clone(),
-                            )
-                            .await;
-
-                            let _ = sender.send(ClientMessage::Message {
-                                date_time,
-                                content: chat_message.content,
-                                user_id: chat_message.user_id,
-                                room_id: chat_message.room_id,
-                            });
-                        }
-
-                        ClientMessage::Event { date_time, content } => {}
-                    }
+                Ok(Message::Item(message)) => {
+                    process_client_message(
+                        message,
+                        &sender,
+                        &database,
+                        &notification_tx,
+                        &request_id,
+                    )
+                    .await
                 }
 
-                Ok(_) => {
-                    println!("Invalid Message");
+                Ok(Message::Close(_)) => {
+                    tracing::info!("closing socket");
                     return;
+                }
+                Ok(_) => {
+                    tracing::info!("invalid message");
                 }
 
                 Err(err) => {
-                    println!("{:?}", err);
+                    tracing::error!("{:?}", err);
                     return;
                 }
             }
@@ -158,57 +94,140 @@ async fn handle_connection(
     };
 }
 
-async fn process_notifications(
-    database: mongodb::Database,
-    message: &db::Message,
-    sender: broadcast::Sender<db::Notification>,
+async fn send_server_message(
+    message: ClientMessage,
+    database: &mongodb::Database,
+    ws_sender: &mut SplitSink<WebSocket<ServerMessage, ClientMessage>, Message<ServerMessage>>,
 ) {
-    let notifications_collection = database.collection::<db::Notification>("notifications");
-    let rooms_collection = database.collection::<db::Room>("rooms");
-    let room = rooms_collection
-        .find_one(doc! { "roomId": &message.room_id}, None)
-        .await
-        .ok()
-        .flatten();
+    let users = database.collection::<db::User>("users");
+    match message {
+        ClientMessage::Message {
+            date_time,
+            content,
+            user_id,
+        } => {
+            let user = users.find_one(doc! {"_id": &user_id}, None).await;
 
-    match room {
-        Some(room) => {
-            // we're the only participant in this room so we return
-            if room.participants.len() == 1 {
-                return;
-            }
-
-            let notifications = room
-                .participants
-                .iter()
-                .map(|participant| Notification {
-                    _id: ObjectId::new(),
-                    seen: false,
-                    body: db::NotificationBody::Message {
-                        message_id: message._id,
-                    },
-                    user_id: participant.clone(),
-                })
-                .filter(|notification| notification.user_id != message.user_id)
-                .collect::<Vec<Notification>>();
-
-            for notification in notifications.iter() {
-                if let Err(err) = sender.send(notification.clone()) {
-                    tracing::error!("{}", err);
+            match user {
+                Ok(Some(user)) => {
+                    let _ = ws_sender
+                        .send(Message::Item(ServerMessage::Reply(MessageWithProfile {
+                            date_time,
+                            user_id,
+                            content,
+                            profile_url: user.profile_url,
+                        })))
+                        .await;
                 }
-            }
+                Ok(None) => {
+                    tracing::error!("Got an invalid user_id `{}`", &user_id);
+                }
 
-            let result = notifications_collection
-                .insert_many(notifications, None)
-                .await;
-
-            if let Err(err) = result {
-                tracing::error!("Insertion error: {}", err);
+                Err(err) => {
+                    tracing::error!("Error: {err}");
+                }
             }
         }
 
-        None => {
-            tracing::error!("User passed an invalid room_id {}", &message.room_id);
+        ClientMessage::Event { date_time, content } => {}
+    }
+}
+
+async fn process_client_message(
+    message: ClientMessage,
+    sender: &broadcast::Sender<ClientMessage>,
+    database: &mongodb::Database,
+    notification_tx: &broadcast::Sender<db::Notification>,
+    request_id: &String,
+) {
+    match message {
+        ClientMessage::Message {
+            date_time,
+            content,
+            user_id,
+        } => {
+            // we store the mesage here since if we do it in `send_task` it will be
+            // duplicated by other threads
+            let chat_message = db::Message {
+                _id: ObjectId::new(),
+                user_id,
+                request_id: request_id.clone(),
+                date_time,
+                content,
+            };
+
+            let messages_collection = database.collection::<db::Message>("messages");
+
+            messages_collection
+                .insert_one(&chat_message, None)
+                .await
+                .unwrap();
+
+            process_notifications(&database, &chat_message, notification_tx).await;
+
+            let _ = sender.send(ClientMessage::Message {
+                date_time,
+                content: chat_message.content,
+                user_id: chat_message.user_id,
+            });
+        }
+
+        ClientMessage::Event { date_time, content } => {}
+    }
+}
+
+async fn process_notifications(
+    database: &mongodb::Database,
+    message: &db::Message,
+    sender: &broadcast::Sender<db::Notification>,
+) {
+    let notifications_collection = database.collection::<db::Notification>("notifications");
+    let requests_collection = database.collection::<db::Request>("requests");
+    let request = requests_collection
+        .find_one(doc! { "_id": &message.request_id}, None)
+        .await;
+
+    let send_notification = |handler_id: String| async {
+        if handler_id == message.user_id {
+            return;
+        }
+
+        let notification = db::Notification {
+            _id: ObjectId::new(),
+            seen: false,
+            body: db::NotificationBody::Message {
+                message_id: message._id,
+            },
+            user_id: handler_id,
+        };
+        let result = notifications_collection
+            .insert_one(&notification, None)
+            .await;
+
+        if let Err(_) = sender.send(notification) {
+            tracing::error!("No channel to send notifications");
+        }
+
+        if let Err(err) = result {
+            tracing::error!("Insertion error: {}", err);
+        }
+    };
+
+    match request {
+        Ok(Some(request)) => {
+            let previous_handler = request.current_stage.prev_handler_id;
+            let current_handler = request.current_stage.handler_id;
+
+            send_notification(previous_handler).await;
+            send_notification(current_handler).await;
+        }
+
+        Ok(None) => {
+            tracing::error!("Invalid request._id: {}", message.request_id);
+        }
+
+        Err(err) => {
+            tracing::error!("Error {err}");
         }
     }
 }
@@ -222,7 +241,7 @@ async fn get_previous_messages(
     let pipeline = vec![
         doc! {
             "$match": {
-                "roomId": params.room_id.clone(),
+                "requestId": &params.request_id,
             }
         },
         doc! {
@@ -239,7 +258,7 @@ async fn get_previous_messages(
         doc! {
             "$project": {
                 "_id": 1,
-                "roomId": 1,
+                "requestId": 1,
                 "userId": 1,
                 "content": 1,
                 "dateTime": 1,
@@ -251,8 +270,6 @@ async fn get_previous_messages(
     let mut cursor = messages_collection.aggregate(pipeline, None).await?;
     let mut messages = Vec::new();
 
-    use futures::StreamExt;
-
     while let Some(doc) = cursor.next().await.transpose()? {
         let chat_message: MessageWithProfile = bson::from_document(doc)?;
         messages.push(chat_message);
@@ -261,44 +278,13 @@ async fn get_previous_messages(
     Ok(messages)
 }
 
-async fn initialize_room(params: &ConnectionArgs, database: mongodb::Database) -> Result<()> {
-    let rooms_collection = database.collection::<db::Room>("rooms");
-
-    let room = rooms_collection
-        .find_one(doc! { "roomId": &params.room_id}, None)
-        .await?;
-
-    match room {
-        Some(room) => {
-            if !room.participants.contains(&params.user_id) {
-                let filter = doc! { "roomId": &params.room_id};
-                let update = doc! { "$push": doc!{"participants": &params.user_id }};
-                let _ = rooms_collection.update_one(filter, update, None).await?;
-            }
-        }
-        None => {
-            let _ = rooms_collection
-                .insert_one(
-                    db::Room {
-                        room_id: params.room_id.clone(),
-                        participants: vec![],
-                    },
-                    None,
-                )
-                .await?;
-        }
-    }
-
-    Ok(())
-}
-
 use crate::utils::get_time;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ConnectionArgs {
-    room_id: String,
+    request_id: String,
     user_id: String,
 }
 
@@ -310,7 +296,6 @@ pub enum ClientMessage {
         #[serde(default = "get_time")]
         date_time: u64,
         content: String,
-        room_id: String,
         user_id: String,
     },
 
@@ -325,7 +310,6 @@ pub enum ClientMessage {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct MessageWithProfile {
-    pub room_id: String,
     pub user_id: String,
     pub date_time: u64,
     pub content: String,

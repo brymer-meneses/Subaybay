@@ -4,17 +4,10 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct Room {
-    pub room_id: String,
-    pub participants: Vec<String>,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone)]
-#[serde(rename_all = "camelCase")]
 pub struct Message {
-    #[serde(default = "ObjectId::new", rename = "_id")]
+    #[serde(rename = "_id")]
     pub _id: ObjectId,
-    pub room_id: String,
+    pub request_id: String,
     pub user_id: String,
     pub date_time: u64,
     pub content: String,
@@ -57,10 +50,38 @@ pub struct Session {
 }
 
 /// What is needed to query the inbox
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Hash, Eq, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct InboxItemIdentifier {
-    #[serde(alias = "_id")]
-    pub _id: ObjectId,
+    pub request_id: String,
     pub stage_type_index: u64,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct Request {
+    #[serde(alias = "_id")]
+    pub _id: String,
+    pub request_type_id: String,
+    pub student_number: String,
+    pub student_name: String,
+    pub student_email: String,
+    pub purpose: String,
+    pub remarks: String,
+    pub is_finished: bool,
+    pub current_stage: Stage,
+    pub history: Vec<Stage>,
+    pub next_handler_id: String,
+    pub room_id: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct Stage {
+    pub stage_type_index: u64,
+    pub handler_id: String,
+    pub prev_handler_id: String,
+    pub finished: bool,
+    pub date_started: DateTime,
+    pub date_finished: DateTime,
 }
