@@ -1,5 +1,6 @@
 import type { LayoutServerLoad } from "./$types";
 import { lucia } from "$lib/server/auth";
+import { requestType } from "$lib/server/database";
 
 interface HeaderData {
   href: string | undefined,
@@ -34,10 +35,15 @@ export const load: LayoutServerLoad = async (event) => {
     case "configuration":
       headerData = [
         { href: "/configuration", content: "Configuration" },
-        { href: undefined, content: "Create New Request" }
+        { href: undefined, content: "Configure Request Type" }
       ]
       if (routes.length > 1) {
-        headerData.push({ href: undefined, content: "Edit a Request Type" })
+        const title = (await requestType.findOne({_id: routes[1]}))?.title;
+        if (title){
+          headerData.push({ href: undefined, content: title});
+        } else {
+          headerData.push({ href: undefined, content: "Request Type Does Not Exist"});
+        }
       }
       break;
     case "admin":
