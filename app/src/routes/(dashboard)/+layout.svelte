@@ -12,7 +12,9 @@
   let clientWidth: number;
 
   $: {
-    if (typeof window !== "undefined") {
+    if (clientWidth < 765) {
+      isSidebarCollapsed = true;
+    } else if (typeof window !== "undefined") {
       isSidebarCollapsed = JSON.parse(
         sessionStorage.getItem("collapsedSidebar") ?? "false",
       );
