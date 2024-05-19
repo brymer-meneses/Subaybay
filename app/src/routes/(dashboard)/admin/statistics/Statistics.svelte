@@ -94,11 +94,7 @@
     });
 
     reqTypes.forEach((reqType: RequestType) => {
-      let reqTitle = reqType.title
-        .replace(/[^A-Z0-9]/g, "")
-        .split(" ")
-        .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
-        .join("");
+      let reqTitle = reqType.title.replace(/[^A-Z0-9]/g, "");
 
       const worksheet = workbook.addWorksheet(reqTitle);
       worksheet.state = "visible";

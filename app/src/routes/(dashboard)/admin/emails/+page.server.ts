@@ -18,7 +18,6 @@ export const load: PageServerLoad = async (event) => {
 
 export const actions: Actions = {
   add_user: async ({request, cookies}) => {
-    console.log("in the add user")
     const data = await request.formData();
     const email: string = data.get("email") as string;
 
