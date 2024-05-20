@@ -10,6 +10,7 @@
   import RequestTableLongEdit from "./RequestTableLongEdit.svelte";
 
   export let request: Request;
+  export let index: number;
 
   let processing = false;
   let editing = false;
@@ -34,19 +35,12 @@
   {#if processing}
     <Table.Cell class="col-span-6">Processing... Please Wait</Table.Cell>
   {:else}
-    <Table.Cell class="col-span-1 py-0">
-      <Button variant="link" on:click={toggleEditing}>
-        {#if !editing}
-          Edit
-        {:else}
-          Cancel
-        {/if}
-      </Button>
-    </Table.Cell>
-
     <!--Normal Mode-->
     {#if !editing}
-      <Table.Cell class="pxl-1 col-span-2">
+      <Table.Cell class="pxl-1 col-span-1 border-r text-center font-semibold">
+        <span class="px-1">{index + 1}</span>
+      </Table.Cell>
+      <Table.Cell class="pxl-1 col-span-1">
         <span class="px-1">{request.studentName}</span>
       </Table.Cell>
       <Table.Cell class="col-span-2">
@@ -66,6 +60,9 @@
           : request.remarks}</Table.Cell
       >
       <Table.Cell class="col-span-1 py-0">
+        <Button variant="link" on:click={toggleEditing}>Edit</Button>
+      </Table.Cell>
+      <Table.Cell class="col-span-1 py-0">
         <Button
           size="icon"
           variant="ghost"
@@ -77,7 +74,10 @@
 
       <!--Edit Mode-->
     {:else}
-      <Table.Cell class="col-span-2">
+      <Table.Cell class="pxl-1 col-span-1 border-r text-center">
+        <span class="px-1">{index + 1}</span>
+      </Table.Cell>
+      <Table.Cell class="col-span-1">
         <Input
           class="inline-flex h-5 w-auto border-gray-300 px-1 py-1"
           bind:value={studentName}
@@ -100,6 +100,9 @@
       </Table.Cell>
       <Table.Cell class="col-span-2">
         <RequestTableLongEdit bind:input={remarks} />
+      </Table.Cell>
+      <Table.Cell class="col-span-1 py-0">
+        <Button variant="link" on:click={toggleEditing}>Cancel</Button>
       </Table.Cell>
       <Table.Cell class="col-span-1 py-0">
         <form

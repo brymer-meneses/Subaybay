@@ -7,7 +7,7 @@
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
 
   import type { Request } from "./typeRequest";
-    import RequestTableEntry from "./RequestTableEntry.svelte";
+  import RequestTableEntry from "./RequestTableEntry.svelte";
 
   export let requests: Request[];
 
@@ -42,12 +42,12 @@
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
       <div class="relative w-80">
         <Search
-          class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
+          class="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4"
         />
         <Input
           type="search"
           placeholder="Search User"
-          class="w-full rounded-lg bg-background pl-8"
+          class="bg-background w-full rounded-lg pl-8"
           bind:value={searchTerm}
         />
       </div>
@@ -62,7 +62,9 @@
       <Table.Header>
         <Table.Row class="auto-rows grid w-full grid-cols-12 text-left">
           <Table.Head class="col-span-1 grid items-center"></Table.Head>
-          <Table.Head class="col-span-2 grid items-center">Student Name</Table.Head>
+          <Table.Head class="col-span-1 grid items-center"
+            >Student Name</Table.Head
+          >
           <Table.Head class="col-span-2 grid items-center"
             >Student Number</Table.Head
           >
@@ -71,14 +73,14 @@
           >
           <Table.Head class="col-span-2 grid items-center">Purpose</Table.Head>
           <Table.Head class="col-span-2 grid items-center">Remarks</Table.Head>
-          <Table.Head class="col-span-1 hidden items-center">Actions</Table.Head
+          <Table.Head class="col-span-2 hidden items-center">Actions</Table.Head
           >
         </Table.Row>
       </Table.Header>
       <ScrollArea class="h-[28rem]">
         <Table.Body>
-          {#each filteredRequests as request}
-            <RequestTableEntry {request}/>
+          {#each filteredRequests as request, index}
+            <RequestTableEntry {request} {index} />
           {/each}
         </Table.Body>
       </ScrollArea>
