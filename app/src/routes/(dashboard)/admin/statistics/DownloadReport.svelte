@@ -33,8 +33,6 @@
   $: {
     if (sortBy === "requestType") {
       sortType = "request";
-    } else {
-      sortType = "oldest"; //deafult sort type maybe?
     }
 
     if (!JSON.parse(dateRange)) {
@@ -61,7 +59,10 @@
         >Please set the following parameters.</Dialog.Description
       >
     </Dialog.Header>
-    <!-- <p>{JSON.stringify(params, null, 2)}</p> -->
+    <!-- <p>
+      <span class="text-red-600">DEBUG:</span> <br />
+      {JSON.stringify(params, null, 2)}
+    </p> -->
     <Separator />
     <div class="space-y-8">
       <div class="flex flex-col gap-4">
@@ -128,16 +129,20 @@
       {/if}
     </div>
     <Dialog.Footer>
-      <Button
-        class="gap-2"
-        on:click={() => {
-          exportExcel(count, summary, reqTypes, requests, params);
-          statDiagOpen = !statDiagOpen;
-        }}
-      >
-        <Download />
-        Report
-      </Button>
+      {#if sortBy === "date" && sortType === "request"}
+        <Button class="gap-2" disabled><Download /> Report</Button>
+      {:else}
+        <Button
+          class="gap-2"
+          on:click={() => {
+            exportExcel(count, summary, reqTypes, requests, params);
+            statDiagOpen = !statDiagOpen;
+          }}
+        >
+          <Download />
+          Report
+        </Button>
+      {/if}
     </Dialog.Footer>
   </Dialog.Content>
 </Dialog.Root>

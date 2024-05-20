@@ -7,7 +7,8 @@
   } from "@internationalized/date";
   import { cn } from "$lib/utils.js";
   import { Button } from "$lib/components/ui/button/index.js";
-  import { Calendar } from "$lib/components/ui/calendar/index.js";
+  // import { Calendar } from "$lib/components/ui/calendar/index.js";
+  import BetterCalendar from "./BetterCalendar.svelte";
   import * as Popover from "$lib/components/ui/popover/index.js";
   import { createEventDispatcher } from "svelte";
 
@@ -38,6 +39,6 @@
     </Button>
   </Popover.Trigger>
   <Popover.Content class="w-auto p-0">
-    <Calendar bind:value initialFocus />
+    <BetterCalendar bind:value initialFocus />
   </Popover.Content>
 </Popover.Root>

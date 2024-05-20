@@ -2,6 +2,7 @@ import ExcelJS from "exceljs";
 import type { Summary, RequestTypeInstancesCount, RequestType, Request, Params } from "./types";
 
 export async function exportExcel(count: RequestTypeInstancesCount[], summary: Summary[], reqTypes: RequestType[], requests: Request[], params: Params) {
+    console.log(requests, reqTypes)
     const workbook = new ExcelJS.Workbook();
     const mainWorksheet = workbook.addWorksheet("Overview");
 
