@@ -1,6 +1,7 @@
 import * as db from "$lib/server/database";
 import { setFlash } from "sveltekit-flash-message/server";
 import type { Actions, PageServerLoad } from "./$types";
+import { fail } from "@sveltejs/kit";
 
 export const load: PageServerLoad = async (event) => {
   const allReq = await db.request.find().toArray();
@@ -17,6 +18,7 @@ export const load: PageServerLoad = async (event) => {
       staleRequests.push(request);
     }
   }
+
   return {
     userInfo: event.locals.user,
     activeRequests,
@@ -38,7 +40,7 @@ export const actions: Actions = {
     const purpose: string = formData.get("purpose")?.toString() ?? "";
     const remarks: string = formData.get("remarks")?.toString() ?? "";
 
-    if (studentName.length == 0) errorMessage += "Student Name cannot be blank";
+    if (studentName.length == 0) errorMessage += "Student Name cannot be blank\n";
     if (!isValidStudentNum(studentNumber))
       errorMessage += "Invalid Student Number Format (XXXX-XXXXX)\n";
     if (!isValidStudentEmail(studentEmail))
@@ -46,7 +48,7 @@ export const actions: Actions = {
 
     if (errorMessage != "") {
       setFlash({ type: "error", message: errorMessage }, cookies);
-      return;
+      return fail(400);
     }
 
     const req = await db.request.findOneAndUpdate(

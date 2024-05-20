@@ -10,6 +10,7 @@
     import RequestTableEntry from "./RequestTableEntry.svelte";
 
   export let requests: Request[];
+
   let searchTerm: string = "";
   let filteredRequests: Request[] = [];
 
@@ -28,8 +29,6 @@
       return null;
     });
   }
-
-  
 </script>
 
 <Card.Root>

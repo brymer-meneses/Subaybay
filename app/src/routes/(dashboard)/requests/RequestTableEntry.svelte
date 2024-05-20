@@ -7,6 +7,7 @@
   import { goto } from "$app/navigation";
   import { Input } from "$lib/components/ui/input";
   import { enhance } from "$app/forms";
+  import RequestTableLongEdit from "./RequestTableLongEdit.svelte";
 
   export let request: Request;
 
@@ -94,16 +95,12 @@
           bind:value={studentNumber}
         />
       </Table.Cell>
-      <Table.Cell class="col-span-2"
-        >{request.purpose.length > 35
-          ? request.purpose.substring(0, 35) + "..."
-          : request.purpose}</Table.Cell
-      >
-      <Table.Cell class="col-span-2"
-        >{request.remarks.length > 35
-          ? request.remarks.substring(0, 35) + "..."
-          : request.remarks}</Table.Cell
-      >
+      <Table.Cell class="col-span-2">
+        <RequestTableLongEdit bind:input={purpose} />
+      </Table.Cell>
+      <Table.Cell class="col-span-2">
+        <RequestTableLongEdit bind:input={remarks} />
+      </Table.Cell>
       <Table.Cell class="col-span-1 py-0">
         <form
           action="?/edit"
@@ -111,8 +108,15 @@
           use:enhance={() => {
             processing = true;
 
-            return async ({ update }) => {
+            return async ({ update, result }) => {
               await update();
+              if (result.type === "success") {
+                request.studentName = studentName;
+                request.studentNumber = studentNumber;
+                request.studentEmail = studentEmail;
+                request.purpose = purpose;
+                request.remarks = remarks;
+              }
               toggleEditing();
               processing = false;
             };
