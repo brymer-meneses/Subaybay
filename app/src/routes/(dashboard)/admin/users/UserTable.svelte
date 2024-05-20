@@ -18,17 +18,21 @@
     {users.length === 1 ? "result" : "results"}.</Table.Caption
   >
   <Table.Header>
-    <Table.Row class="grid w-full grid-cols-6 text-left">
-      <Table.Head class="col-span-2 ">User</Table.Head>
-      <Table.Head class="col-span-2 ">Roles</Table.Head>
-      <Table.Head class="col-span-2 text-center ">Actions</Table.Head>
+    <Table.Row class="grid w-full grid-cols-12 text-left">
+      <Table.Head class="col-span-1 "></Table.Head>
+      <Table.Head class="col-span-4 ">User</Table.Head>
+      <Table.Head class="col-span-3 ">Roles</Table.Head>
+      <Table.Head class="col-span-4 text-center ">Actions</Table.Head>
     </Table.Row>
   </Table.Header>
   <ScrollArea class="h-[28rem]">
     <Table.Body>
-      {#each users as user (user._id)}
-        <Table.Row class="grid w-full grid-cols-6 text-left">
-          <Table.Cell class="col-span-2">
+      {#each users as user, index}
+        <Table.Row class="grid w-full grid-cols-12 text-left">
+          <Table.Cell class="col-span-1 border-r text-center font-semibold"
+            >{index + 1}</Table.Cell
+          >
+          <Table.Cell class="col-span-4">
             <div class="mb-4 flex items-center justify-between space-x-4">
               <div class="flex items-center lg:space-x-4">
                 <img
@@ -42,13 +46,13 @@
                       ? user.name.substring(0, 20) + "..."
                       : user.name}
                     <span
-                      class="hidden font-normal text-muted-foreground lg:block xl:inline"
+                      class="text-muted-foreground hidden font-normal lg:block xl:inline"
                     >
                       ({user._id})
                     </span>
                   </p>
                   <p
-                    class="hidden text-sm text-muted-foreground lg:block xl:inline"
+                    class="text-muted-foreground hidden text-sm lg:block xl:inline"
                   >
                     {user.email.length > 25
                       ? user.email.substring(0, 25) + "..."
@@ -58,20 +62,20 @@
               </div>
             </div>
           </Table.Cell>
-          <Table.Cell class="col-span-2">
+          <Table.Cell class="col-span-3">
             {#if user.isAdmin}
               <Badge>Admin</Badge>
             {/if}
             <Badge variant="outline">Staff</Badge>
           </Table.Cell>
-          <Table.Cell class="flex justify-center">
+          <Table.Cell class="col-span-2 flex justify-center">
             {#if user.isAdmin}
               <RemoveAdminForm {user} />
             {:else}
               <AddAdminForm {user} />
             {/if}
           </Table.Cell>
-          <Table.Cell class="flex justify-center">
+          <Table.Cell class="col-span-2 flex justify-center">
             <RemoveUserForm {user} />
           </Table.Cell>
         </Table.Row>

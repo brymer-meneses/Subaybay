@@ -25,20 +25,34 @@ export const actions: Actions = {
 
     if (!email) {
       console.log("Null email.");
+      setFlash(
+        { type: "error", message: `Email cannot be empty.` },
+        cookies,
+      );
       return;
     }
 
-    await permittedEmail.insertOne({ email });
-    setFlash(
-      { type: "success", message: `${email} successfully added` },
-      cookies,
-    );
+    const existingEmail = await permittedEmail.findOne({ email }, { projection: { _id:0 } });
+    if (!existingEmail) {
+      await permittedEmail.insertOne({ email });
+      setFlash(
+        { type: "success", message: `${email} successfully added.` },
+        cookies,
+      );
+
+    } else {
+      setFlash(
+        { type: "error", message: `${email} is already in the list.` },
+        cookies,
+      );
+      return;
+    }
+
     const permittedEmails = await permittedEmail
       .find({}, { projection: { _id: 0 } })
       .toArray();
 
-    console.log(permittedEmails);
-    return { permittedEmails, test: "test String" };
+    return { permittedEmails };
   },
 
   remove_user: async ({ cookies, request }) => {

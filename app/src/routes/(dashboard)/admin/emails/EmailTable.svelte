@@ -16,25 +16,31 @@
     {emails.length === 1 ? "result" : "results"}.</Table.Caption
   >
   <Table.Header>
-    <Table.Row class="grid w-full grid-cols-6 text-left">
-      <Table.Head class="col-span-2 ">User</Table.Head>
-      <Table.Head class="col-span-2 ">Roles</Table.Head>
-      <Table.Head class="col-span-2 text-center ">Actions</Table.Head>
+    <Table.Row class="grid w-full grid-cols-12 text-left">
+      <Table.Head class="col-span-1"></Table.Head>
+      <Table.Head class="col-span-4 ">User</Table.Head>
+      <Table.Head class="col-span-3 ">Roles</Table.Head>
+      <Table.Head class="col-span-4 text-center ">Actions</Table.Head>
     </Table.Row>
   </Table.Header>
   <ScrollArea class="h-[28rem]">
-    <Table.Body>
-      {#each emails as email}
-        <Table.Row class="grid w-full grid-cols-6 text-left">
-          <Table.Cell class="col-span-2">
+    <Table.Body class="border-b">
+      {#each emails as email, index}
+        <Table.Row class="grid w-full grid-cols-12 text-left">
+          <Table.Cell class="colspan-1 border-r text-center font-semibold"
+            >{index + 1}</Table.Cell
+          >
+          <Table.Cell class="col-span-4">
             <div class="mb-4 flex items-center justify-between space-x-4">
-              {email.email}
+              {email.email.length > 20
+                ? email.email.substring(0, 20) + "..."
+                : email.email}
             </div>
           </Table.Cell>
-          <Table.Cell class="col-span-2">
+          <Table.Cell class="col-span-3">
             <Badge variant="outline">Permitted Email</Badge>
           </Table.Cell>
-          <Table.Cell class="col-span-2 flex justify-center">
+          <Table.Cell class="col-span-4 flex justify-center">
             <RevokeAccess {email} />
           </Table.Cell>
         </Table.Row>
