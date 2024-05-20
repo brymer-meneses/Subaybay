@@ -108,10 +108,10 @@
         <Table.Row class="auto-rows grid w-full grid-cols-12 text-left">
           <Table.Head class="col-span-1 grid items-center"></Table.Head>
           <Table.Head class="col-span-1 grid items-center"
-            >Student Name</Table.Head
+            >Student Number</Table.Head
           >
           <Table.Head class="col-span-2 grid items-center"
-            >Student Number</Table.Head
+            >Student Name</Table.Head
           >
           <Table.Head class="col-span-2 grid items-center"
             >Student Email</Table.Head

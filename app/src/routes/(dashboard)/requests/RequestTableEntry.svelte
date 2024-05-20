@@ -41,13 +41,13 @@
         <span class="px-1">{index + 1}</span>
       </Table.Cell>
       <Table.Cell class="pxl-1 col-span-1">
+        <span class="px-1">{request.studentNumber}</span>
+      </Table.Cell>
+      <Table.Cell class="col-span-2">
         <span class="px-1">{request.studentName}</span>
       </Table.Cell>
       <Table.Cell class="col-span-2">
         <span class="px-1">{request.studentEmail}</span>
-      </Table.Cell>
-      <Table.Cell class="col-span-2">
-        <span class="px-1">{request.studentNumber}</span>
       </Table.Cell>
       <Table.Cell class="col-span-2"
         >{request.purpose.length > 35
@@ -80,6 +80,12 @@
       <Table.Cell class="col-span-1">
         <Input
           class="inline-flex h-5 w-auto border-gray-300 px-1 py-1"
+          bind:value={studentNumber}
+        />
+      </Table.Cell>
+      <Table.Cell class="col-span-2">
+        <Input
+          class="inline-flex h-5 w-auto border-gray-300 px-1 py-1"
           bind:value={studentName}
         />
       </Table.Cell>
@@ -87,12 +93,6 @@
         <Input
           class="inline-flex h-5 w-auto border-gray-300 px-1 py-1"
           bind:value={studentEmail}
-        />
-      </Table.Cell>
-      <Table.Cell class="col-span-2">
-        <Input
-          class="inline-flex h-5 w-auto border-gray-300 px-1 py-1"
-          bind:value={studentNumber}
         />
       </Table.Cell>
       <Table.Cell class="col-span-2">
