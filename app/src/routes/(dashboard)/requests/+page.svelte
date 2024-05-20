@@ -18,13 +18,19 @@
         <Tabs.Trigger value="discontinued">Discontinued</Tabs.Trigger>
       </Tabs.List>
       <Tabs.Content value="pending">
-        <RequestsTable requests={activeRequests} />
+        <RequestsTable requests={activeRequests} classification={"pending"} />
       </Tabs.Content>
       <Tabs.Content value="finished">
-        <RequestsTable requests={finishedRequests} />
+        <RequestsTable
+          requests={finishedRequests}
+          classification={"finished"}
+        />
       </Tabs.Content>
       <Tabs.Content value="discontinued">
-        <RequestsTable requests={staleRequests} />
+        <RequestsTable
+          requests={staleRequests}
+          classification={"discontinued"}
+        />
       </Tabs.Content>
     </Tabs.Root>
   </div>

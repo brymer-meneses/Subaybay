@@ -1,18 +1,29 @@
 <script lang="ts">
+  import {
+    sortPendingNewest,
+    sortPendingOldest,
+    sortFinishedNewest,
+    sortFinishedOldest,
+  } from "./sortingFunctions";
   import * as Table from "$lib/components/ui/table";
   import * as Card from "$lib/components/ui/card/index.js";
+  import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 
   import Input from "$lib/components/ui/input/input.svelte";
+  import Button from "$lib/components/ui/button/button.svelte";
   import Search from "lucide-svelte/icons/search";
+  import ChevronDown from "lucide-svelte/icons/chevron-down";
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
 
   import type { Request } from "./typeRequest";
   import RequestTableEntry from "./RequestTableEntry.svelte";
 
   export let requests: Request[];
+  export let classification: string;
 
   let searchTerm: string = "";
   let filteredRequests: Request[] = [];
+  let sortBy: string = "Newest";
 
   $: {
     filteredRequests = requests.filter((request: Request) => {
@@ -28,6 +39,18 @@
       }
       return null;
     });
+
+    if (classification === "pending" || classification === "discontinued") {
+      if (sortBy === "Newest")
+        filteredRequests = filteredRequests.sort(sortPendingNewest);
+      else if (sortBy === "Oldest")
+        filteredRequests = filteredRequests.sort(sortPendingOldest);
+    } else if (classification === "finished") {
+      if (sortBy === "Newest")
+        filteredRequests = filteredRequests.sort(sortFinishedNewest);
+      else if (sortBy === "Oldest")
+        filteredRequests = filteredRequests.sort(sortFinishedOldest);
+    }
   }
 </script>
 
@@ -40,6 +63,28 @@
       <Card.Description>List of discontinued requests</Card.Description>
     </div>
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
+      <div>
+        <span class="mr-2">Sort:</span>
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
+            <Button variant="outline" class="pr-0"
+              >{sortBy} <ChevronDown class="mx-2" /></Button
+            >
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content>
+            <DropdownMenu.Label>Sort By</DropdownMenu.Label>
+            <DropdownMenu.Separator />
+            <DropdownMenu.RadioGroup bind:value={sortBy}>
+              <DropdownMenu.RadioItem value={"Newest"}
+                >Newest</DropdownMenu.RadioItem
+              >
+              <DropdownMenu.RadioItem value={"Oldest"}
+                >Oldest</DropdownMenu.RadioItem
+              >
+            </DropdownMenu.RadioGroup>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
+      </div>
       <div class="relative w-80">
         <Search
           class="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4"
