@@ -129,7 +129,7 @@
       {/if}
     </div>
     <Dialog.Footer>
-      {#if sortBy === "date" && sortType === "request"}
+      {#if (sortBy === "date" && sortType === "request") || ((startDate.getTime() === 0 || endDate.getTime() === 0) && JSON.parse(dateRange))}
         <Button class="gap-2" disabled><Download /> Report</Button>
       {:else}
         <Button
