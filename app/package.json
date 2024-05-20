@@ -39,9 +39,10 @@
   "dependencies": {
     "@fontsource-variable/inter": "^5.0.17",
     "@fontsource/poppins": "^5.0.12",
+    "@internationalized/date": "^3.5.3",
     "@lucia-auth/adapter-mongodb": "^1.0.3",
     "arctic": "^1.5.0",
-    "bits-ui": "^0.21.7",
+    "bits-ui": "^0.21.8",
     "clsx": "^2.1.0",
     "cmdk-sv": "^0.0.17",
     "d3-scale": "^4.0.2",

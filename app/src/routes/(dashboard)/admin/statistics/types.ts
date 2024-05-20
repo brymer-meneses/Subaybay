@@ -1,4 +1,4 @@
-type User = {
+export type User = {
   _id: string;
   name: string;
   email: string;
@@ -6,11 +6,11 @@ type User = {
   isAdmin: boolean;
 };
 
-type PermittedEmail = {
+export type PermittedEmail = {
   email: string;
 };
 
-type RequestTypeInstancesCount = {
+export type RequestTypeInstancesCount = {
   reqTitle: string;
   total: {
     finished: number;
@@ -19,18 +19,18 @@ type RequestTypeInstancesCount = {
   };
 };
 
-type summary = {
+export type Summary = {
   type: string;
   count: number;
   countThisMonth: number;
 };
 
-type RequestType = {
+export type RequestType = {
   _id: string;
   title: string;
 };
 
-type OURRequest = {
+export type Request = {
   _id: string;
   requestTypeId: string;
   studentNumber: string;
@@ -38,4 +38,11 @@ type OURRequest = {
   studentEmail: string;
   purpose: string;
   remarks: string;
+};
+
+export type Params = {
+  sortBy: "date" | "requestType";
+  sortType: "oldest" | "newest" | "request";
+  startDate: Date;
+  endDate: Date;
 };
