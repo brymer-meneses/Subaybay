@@ -12,7 +12,7 @@
 
   let selectedStageIndex: number = 0;
   let searchTerm: string = "";
-  let filteredStages: InboxStageData[] = [];
+  let filteredStages: InboxStageData[] = stages;
   let skipThese: string[] = [
     "handlerId",
     "prevHandlerId",
