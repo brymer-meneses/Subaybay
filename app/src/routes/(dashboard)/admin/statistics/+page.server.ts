@@ -82,6 +82,10 @@ export const load: PageServerLoad = async (event) => {
     }
   }
   count.sort(compare);
+  /**
+   * sum and count are needed for the overview of each request type
+   * requests and requestTypes are needed for the actual data
+   */
   return { stats: { summary, count, requests, requestTypes } };
 };
 
