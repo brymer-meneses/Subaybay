@@ -1,6 +1,6 @@
 import * as db from "$lib/server/database";
-import { ObjectId } from "mongodb";
-import type { PageServerLoad } from "./$types";
+import { setFlash } from "sveltekit-flash-message/server";
+import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async (event) => {
   const allReq = await db.request.find().toArray();
@@ -24,3 +24,57 @@ export const load: PageServerLoad = async (event) => {
     staleRequests,
   };
 };
+
+export const actions: Actions = {
+  edit: async ({ request, cookies }) => {
+    const formData = await request.formData();
+
+    let errorMessage = "";
+    const requestId: string = formData.get("requestId")?.toString() ?? "";
+    const studentName: string = formData.get("studentName")?.toString() ?? "";
+    const studentEmail: string = formData.get("studentEmail")?.toString() ?? "";
+    const studentNumber: string =
+      formData.get("studentNumber")?.toString() ?? "";
+    const purpose: string = formData.get("purpose")?.toString() ?? "";
+    const remarks: string = formData.get("remarks")?.toString() ?? "";
+
+    if (studentName.length == 0) errorMessage += "Student Name cannot be blank";
+    if (!isValidStudentNum(studentNumber))
+      errorMessage += "Invalid Student Number Format (XXXX-XXXXX)\n";
+    if (!isValidStudentEmail(studentEmail))
+      errorMessage += "Invalid Student Email\n";
+
+    if (errorMessage != "") {
+      setFlash({ type: "error", message: errorMessage }, cookies);
+      return;
+    }
+
+    const req = await db.request.findOneAndUpdate(
+      { _id: requestId },
+      {
+        $set: {
+          studentName: studentName,
+          studentEmail: studentEmail,
+          studentNumber: studentNumber,
+          purpose: purpose,
+          remarks: remarks,
+        },
+      },
+    );
+
+    if (!req) {
+      setFlash({ type: "error", message: "Database Error: Request update failed" }, cookies);
+    }
+    else {
+      setFlash({ type: "success", message: "Success. Request Details updated" }, cookies);
+    }
+  },
+};
+
+function isValidStudentNum(studentNumber: string) {
+  return /^\d{4}-\d{5}$/.test(studentNumber);
+}
+
+function isValidStudentEmail(studentEmail: string) {
+  return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(studentEmail);
+}

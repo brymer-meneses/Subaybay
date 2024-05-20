@@ -13,7 +13,7 @@ declare global {
       flash?: {
         type: "success" | "error";
         message: string;
-        args: ExternalToast;
+        args?: ExternalToast;
       };
     }
     // interface PageState {}

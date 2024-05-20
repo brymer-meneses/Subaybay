@@ -19,10 +19,7 @@ export async function getRequestAndType(requestId: string) {
     return {
       req: null,
       reqType: null,
-      error: {
-        type: "error",
-        message: "Error. Request could not be found in database",
-      },
+      error: new Result("error", "Error. Request could not be found in database"),
     };
   }
 
@@ -33,10 +30,7 @@ export async function getRequestAndType(requestId: string) {
     return {
       req: null,
       reqType: null,
-      error: {
-        type: "error",
-        message: "Error. Request Type could not be found in database",
-      },
+      error: new Result("error", "Error. Request Type could not be found in database"),
     };
   }
 

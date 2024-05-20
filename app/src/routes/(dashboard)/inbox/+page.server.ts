@@ -289,7 +289,10 @@ export const actions: Actions = {
 
     const req = await db.request.findOne({ _id: requestId });
     if (!req) {
-      setFlash("Error. Request not found in database.", cookies);
+      setFlash(
+        { type: "error", message: "Error. Request not found in database." },
+        cookies,
+      );
       return;
     }
 
