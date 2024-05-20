@@ -42,7 +42,7 @@
 <aside
   class={clsx(
     "bg-background fixed inset-y-0 left-0 hidden flex-col border-r transition-all sm:flex",
-    isCollapsed ? "w-[80px] items-center" : "ml-6 w-[200px] items-start",
+    isCollapsed ? "w-[80px] items-center" : "w-[224px] items-start",
   )}
 >
   <nav class="flex flex-col items-center gap-4 px-4 py-4">
