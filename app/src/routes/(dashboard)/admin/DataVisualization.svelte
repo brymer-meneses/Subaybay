@@ -196,7 +196,7 @@
           >
         {:else}
           <rect
-            class="max-w-[51px] bg-primary-foreground"
+            class="bg-primary-foreground max-w-[51px]"
             x={xScale(i) + 10}
             y={yScale(point.value)}
             width={barWidth / 2 - 5}
