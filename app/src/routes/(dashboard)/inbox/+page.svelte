@@ -60,11 +60,6 @@
   class="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-4"
 >
   <div class="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
-    <div
-      class="grid gap-24 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4"
-    >
-      <NewRequest {requestTypes} data={data.form} />
-    </div>
     <Tabs.Root value="active" onValueChange={onTabChange}>
       <div class="flex items-center">
         <Tabs.List>
@@ -80,11 +75,10 @@
             <DropdownMenu.Trigger asChild let:builder>
               <Button
                 variant="outline"
-                size="sm"
-                class="h-7 gap-1 text-sm"
+                class="h-9.5 gap-2"
                 builders={[builder]}
               >
-                <ListFilter class="h-3.5 w-3.5" />
+                <ListFilter size="18" />
                 <span class="sr-only sm:not-sr-only">Filter</span>
               </Button>
             </DropdownMenu.Trigger>
@@ -98,10 +92,11 @@
               <DropdownMenu.CheckboxItem>Refunded</DropdownMenu.CheckboxItem>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
-          <Button size="sm" variant="outline" class="h-7 gap-1 text-sm">
-            <File class="h-3.5 w-3.5" />
+          <Button variant="outline" class="h-9.5 gap-2">
+            <File size="18" />
             <span class="sr-only sm:not-sr-only">Export</span>
           </Button>
+          <NewRequest {requestTypes} data={data.form} />
         </div>
       </div>
       <Tabs.Content value="active">

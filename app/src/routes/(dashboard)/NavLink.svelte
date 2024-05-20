@@ -18,15 +18,15 @@
   <a
     {href}
     class={clsx(
-      "flex h-10 items-center rounded-xl px-4 hover:text-foreground",
+      "hover:text-foreground flex h-10 items-center rounded-xl px-4",
       isSelected
-        ? "bg-slate-200 text-accent-foreground"
+        ? "text-accent-foreground bg-slate-200"
         : "text-muted-foreground",
     )}
   >
     <div class="flex items-center gap-3">
       <svelte:component this={icon} class="h-5 w-5" />
-      <span class="text-sm">{name}</span>
+      <span class="text-base">{name}</span>
     </div>
   </a>
 {:else}
@@ -35,9 +35,9 @@
       <a
         {href}
         class={clsx(
-          "flex h-10 items-center rounded-xl px-4 hover:text-foreground",
+          "hover:text-foreground flex h-10 items-center rounded-xl px-4",
           isSelected
-            ? "bg-slate-200 text-accent-foreground"
+            ? "text-accent-foreground bg-slate-200"
             : "text-muted-foreground",
         )}
         use:builder.action

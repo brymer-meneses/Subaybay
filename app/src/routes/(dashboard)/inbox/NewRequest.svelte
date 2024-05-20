@@ -53,9 +53,9 @@
 
 <Dialog.Root>
   <Dialog.Trigger>
-    <Button class="gap-4 p-3" variant="outline"
-      ><FilePlus size="20" /> Create Request</Button
-    >
+    <Button class="h-9 gap-2">
+      <FilePlus size="18" /> Create Request
+    </Button>
   </Dialog.Trigger>
   <Dialog.Content>
     <form action="?/add_request" method="POST" use:enhance>

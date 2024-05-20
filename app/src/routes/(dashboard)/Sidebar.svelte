@@ -41,8 +41,8 @@
 
 <aside
   class={clsx(
-    "fixed inset-y-0 left-0  hidden flex-col border-r bg-background transition-all sm:flex",
-    isCollapsed ? "w-[80px] items-center" : "w-[200px] items-start",
+    "bg-background fixed inset-y-0 left-0 hidden flex-col border-r transition-all sm:flex",
+    isCollapsed ? "w-[80px] items-center" : "ml-6 w-[200px] items-start",
   )}
 >
   <nav class="flex flex-col items-center gap-4 px-4 py-4">
@@ -99,19 +99,19 @@
     <Tooltip.Root>
       <Tooltip.Trigger>
         <div
-          class="flex items-center text-muted-foreground hover:text-accent-foreground"
+          class="text-muted-foreground hover:text-accent-foreground flex items-center"
         >
           <form method="post" action="/auth/logout">
             <Button
               type="submit"
               variant="link"
-              class="rounded-lg text-muted-foreground"
+              class="text-muted-foreground rounded-lg"
             >
               <LogOut class="h-5 w-5" />
             </Button>
           </form>
           {#if !isCollapsed}
-            <span class="text-sm">Sign Out</span>
+            <span class="text-base">Sign Out</span>
           {/if}
         </div>
       </Tooltip.Trigger>

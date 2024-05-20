@@ -60,29 +60,26 @@
   }
 </script>
 
-<Card.Root
-  data-x-chunk-name="dashboard-05-chunk-3"
-  data-x-chunk-description="A table of recent orders showing the following columns: Customer, Type, Status, Date, and Amount."
->
+<Card.Root>
   <Card.Header class="px-7">
     <Card.Title>Inbox</Card.Title>
     <Card.Description>Recent stages that need completion</Card.Description>
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
       <div class="relative w-full">
         <Search
-          class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
+          class="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4"
         />
         <Input
           type="search"
           placeholder="Search..."
-          class="w-full rounded-lg bg-background pl-8"
+          class="bg-background w-full rounded-lg pl-8"
           bind:value={searchTerm}
         />
       </div>
     </div>
   </Card.Header>
   <Card.Content>
-    <ScrollArea class="h-96">
+    <ScrollArea class="h-[37.6rem]">
       <div class="flex w-[98%] flex-col gap-1">
         {#each filteredStages as stage, index}
           <InboxItem
