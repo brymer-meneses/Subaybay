@@ -3,8 +3,10 @@ import { MongodbAdapter } from "@lucia-auth/adapter-mongodb";
 import { Google } from "arctic";
 
 import { dev } from "$app/environment";
-import { GOOGLE_CLIENT_SECRET, GOOGLE_CLIENT_ID } from "$env/static/private";
 import { session, user, type User } from "./database";
+
+const GOOGLE_CLIENT_SECRET = process.env["GOOGLE_CLIENT_SECRET"] ?? "";
+const GOOGLE_CLIENT_ID = process.env["GOOGLE_CLIENT_ID"] ?? "";
 
 export const google = new Google(
   GOOGLE_CLIENT_ID,

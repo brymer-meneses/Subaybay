@@ -4,7 +4,7 @@ SERVICES := backend
 all: run
 
 stop:
-	docker compose --env-file .env.development down
+	docker compose down
 
 reset-database:
 	docker compose down database
@@ -15,12 +15,11 @@ format:
 
 run:
 ifeq ($(MODE), dev)
-
-	docker compose --env-file .env.development up --build $(SERVICES) -d
+	docker compose  up --build $(SERVICES) -d
 	cd app && npm run dev
 
 else ifeq ($(MODE), prod)
-	docker compose --env-file .env.development up --build
+	docker compose  up --build
 
 else
 	$(error Invalid argument `$(MODE)` for `MODE`. Expected either `prod` or `dev`.)

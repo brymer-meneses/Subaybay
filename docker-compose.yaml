@@ -8,7 +8,7 @@ services:
     ports: 
       - ${APP_PORT}:3000
     env_file:
-      - ./.env.development
+      - ./.env
     depends_on:
       - backend
       - database
@@ -22,17 +22,17 @@ services:
     ports:
       - ${DATABASE_PORT}:27017
     env_file:
-      - ./.env.development
+      - ./.env
 
   backend:
     build: backend
     restart: always
     ports: 
       - ${BACKEND_PORT}:8080
-    env_file:
-      - ./.env.development
     depends_on:
       - database
+    env_file:
+      - ./.env
 
 
 volumes:
