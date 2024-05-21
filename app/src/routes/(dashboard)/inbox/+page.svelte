@@ -92,10 +92,6 @@
               <DropdownMenu.CheckboxItem>Refunded</DropdownMenu.CheckboxItem>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
-          <Button variant="outline" class="h-9.5 gap-2">
-            <File size="18" />
-            <span class="sr-only sm:not-sr-only">Export</span>
-          </Button>
           <NewRequest {requestTypes} data={data.form} />
         </div>
       </div>
