@@ -31,21 +31,18 @@
 </script>
 
 {#if !processing}
-  <div class="flex gap-2">
-    <!--If in active inbox-->
-    {#if stage.currentStageTypeIndex == stage.inboxStageTypeIndex}
-      {#if stage.final}
-        <ArchiveButton {stage} {enhanceFunc} />
-      {:else}
-        <FinishButton {users} {stage} {request} {enhanceFunc} />
-      {/if}
-      <ReassignButton {users} {stage} {request} {enhanceFunc} />
-
-      <!--If in pending inbox-->
+  <!--If in active inbox-->
+  {#if stage.currentStageTypeIndex == stage.inboxStageTypeIndex}
+    <ReassignButton {users} {stage} {request} {enhanceFunc} />
+    {#if stage.final}
+      <ArchiveButton {stage} {enhanceFunc} />
     {:else}
-      <RollbackButton {stage} {enhanceFunc} />
+      <FinishButton {users} {stage} {request} {enhanceFunc} />
     {/if}
-  </div>
+    <!--If in pending inbox-->
+  {:else}
+    <RollbackButton {stage} {enhanceFunc} />
+  {/if}
 {:else}
   Processing... Please Wait...
 {/if}

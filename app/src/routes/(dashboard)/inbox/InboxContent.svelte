@@ -8,6 +8,7 @@
   import { Button } from "$lib/components/ui/button";
   import { Badge } from "$lib/components/ui/badge";
   import { Textarea } from "$lib/components/ui/textarea";
+  import { Separator } from "$lib/components/ui/separator";
 
   import Forward from "lucide-svelte/icons/forward";
   import MessageCircle from "lucide-svelte/icons/message-circle";
@@ -37,7 +38,7 @@
 
 {#if stage && info}
   <Card.Root class="overflow-hidden">
-    <Card.Header class="flex flex-row items-start bg-muted/50">
+    <Card.Header class="bg-muted/50 flex flex-row items-start">
       <div class="grid gap-0.5">
         <Card.Title class="group flex items-center gap-2 text-lg">
           {stage.stageTitle}
@@ -71,9 +72,8 @@
 
       <div class="ml-auto flex items-center gap-2">
         <Button
-          size="sm"
           variant="outline"
-          class="h-8 gap-1"
+          class="h-9.5 gap-2"
           on:click={() => {
             goto("/requests/" + stage.requestId);
           }}
@@ -81,20 +81,20 @@
           <span
             class="flex items-center justify-center gap-2 lg:sr-only xl:not-sr-only xl:whitespace-nowrap"
           >
-            <Locate size={15} /> View Progress
+            <Locate size={18} /> View Progress
           </span>
         </Button>
       </div>
     </Card.Header>
-    <Card.Content class="flex flex-col gap-4 p-6 text-sm">
+    <Card.Content class="flex h-[43.1em] flex-col gap-4 px-6 py-2">
       <Tabs.Root value="details">
         <Tabs.List>
           <Tabs.Trigger value="details" class="flex gap-2">
-            <ReceiptText size={15} />
+            <ReceiptText size={18} />
             Details</Tabs.Trigger
           >
           <Tabs.Trigger value="chat" class="flex gap-2"
-            ><MessageCircle size={15} />Chat</Tabs.Trigger
+            ><MessageCircle size={18} />Chat</Tabs.Trigger
           >
         </Tabs.List>
 
@@ -107,7 +107,7 @@
                   <Tooltip.Root>
                     <Tooltip.Trigger>
                       <Badge variant="secondary" class="flex gap-2 font-normal">
-                        <GraduationCap size={15} />
+                        <GraduationCap size={18} />
                         {info.studentNumber}
                       </Badge>
                     </Tooltip.Trigger>
@@ -119,7 +119,7 @@
                   <Tooltip.Root>
                     <Tooltip.Trigger>
                       <Badge variant="secondary" class="flex gap-2 font-normal">
-                        <UserRound size={15} />
+                        <UserRound size={18} />
                         {info.studentName}
                       </Badge>
                     </Tooltip.Trigger>
@@ -131,7 +131,7 @@
                   <Tooltip.Root>
                     <Tooltip.Trigger>
                       <Badge variant="secondary" class="flex gap-2 font-normal">
-                        <Mail size={15} />
+                        <Mail size={18} />
                         {info.studentEmail}
                       </Badge>
                     </Tooltip.Trigger>
@@ -150,17 +150,20 @@
         </Tabs.Content>
 
         <Tabs.Content value="chat">
-          <ChatArea requestId={stage.requestId} />
+          <div class="flex h-[38.1rem] flex-col">
+            <ChatArea requestId={stage.requestId} height="h-[29.5rem]" />
+            <div class="mt-auto flex justify-end gap-4">
+              <InboxContentButtons
+                request={requests[stage.requestId]}
+                {stage}
+                {users}
+                {updateSelectedStage}
+                bind:processing
+              />
+            </div>
+          </div>
         </Tabs.Content>
       </Tabs.Root>
-
-      <InboxContentButtons
-        request={requests[stage.requestId]}
-        {stage}
-        {users}
-        {updateSelectedStage}
-        bind:processing
-      />
     </Card.Content>
   </Card.Root>
 {/if}

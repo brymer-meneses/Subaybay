@@ -19,16 +19,13 @@
 </script>
 
 <PopoverButton {users} {processing} bind:nextHandlerId>
-  <Button variant="outline" slot="button" class="gap-2 rounded-md">
-    <User /> Reassign
+  <Button variant="outline" slot="button" class="h-9.5 gap-2">
+    <User size={18} /> Reassign
   </Button>
 
   <Dialog.Root>
     <Dialog.Trigger disabled={nextHandlerId in users ? false : true}>
-      <Button
-        class="gap-2 text-red-600 text-white"
-        disabled={nextHandlerId in users ? false : true}
-      >
+      <Button class="h-9" disabled={nextHandlerId in users ? false : true}>
         Reassign
       </Button>
     </Dialog.Trigger>
@@ -56,7 +53,9 @@
         <form action="?/reassign_stage" method="POST" use:enhance={enhanceFunc}>
           <input type="hidden" name="requestId" value={stage.requestId} />
           <input type="hidden" name="nextHandlerId" value={nextHandlerId} />
-          <Button type="submit">I'm Sure. Reassign.</Button>
+          <Button class="h-9" variant="destructive" type="submit"
+            >I'm Sure. Reassign.</Button
+          >
         </form>
       </Dialog.Footer>
     </Dialog.Content>

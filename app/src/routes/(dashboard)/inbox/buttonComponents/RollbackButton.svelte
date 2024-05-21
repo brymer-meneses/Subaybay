@@ -11,8 +11,8 @@
 
 <Dialog.Root>
   <Dialog.Trigger>
-    <Button variant="destructive" class="gap-2 text-red-600 text-white">
-      <MoveLeft />
+    <Button variant="destructive" class="h-9 gap-2">
+      <MoveLeft size="18" />
       Rollback
     </Button>
   </Dialog.Trigger>
@@ -45,7 +45,7 @@
           name="inboxStageTypeIndex"
           value={stage.inboxStageTypeIndex}
         />
-        <Button type="submit" class="gap-2 rounded-md" variant="destructive">
+        <Button class="h-9" variant="destructive" type="submit">
           I'm sure. Rollback.
         </Button>
       </form>

@@ -18,13 +18,17 @@
 </script>
 
 <PopoverButton {users} {processing} bind:nextHandlerId>
-  <Button slot="button" class="gap-2 rounded-md">
-    <CheckCheck /> Finish
+  <Button slot="button" class="h-9 gap-2">
+    <CheckCheck size="18" /> Finish
   </Button>
   <form action="?/finish_stage" method="POST" use:enhance={enhanceFunc}>
     <input type="hidden" name="requestId" value={stage.requestId} />
     <input type="hidden" name="nextHandlerId" value={nextHandlerId} />
-    <Button type="submit" disabled={nextHandlerId in users ? false : true}>
+    <Button
+      type="submit"
+      disabled={nextHandlerId in users ? false : true}
+      class="h-9"
+    >
       Confirm
     </Button>
   </form>

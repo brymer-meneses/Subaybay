@@ -13,8 +13,8 @@
 
 <Dialog.Root>
   <Dialog.Trigger>
-    <Button class="gap-2 text-red-600 text-white">
-      <CheckCheck />
+    <Button class="h-9 gap-2">
+      <CheckCheck size="18" />
       Finish and Archive
     </Button>
   </Dialog.Trigger>
@@ -36,7 +36,9 @@
       <form action="?/finish_stage" method="POST" use:enhance={enhanceFunc}>
         <input type="hidden" name="requestId" value={stage.requestId} />
         <input type="hidden" name="nextHandlerId" value={""} />
-        <Button type="submit">I'm Sure. Archive.</Button>
+        <Button class="h-9" variant="destructive" type="submit">
+          I'm Sure. Archive.
+        </Button>
       </form>
     </Dialog.Footer>
   </Dialog.Content>

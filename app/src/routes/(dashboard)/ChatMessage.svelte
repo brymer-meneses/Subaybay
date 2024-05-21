@@ -27,7 +27,7 @@
       class="h-6 w-6 rounded-full object-cover"
     />
     <div
-      class={`flex w-fit min-w-[10%] max-w-[80%] items-center rounded-2xl p-3 ${color}`}
+      class={`flex w-fit min-w-[10%] max-w-[80%] items-center break-all rounded-2xl p-3 ${color}`}
     >
       <p class="text-base font-light">{message}</p>
     </div>
