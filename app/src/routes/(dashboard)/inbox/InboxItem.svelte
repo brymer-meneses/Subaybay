@@ -13,7 +13,7 @@
 
 <Button
   class={clsx(
-    "flex h-[8.5rem] w-[48rem] flex-row items-center rounded-2xl hover:text-white",
+    "flex h-[8.5rem] w-[48rem] flex-row items-start rounded-2xl hover:text-white",
     isSelected ? "bg-primary text-white" : "bg-accent text-black",
   )}
   on:click={onClick}
