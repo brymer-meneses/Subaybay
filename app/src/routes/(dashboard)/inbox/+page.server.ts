@@ -119,8 +119,13 @@ import { setFlash } from "sveltekit-flash-message/server";
 
 export const actions: Actions = {
   add_request: async (event) => {
-    const { request, locals, cookies } = event;
-    const userId = locals.user?.id ?? "0";
+    const { locals, cookies } = event;
+    const userId = locals.user?.id ?? "-1";
+
+    if (userId === "-1") {
+      setFlash({ type: "error", message: "Something went wrong. Invalid userId" }, cookies);
+      return fail(400);
+    }
 
     const form = await superValidate(event, zod(formSchema));
     if (!form.valid) {
@@ -134,53 +139,64 @@ export const actions: Actions = {
     const studentName = data.studentName;
     const studentEmail = data.studentEmail;
     const studentNumber = data.studentNumber;
-    const requestTypeId = data.requestTypeId;
+    const selectedRequestTypeIds = data.selectedReqTypeIds;
     const purpose = data.purpose;
     const remarks = data.remarks;
 
-    const reqType = await db.requestType.findOne({ _id: requestTypeId });
-    if (!reqType) {
-      setFlash({ type: "error", message: "Invalid Request Type" }, cookies);
-      return;
-    }
+    const reqTypeIds = JSON.parse(selectedRequestTypeIds);
 
-    const nextHandlerId =
-      reqType.stages.length >= 2 ? reqType.stages[1].defaultHandlerId : "";
-
-    const req: db.Request = {
-      _id: new ObjectId().toString(),
-      requestTypeId: requestTypeId,
-      studentNumber: studentNumber,
-      studentName: studentName,
-      studentEmail: studentEmail,
-      purpose: purpose,
-      remarks: remarks,
-      isFinished: false,
-      roomId: new ObjectId().toString(),
-      currentStage: {
-        stageTypeIndex: 0,
-        handlerId: userId,
-        prevHandlerId: "",
-        finished: false,
-        dateStarted: new Date(),
-        dateFinished: new Date(0),
-      },
-      history: [],
-      nextHandlerId: nextHandlerId,
+    const currentStage = {
+      stageTypeIndex: 0,
+      handlerId: userId,
+      prevHandlerId: "",
+      finished: false,
+      dateStarted: new Date(),
+      dateFinished: new Date(0),
     };
 
-    let insertionResult = await db.request.insertOne(req);
-    if (!insertionResult.acknowledged) {
-      setFlash(
-        { type: "error", message: "Database Error: Request creation failed" },
-        cookies,
-      );
-      return;
+    for (const reqTypeId of reqTypeIds) {
+      const reqType = await db.requestType.findOne({
+        _id: reqTypeId,
+      });
+      if (!reqType) {
+        // setFlash({ type: "error", message: "Invalid Request Type" }, cookies);
+        continue;
+      }
+
+      const nextHandlerId =
+        reqType.stages.length >= 2 ? reqType.stages[1].defaultHandlerId : "";
+
+      const req: db.Request = {
+        _id: new ObjectId().toString(),
+        requestTypeId: reqTypeId,
+        studentNumber: studentNumber,
+        studentName: studentName,
+        studentEmail: studentEmail,
+        purpose: purpose,
+        remarks: remarks,
+        isFinished: false,
+        roomId: new ObjectId().toString(),
+        currentStage: currentStage,
+        history: [],
+        nextHandlerId: nextHandlerId,
+      };
+
+      let insertionResult = await db.request.insertOne(req);
+      if (!insertionResult.acknowledged) {
+        // setFlash(
+        //   { type: "error", message: "Database Error: Request creation failed" },
+        //   cookies,
+        // );
+        continue;
+      }
+
+      addToInbox(userId, "current", { requestId: req._id, stageTypeIndex: 0 });
+
+      // setFlash(
+      //   { type: "success", message: "Added request of type: " + reqType.title },
+      //   cookies,
+      // );
     }
-
-    addToInbox(userId, "current", { requestId: req._id, stageTypeIndex: 0 });
-
-    setFlash({ type: "success", message: "Added request" }, cookies);
   },
   finish_stage: async ({ request, locals, cookies }) => {
     const userId = locals.user?.id ?? "0";

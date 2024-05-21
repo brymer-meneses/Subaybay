@@ -16,7 +16,7 @@
 
   export let data: PageServerData;
 
-  let requestTypes = data.latestRequestTypes;
+  let latestReqTypes = data.latestRequestTypes;
 
   let selectedStage: InboxStageData | null = null;
   let inboxes: { active: any; pending: any } = {
@@ -92,7 +92,7 @@
               <DropdownMenu.CheckboxItem>Refunded</DropdownMenu.CheckboxItem>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
-          <NewRequest {requestTypes} data={data.form} />
+          <NewRequest latestReqTypes={latestReqTypes} data={data.form} />
         </div>
       </div>
       <Tabs.Content value="active">

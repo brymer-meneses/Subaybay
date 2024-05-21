@@ -3,6 +3,8 @@
   import { Input } from "$lib/components/ui/input/index.js";
   import { Textarea } from "$lib/components/ui/textarea/index.js";
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
+  import { Label } from "$lib/components/ui/label";
+  import Checkbox from "$lib/components/ui/checkbox/checkbox.svelte";
 
   import * as Command from "$lib/components/ui/command/index.js";
   import * as Dialog from "$lib/components/ui/dialog/index.js";
@@ -27,7 +29,7 @@
   import CaretSort from "svelte-radix/CaretSort.svelte";
 
   export let data: SuperValidated<Infer<FormSchema>>;
-  export let requestTypes: RequestType[];
+  export let latestReqTypes: RequestType[];
 
   const form = superForm(data, {
     validators: zodClient(formSchema),
@@ -35,10 +37,42 @@
 
   const { form: formData, enhance } = form;
 
-  let open = false;
-  let value = "";
+  let reqTypeSelection: { [id: string]: boolean } = {};
 
-  $: selectedRequestType = requestTypes.find((f) => f.title === value);
+  let selectedCount: number = 0;
+  let open = false;
+
+  $: if ($formData.selectedReqTypeIds.length == 0) {
+    selectedCount = 0;
+    for (const id in reqTypeSelection) {
+      reqTypeSelection[id] = false;
+    }
+  }
+
+  for (const reqType of latestReqTypes) {
+    reqTypeSelection[reqType._id] = false;
+  }
+
+  function updateSelection(id: string, value: boolean | "indeterminate") {
+    if (value === "indeterminate" || value == false) {
+      reqTypeSelection[id] = false;
+      selectedCount--;
+    } else {
+      reqTypeSelection[id] = true;
+      selectedCount++;
+    }
+
+    // store selection in JSON string array
+    $formData.selectedReqTypeIds = "[";
+    for (const id in reqTypeSelection) {
+      if (reqTypeSelection[id]) $formData.selectedReqTypeIds += '"' + id + '",';
+    }
+    $formData.selectedReqTypeIds = $formData.selectedReqTypeIds.replace(
+      /,$/,
+      "",
+    ); //remove excess comma if there is one
+    $formData.selectedReqTypeIds += "]";
+  }
 
   // We want to refocus the trigger button when the user selects
   // an item from the list so users can continue navigating the
@@ -135,10 +169,10 @@
           <Form.FieldErrors />
         </Form.Field>
 
-        <Form.Field {form} name="requestTypeId" class="flex flex-col">
-          <Popover.Root bind:open let:ids>
+        <Form.Field {form} name="selectedReqTypeIds" class="flex flex-col">
+          <Popover.Root bind:open>
             <Form.Control let:attrs>
-              <Form.Label>Request Type</Form.Label>
+              <Form.Label>Request Types</Form.Label>
               <Popover.Trigger asChild let:builder role="combobox" {...attrs}>
                 <Button
                   builders={[builder]}
@@ -147,42 +181,38 @@
                   aria-expanded={open}
                   class="w-full justify-between"
                 >
-                  {selectedRequestType === undefined
-                    ? "Select a request type"
-                    : selectedRequestType.title}
+                  {selectedCount == 0
+                    ? "Select atleast one request type"
+                    : selectedCount + " selected"}
                   <CaretSort class="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </Popover.Trigger>
               <input
                 hidden
-                value={selectedRequestType === undefined
-                  ? ""
-                  : selectedRequestType._id.toString()}
+                value={$formData.selectedReqTypeIds}
                 name={attrs.name}
               />
             </Form.Control>
 
             <Popover.Content class="w-full p-0">
               <Command.Root>
-                <Command.Input placeholder="Search framework..." class="h-9" />
+                <Command.Input
+                  placeholder="Search request type..."
+                  class="h-9"
+                />
                 <Command.Empty>No request type found.</Command.Empty>
                 <Command.Group>
                   <ScrollArea class="h-40">
-                    {#each requestTypes as requestType}
-                      <Command.Item
-                        value={requestType.title}
-                        onSelect={(currentValue) => {
-                          value = currentValue;
-                          closeAndFocusTrigger(ids.trigger);
-                        }}
-                      >
-                        <Check
-                          class={cn(
-                            "mr-2 h-4 w-4",
-                            value !== requestType.title && "text-transparent",
-                          )}
+                    {#each latestReqTypes as requestType}
+                      <Command.Item value={requestType.title}>
+                        <Checkbox
+                          bind:checked={reqTypeSelection[requestType._id]}
+                          onCheckedChange={(value) =>
+                            updateSelection(requestType._id, value)}
                         />
-                        {requestType.title}
+                        <Label class="px-1">
+                          {requestType.title}
+                        </Label>
                       </Command.Item>
                     {/each}
                   </ScrollArea>
