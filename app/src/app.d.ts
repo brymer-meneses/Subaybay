@@ -1,6 +1,6 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
-import { ExternalToast } from "svelte-sonner";
+import type { ExternalToast } from "svelte-sonner";
 
 declare global {
   namespace App {
@@ -21,4 +21,4 @@ declare global {
   }
 }
 
-export {};
+export { };
