@@ -38,6 +38,7 @@ export const load: PageServerLoad = async (event) => {
       total: { finished: 0, pending: 0, stale: 0 },
     });
   }
+  
   count = Array.from(new Set(count)) as RequestTypeInstancesCount[]; //remove duplicates
 
   for (const request of requests) {
@@ -59,12 +60,11 @@ export const load: PageServerLoad = async (event) => {
       const currentStageDateFinished = new Date(
         request.currentStage.dateFinished,
       );
-      const epochDate = new Date(0);
 
       if (
         currentStageIndex === finalStageIndex &&
         request.isFinished &&
-        currentStageDateFinished.getTime() !== epochDate.getTime()
+        currentStageDateFinished.getTime() !== 0
       ) {
         count[foundIndex].total.finished++;
         summary[0].count++;

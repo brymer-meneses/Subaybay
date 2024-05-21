@@ -1,10 +1,9 @@
 import { MongoClient, ObjectId } from "mongodb";
-import {
-  DATABASE_PORT,
-  DATABASE_HOSTNAME,
-  DATABASE_NAME,
-} from "$env/static/private";
 import { dev } from "$app/environment";
+
+const DATABASE_PORT = process.env["DATABASE_PORT"] ?? "27017";
+const DATABASE_HOSTNAME = process.env["DATABASE_HOSTNAME"] ?? "host.docker.internal";
+const DATABASE_NAME = process.env["DATABASE_NAME"] ?? "subaybay";
 
 const hostname = dev ? "localhost" : DATABASE_HOSTNAME;
 

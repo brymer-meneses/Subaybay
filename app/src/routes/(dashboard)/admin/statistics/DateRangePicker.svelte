@@ -1,65 +1,43 @@
 <script lang="ts">
-  // CURRENTLY UNUSED
   import CalendarIcon from "lucide-svelte/icons/calendar";
-  import type { DateRange } from "bits-ui";
   import {
-    CalendarDate,
     DateFormatter,
     type DateValue,
     getLocalTimeZone,
   } from "@internationalized/date";
   import { cn } from "$lib/utils.js";
   import { Button } from "$lib/components/ui/button/index.js";
-  import { RangeCalendar } from "$lib/components/ui/range-calendar/index.js";
+  import BetterCalendar from "./BetterCalendar.svelte";
   import * as Popover from "$lib/components/ui/popover/index.js";
+  import { createEventDispatcher } from "svelte";
 
   const df = new DateFormatter("en-US", {
-    dateStyle: "medium",
+    dateStyle: "long",
   });
 
-  let value: DateRange | undefined = {
-    start: new CalendarDate(2022, 1, 20),
-    end: new CalendarDate(2022, 1, 20).add({ days: 20 }),
-  };
+  let date: DateValue | undefined = undefined;
 
-  let startValue: DateValue | undefined = undefined;
+  const dispatcher = createEventDispatcher();
+  $: {
+    dispatcher("dateSelect", date);
+  }
 </script>
 
-<div class="grid gap-2">
-  <Popover.Root openFocus>
-    <Popover.Trigger asChild let:builder>
-      <Button
-        variant="outline"
-        class={cn(
-          "w-[300px] justify-start text-left font-normal",
-          !value && "text-muted-foreground",
-        )}
-        builders={[builder]}
-      >
-        <CalendarIcon class="mr-2 h-4 w-4" />
-        {#if value && value.start}
-          {#if value.end}
-            {df.format(value.start.toDate(getLocalTimeZone()))} - {df.format(
-              value.end.toDate(getLocalTimeZone()),
-            )}
-          {:else}
-            {df.format(value.start.toDate(getLocalTimeZone()))}
-          {/if}
-        {:else if startValue}
-          {df.format(startValue.toDate(getLocalTimeZone()))}
-        {:else}
-          Pick a date
-        {/if}
-      </Button>
-    </Popover.Trigger>
-    <Popover.Content class="w-auto p-0" align="start">
-      <RangeCalendar
-        bind:value
-        bind:startValue
-        initialFocus
-        numberOfMonths={2}
-        placeholder={value?.start}
-      />
-    </Popover.Content>
-  </Popover.Root>
-</div>
+<Popover.Root>
+  <Popover.Trigger asChild let:builder>
+    <Button
+      variant="outline"
+      class={cn(
+        "w-[280px] justify-start text-left font-normal",
+        !date && "text-muted-foreground",
+      )}
+      builders={[builder]}
+    >
+      <CalendarIcon class="mr-2 h-4 w-4" />
+      {date ? df.format(date.toDate(getLocalTimeZone())) : "Pick a Date"}
+    </Button>
+  </Popover.Trigger>
+  <Popover.Content class="flex w-auto p-0">
+    <BetterCalendar bind:value={date} initialFocus />
+  </Popover.Content>
+</Popover.Root>

@@ -13,8 +13,7 @@
   import Label from "$lib/components/ui/label/label.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
   import Separator from "$lib/components/ui/separator/separator.svelte";
-  import DatePicker from "./DatePicker.svelte";
-
+  import DateRangePicker from "./DateRangePicker.svelte";
   import Download from "lucide-svelte/icons/download";
 
   export let count: RequestTypeInstancesCount[];
@@ -26,9 +25,14 @@
   let sortType: "oldest" | "newest" | "request" = "oldest";
   let startDate: Date = new Date(0);
   let endDate: Date = new Date(0);
-  let params: Params = { sortBy, sortType, startDate, endDate };
-
-  let dateRange: string = "true"; //i tried boolean, but radio group component doesnt allow me
+  let dateRange: string = "false"; //i tried boolean, but radio group component doesnt allow me
+  let params: Params = {
+    sortBy,
+    sortType,
+    startDate,
+    endDate,
+    dateRange: JSON.parse(dateRange),
+  };
 
   $: {
     if (sortBy === "requestType") {
@@ -39,10 +43,16 @@
       startDate = new Date(0);
       endDate = new Date(0);
     }
-    params = { sortBy, sortType, startDate, endDate };
+    params = {
+      sortBy,
+      sortType,
+      startDate,
+      endDate,
+      dateRange: JSON.parse(dateRange),
+    };
   }
 
-  let statDiagOpen = true;
+  let statDiagOpen = false;
 </script>
 
 <Dialog.Root bind:open={statDiagOpen}>
@@ -69,34 +79,30 @@
         <Label>Download all request details during:</Label>
         <RadioGroup.Root bind:value={dateRange} class="flex">
           <div class="flex items-center space-x-2">
+            <RadioGroup.Item value={"false"} id="dateRange2" />
+            <Label for="dateRange2" class="font-normal">Lifetime</Label>
+          </div>
+          <div class="flex items-center space-x-2">
             <RadioGroup.Item value={"true"} id="dateRange1" />
             <Label for="dateRange1" class="font-normal">Custom Date Range</Label
             >
-          </div>
-          <div class="flex items-center space-x-2">
-            <RadioGroup.Item value={"false"} id="dateRange2" />
-            <Label for="dateRange2" class="font-normal">Lifetime</Label>
           </div>
         </RadioGroup.Root>
       </div>
       {#if JSON.parse(dateRange)}
         <div class="my-4 flex flex-col gap-4">
-          <div class="flex flex-col gap-4">
-            <Label>Start Date</Label>
-            <DatePicker
-              on:dateSelect={(event) => {
-                startDate = new Date(event.detail);
-              }}
-            />
-          </div>
-          <div class="flex flex-col gap-4">
-            <Label>End Date</Label>
-            <DatePicker
-              on:dateSelect={(event) => {
-                endDate = new Date(event.detail);
-              }}
-            />
-          </div>
+          <Label>Start Date</Label>
+          <DateRangePicker
+            on:dateSelect={(event) => {
+              startDate = new Date(event.detail);
+            }}
+          />
+          <Label>End Date</Label>
+          <DateRangePicker
+            on:dateSelect={(event) => {
+              endDate = new Date(event.detail);
+            }}
+          />
         </div>
       {/if}
       <div class="flex flex-col gap-4">

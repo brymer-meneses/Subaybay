@@ -35,7 +35,10 @@
     month: "long",
   });
 
-  const yearOptions = Array.from({ length: 100 }, (_, i) => ({
+  const minYear = 2000;
+  const length = new Date().getFullYear() - minYear + 1;
+
+  const yearOptions = Array.from({ length }, (_, i) => ({
     label: String(new Date().getFullYear() - i),
     value: new Date().getFullYear() - i,
   }));
