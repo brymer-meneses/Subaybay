@@ -104,7 +104,7 @@
 </script>
 
 <Card.Root>
-  <Card.Content class="flex w-full flex-col gap-5 p-2">
+  <Card.Content class="flex w-full flex-col gap-5 px-1 py-6">
     <div bind:this={messageContainer} class={height + " overflow-auto"}>
       <div class="flex w-[96%] flex-col gap-3">
         {#each messages as message, _}
