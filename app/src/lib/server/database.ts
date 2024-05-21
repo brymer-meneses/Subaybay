@@ -1,11 +1,14 @@
 import { MongoClient, ObjectId } from "mongodb";
 import { dev } from "$app/environment";
+import { env } from "$env/dynamic/private"
 
-const DATABASE_PORT = process.env["DATABASE_PORT"] ?? "27017";
-const DATABASE_HOSTNAME = process.env["DATABASE_HOSTNAME"] ?? "host.docker.internal";
-const DATABASE_NAME = process.env["DATABASE_NAME"] ?? "subaybay";
-const DATABASE_USERNAME = process.env["DATABASE_USERNAME"] ?? "admin";
-const DATABASE_PASSWORD = process.env["DATABASE_PASSWORD"] ?? "password";
+const DATABASE_PORT = env.DATABASE_PORT ?? "27017";
+const DATABASE_HOSTNAME = env.DATABASE_HOSTNAME ?? "host.docker.internal";
+const DATABASE_NAME = env.DATABASE_NAME ?? "subaybay";
+const DATABASE_USERNAME = env.DATABASE_USERNAME ?? "admin";
+const DATABASE_PASSWORD = env.DATABASE_PASSWORD ?? "";
+
+if (DATABASE_PASSWORD === "") { throw Error("Environment variables are not loaded properly") }
 
 const hostname = dev ? "localhost" : DATABASE_HOSTNAME;
 const URI = `mongodb://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${hostname}:${DATABASE_PORT}/`;

@@ -4,9 +4,10 @@ import { Google } from "arctic";
 
 import { dev } from "$app/environment";
 import { session, user, type User } from "./database";
+import { env } from "$env/dynamic/private"
 
-const GOOGLE_CLIENT_SECRET = process.env["GOOGLE_CLIENT_SECRET"] ?? "";
-const GOOGLE_CLIENT_ID = process.env["GOOGLE_CLIENT_ID"] ?? "";
+const GOOGLE_CLIENT_SECRET = env.GOOGLE_CLIENT_SECRET ?? "";
+const GOOGLE_CLIENT_ID = env.GOOGLE_CLIENT_ID ?? "";
 
 export const google = new Google(
   GOOGLE_CLIENT_ID,
