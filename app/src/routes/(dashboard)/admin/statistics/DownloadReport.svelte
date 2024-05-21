@@ -14,9 +14,7 @@
   import Button from "$lib/components/ui/button/button.svelte";
   import Separator from "$lib/components/ui/separator/separator.svelte";
   import DateRangePicker from "./DateRangePicker.svelte";
-  import DateRangePicker2 from "./DateRangePicker2.svelte";
   import Download from "lucide-svelte/icons/download";
-  import Input from "$lib/components/ui/input/input.svelte";
 
   export let count: RequestTypeInstancesCount[];
   export let summary: Summary[];
@@ -27,18 +25,13 @@
   let sortType: "oldest" | "newest" | "request" = "oldest";
   let startDate: Date = new Date(0);
   let endDate: Date = new Date(0);
-  let params: Params = { sortBy, sortType, startDate, endDate };
-
   let dateRange: string = "false"; //i tried boolean, but radio group component doesnt allow me
-  let days: number = 0;
-  let weeks: number = 0;
-  let months: number = 0;
-  let years: number = 0;
-  let range: { days: number; weeks: number; months: number; years: number } = {
-    days,
-    weeks,
-    months,
-    years,
+  let params: Params = {
+    sortBy,
+    sortType,
+    startDate,
+    endDate,
+    dateRange: JSON.parse(dateRange),
   };
 
   $: {
@@ -50,12 +43,12 @@
       startDate = new Date(0);
       endDate = new Date(0);
     }
-    params = { sortBy, sortType, startDate, endDate };
-    range = {
-      days: Number(days),
-      weeks: Number(weeks),
-      months: Number(months),
-      years: Number(years),
+    params = {
+      sortBy,
+      sortType,
+      startDate,
+      endDate,
+      dateRange: JSON.parse(dateRange),
     };
   }
 
@@ -111,73 +104,6 @@
             }}
           />
         </div>
-        <!-- <div class="my-4 flex flex-col gap-4">
-          <Label>Download request details from the last:</Label>
-          <div class="grid grid-cols-12 [&>div]:mb-4">
-            <div class="col-span-4">
-              <div class="flex items-center gap-4">
-                <Label for="rdays" class="">Days:</Label>
-                <div class="grow"></div>
-                <Input
-                  type="number"
-                  min="0"
-                  max="6"
-                  id="rdays"
-                  class="w-[4rem]"
-                  bind:value={days}
-                />
-              </div>
-            </div>
-            <div class="col-span-2"></div>
-            <div class="col-span-4">
-              <div class="flex items-center gap-4">
-                <Label for="rweeks" class="">Weeks:</Label>
-                <div class="grow"></div>
-                <Input
-                  type="number"
-                  min="0"
-                  max="3"
-                  id="rweeks"
-                  class="w-[4rem]"
-                  bind:value={weeks}
-                />
-              </div>
-            </div>
-            <div class="col-span-1"></div>
-            <div class="col-span-4">
-              <div class="flex items-center gap-4">
-                <Label for="rmonths" class="">Months:</Label>
-                <div class="grow"></div>
-                <Input
-                  type="number"
-                  min="0"
-                  max="11"
-                  id="rmonths"
-                  class="w-[4rem]"
-                  bind:value={months}
-                />
-              </div>
-            </div>
-            <div class="col-span-2"></div>
-            <div class="col-span-4">
-              <div class="flex items-center gap-4">
-                <Label for="ryears" class="">Years:</Label>
-                <div class="grow"></div>
-                <Input
-                  type="number"
-                  min="0"
-                  max="10"
-                  id="ryears"
-                  class="w-[4rem]"
-                  bind:value={years}
-                />
-              </div>
-            </div>
-            <div class="col-span-1"></div>
-          </div>
-          <Label>Range:</Label>
-          <DateRangePicker2 {range} />
-        </div> -->
       {/if}
       <div class="flex flex-col gap-4">
         <Label>Sort by:</Label>

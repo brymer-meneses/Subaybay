@@ -68,4 +68,5 @@ export type Params = {
   sortType: "oldest" | "newest" | "request";
   startDate: Date;
   endDate: Date;
+  dateRange: boolean;
 };
