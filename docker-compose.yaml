@@ -4,7 +4,7 @@ name: subaybay
 services:
   app:
     build: app
-    restart: always
+    restart: unless-stopped
     ports: 
       - ${APP_PORT}:3000
     env_file:
@@ -15,7 +15,7 @@ services:
 
   database:
     image: mongo
-    restart: always
+    restart: unless-stopped
     volumes:
        - db-data:/data/db
        - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
@@ -23,16 +23,19 @@ services:
       - ${DATABASE_PORT}:27017
     env_file:
       - ./.env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DATABASE_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_PASSWORD}
 
   backend:
     build: backend
-    restart: always
+    restart: unless-stopped
     ports: 
       - ${BACKEND_PORT}:8080
-    depends_on:
-      - database
     env_file:
       - ./.env
+    depends_on:
+      - database
 
 
 volumes:

@@ -1,5 +1,12 @@
+include .env
+
 MODE := dev
 SERVICES := backend
+ENVIRONMENT_VARIABLES := \
+	DATABASE_USERNAME=${DATABASE_USERNAME} \
+	DATABASE_PASSWORD=${DATABASE_PASSWORD} \
+	GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} \
+	GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET} \
 
 all: run
 
@@ -15,12 +22,11 @@ format:
 
 run:
 ifeq ($(MODE), dev)
-	docker compose  up --build $(SERVICES) -d
-	cd app && npm run dev
-
+	docker compose --env-file .env up --build $(SERVICES) -d
+	@cd app && $(ENVIRONMENT_VARIABLES) npm run dev
 else ifeq ($(MODE), prod)
-	docker compose  up --build
-
+	docker compose --env-file .env up --build
 else
 	$(error Invalid argument `$(MODE)` for `MODE`. Expected either `prod` or `dev`.)
 endif
+

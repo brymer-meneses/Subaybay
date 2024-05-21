@@ -4,12 +4,13 @@ import { dev } from "$app/environment";
 const DATABASE_PORT = process.env["DATABASE_PORT"] ?? "27017";
 const DATABASE_HOSTNAME = process.env["DATABASE_HOSTNAME"] ?? "host.docker.internal";
 const DATABASE_NAME = process.env["DATABASE_NAME"] ?? "subaybay";
+const DATABASE_USERNAME = process.env["DATABASE_USERNAME"] ?? "admin";
+const DATABASE_PASSWORD = process.env["DATABASE_PASSWORD"] ?? "password";
 
 const hostname = dev ? "localhost" : DATABASE_HOSTNAME;
+const URI = `mongodb://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${hostname}:${DATABASE_PORT}/`;
 
-export const client = new MongoClient(
-  `mongodb://${hostname}:${DATABASE_PORT}/`,
-);
+export const client = new MongoClient(URI);
 await client.connect();
 
 export const database = client.db(DATABASE_NAME);
