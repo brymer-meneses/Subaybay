@@ -36,6 +36,7 @@
   };
 
   export let requestId: string;
+  export let height: string = "h-48";
 
   $: userId = $page.data.userInfo.id;
   $: sessionId = $page.data.sessionId;
@@ -105,7 +106,7 @@
 <Card.Root>
   <Card.Content class="flex w-full flex-col gap-5 p-3">
     <div bind:this={messageContainer}>
-      <div class="flex h-48 w-[96%] flex-col gap-2">
+      <div class={height + " flex w-[96%] flex-col gap-2"}>
         {#each messages as message, _}
           <ChatMessage
             message={message.content}
@@ -119,7 +120,7 @@
 
     <div class="flex w-full items-center space-x-2">
       <Input
-        class="border-b-1 w-full bg-accent focus:ring-0 focus:ring-offset-0"
+        class="border-b-1 bg-accent w-full focus:ring-0 focus:ring-offset-0"
         placeholder="Send a message ..."
         bind:value={messageContent}
       />
