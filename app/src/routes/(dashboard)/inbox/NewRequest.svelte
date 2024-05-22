@@ -91,7 +91,7 @@
       <FilePlus size="18" /> Create Request
     </Button>
   </Dialog.Trigger>
-  <Dialog.Content>
+  <Dialog.Content class="max-h-screen overflow-y-scroll">
     <form action="?/add_request" method="POST" use:enhance>
       <Dialog.Header>
         <Dialog.Title>Add details for new request.</Dialog.Title>
@@ -225,9 +225,7 @@
       </div>
 
       <Dialog.Footer>
-        <Button type="submit" class="gap-2 rounded-xl text-white"
-          ><Plus />Add</Button
-        >
+        <Button type="submit" class="h-9 gap-2 "><Plus size="18" />Add</Button>
       </Dialog.Footer>
     </form>
   </Dialog.Content>

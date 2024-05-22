@@ -1,15 +1,12 @@
 import { MongoClient, ObjectId } from "mongodb";
 import { dev } from "$app/environment";
 
-const DATABASE_PORT = process.env["DATABASE_PORT"] ?? "27017";
-const DATABASE_HOSTNAME = process.env["DATABASE_HOSTNAME"] ?? "host.docker.internal";
-const DATABASE_NAME = process.env["DATABASE_NAME"] ?? "subaybay";
+import { DATABASE_NAME, DATABASE_USERNAME, DATABASE_PORT, DATABASE_PASSWORD, DATABASE_HOSTNAME } from "$env/static/private";
 
 const hostname = dev ? "localhost" : DATABASE_HOSTNAME;
+const URI = `mongodb://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${hostname}:${DATABASE_PORT}/`;
 
-export const client = new MongoClient(
-  `mongodb://${hostname}:${DATABASE_PORT}/`,
-);
+export const client = new MongoClient(URI);
 await client.connect();
 
 export const database = client.db(DATABASE_NAME);

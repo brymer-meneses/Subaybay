@@ -1,3 +1,4 @@
+
 MODE := dev
 SERVICES := backend
 
@@ -15,12 +16,11 @@ format:
 
 run:
 ifeq ($(MODE), dev)
-	docker compose  up --build $(SERVICES) -d
-	cd app && npm run dev
-
+	docker compose --env-file .env up --build $(SERVICES) -d
+	@cd app && npm run dev
 else ifeq ($(MODE), prod)
-	docker compose  up --build
-
+	docker compose --env-file .env up --build -d
 else
 	$(error Invalid argument `$(MODE)` for `MODE`. Expected either `prod` or `dev`.)
 endif
+

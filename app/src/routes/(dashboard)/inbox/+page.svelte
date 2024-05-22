@@ -71,28 +71,7 @@
           </Tabs.Trigger>
         </Tabs.List>
         <div class="ml-auto flex items-center gap-2">
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger asChild let:builder>
-              <Button
-                variant="outline"
-                class="h-9.5 gap-2"
-                builders={[builder]}
-              >
-                <ListFilter size="18" />
-                <span class="sr-only sm:not-sr-only">Filter</span>
-              </Button>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content align="end">
-              <DropdownMenu.Label>Filter by</DropdownMenu.Label>
-              <DropdownMenu.Separator />
-              <DropdownMenu.CheckboxItem checked>
-                Fulfilled
-              </DropdownMenu.CheckboxItem>
-              <DropdownMenu.CheckboxItem>Declined</DropdownMenu.CheckboxItem>
-              <DropdownMenu.CheckboxItem>Refunded</DropdownMenu.CheckboxItem>
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
-          <NewRequest latestReqTypes={latestReqTypes} data={data.form} />
+          <NewRequest latestRequests={requestTypes} data={data.form} />
         </div>
       </div>
       <Tabs.Content value="active">

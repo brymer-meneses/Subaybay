@@ -3,19 +3,30 @@ name: subaybay
 
 services:
   app:
-    build: app
-    restart: always
+    restart: unless-stopped
     ports: 
       - ${APP_PORT}:3000
     env_file:
       - ./.env
     depends_on:
-      - backend
-      - database
+      database:
+        condition: service_started
+      backend:
+        condition: service_started
+    build:
+      context: app
+      args:
+        GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+        GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+        DATABASE_PORT: ${DATABASE_PORT}
+        DATABASE_HOSTNAME: host.docker.internal
+        DATABASE_NAME: ${DATABASE_NAME}
+        DATABASE_USERNAME: ${DATABASE_USERNAME}
+        DATABASE_PASSWORD: ${DATABASE_PASSWORD}
 
   database:
     image: mongo
-    restart: always
+    restart: unless-stopped
     volumes:
        - db-data:/data/db
        - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
@@ -23,17 +34,28 @@ services:
       - ${DATABASE_PORT}:27017
     env_file:
       - ./.env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DATABASE_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_PASSWORD}
 
   backend:
     build: backend
-    restart: always
+    restart: unless-stopped
     ports: 
       - ${BACKEND_PORT}:8080
-    depends_on:
-      - database
     env_file:
       - ./.env
+    depends_on:
+      - database
 
+  watchtower:
+    image: containrrr/watchtower
+    restart: unless-stopped
+    environment:
+      WATCHTOWER_LABEL_ENABLE: 1
+      WATCHTOWER_SCHEDULE: '* * * * *'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
   db-data:
