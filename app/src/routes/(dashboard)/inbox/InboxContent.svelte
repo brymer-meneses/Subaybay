@@ -38,7 +38,7 @@
 
 {#if stage && info}
   <Card.Root class="overflow-hidden">
-    <Card.Header class="flex flex-row items-start bg-muted/50">
+    <Card.Header class="bg-muted/50 flex flex-row items-start">
       <div class="grid gap-0.5">
         <Card.Title class="group flex items-center gap-2 text-lg">
           {stage.stageTitle}
@@ -78,15 +78,13 @@
             goto("/requests/" + stage.requestId);
           }}
         >
-          <span
-            class="flex items-center justify-center gap-2 lg:sr-only xl:not-sr-only xl:whitespace-nowrap"
-          >
+          <span class="flex items-center justify-center gap-2">
             <Locate size={18} /> View Progress
           </span>
         </Button>
       </div>
     </Card.Header>
-    <Card.Content class="flex flex-col gap-4 px-6 py-2">
+    <Card.Content class="flex flex-col gap-4 px-6 py-2 xl:h-[38.2rem]">
       <Tabs.Root value="details">
         <Tabs.List>
           <Tabs.Trigger value="details" class="flex gap-2">
@@ -102,11 +100,14 @@
           <Card.Root>
             <Card.Content class="p-4">
               <div class="flex flex-col gap-4">
-                <p class="text-xs font-semibold">Student Information</p>
+                <p class="text-sm font-semibold">Student Information</p>
                 <div class="flex flex-wrap gap-4">
                   <Tooltip.Root>
                     <Tooltip.Trigger>
-                      <Badge variant="secondary" class="flex gap-2 font-normal">
+                      <Badge
+                        variant="secondary"
+                        class="flex gap-2 text-sm font-normal"
+                      >
                         <GraduationCap size={18} />
                         {info.studentNumber}
                       </Badge>
@@ -118,7 +119,10 @@
 
                   <Tooltip.Root>
                     <Tooltip.Trigger>
-                      <Badge variant="secondary" class="flex gap-2 font-normal">
+                      <Badge
+                        variant="secondary"
+                        class="flex gap-2 text-sm font-normal"
+                      >
                         <UserRound size={18} />
                         {info.studentName}
                       </Badge>
@@ -130,7 +134,10 @@
 
                   <Tooltip.Root>
                     <Tooltip.Trigger>
-                      <Badge variant="secondary" class="flex gap-2 font-normal">
+                      <Badge
+                        variant="secondary"
+                        class="flex gap-2 text-sm font-normal"
+                      >
                         <Mail size={18} />
                         {info.studentEmail}
                       </Badge>
@@ -140,12 +147,12 @@
                     </Tooltip.Content>
                   </Tooltip.Root>
                 </div>
-                <p class="text-xs font-semibold">Purpose</p>
+                <p class="text-sm font-semibold">Purpose</p>
                 <Textarea disabled value={info.purpose} />
-                <p class="text-xs font-semibold">Remarks</p>
+                <p class="text-sm font-semibold">Remarks</p>
                 <Textarea disabled value={info.remarks} />
 
-                <p class="text-xs font-semibold">Progress</p>
+                <p class="text-sm font-semibold">Progress</p>
                 <Progress value={33} />
               </div>
             </Card.Content>
@@ -154,12 +161,16 @@
 
         <Tabs.Content value="chat">
           <div class="flex flex-col">
-            <ChatArea requestId={stage.requestId} />
+            <ChatArea
+              requestId={stage.requestId}
+              height="min-[320px]:h-[21.4rem] sm:max-lg:h-[21.4rem] xl:h-[28.9rem]"
+            />
           </div>
         </Tabs.Content>
       </Tabs.Root>
-
-      <div class="mt-auto flex justify-end gap-4">
+    </Card.Content>
+    <Card.Footer>
+      <div class="mt-auto flex w-full justify-end gap-4 pt-4">
         <InboxContentButtons
           request={requests[stage.requestId]}
           {stage}
@@ -168,6 +179,6 @@
           bind:processing
         />
       </div>
-    </Card.Content>
+    </Card.Footer>
   </Card.Root>
 {/if}
