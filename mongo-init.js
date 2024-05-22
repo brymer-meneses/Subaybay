@@ -2,11 +2,11 @@
 db = new Mongo().getDB("subaybay");
 
 db.permittedEmails.insertMany([
-  { email:"yuumi@lol.com" },
-  { email:"smolder@lol.com" },
-  { email:"gnar@lol.com" },
-  { email:"sol@lol.com" },
-  { email:"kogmaw@lol.com" },
+  { email: "yuumi@lol.com" },
+  { email: "smolder@lol.com" },
+  { email: "gnar@lol.com" },
+  { email: "sol@lol.com" },
+  { email: "kogmaw@lol.com" },
 ])
 
 db.users.insertMany([
@@ -50,7 +50,7 @@ db.users.insertMany([
 
 // [id, title]
 basicCerts = [
-  ["coe", "Certificate of Enrolment"],
+  ["coe", "Certificate of Enrollment"],
   ["cge", "Certificate of Grade Equivalence"],
   ["cg", "Certificate of Graduation"],
   ["cmi", "Certificate of Medium of Instruction"],
@@ -100,46 +100,46 @@ db.requestTypes.insertMany([
     title: "Official Transcript of Records (OTR) - First Request",
     version: 1,
     stages: [
-        {
-          stageTitle: "Newly Created Request",
-          defaultHandlerId: "",
-        },
-        {
-          stageTitle: "RR and Edit of Draft",
-          defaultHandlerId: "", //staff 1
-        },
-        {
-          stageTitle: "Checking and Printing of Initial Draft",
-          defaultHandlerId: "", //staff 2
-        },
-        {
-          stageTitle: "Checking Printed Draft",
-          defaultHandlerId: "", //staff 3
-        },
-        {
-          stageTitle: "Final Printing",
-          defaultHandlerId: "", //staff 2
-        },
-        {
-          stageTitle: "Signature",
-          defaultHandlerId: "", //staff 1
-        },
-        {
-          stageTitle: "Signature",
-          defaultHandlerId: "", //staff 3
-        },
-        {
-          stageTitle: "University Registrar Signature",
-          defaultHandlerId: "",
-        },
-        {
-          stageTitle: "Prepare final copy and CTC OTR (if applicable)",
-          defaultHandlerId: "", //staff 2
-        },
-        {
-          stageTitle: "Notify Requester",
-          defaultHandlerId: "",
-        },
+      {
+        stageTitle: "Newly Created Request",
+        defaultHandlerId: "",
+      },
+      {
+        stageTitle: "RR and Edit of Draft",
+        defaultHandlerId: "", //staff 1
+      },
+      {
+        stageTitle: "Checking and Printing of Initial Draft",
+        defaultHandlerId: "", //staff 2
+      },
+      {
+        stageTitle: "Checking Printed Draft",
+        defaultHandlerId: "", //staff 3
+      },
+      {
+        stageTitle: "Final Printing",
+        defaultHandlerId: "", //staff 2
+      },
+      {
+        stageTitle: "Signature",
+        defaultHandlerId: "", //staff 1
+      },
+      {
+        stageTitle: "Signature",
+        defaultHandlerId: "", //staff 3
+      },
+      {
+        stageTitle: "University Registrar Signature",
+        defaultHandlerId: "",
+      },
+      {
+        stageTitle: "Prepare final copy and CTC OTR (if applicable)",
+        defaultHandlerId: "", //staff 2
+      },
+      {
+        stageTitle: "Notify Requester",
+        defaultHandlerId: "",
+      },
     ]
   },
   {
@@ -147,34 +147,34 @@ db.requestTypes.insertMany([
     title: "Official Transcript of Records (OTR) - Second Request",
     version: 1,
     stages: [
-        {
-          stageTitle: "Newly Created Request",
-          defaultHandlerId: ""
-        },
-        {
-          stageTitle: "Print and Sign OTR",
-          defaultHandlerId: "" //staff 2
-        },
-        {
-          stageTitle: "Signature",
-          defaultHandlerId: "" //staff 1
-        },
-        {
-          stageTitle: "Signature",
-          defaultHandlerId: "" //staff 3
-        },
-        {
-          stageTitle: "Signature of University Registrar",
-          defaultHandlerId: ""
-        },
-        {
-          stageTitle: "Prepare final copy and CTC OTR (if applicable)",
-          defaultHandlerId: "", //staff 2
-        },
-        {
-          stageTitle: "Notify Requester",
-          defaultHandlerId: "",
-        },
+      {
+        stageTitle: "Newly Created Request",
+        defaultHandlerId: ""
+      },
+      {
+        stageTitle: "Print and Sign OTR",
+        defaultHandlerId: "" //staff 2
+      },
+      {
+        stageTitle: "Signature",
+        defaultHandlerId: "" //staff 1
+      },
+      {
+        stageTitle: "Signature",
+        defaultHandlerId: "" //staff 3
+      },
+      {
+        stageTitle: "Signature of University Registrar",
+        defaultHandlerId: ""
+      },
+      {
+        stageTitle: "Prepare final copy and CTC OTR (if applicable)",
+        defaultHandlerId: "", //staff 2
+      },
+      {
+        stageTitle: "Notify Requester",
+        defaultHandlerId: "",
+      },
     ]
   }
 ]);
@@ -189,16 +189,16 @@ db.requests.insertMany([
     purpose: "Purpose",
     remarks: "Good Morning",
     copies: 1,
-    currentStage: 
-      {
-        stageTypeIndex: 0,
-        handlerId: "airylionsoul",
-        prevHandlerId: "",
-        finished: false,
-        dateStarted: new Date('2024-04-27'),
-        dateFinished: new Date(0),
-        roomId: "134333412"
-      },
+    currentStage:
+    {
+      stageTypeIndex: 0,
+      handlerId: "airylionsoul",
+      prevHandlerId: "",
+      finished: false,
+      dateStarted: new Date('2024-04-27'),
+      dateFinished: new Date(0),
+      roomId: "134333412"
+    },
     history: [],
     nextHandlerId: ""
   },
@@ -211,16 +211,16 @@ db.requests.insertMany([
     purpose: "Purpose",
     remarks: "Hello",
     copies: 2,
-    currentStage: 
-      {
-        stageTypeIndex: 2,
-        handlerId: "airylionsoul",
-        prevHandlerId: "airylionsoul",
-        finished: true,
-        dateStarted: new Date('2024-04-27'),
-        dateFinished: new Date(0),
-        roomId: "13212"
-      },
+    currentStage:
+    {
+      stageTypeIndex: 2,
+      handlerId: "airylionsoul",
+      prevHandlerId: "airylionsoul",
+      finished: true,
+      dateStarted: new Date('2024-04-27'),
+      dateFinished: new Date(0),
+      roomId: "13212"
+    },
     history: [
       {
         stageTypeIndex: 0,
