@@ -71,7 +71,7 @@
           </Tabs.Trigger>
         </Tabs.List>
         <div class="ml-auto flex items-center gap-2">
-          <NewRequest latestRequests={requestTypes} data={data.form} />
+          <NewRequest {latestReqTypes} data={data.form} />
         </div>
       </div>
       <Tabs.Content value="active">
