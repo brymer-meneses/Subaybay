@@ -1,7 +1,12 @@
 <script lang="ts">
   import HistoryView from "./HistoryView.svelte";
   import ProgressView from "./ProgressView.svelte";
-  import { Card, CardContent } from "$lib/components/ui/card";
+  import {
+    Card,
+    CardContent,
+    CardTitle,
+    CardHeader,
+  } from "$lib/components/ui/card";
   import ChatArea from "../../ChatArea.svelte";
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
   import * as Tabs from "$lib/components/ui/tabs";
@@ -25,8 +30,13 @@
 
       <Tabs.Content value="progress">
         <Card>
-          <CardContent class="flex flex-col gap-2 pt-8">
-            <ScrollArea class="h-[43rem] px-4">
+          <CardHeader>
+            <CardTitle>
+              {data.requestType.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="flex flex-col gap-2">
+            <ScrollArea class="h-[39rem] px-4">
               <ProgressView
                 request={data.request}
                 requestType={data.requestType}
@@ -39,8 +49,13 @@
 
       <Tabs.Content value="history">
         <Card>
-          <CardContent class="flex flex-col gap-2 pt-8">
-            <ScrollArea class="h-[45rem] px-4">
+          <CardHeader>
+            <CardTitle>
+              {data.requestType.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="flex flex-col gap-2">
+            <ScrollArea class="h-[39rem] px-4">
               <HistoryView
                 request={data.request}
                 requestType={data.requestType}

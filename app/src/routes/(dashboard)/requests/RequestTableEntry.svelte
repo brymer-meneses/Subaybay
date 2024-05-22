@@ -6,7 +6,6 @@
   import type { Request } from "$lib/server/database";
   import { goto } from "$app/navigation";
   import RequestTablePopoverText from "./RequestTablePopoverText.svelte";
-  import Badge from "$lib/components/ui/badge/badge.svelte";
 
   export let request: Request;
   export let index: number;
@@ -33,12 +32,14 @@
     editing = !editing;
   }
 
-  if (classification !== "finished")
-    date =
-      request.history.length > 0
-        ? request.history[0].dateStarted.toDateString()
-        : request.currentStage.dateStarted.toDateString();
-  else date = request.currentStage.dateFinished.toDateString();
+  $: {
+    if (classification !== "finished")
+      date =
+        request.history.length > 0
+          ? request.history[0].dateStarted.toDateString()
+          : request.currentStage.dateStarted.toDateString();
+    else date = request.currentStage.dateFinished.toDateString();
+  }
 </script>
 
 <Table.Row class="auto-rows grid w-full grid-cols-12 items-center text-left">

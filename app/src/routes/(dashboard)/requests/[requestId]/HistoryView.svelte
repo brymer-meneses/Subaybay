@@ -31,33 +31,37 @@
 </script>
 
 <div class="flex flex-col gap-2 p-2">
-  {#each history as substage}
-    <Card.Card>
-      <Card.CardContent class="flex flex-col gap-2 p-2">
-        <div class="margin-top-1 flex flex-row items-center gap-2">
-          <div class="ml-2">
-            {#if !substage.handlerId}
-              <CircleUserRound
-                class="h-8 w-8 stroke-muted-foreground stroke-1"
-              />
-            {:else}
-              <Avatar.Avatar class="h-8 w-8">
-                <Avatar.AvatarImage
-                  src={users[substage.handlerId].profileUrl}
-                  alt={users[substage.handlerId].name}
+  {#if history.length > 0}
+    {#each history as substage}
+      <Card.Card>
+        <Card.CardContent class="flex flex-col gap-2 p-2">
+          <div class="margin-top-1 flex flex-row items-center gap-2">
+            <div class="ml-2">
+              {#if !substage.handlerId}
+                <CircleUserRound
+                  class="stroke-muted-foreground h-8 w-8 stroke-1"
                 />
-              </Avatar.Avatar>
-            {/if}
-          </div>
+              {:else}
+                <Avatar.Avatar class="h-8 w-8">
+                  <Avatar.AvatarImage
+                    src={users[substage.handlerId].profileUrl}
+                    alt={users[substage.handlerId].name}
+                  />
+                </Avatar.Avatar>
+              {/if}
+            </div>
 
-          <Label class="flex flex-grow flex-row" placeholder="No Name">
-            {substage.title}
-          </Label>
-        </div>
-      </Card.CardContent>
-      <Card.CardFooter class="text-xs text-gray-500">
-        {substage.dateFinished}
-      </Card.CardFooter>
-    </Card.Card>
-  {/each}
+            <Label class="flex flex-grow flex-row" placeholder="No Name">
+              {substage.title}
+            </Label>
+          </div>
+        </Card.CardContent>
+        <Card.CardFooter class="text-xs text-gray-500">
+          {substage.dateFinished}
+        </Card.CardFooter>
+      </Card.Card>
+    {/each}
+  {:else}
+    <p>No History available yet...</p>
+  {/if}
 </div>

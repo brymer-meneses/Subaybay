@@ -29,6 +29,25 @@
     filteredRequests = requests.filter((request: Request) => {
       for (const key in request) {
         const userKey = key as keyof Request;
+        // check date available in the table
+        if (!request.isFinished) {
+          const date =
+            request.history.length > 0
+              ? request.history[0].dateStarted.toDateString()
+              : request.currentStage.dateStarted.toDateString();
+          if (date.toLowerCase().includes(searchTerm.trim().toLowerCase()))
+            return request;
+        } else if (
+          request.isFinished &&
+          request.currentStage.dateFinished
+            .toDateString()
+            .toLowerCase()
+            .includes(searchTerm.trim().toLowerCase())
+        ) {
+          return request;
+        }
+
+        // check other properties
         if (
           String(request[userKey])
             .toLowerCase()
@@ -51,6 +70,8 @@
       else if (sortBy === "Oldest")
         filteredRequests = filteredRequests.sort(sortFinishedOldest);
     }
+
+    console.log(filteredRequests);
   }
 </script>
 
@@ -124,7 +145,7 @@
             </Table.Head>
           {:else}
             <Table.Head class="col-span-2 grid items-center">
-              Date Finished
+              Date Completed
             </Table.Head>
           {/if}
           <Table.Head class="col-span-2 grid items-center">Purpose</Table.Head>
