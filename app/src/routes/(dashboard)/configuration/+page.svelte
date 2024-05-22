@@ -16,6 +16,7 @@
   import ConfigStage from "./ConfigStage.svelte";
   import { enhance } from "$app/forms";
   import RequestTypeList from "./RequestTypeList.svelte";
+  import ConfigConfirmation from "./ConfigConfirmation.svelte";
 
   export let data: PageServerData;
 
@@ -96,7 +97,7 @@
         <CardTitle>Stages</CardTitle>
         <CardDescription>
           Note: the first stage is always the creation stage, it cannot be
-          removed
+          edited.
         </CardDescription>
       </CardHeader>
       <CardContent class="flex flex-col gap-2">
@@ -105,8 +106,6 @@
             <div class="mb-4">
               <ConfigStage
                 bind:stageTitle={stageType.stageTitle}
-                isDeletable={stageIndex !== 0}
-                isRenamable={stageIndex !== 0}
                 {stageIndex}
                 handlerId={stageType.defaultHandlerId}
                 deleteFunction={deleteStage}
@@ -123,19 +122,17 @@
         </Button>
       </CardContent>
       <CardFooter>
-        <form
-          action="?/create"
-          method="POST"
-          use:enhance={(event) => {
-            return handleSubmit(event);
-          }}
-        >
-          {#if !processing}
+        <ConfigConfirmation requestTypeTitle={title} {processing}>
+          <form
+            action="?/create"
+            method="POST"
+            use:enhance={(event) => {
+              return handleSubmit(event);
+            }}
+          >
             <Button type="submit">Create</Button>
-          {:else}
-            Processing... Please Wait
-          {/if}
-        </form>
+          </form>
+        </ConfigConfirmation>
       </CardFooter>
     </Card>
   </div>

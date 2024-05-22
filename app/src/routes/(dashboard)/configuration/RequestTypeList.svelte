@@ -17,7 +17,6 @@
   });
 </script>
 
-<!--Todo layout-->
 <Card.Root class="w-[30rem] border ">
   <Card.Header>
     <Card.Title>Request Types</Card.Title>
