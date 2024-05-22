@@ -15,5 +15,4 @@ RUN cargo build --release
 
 CMD ["./target/release/backend"]
 
-
-expose 8080
+EXPOSE 8080
