@@ -31,7 +31,8 @@ export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: 
   let stale: Request[] = [];
   let counts: RequestTypeInstancesCount[] = [];
   let summary: Summary[] = [{type: "finished", count: 0, countThisMonth:0},{type: "pending", count: 0, countThisMonth:0},{type: "stale", count: 0, countThisMonth:0}];
-
+  
+  // Separate pending to archived requests
   for (const request of requests) {
     if (!request.isFinished) {
       pending.push(request);
@@ -42,13 +43,15 @@ export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: 
     }
   }
   
-  for (const rt of reqTypes) {
-    counts.push({ reqTitle: rt.title, total: { pending: 0, finished: 0, stale:0 } });
-  }
+  
+  // if has specified date range, filter requests
+  if (params.dateRange) { 
 
-  counts = Array.from(new Set(counts)); // remove duplicate haha
+    for (const rt of reqTypes) {
+      counts.push({ reqTitle: rt.title, total: { pending: 0, finished: 0, stale:0 } });
+    }
+    counts = Array.from(new Set(counts)); // remove duplicate haha
 
-  if (params.dateRange) {
     finished = finished.filter((r) => {
       let dateFinished = r.currentStage.dateFinished;
       let reqTitle =  reqTypes.find((rt) => rt._id === r.requestTypeId)?.title;
@@ -64,20 +67,20 @@ export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: 
       }
     });
   
-    pending = pending.filter((r) => {
-    let dateStarted = r.history.length > 0? r.history[0].dateStarted : r.currentStage.dateStarted;
-    let reqTitle =  reqTypes.find((rt) => rt._id === r.requestTypeId)?.title;
-      if (dateStarted.getTime() - params.startDate.getTime() > 0 && params.endDate.getTime() - dateStarted.getTime() > 0) {
-        for (let count of counts) {
-          if (count.reqTitle === reqTitle) {
-            count.total.pending ++;
-            summary[1].count++;
-            break;
-          }
-        }
-        return r;
-      }
-    });
+    pending = pending.filter((r) => { 
+    let dateStarted = r.history.length > 0? r.history[0].dateStarted : r.currentStage.dateStarted; 
+    let reqTitle =  reqTypes.find((rt) => rt._id === r.requestTypeId)?.title; 
+      if (dateStarted.getTime() - params.startDate.getTime() > 0 && params.endDate.getTime() - dateStarted.getTime() > 0) { 
+        for (let count of counts) { 
+          if (count.reqTitle === reqTitle) { 
+            count.total.pending ++; 
+            summary[1].count++; 
+            break; 
+          } 
+        } 
+        return r; 
+      } 
+    }); 
     
     stale = stale.filter((r) => {
       let dateStarted = r.history.length > 0? r.history[0].dateStarted : r.currentStage.dateStarted;
@@ -148,7 +151,37 @@ export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: 
     }
   });
 
-  // TODO: Sort accorting to Sort By and Sort Type
+  // Sort accorting to params.sortBy and params.sortType
+  if (params.sortBy === "date" && params.sortType !== "request") {
+    switch (params.sortType) {
+      case "oldest": 
+        pending.sort(sortPendingOldest);
+        finished.sort(sortFinishedOldest);
+        stale.sort(sortPendingOldest)
+        break;
+      case "newest": 
+        pending.sort(sortPendingNewest);
+        finished.sort(sortFinishedNewest);
+        stale.sort(sortPendingNewest)
+        break; 
+    }
+  } else if (params.sortBy === "requestType" && params.sortType === "request") {
+    pending.sort((a, b) => {
+      const titleA = reqTypes.find((r) => r._id === a.requestTypeId)?.title || '';
+      const titleB = reqTypes.find((r) => r._id === b.requestTypeId)?.title || '';
+      return titleA.localeCompare(titleB);
+    });
+    finished.sort((a, b) => {
+      const titleA = reqTypes.find((r) => r._id === a.requestTypeId)?.title || '';
+      const titleB = reqTypes.find((r) => r._id === b.requestTypeId)?.title || '';
+      return titleA.localeCompare(titleB);
+    });
+    stale.sort((a, b) => {
+      const titleA = reqTypes.find((r) => r._id === a.requestTypeId)?.title || '';
+      const titleB = reqTypes.find((r) => r._id === b.requestTypeId)?.title || '';
+      return titleA.localeCompare(titleB);
+    });
+  }
 
   let fws = workbook.addWorksheet("Finished Requests"); 
   fws.state = "visible";
@@ -215,13 +248,23 @@ export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: 
   const url = window.URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = `OUR_Requests(Generated_${new Date().toDateString().split(" ").splice(1).join(" ")}).xlsx`;
+
+  // FOR THE FILE NAME:
+  const sortDate = (params.sortBy === "date")? "sorted_by_date_" + params.sortType + "_first_": "";
+  const sortReqType =  (params.sortBy === "requestType")? "sorted_by_requested_form_" : "";
+  const start = params.startDate.toDateString().split(" ").splice(1).join(" ");
+  const end =  params.endDate.toDateString().split(" ").splice(1).join(" ");
+  const dateRange = (params.dateRange)? "from_" + start + "_to_" + end + "_": "";
+  const title = "OUR_Requests_" + sortDate + sortReqType + dateRange + "generated_" + new Date().toDateString().split(" ").splice(1).join(" ") + ".xlsx";
+
+  anchor.download = title;
   anchor.click();
 
   window.URL.revokeObjectURL(url);
   anchor.remove();
 }
 
+// Style rows for the pending, finished, stale worksheets (i used excelJS)
 function formatRow (row: any, rowNumber: any) {
   row.height = 20;
   if (rowNumber === 1) {
@@ -245,3 +288,44 @@ function formatRow (row: any, rowNumber: any) {
     });
   }
 }
+
+const sortPending = (a: Request, b: Request) => {
+    let dateA =
+      a.history.length > 0
+        ? a.history[0].dateStarted.getTime()
+        : a.currentStage.dateStarted.getTime();
+    let dateB =
+      b.history.length > 0
+        ? b.history[0].dateStarted.getTime()
+        : b.currentStage.dateStarted.getTime();
+    return { dateA, dateB };
+  };
+
+const sortPendingNewest = (a: Request, b: Request) => {
+    const { dateA, dateB } = sortPending(a, b);
+    return dateB - dateA;
+  };
+
+const sortPendingOldest = (a: Request, b: Request) => {
+    const { dateA, dateB } = sortPending(a, b);
+    return dateA - dateB;
+  };
+
+const sortFinished = (a: Request, b: Request) => {
+    const dateA = a.history[a.history.length - 1].dateFinished.getTime();
+    const dateB = b.history[b.history.length - 1].dateFinished.getTime();
+
+    return { dateA, dateB };
+  };
+
+const sortFinishedNewest = (a: Request, b: Request) => {
+    const { dateA, dateB } = sortFinished(a, b);
+    return dateB - dateA;
+  };
+
+export const sortFinishedOldest = (a: Request, b: Request) => {
+    const { dateA, dateB } = sortFinished(a, b);
+
+    return dateA - dateB;
+  };
+
