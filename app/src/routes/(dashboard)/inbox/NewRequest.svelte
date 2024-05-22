@@ -3,6 +3,7 @@
   import { Input } from "$lib/components/ui/input/index.js";
   import { Textarea } from "$lib/components/ui/textarea/index.js";
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
+  import { Label } from "$lib/components/ui/label";
 
   import * as Command from "$lib/components/ui/command/index.js";
   import * as Dialog from "$lib/components/ui/dialog/index.js";
@@ -11,7 +12,6 @@
 
   import Plus from "lucide-svelte/icons/plus";
   import FilePlus from "lucide-svelte/icons/file-plus";
-  import Check from "svelte-radix/Check.svelte";
 
   import { tick } from "svelte";
 
@@ -25,9 +25,11 @@
   import { cn } from "$lib/utils.js";
 
   import CaretSort from "svelte-radix/CaretSort.svelte";
+  import CopiesCountInput from "./CopiesCountInput.svelte";
+    import { json } from "@sveltejs/kit";
 
   export let data: SuperValidated<Infer<FormSchema>>;
-  export let requestTypes: RequestType[];
+  export let latestReqTypes: RequestType[];
 
   const form = superForm(data, {
     validators: zodClient(formSchema),
@@ -35,10 +37,42 @@
 
   const { form: formData, enhance } = form;
 
-  let open = false;
-  let value = "";
+  let reqTypeCounts: { [id: string]: number } = {};
 
-  $: selectedRequestType = requestTypes.find((f) => f.title === value);
+  let selectedCount: number = 0;
+  let open = false;
+
+  $: if ($formData.selectedReqTypeIds.length == 0) {
+    selectedCount = 0;
+    for (const id in reqTypeCounts) {
+      reqTypeCounts[id] = 0;
+    }
+  }
+
+  for (const reqType of latestReqTypes) {
+    reqTypeCounts[reqType._id] = 0;
+  }
+
+  function updateSelection(id: string, prev: number, value: number) {
+    if (!(id in reqTypeCounts)) {
+      return;
+    }
+
+    if (prev == 0 && value != 0) {
+      selectedCount++;
+    } else if (value == 0) {
+      selectedCount--;
+    }
+
+    const nonzeros: { id: string; count: number }[] = [];
+    for (const id in reqTypeCounts) {
+      if(reqTypeCounts[id] > 0)
+        nonzeros.push({ id, count: reqTypeCounts[id] });
+    }
+
+    $formData.selectedReqTypeIds = JSON.stringify(nonzeros);
+    console.log($formData.selectedReqTypeIds);
+  }
 
   // We want to refocus the trigger button when the user selects
   // an item from the list so users can continue navigating the
@@ -135,10 +169,10 @@
           <Form.FieldErrors />
         </Form.Field>
 
-        <Form.Field {form} name="requestTypeId" class="flex flex-col">
-          <Popover.Root bind:open let:ids>
+        <Form.Field {form} name="selectedReqTypeIds" class="flex flex-col">
+          <Popover.Root bind:open>
             <Form.Control let:attrs>
-              <Form.Label>Request Type</Form.Label>
+              <Form.Label>Request Types</Form.Label>
               <Popover.Trigger asChild let:builder role="combobox" {...attrs}>
                 <Button
                   builders={[builder]}
@@ -147,42 +181,38 @@
                   aria-expanded={open}
                   class="w-full justify-between"
                 >
-                  {selectedRequestType === undefined
-                    ? "Select a request type"
-                    : selectedRequestType.title}
+                  {selectedCount == 0
+                    ? "Select atleast one request type"
+                    : selectedCount + " selected"}
                   <CaretSort class="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </Popover.Trigger>
               <input
                 hidden
-                value={selectedRequestType === undefined
-                  ? ""
-                  : selectedRequestType._id.toString()}
+                value={$formData.selectedReqTypeIds}
                 name={attrs.name}
               />
             </Form.Control>
 
             <Popover.Content class="w-full p-0">
               <Command.Root>
-                <Command.Input placeholder="Search framework..." class="h-9" />
+                <Command.Input
+                  placeholder="Search request type..."
+                  class="h-9"
+                />
                 <Command.Empty>No request type found.</Command.Empty>
                 <Command.Group>
                   <ScrollArea class="h-40">
-                    {#each requestTypes as requestType}
-                      <Command.Item
-                        value={requestType.title}
-                        onSelect={(currentValue) => {
-                          value = currentValue;
-                          closeAndFocusTrigger(ids.trigger);
-                        }}
-                      >
-                        <Check
-                          class={cn(
-                            "mr-2 h-4 w-4",
-                            value !== requestType.title && "text-transparent",
-                          )}
+                    {#each latestReqTypes as requestType}
+                      <Command.Item value={requestType.title}>
+                        <CopiesCountInput
+                          bind:value={reqTypeCounts[requestType._id]}
+                          onUpdated={(prev, value) =>
+                            updateSelection(requestType._id, prev, value)}
                         />
-                        {requestType.title}
+                        <Label class="px-1">
+                          {requestType.title}
+                        </Label>
                       </Command.Item>
                     {/each}
                   </ScrollArea>

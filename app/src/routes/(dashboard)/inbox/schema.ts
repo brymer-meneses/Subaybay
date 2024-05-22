@@ -1,4 +1,3 @@
-import { message } from "sveltekit-superforms";
 import { z } from "zod";
 
 export const formSchema = z.object({
@@ -12,7 +11,12 @@ export const formSchema = z.object({
   purpose: z.string(),
   remarks: z.string(),
   // FIXME: this is a band-aid solution since we're not checking for valid `requestTypeId`
-  requestTypeId: z.string(),
+  selectedReqTypeIds: z
+    .string()
+    //checks for json string array with more than 1 element
+    .refine((value) => /^\[.+\]$/.test(value), { 
+      message: "Must select atleast one request type",
+    }),
 });
 
 export type FormSchema = typeof formSchema;

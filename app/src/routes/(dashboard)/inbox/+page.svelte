@@ -16,7 +16,7 @@
 
   export let data: PageServerData;
 
-  let requestTypes = data.latestRequestTypes;
+  let latestReqTypes = data.latestRequestTypes;
 
   let selectedStage: InboxStageData | null = null;
   let inboxes: { active: any; pending: any } = {
@@ -71,7 +71,7 @@
           </Tabs.Trigger>
         </Tabs.List>
         <div class="ml-auto flex items-center gap-2">
-          <NewRequest {requestTypes} data={data.form} />
+          <NewRequest {latestReqTypes} data={data.form} />
         </div>
       </div>
       <Tabs.Content value="active">

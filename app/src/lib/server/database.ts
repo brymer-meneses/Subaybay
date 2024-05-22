@@ -60,6 +60,7 @@ export interface Request {
   studentEmail: string;
   purpose: string;
   remarks: string;
+  copies: number;
   isFinished: boolean;
   currentStage: Stage;
   history: Array<Stage>;
