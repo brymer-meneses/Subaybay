@@ -37,7 +37,7 @@
 
   const { form: formData, enhance } = form;
 
-  let reqTypeSelection: { [id: string]: boolean } = {};
+  let reqTypeSelection: { [id: string]: number } = {};
 
   let selectedCount: number = 0;
   let open = false;
@@ -45,20 +45,20 @@
   $: if ($formData.selectedReqTypeIds.length == 0) {
     selectedCount = 0;
     for (const id in reqTypeSelection) {
-      reqTypeSelection[id] = false;
+      reqTypeSelection[id] = 0;
     }
   }
 
   for (const reqType of latestReqTypes) {
-    reqTypeSelection[reqType._id] = false;
+    reqTypeSelection[reqType._id] = 0;
   }
 
   function updateSelection(id: string, value: boolean | "indeterminate") {
     if (value === "indeterminate" || value == false) {
-      reqTypeSelection[id] = false;
+      reqTypeSelection[id] = 0;
       selectedCount--;
     } else {
-      reqTypeSelection[id] = true;
+      reqTypeSelection[id] = 0;
       selectedCount++;
     }
 
@@ -205,8 +205,9 @@
                   <ScrollArea class="h-40">
                     {#each latestReqTypes as requestType}
                       <Command.Item value={requestType.title}>
+                        <!-- bind:checked={reqTypeSelection[requestType._id]} -->
+                        <Input bind:value={reqTypeSelection[requestType._id]} />
                         <Checkbox
-                          bind:checked={reqTypeSelection[requestType._id]}
                           onCheckedChange={(value) =>
                             updateSelection(requestType._id, value)}
                         />

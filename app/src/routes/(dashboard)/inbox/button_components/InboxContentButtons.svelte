@@ -1,10 +1,4 @@
 <script lang="ts">
-  import { Button } from "$lib/components/ui/button";
-  import MoveLeft from "lucide-svelte/icons/move-left";
-  import CheckCheck from "lucide-svelte/icons/check-check";
-
-  import { enhance } from "$app/forms";
-
   import FinishButton from "./FinishButton.svelte";
   import ReassignButton from "./ReassignButton.svelte";
   import RollbackButton from "./RollbackButton.svelte";

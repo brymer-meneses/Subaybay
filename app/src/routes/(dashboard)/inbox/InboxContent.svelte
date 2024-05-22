@@ -8,7 +8,6 @@
   import { Button } from "$lib/components/ui/button";
   import { Badge } from "$lib/components/ui/badge";
   import { Textarea } from "$lib/components/ui/textarea";
-  import { Separator } from "$lib/components/ui/separator";
 
   import Forward from "lucide-svelte/icons/forward";
   import MessageCircle from "lucide-svelte/icons/message-circle";
@@ -22,7 +21,7 @@
   import type { InboxStageData, UserInfo } from "./inboxTypes";
 
   import ChatArea from "../ChatArea.svelte";
-  import InboxContentButtons from "./buttonComponents/InboxContentButtons.svelte";
+  import InboxContentButtons from "./button_components/InboxContentButtons.svelte";
 
   export let requests: { [key: string]: Request };
   export let stage: InboxStageData | null;
@@ -31,8 +30,8 @@
   export let updateSelectedStage: () => void;
 
   let processing = false;
-  //todo change display when processing is true
 
+  //todo change display when processing is true
   $: info = stage ? requests[stage.requestId] : null;
 </script>
 

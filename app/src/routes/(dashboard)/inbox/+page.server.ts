@@ -174,6 +174,7 @@ export const actions: Actions = {
         studentEmail: studentEmail,
         purpose: purpose,
         remarks: remarks,
+        copies: 1, // todo get the data from the thing
         isFinished: false,
         roomId: new ObjectId().toString(),
         currentStage: currentStage,
@@ -243,7 +244,7 @@ export const actions: Actions = {
 
     setFlash(result, cookies);
   },
-  rollback_stage: async ({ locals, request, cookies }) => {
+  rollbackStage: async ({ locals, request, cookies }) => {
     const userId = locals.user?.id ?? "0";
     const data = await request.formData();
     const requestId: string = data.get("requestId")?.toString() ?? "";
@@ -298,7 +299,7 @@ export const actions: Actions = {
     );
     setFlash(result, cookies);
   },
-  reassign_stage: async ({ locals, request, cookies }) => {
+  reassignStage: async ({ locals, request, cookies }) => {
     const data = await request.formData();
     const requestId: string = data.get("requestId")?.toString() ?? "";
     const nextHandlerId: string = data.get("nextHandlerId")?.toString() ?? "";
