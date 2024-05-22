@@ -240,6 +240,11 @@ export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: 
     )
   });
 
+  [fws, pws, sws].forEach(sheet => {
+    sheet.getColumn('startDate').numFmt = 'mm/dd/yyyy hh:mm:ss';
+    sheet.getColumn('endDate').numFmt = 'mm/dd/yyyy hh:mm:ss';
+  });
+  
   fws.eachRow(formatRow);
   pws.eachRow(formatRow);
   sws.eachRow(formatRow);
