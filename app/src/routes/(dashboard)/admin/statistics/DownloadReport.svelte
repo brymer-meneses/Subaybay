@@ -69,10 +69,10 @@
         >Please set the following parameters.</Dialog.Description
       >
     </Dialog.Header>
-    <!-- <p>
+    <p>
       <span class="text-red-600">DEBUG:</span> <br />
       {JSON.stringify(params, null, 2)}
-    </p> -->
+    </p>
     <Separator />
     <div class="space-y-8">
       <div class="flex flex-col gap-4">

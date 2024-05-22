@@ -8,6 +8,7 @@
   import { Button } from "$lib/components/ui/button";
   import { Badge } from "$lib/components/ui/badge";
   import { Textarea } from "$lib/components/ui/textarea";
+  import { Progress } from "$lib/components/ui/progress";
 
   import Forward from "lucide-svelte/icons/forward";
   import MessageCircle from "lucide-svelte/icons/message-circle";
@@ -21,7 +22,7 @@
   import type { InboxStageData, UserInfo } from "./inboxTypes";
 
   import ChatArea from "../ChatArea.svelte";
-  import InboxContentButtons from "./button_components/InboxContentButtons.svelte";
+  import InboxContentButtons from "./button_Components/InboxContentButtons.svelte";
 
   export let requests: { [key: string]: Request };
   export let stage: InboxStageData | null;
@@ -37,7 +38,7 @@
 
 {#if stage && info}
   <Card.Root class="overflow-hidden">
-    <Card.Header class="bg-muted/50 flex flex-row items-start">
+    <Card.Header class="flex flex-row items-start bg-muted/50">
       <div class="grid gap-0.5">
         <Card.Title class="group flex items-center gap-2 text-lg">
           {stage.stageTitle}
@@ -85,7 +86,7 @@
         </Button>
       </div>
     </Card.Header>
-    <Card.Content class="flex h-[43.1em] flex-col gap-4 px-6 py-2">
+    <Card.Content class="flex flex-col gap-4 px-6 py-2">
       <Tabs.Root value="details">
         <Tabs.List>
           <Tabs.Trigger value="details" class="flex gap-2">
@@ -143,26 +144,30 @@
                 <Textarea disabled value={info.purpose} />
                 <p class="text-xs font-semibold">Remarks</p>
                 <Textarea disabled value={info.remarks} />
+
+                <p class="text-xs font-semibold">Progress</p>
+                <Progress value={33} />
               </div>
             </Card.Content>
           </Card.Root>
         </Tabs.Content>
 
         <Tabs.Content value="chat">
-          <div class="flex h-[38.1rem] flex-col">
-            <ChatArea requestId={stage.requestId} height="h-[29.5rem]" />
-            <div class="mt-auto flex justify-end gap-4">
-              <InboxContentButtons
-                request={requests[stage.requestId]}
-                {stage}
-                {users}
-                {updateSelectedStage}
-                bind:processing
-              />
-            </div>
+          <div class="flex flex-col">
+            <ChatArea requestId={stage.requestId} />
           </div>
         </Tabs.Content>
       </Tabs.Root>
+
+      <div class="mt-auto flex justify-end gap-4">
+        <InboxContentButtons
+          request={requests[stage.requestId]}
+          {stage}
+          {users}
+          {updateSelectedStage}
+          bind:processing
+        />
+      </div>
     </Card.Content>
   </Card.Root>
 {/if}
