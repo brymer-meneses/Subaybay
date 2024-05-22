@@ -65,7 +65,7 @@ async fn handle_connection(
                         message,
                         &sender,
                         &database,
-                        &notification_tx,
+                        notification_tx,
                         &request_id,
                     )
                     .await
@@ -129,7 +129,7 @@ async fn send_server_message(
             }
         }
 
-        ClientMessage::Event { date_time, content } => {}
+        ClientMessage::Event { date_time: _, content: _ } => {}
     }
 }
 
@@ -163,7 +163,7 @@ async fn process_client_message(
                 .await
                 .unwrap();
 
-            process_notifications(&database, &chat_message, notification_tx).await;
+            process_notifications(database, &chat_message, notification_tx).await;
 
             let _ = sender.send(ClientMessage::Message {
                 date_time,
@@ -172,7 +172,7 @@ async fn process_client_message(
             });
         }
 
-        ClientMessage::Event { date_time, content } => {}
+        ClientMessage::Event { date_time: _, content: _ } => {}
     }
 }
 
@@ -204,7 +204,7 @@ async fn process_notifications(
             .insert_one(&notification, None)
             .await;
 
-        if let Err(_) = sender.send(notification) {
+        if sender.send(notification).is_err() {
             tracing::error!("No channel to send notifications");
         }
 

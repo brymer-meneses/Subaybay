@@ -1,8 +1,5 @@
-use crate::{
-    database as db,
-    routes::{chat, notifications},
-};
-use axum_typed_websockets::{Message, WebSocket, WebSocketUpgrade};
+use crate::{database as db, routes::chat};
+
 use mongodb::Database;
 use tokio::sync::broadcast;
 
