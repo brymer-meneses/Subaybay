@@ -4,7 +4,6 @@
   import { Textarea } from "$lib/components/ui/textarea/index.js";
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
   import { Label } from "$lib/components/ui/label";
-  import Checkbox from "$lib/components/ui/checkbox/checkbox.svelte";
 
   import * as Command from "$lib/components/ui/command/index.js";
   import * as Dialog from "$lib/components/ui/dialog/index.js";
@@ -13,7 +12,6 @@
 
   import Plus from "lucide-svelte/icons/plus";
   import FilePlus from "lucide-svelte/icons/file-plus";
-  import Check from "svelte-radix/Check.svelte";
 
   import { tick } from "svelte";
 
@@ -27,6 +25,8 @@
   import { cn } from "$lib/utils.js";
 
   import CaretSort from "svelte-radix/CaretSort.svelte";
+  import CopiesCountInput from "./CopiesCountInput.svelte";
+    import { json } from "@sveltejs/kit";
 
   export let data: SuperValidated<Infer<FormSchema>>;
   export let latestReqTypes: RequestType[];
@@ -37,41 +37,41 @@
 
   const { form: formData, enhance } = form;
 
-  let reqTypeSelection: { [id: string]: number } = {};
+  let reqTypeCounts: { [id: string]: number } = {};
 
   let selectedCount: number = 0;
   let open = false;
 
   $: if ($formData.selectedReqTypeIds.length == 0) {
     selectedCount = 0;
-    for (const id in reqTypeSelection) {
-      reqTypeSelection[id] = 0;
+    for (const id in reqTypeCounts) {
+      reqTypeCounts[id] = 0;
     }
   }
 
   for (const reqType of latestReqTypes) {
-    reqTypeSelection[reqType._id] = 0;
+    reqTypeCounts[reqType._id] = 0;
   }
 
-  function updateSelection(id: string, value: boolean | "indeterminate") {
-    if (value === "indeterminate" || value == false) {
-      reqTypeSelection[id] = 0;
-      selectedCount--;
-    } else {
-      reqTypeSelection[id] = 0;
-      selectedCount++;
+  function updateSelection(id: string, prev: number, value: number) {
+    if (!(id in reqTypeCounts)) {
+      return;
     }
 
-    // store selection in JSON string array
-    $formData.selectedReqTypeIds = "[";
-    for (const id in reqTypeSelection) {
-      if (reqTypeSelection[id]) $formData.selectedReqTypeIds += '"' + id + '",';
+    if (prev == 0 && value != 0) {
+      selectedCount++;
+    } else if (value == 0) {
+      selectedCount--;
     }
-    $formData.selectedReqTypeIds = $formData.selectedReqTypeIds.replace(
-      /,$/,
-      "",
-    ); //remove excess comma if there is one
-    $formData.selectedReqTypeIds += "]";
+
+    const nonzeros: { id: string; count: number }[] = [];
+    for (const id in reqTypeCounts) {
+      if(reqTypeCounts[id] > 0)
+        nonzeros.push({ id, count: reqTypeCounts[id] });
+    }
+
+    $formData.selectedReqTypeIds = JSON.stringify(nonzeros);
+    console.log($formData.selectedReqTypeIds);
   }
 
   // We want to refocus the trigger button when the user selects
@@ -205,11 +205,10 @@
                   <ScrollArea class="h-40">
                     {#each latestReqTypes as requestType}
                       <Command.Item value={requestType.title}>
-                        <!-- bind:checked={reqTypeSelection[requestType._id]} -->
-                        <Input bind:value={reqTypeSelection[requestType._id]} />
-                        <Checkbox
-                          onCheckedChange={(value) =>
-                            updateSelection(requestType._id, value)}
+                        <CopiesCountInput
+                          bind:value={reqTypeCounts[requestType._id]}
+                          onUpdated={(prev, value) =>
+                            updateSelection(requestType._id, prev, value)}
                         />
                         <Label class="px-1">
                           {requestType.title}

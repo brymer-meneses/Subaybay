@@ -123,7 +123,10 @@ export const actions: Actions = {
     const userId = locals.user?.id ?? "-1";
 
     if (userId === "-1") {
-      setFlash({ type: "error", message: "Something went wrong. Invalid userId" }, cookies);
+      setFlash(
+        { type: "error", message: "Something went wrong. Invalid userId" },
+        cookies,
+      );
       return fail(400);
     }
 
@@ -143,7 +146,7 @@ export const actions: Actions = {
     const purpose = data.purpose;
     const remarks = data.remarks;
 
-    const reqTypeIds = JSON.parse(selectedRequestTypeIds);
+    const reqTypeIdCounts = JSON.parse(selectedRequestTypeIds);
 
     const currentStage = {
       stageTypeIndex: 0,
@@ -154,12 +157,15 @@ export const actions: Actions = {
       dateFinished: new Date(0),
     };
 
-    for (const reqTypeId of reqTypeIds) {
+    let successCount = 0;
+    let failureCount = 0;
+
+    for (const idCount of reqTypeIdCounts) {
       const reqType = await db.requestType.findOne({
-        _id: reqTypeId,
+        _id: idCount.id,
       });
       if (!reqType) {
-        // setFlash({ type: "error", message: "Invalid Request Type" }, cookies);
+        failureCount++;
         continue;
       }
 
@@ -168,13 +174,13 @@ export const actions: Actions = {
 
       const req: db.Request = {
         _id: new ObjectId().toString(),
-        requestTypeId: reqTypeId,
+        requestTypeId: idCount.id,
         studentNumber: studentNumber,
         studentName: studentName,
         studentEmail: studentEmail,
         purpose: purpose,
         remarks: remarks,
-        copies: 1, // todo get the data from the thing
+        copies: idCount.cound,
         isFinished: false,
         roomId: new ObjectId().toString(),
         currentStage: currentStage,
@@ -184,19 +190,25 @@ export const actions: Actions = {
 
       let insertionResult = await db.request.insertOne(req);
       if (!insertionResult.acknowledged) {
-        // setFlash(
-        //   { type: "error", message: "Database Error: Request creation failed" },
-        //   cookies,
-        // );
+        failureCount++;
         continue;
       }
 
       addToInbox(userId, "current", { requestId: req._id, stageTypeIndex: 0 });
 
-      // setFlash(
-      //   { type: "success", message: "Added request of type: " + reqType.title },
-      //   cookies,
-      // );
+      successCount++;
+    }
+
+    if (successCount == 0) {
+      setFlash(
+        { type: "error", message: "Failed to create requests" },
+        cookies,
+      );
+    } else {
+      let message = `Successfully created ${successCount} request${successCount > 1 ? 's' : ''}. `;
+      if (failureCount > 0)
+        message += `Failed to create ${failureCount} requests.`;
+      setFlash({ type: "success", message: message }, cookies);
     }
   },
   finish_stage: async ({ request, locals, cookies }) => {
@@ -244,7 +256,7 @@ export const actions: Actions = {
 
     setFlash(result, cookies);
   },
-  rollbackStage: async ({ locals, request, cookies }) => {
+  rollback_stage: async ({ locals, request, cookies }) => {
     const userId = locals.user?.id ?? "0";
     const data = await request.formData();
     const requestId: string = data.get("requestId")?.toString() ?? "";
@@ -299,7 +311,7 @@ export const actions: Actions = {
     );
     setFlash(result, cookies);
   },
-  reassignStage: async ({ locals, request, cookies }) => {
+  reassign_stage: async ({ locals, request, cookies }) => {
     const data = await request.formData();
     const requestId: string = data.get("requestId")?.toString() ?? "";
     const nextHandlerId: string = data.get("nextHandlerId")?.toString() ?? "";
