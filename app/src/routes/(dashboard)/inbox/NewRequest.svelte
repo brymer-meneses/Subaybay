@@ -4,6 +4,7 @@
   import { Textarea } from "$lib/components/ui/textarea/index.js";
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
   import { Label } from "$lib/components/ui/label";
+  import { Separator } from "$lib/components/ui/separator";
 
   import * as Command from "$lib/components/ui/command/index.js";
   import * as Dialog from "$lib/components/ui/dialog/index.js";
@@ -26,7 +27,7 @@
 
   import CaretSort from "svelte-radix/CaretSort.svelte";
   import CopiesCountInput from "./CopiesCountInput.svelte";
-    import { json } from "@sveltejs/kit";
+  import { json } from "@sveltejs/kit";
 
   export let data: SuperValidated<Infer<FormSchema>>;
   export let latestReqTypes: RequestType[];
@@ -66,7 +67,7 @@
 
     const nonzeros: { id: string; count: number }[] = [];
     for (const id in reqTypeCounts) {
-      if(reqTypeCounts[id] > 0)
+      if (reqTypeCounts[id] > 0)
         nonzeros.push({ id, count: reqTypeCounts[id] });
     }
 
@@ -202,7 +203,7 @@
                 />
                 <Command.Empty>No request type found.</Command.Empty>
                 <Command.Group>
-                  <ScrollArea class="h-40">
+                  <ScrollArea class="h-52">
                     {#each latestReqTypes as requestType}
                       <Command.Item value={requestType.title}>
                         <CopiesCountInput
@@ -214,6 +215,7 @@
                           {requestType.title}
                         </Label>
                       </Command.Item>
+                      <Separator class="my-0" />
                     {/each}
                   </ScrollArea>
                 </Command.Group>
