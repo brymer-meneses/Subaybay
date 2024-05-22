@@ -5,6 +5,7 @@ export type Request = {
   studentNumber: string;
   studentName: string;
   studentEmail: string;
+  copies: number;
   purpose: string;
   remarks: string;
   isFinished: boolean;

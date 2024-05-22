@@ -272,6 +272,7 @@ db.requests.insertMany([
     studentEmail: "student@student.com",
     purpose: "Purpose",
     remarks: "Good Morning",
+    copies: 1,
     isFinished: true,
     currentStage: {
       stageTypeIndex: 3,

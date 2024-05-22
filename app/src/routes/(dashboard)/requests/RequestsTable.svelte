@@ -60,7 +60,7 @@
   >
     <div class="space-y-2">
       <Card.Title>Requests</Card.Title>
-      <Card.Description>List of discontinued requests</Card.Description>
+      <Card.Description>List of requests</Card.Description>
     </div>
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
       <div>
@@ -110,11 +110,14 @@
           <Table.Head class="col-span-1 grid items-center"
             >Student Number</Table.Head
           >
-          <Table.Head class="col-span-2 grid items-center"
+          <Table.Head class="col-span-1 grid items-center"
             >Student Name</Table.Head
           >
           <Table.Head class="col-span-2 grid items-center"
             >Student Email</Table.Head
+          >
+          <Table.Head class="col-span-1 grid items-center"
+            >Number of Copies</Table.Head
           >
           <Table.Head class="col-span-2 grid items-center">Purpose</Table.Head>
           <Table.Head class="col-span-2 grid items-center">Remarks</Table.Head>

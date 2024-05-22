@@ -39,12 +39,16 @@ export const actions: Actions = {
       formData.get("studentNumber")?.toString() ?? "";
     const purpose: string = formData.get("purpose")?.toString() ?? "";
     const remarks: string = formData.get("remarks")?.toString() ?? "";
+    const copiesString = formData.get("copies")?.toString() ?? "";
+    const copies: number = copiesString.length > 0 ? parseInt(copiesString, 10) : 0;
 
     if (studentName.length == 0) errorMessage += "Student Name cannot be blank\n";
     if (!isValidStudentNum(studentNumber))
       errorMessage += "Invalid Student Number Format (XXXX-XXXXX)\n";
     if (!isValidStudentEmail(studentEmail))
       errorMessage += "Invalid Student Email\n";
+    if (copiesString.length <= 0)
+      errorMessage += "Number of Copies cannot be null.\n";
 
     if (errorMessage != "") {
       setFlash({ type: "error", message: errorMessage }, cookies);
@@ -60,6 +64,7 @@ export const actions: Actions = {
           studentNumber: studentNumber,
           purpose: purpose,
           remarks: remarks,
+          copies: copies,
         },
       },
     );

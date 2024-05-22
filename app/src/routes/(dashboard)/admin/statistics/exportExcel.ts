@@ -8,7 +8,7 @@ const columns = [
   { header: "Date Requested", key: "startDate", width: 30 },
   { header: "Date Finished", key: "endDate", width: 30 },
   { header: "Requested Form", key: "reqType", width: 60 },
-  // { header: "N of Copies", key: "numOfCopies", width: 30 }, //Add this later kapag na-update na yung db
+  { header: "Copies", key: "copies", width: 30 }, 
   { header: "Purpose", key: "purpose", width: 80 },
   { header: "Remarks", key: "remarks", width: 80 },
   
@@ -195,6 +195,7 @@ export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: 
         startDate: r.history[0].dateStarted,
         endDate: r.currentStage.dateFinished,
         reqType: reqTypes.find((rt) => rt._id === r.requestTypeId)?.title,
+        copies: r.copies,
         purpose: r.purpose,
         remarks: r.remarks,
       }
@@ -213,6 +214,7 @@ export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: 
         startDate: r.history.length > 0? r.history[0].dateStarted: r.currentStage.dateStarted,
         endDate: "Ongoing",
         reqType: reqTypes.find((rt) => rt._id === r.requestTypeId)?.title,
+        copies: r.copies,
         purpose: r.purpose,
         remarks: r.remarks,
       }
@@ -231,6 +233,7 @@ export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: 
         startDate: r.history.length > 0? r.history[0].dateStarted: r.currentStage.dateStarted,
         endDate: "Discontinued",
         reqType: reqTypes.find((rt) => rt._id === r.requestTypeId)?.title,
+        copies: r.copies,
         purpose: r.purpose,
         remarks: r.remarks,
       }
