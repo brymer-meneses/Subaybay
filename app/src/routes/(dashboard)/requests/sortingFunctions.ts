@@ -1,4 +1,4 @@
-import { type Request } from "./typeRequest"
+import type { Request } from "$lib/server/database"
 
 const sortPending = (a: Request, b: Request) => {
     let dateA =

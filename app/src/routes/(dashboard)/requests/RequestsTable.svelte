@@ -15,7 +15,7 @@
   import ChevronDown from "lucide-svelte/icons/chevron-down";
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
 
-  import type { Request } from "./typeRequest";
+  import type { Request } from "$lib/server/database";
   import RequestTableEntry from "./RequestTableEntry.svelte";
 
   export let requests: Request[];

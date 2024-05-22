@@ -5,9 +5,7 @@
 
   import type { Request } from "$lib/server/database";
   import { goto } from "$app/navigation";
-  import { Input } from "$lib/components/ui/input";
-  import { enhance } from "$app/forms";
-  import RequestTableLongEdit from "./RequestTableLongEdit.svelte";
+  import RequestTablePopoverText from "./RequestTablePopoverText.svelte";
 
   export let request: Request;
   export let index: number;
@@ -37,33 +35,27 @@
   {#if processing}
     <Table.Cell class="col-span-6">Processing... Please Wait</Table.Cell>
   {:else}
-    <!--Normal Mode-->
-    {#if !editing}
-      <Table.Cell class="pxl-1 col-span-1 border-r text-center font-semibold">
+      <Table.Cell class="pxl-1 col-span-1 border-r text-center font-semibold overflow-hidden text-ellipsis">
         <span class="px-1">{index + 1}</span>
       </Table.Cell>
       <Table.Cell class="pxl-1 col-span-1">
         <span class="px-1">{request.studentNumber}</span>
       </Table.Cell>
-      <Table.Cell class="col-span-1">
+      <Table.Cell class="col-span-1 overflow-hidden text-ellipsis">
         <span class="px-1">{request.studentName}</span>
       </Table.Cell>
-      <Table.Cell class="col-span-2">
+      <Table.Cell class="col-span-2 overflow-hidden text-ellipsis">
         <span class="px-1">{request.studentEmail}</span>
       </Table.Cell>
       <Table.Cell class="col-span-1">
         <span class="px-1">{request.copies}</span>
       </Table.Cell>
-      <Table.Cell class="col-span-2"
-        >{request.purpose.length > 35
-          ? request.purpose.substring(0, 35) + "..."
-          : request.purpose}</Table.Cell
-      >
-      <Table.Cell class="col-span-2"
-        >{request.remarks.length > 35
-          ? request.remarks.substring(0, 35) + "..."
-          : request.remarks}</Table.Cell
-      >
+      <Table.Cell class="col-span-2">
+        <RequestTablePopoverText input={request.purpose} />
+      </Table.Cell>
+      <Table.Cell class="col-span-2">
+        <RequestTablePopoverText input={request.remarks} />
+      </Table.Cell>
       <Table.Cell class="col-span-1 py-0">
         <Button variant="link" on:click={toggleEditing}>Edit</Button>
       </Table.Cell>
@@ -77,46 +69,7 @@
         >
       </Table.Cell>
 
-      <!--Edit Mode-->
-    {:else}
-      <Table.Cell class="pxl-1 col-span-1 border-r text-center">
-        <span class="px-1">{index + 1}</span>
-      </Table.Cell>
-      <Table.Cell class="col-span-1">
-        <Input
-          class="inline-flex h-5 w-auto border-gray-300 px-1 py-1"
-          bind:value={studentNumber}
-        />
-      </Table.Cell>
-      <Table.Cell class="col-span-1">
-        <Input
-          class="inline-flex h-5 w-auto border-gray-300 px-1 py-1"
-          bind:value={studentName}
-        />
-      </Table.Cell>
-      <Table.Cell class="col-span-2">
-        <Input
-          class="inline-flex h-5 w-auto border-gray-300 px-1 py-1"
-          bind:value={studentEmail}
-        />
-      </Table.Cell>
-      <Table.Cell class="col-span-1">
-        <Input
-          class="inline-flex h-5 w-auto border-gray-300 px-1 py-1"
-          bind:value={copies}
-        />
-      </Table.Cell>
-      <Table.Cell class="col-span-2">
-        <RequestTableLongEdit bind:input={purpose} />
-      </Table.Cell>
-      <Table.Cell class="col-span-2">
-        <RequestTableLongEdit bind:input={remarks} />
-      </Table.Cell>
-      <Table.Cell class="col-span-1 py-0">
-        <Button variant="link" on:click={toggleEditing}>Cancel</Button>
-      </Table.Cell>
-      <Table.Cell class="col-span-1 py-0">
-        <form
+      <!-- <form
           action="?/edit"
           method="POST"
           use:enhance={() => {
@@ -147,8 +100,8 @@
           <Button size="icon" variant="ghost" type="submit">
             <CircleCheck class="h-5 w-5 text-emerald-600" />
           </Button>
-        </form>
-      </Table.Cell>
-    {/if}
+        </form> -->
+
+      
   {/if}
 </Table.Row>
