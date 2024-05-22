@@ -180,7 +180,7 @@ export const actions: Actions = {
         studentEmail: studentEmail,
         purpose: purpose,
         remarks: remarks,
-        copies: idCount.cound,
+        copies: idCount.count,
         isFinished: false,
         roomId: new ObjectId().toString(),
         currentStage: currentStage,

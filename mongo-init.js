@@ -188,6 +188,7 @@ db.requests.insertMany([
     studentEmail: "student@student.com",
     purpose: "Purpose",
     remarks: "Good Morning",
+    copies: 1,
     currentStage: 
       {
         stageTypeIndex: 0,
@@ -209,6 +210,7 @@ db.requests.insertMany([
     studentEmail: "student@student.com",
     purpose: "Purpose",
     remarks: "Hello",
+    copies: 2,
     currentStage: 
       {
         stageTypeIndex: 2,
@@ -233,7 +235,7 @@ db.requests.insertMany([
         stageTypeIndex: 1,
         handlerId: "airylionsoul",
         prevHandlerId: "gnar",
-        finished: false,
+        finished: true,
         dateStarted: new Date('2024-04-27'),
         dateFinished: new Date('2024-04-27'),
         roomId: "453435"
@@ -249,6 +251,7 @@ db.requests.insertMany([
     studentEmail: "student@student.com",
     purpose: "Purpose",
     remarks: "Good Morning",
+    copies: 3,
     isFinished: true,
     currentStage: {
       stageTypeIndex: 0,
