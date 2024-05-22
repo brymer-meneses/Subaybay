@@ -192,8 +192,8 @@ export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: 
         number: r.studentNumber,
         name: r.studentName,
         email: r.studentEmail,
-        startDate: r.history[0].dateStarted,
-        endDate: r.currentStage.dateFinished,
+        startDate: new Date(r.history[0].dateStarted),
+        endDate: new Date(r.currentStage.dateFinished),
         reqType: reqTypes.find((rt) => rt._id === r.requestTypeId)?.title,
         copies: r.copies,
         purpose: r.purpose,
@@ -211,7 +211,7 @@ export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: 
         number: r.studentNumber,
         name: r.studentName,
         email: r.studentEmail,
-        startDate: r.history.length > 0? r.history[0].dateStarted: r.currentStage.dateStarted,
+        startDate: new Date(r.history.length > 0? r.history[0].dateStarted: r.currentStage.dateStarted),
         endDate: "Ongoing",
         reqType: reqTypes.find((rt) => rt._id === r.requestTypeId)?.title,
         copies: r.copies,
@@ -230,7 +230,7 @@ export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: 
         number: r.studentNumber,
         name: r.studentName,
         email: r.studentEmail,
-        startDate: r.history.length > 0? r.history[0].dateStarted: r.currentStage.dateStarted,
+        startDate: new Date(r.history.length > 0? r.history[0].dateStarted: r.currentStage.dateStarted),
         endDate: "Discontinued",
         reqType: reqTypes.find((rt) => rt._id === r.requestTypeId)?.title,
         copies: r.copies,
@@ -288,6 +288,11 @@ function formatRow (row: any, rowNumber: any) {
         color: { argb: "0000" },
         size: 12,
       };
+      if (cell.col === 4 || cell.col === 5 || cell.col === 7) {
+        cell.alignment = {
+          horizontal: "center",
+        };
+      }
     });
   }
 }
