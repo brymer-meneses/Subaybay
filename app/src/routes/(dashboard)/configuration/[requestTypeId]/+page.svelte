@@ -72,9 +72,9 @@
 
 <main class="flex justify-center">
   <div class="flex w-[40%] flex-col gap-4">
-    <Label>
+    <h1 class="text-center flex-grow font-semibold">
       {requestType.title}
-    </Label>
+    </h1>
     <Card class="flex flex-col border-gray-300">
       <CardHeader>
         <CardTitle>Stages</CardTitle>
@@ -87,8 +87,6 @@
         {#each stages as stageType, stageIndex}
           <ConfigStage
             bind:stageTitle={stageType.stageTitle}
-            isDeletable={stageIndex !== 0}
-            isRenamable={stageIndex !== 0}
             {stageIndex}
             handlerId={stageType.defaultHandlerId}
             deleteFunction={deleteStage}

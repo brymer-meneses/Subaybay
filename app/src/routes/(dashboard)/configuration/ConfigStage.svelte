@@ -15,13 +15,16 @@
   export let handlerOptions: UserData[];
   export let handlerId: string;
 
-  export let isDeletable = true;
-  export let isRenamable = true;
   export let stageTitle = "";
   export let stageIndex: number;
 
   export let deleteFunction = (stageIndex: number) => {};
   export let onHandlerEdited: (stageIndex: number, handlerId: string) => void;
+
+  // First stage cannot be renamed, edited, or deleted
+  let isDeletable = stageIndex > 0;
+  let isRenamable = stageIndex > 0;
+  let editableHandler = stageIndex > 0;
 
   function onDropdownChanged(value: string | undefined) {
     if (!value) value = "";
@@ -45,16 +48,20 @@
   </Button>
 
   <Input
+    class="border-muted-foreground"
     placeholder="Stage Name (Click to Name)"
     bind:value={stageTitle}
     disabled={!isRenamable}
   />
 
   <DropDownMenu.Root>
-    <DropDownMenu.Trigger>
+    <DropDownMenu.Trigger disabled={!editableHandler}>
       <div class="ml-2">
-        {#if !(handlerId in users) || users[handlerId].profileUrl === ""}
-          <CircleUserRound class="h-8 w-8 stroke-muted-foreground stroke-1" />
+        {#if !editableHandler}
+          <!--Invisible-->
+          <CircleUserRound class="h-8 w-8 stroke-0" />
+        {:else if !(handlerId in users) || users[handlerId].profileUrl === ""}
+          <CircleUserRound class="stroke-muted-foreground h-8 w-8 stroke-1" />
         {:else}
           <Avatar.Root class="h-8 w-8">
             <Avatar.Image
