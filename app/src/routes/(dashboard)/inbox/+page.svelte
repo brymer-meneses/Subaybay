@@ -57,7 +57,7 @@
 </script>
 
 <main
-  class="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-4"
+  class="grid flex-1 items-start gap-4 p-4 sm:py-0 sm:pl-9 md:gap-8 md:pl-2 md:pr-4 lg:grid-cols-1 xl:grid-cols-4 xl:px-6"
 >
   <div class="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
     <Tabs.Root value="active" onValueChange={onTabChange}>

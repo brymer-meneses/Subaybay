@@ -67,19 +67,19 @@
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
       <div class="relative w-full">
         <Search
-          class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
+          class="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4"
         />
         <Input
           type="search"
           placeholder="Search..."
-          class="w-full rounded-lg bg-background pl-8"
+          class="bg-background w-full rounded-lg pl-8"
           bind:value={searchTerm}
         />
       </div>
     </div>
   </Card.Header>
   <Card.Content>
-    <ScrollArea class="h-96 w-[98%]">
+    <ScrollArea class="h-[37.6rem] w-[98%] sm:max-xl:h-96 lg:max-xl:w-full">
       <div class="flex flex-col gap-2 transition-all">
         {#each filteredStages as stage, index}
           <InboxItem
