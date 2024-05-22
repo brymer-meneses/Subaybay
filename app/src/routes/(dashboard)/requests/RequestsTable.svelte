@@ -19,7 +19,7 @@
   import RequestTableEntry from "./RequestTableEntry.svelte";
 
   export let requests: Request[];
-  export let classification: string;
+  export let classification: "pending" | "finished" | "discontinued";
 
   let searchTerm: string = "";
   let filteredRequests: Request[] = [];
@@ -98,7 +98,7 @@
       </div>
     </div>
   </Card.Header>
-  <Card.Content class="px-6 text-sm">
+  <Card.Content class=" px-6 text-sm">
     <Table.Root>
       <Table.Caption
         >Showing {filteredRequests.length}
@@ -106,19 +106,27 @@
       >
       <Table.Header>
         <Table.Row class="auto-rows grid w-full grid-cols-12 text-left">
-          <Table.Head class="col-span-1 grid items-center"></Table.Head>
-          <Table.Head class="col-span-1 grid items-center"
+          <Table.Head class="col-span-1 grid items-center pl-10"
             >Student Number</Table.Head
           >
           <Table.Head class="col-span-1 grid items-center"
             >Student Name</Table.Head
           >
-          <Table.Head class="col-span-2 grid items-center"
+          <Table.Head class="col-span-1 grid items-center"
             >Student Email</Table.Head
           >
           <Table.Head class="col-span-1 grid items-center"
             >Number of Copies</Table.Head
           >
+          {#if classification !== "finished"}
+            <Table.Head class="col-span-2 grid items-center">
+              Date Requested
+            </Table.Head>
+          {:else}
+            <Table.Head class="col-span-2 grid items-center">
+              Date Finished
+            </Table.Head>
+          {/if}
           <Table.Head class="col-span-2 grid items-center">Purpose</Table.Head>
           <Table.Head class="col-span-2 grid items-center">Remarks</Table.Head>
           <Table.Head class="col-span-2 hidden items-center">Actions</Table.Head
@@ -128,7 +136,7 @@
       <ScrollArea class="h-[28rem]">
         <Table.Body>
           {#each filteredRequests as request, index}
-            <RequestTableEntry {request} {index} />
+            <RequestTableEntry {request} {index} {classification} />
           {/each}
         </Table.Body>
       </ScrollArea>
