@@ -57,7 +57,7 @@
       <FilePlus size="18" /> Create Request
     </Button>
   </Dialog.Trigger>
-  <Dialog.Content class="max-h-screen overflow-y-scroll">
+  <Dialog.Content>
     <form action="?/add_request" method="POST" use:enhance>
       <Dialog.Header>
         <Dialog.Title>Add details for new request.</Dialog.Title>
