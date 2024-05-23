@@ -69,10 +69,10 @@
         >Please set the following parameters.</Dialog.Description
       >
     </Dialog.Header>
-    <p>
+    <!-- <p>
       <span class="text-red-600">DEBUG:</span> <br />
       {JSON.stringify(params, null, 2)}
-    </p>
+    </p> -->
     <Separator />
     <div class="space-y-8">
       <div class="flex flex-col gap-4">
@@ -100,7 +100,11 @@
           <Label>End Date</Label>
           <DateRangePicker
             on:dateSelect={(event) => {
-              endDate = new Date(event.detail);
+              if (startDate.getTime() <= new Date(event.detail).getTime()) {
+                endDate = new Date(event.detail);
+              } else {
+                endDate = startDate;
+              }
             }}
           />
         </div>

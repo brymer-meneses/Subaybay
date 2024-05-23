@@ -12,6 +12,7 @@
   export let onUpdated: (prev: number, current: number) => void = (x) => {};
 
   function onInput() {
+    inputValue = inputValue.replace(/[^0-9]/gm, "");
     let input = parseInt(inputValue);
     if (!input || input < 0) {
       input = 0;
