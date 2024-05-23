@@ -79,7 +79,9 @@
     </div>
   </Card.Header>
   <Card.Content>
-    <ScrollArea class="h-[37.6rem] w-[98%] sm:max-xl:h-96 lg:max-xl:w-full">
+    <ScrollArea
+      class="flex h-[35rem] w-[98%] flex-grow flex-col sm:max-xl:h-96 lg:max-xl:w-full"
+    >
       <div class="flex flex-col gap-2 transition-all">
         {#each filteredStages as stage, index}
           <InboxItem

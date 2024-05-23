@@ -5,15 +5,14 @@ use axum::{
 use axum_typed_websockets::{Message, WebSocket, WebSocketUpgrade};
 use futures::{SinkExt, StreamExt, TryStreamExt};
 
-use crate::state::AppState;
 use crate::{
     database::{self as db, InboxItemIdentifier, Notification, NotificationBody},
-    error::Result,
+    state::AppState,
 };
 
-use mongodb::bson::{doc, oid::ObjectId};
+use mongodb::bson::doc;
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, sync::Arc, thread::current};
+use std::{collections::HashMap, sync::Arc};
 
 pub async fn event() -> impl IntoResponse {
     "ok"
@@ -32,7 +31,7 @@ async fn handle_connection(
     args: ConnectionArgs,
     socket: WebSocket<ServerMessage, ClientMessage>,
 ) {
-    let (mut ws_sender, mut ws_receiver) = socket.split();
+    let (mut ws_sender, _ws_receiver) = socket.split();
     let mut notification_tx = state.notification_tx.subscribe();
 
     match get_unseen_notifications(state.database.clone(), &args.user_id).await {
@@ -53,9 +52,9 @@ async fn handle_connection(
         }
     };
 
-    let receive_task = tokio::spawn(async move {
+    let _receive_task = tokio::spawn(async move {
         while let Ok(notification) = notification_tx.recv().await {
-            let notifications_collection = state
+            let _notifications_collection = state
                 .database
                 .collection::<db::Notification>("notifications");
 

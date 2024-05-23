@@ -84,7 +84,9 @@
         </Button>
       </div>
     </Card.Header>
-    <Card.Content class="flex flex-col gap-4 px-6 py-2 xl:h-[38.2rem]">
+    <Card.Content
+      class="flex flex-grow flex-col gap-4 px-6 py-2 xl:h-[35.6rem]"
+    >
       <Tabs.Root value="details">
         <Tabs.List>
           <Tabs.Trigger value="details" class="flex gap-2">
@@ -163,7 +165,7 @@
           <div class="flex flex-col">
             <ChatArea
               requestId={stage.requestId}
-              height="min-[320px]:h-[21.4rem] sm:max-lg:h-[21.4rem] xl:h-[28.9rem]"
+              height="min-[320px]:h-[21.4rem] sm:max-lg:h-[21.4rem] xl:h-[26.25rem]"
             />
           </div>
         </Tabs.Content>

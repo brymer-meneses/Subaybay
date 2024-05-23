@@ -1,15 +1,24 @@
 import { MongoClient, ObjectId } from "mongodb";
 import { dev } from "$app/environment";
 
-import { DATABASE_NAME, DATABASE_USERNAME, DATABASE_PORT, DATABASE_PASSWORD, DATABASE_HOSTNAME } from "$env/static/private";
+import { env } from "$env/dynamic/private";
 
-const hostname = dev ? "localhost" : DATABASE_HOSTNAME;
-const URI = `mongodb://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${hostname}:${DATABASE_PORT}/`;
+
+// NOTE:
+// This gets run by the build step somehow, MongoClient(URI) will throw an
+// error if URI is not a valid mongodb URI (because mongodb://undefined:undefined/ is not valid)
+// so we need to check here.
+//
+// Also `client.connect` is run at `src/hooks.server.ts` repeated use of
+// `client.connect` is a no-op if it is connected anyway
+
+const hostname = dev ? "localhost" : env.DATABASE_HOSTNAME;
+const URI = env.DATABASE_NAME !== undefined
+  ? `mongodb://${env.DATABASE_USERNAME}:${env.DATABASE_PASSWORD}@${hostname}:${env.DATABASE_PORT}/`
+  : "mongodb://localhost:27017";
 
 export const client = new MongoClient(URI);
-await client.connect();
-
-export const database = client.db(DATABASE_NAME);
+export const database = client.db(env.DATABASE_NAME);
 
 export const user = database.collection<User>("users");
 export const session = database.collection<Session>("sessions");

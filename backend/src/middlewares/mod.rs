@@ -3,7 +3,6 @@ use axum::{
     http::StatusCode,
     middleware::Next,
     response::Response,
-    BoxError,
 };
 
 use serde::{Deserialize, Serialize};
@@ -58,8 +57,8 @@ pub async fn authentication(
     };
 
     println!("UNAUTHORIZED");
-    return Err((
+    Err((
         StatusCode::UNAUTHORIZED,
         "The `sessionId` passed is not valid",
-    ));
+    ))
 }

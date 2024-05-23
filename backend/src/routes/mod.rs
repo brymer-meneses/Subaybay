@@ -1,14 +1,15 @@
 use axum::{
     http::Method,
     middleware,
-    response::{IntoResponse, Redirect},
+    response::IntoResponse,
     routing::{get, post},
     Router,
 };
 
-use tower::{Layer, ServiceBuilder};
-use tower_http::cors::{Any, CorsLayer};
-use tower_http::trace::TraceLayer;
+use tower_http::{
+    cors::{Any, CorsLayer},
+    trace::TraceLayer,
+};
 
 use crate::state::AppState;
 use std::sync::Arc;
@@ -26,7 +27,7 @@ pub async fn root() -> Router {
     let trace_layer = TraceLayer::new_for_http();
     let state = Arc::new(AppState::new().await);
 
-    let router = Router::new()
+    Router::new()
         .route("/notifications/ws", get(notifications::websocket))
         .route("/notifications/events", post(notifications::event))
         .route("/chat/ws", get(chat::websocket))
@@ -37,9 +38,7 @@ pub async fn root() -> Router {
         .route("/status", get(status))
         .layer(cors_layer)
         .layer(trace_layer)
-        .with_state(state);
-
-    router
+        .with_state(state)
 }
 
 async fn status() -> impl IntoResponse {

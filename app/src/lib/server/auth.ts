@@ -4,11 +4,11 @@ import { Google } from "arctic";
 
 import { dev } from "$app/environment";
 import { session, user, type User } from "./database";
-import { GOOGLE_CLIENT_SECRET, GOOGLE_CLIENT_ID } from "$env/static/private"
+import { env } from "$env/dynamic/private"
 
 export const google = new Google(
-  GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET,
+  env.GOOGLE_CLIENT_ID,
+  env.GOOGLE_CLIENT_SECRET,
   "http://localhost:5173/auth/login/callback",
 );
 
