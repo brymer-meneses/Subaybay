@@ -11,7 +11,7 @@ use tower_http::{
     trace::TraceLayer,
 };
 
-use crate::state::AppState;
+use crate::{state::AppState, Config};
 use std::sync::Arc;
 
 pub mod chat;
@@ -19,13 +19,13 @@ pub mod notifications;
 
 use crate::middlewares::authentication;
 
-pub async fn root() -> Router {
+pub async fn root(config: &Config) -> Router {
     let cors_layer = CorsLayer::new()
         .allow_methods([Method::GET, Method::POST])
         .allow_origin(Any);
 
     let trace_layer = TraceLayer::new_for_http();
-    let state = Arc::new(AppState::new().await);
+    let state = Arc::new(AppState::new(config).await);
 
     Router::new()
         .route("/notifications/ws", get(notifications::websocket))

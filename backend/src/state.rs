@@ -1,4 +1,4 @@
-use crate::{database as db, routes::chat};
+use crate::{database as db, routes::chat, Config};
 
 use mongodb::Database;
 use tokio::sync::broadcast;
@@ -11,14 +11,19 @@ pub struct AppState {
 }
 
 impl AppState {
-    pub async fn new() -> Self {
+    pub async fn new(config: &Config) -> Self {
         use mongodb::{
             options::{ClientOptions, ServerApi, ServerApiVersion},
             Client,
         };
 
-        let host = std::env::var("DATABASE_HOSTNAME").unwrap_or("localhost".to_owned());
-        let uri = format!("mongodb://{host}:27017/?directConnection=true");
+        let uri = format!(
+            "mongodb://{}:{}@{}:{}/",
+            config.database_username,
+            config.database_password,
+            config.database_hostname,
+            config.database_port
+        );
 
         let client = {
             let mut options = ClientOptions::parse_async(uri).await.expect("Invalid URI");
