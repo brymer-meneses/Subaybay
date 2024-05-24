@@ -62,8 +62,8 @@
 
 <Dialog.Root bind:open={statDiagOpen}>
   <Dialog.Trigger>
-    <Button variant="outline" class="gap-2">
-      <Download class="text-muted-foreground h-6 w-6" />
+    <Button class="gap-2">
+      <Download class="h-6 w-6" />
       Report
     </Button>
   </Dialog.Trigger>
