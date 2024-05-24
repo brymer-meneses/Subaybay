@@ -133,7 +133,7 @@
           <Table.Head class="col-span-1 grid items-center"
             >Student Name</Table.Head
           >
-          <Table.Head class="col-span-1 grid items-center"
+          <Table.Head class="col-span-2 grid items-center"
             >Student Email</Table.Head
           >
           <Table.Head class="col-span-1 grid items-center"
