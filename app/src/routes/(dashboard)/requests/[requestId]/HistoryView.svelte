@@ -62,6 +62,6 @@
       </Card.Card>
     {/each}
   {:else}
-    <p>No History available yet...</p>
+    <p class="text-muted-foreground">No History available yet...</p>
   {/if}
 </div>

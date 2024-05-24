@@ -1,6 +1,6 @@
-import type { Request } from "$lib/server/database"
+import type { RequestSearchItem } from "./RequestsTable.svelte"
 
-const sortPending = (a: Request, b: Request) => {
+const sortPending = (a: RequestSearchItem, b: RequestSearchItem) => {
     let dateA =
       a.history.length > 0
         ? a.history[0].dateStarted.getTime()
@@ -12,29 +12,29 @@ const sortPending = (a: Request, b: Request) => {
     return { dateA, dateB };
   };
 
-export  const sortPendingNewest = (a: Request, b: Request) => {
+export  const sortPendingNewest = (a: RequestSearchItem, b: RequestSearchItem) => {
     const { dateA, dateB } = sortPending(a, b);
     return dateB - dateA;
   };
 
-export  const sortPendingOldest = (a: Request, b: Request) => {
+export  const sortPendingOldest = (a: RequestSearchItem, b: RequestSearchItem) => {
     const { dateA, dateB } = sortPending(a, b);
     return dateA - dateB;
   };
 
-const sortFinished = (a: Request, b: Request) => {
+const sortFinished = (a: RequestSearchItem, b: RequestSearchItem) => {
     const dateA = a.history[a.history.length - 1].dateFinished.getTime();
     const dateB = b.history[b.history.length - 1].dateFinished.getTime();
 
     return { dateA, dateB };
   };
 
-export  const sortFinishedNewest = (a: Request, b: Request) => {
+export  const sortFinishedNewest = (a: RequestSearchItem, b: RequestSearchItem) => {
     const { dateA, dateB } = sortFinished(a, b);
     return dateB - dateA;
   };
 
-export const sortFinishedOldest = (a: Request, b: Request) => {
+export const sortFinishedOldest = (a: RequestSearchItem, b: RequestSearchItem) => {
     const { dateA, dateB } = sortFinished(a, b);
 
     return dateA - dateB;

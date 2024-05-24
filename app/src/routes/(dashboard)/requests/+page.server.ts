@@ -8,6 +8,7 @@ export const load: PageServerLoad = async (event) => {
   const activeRequests: db.Request[] = [];
   const finishedRequests: db.Request[] = [];
   const staleRequests: db.Request[] = [];
+  const requestTypes: db.RequestType[] = await db.requestType.find({}).toArray();
 
   for (const request of allReq) {
     if (!request.isFinished) {
@@ -21,6 +22,7 @@ export const load: PageServerLoad = async (event) => {
 
   return {
     userInfo: event.locals.user,
+    requestTypes,
     activeRequests,
     finishedRequests,
     staleRequests,

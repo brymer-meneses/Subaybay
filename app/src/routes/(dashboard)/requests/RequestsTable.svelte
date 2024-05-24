@@ -1,4 +1,14 @@
+<script lang="ts" context="module">
+  import type { Request } from "$lib/server/database";
+
+  export type RequestSearchItem = Request & {
+    requestTitle: string;
+    date: string;
+  };
+</script>
+
 <script lang="ts">
+  import { page } from "$app/stores";
   import {
     sortPendingNewest,
     sortPendingOldest,
@@ -15,39 +25,33 @@
   import ChevronDown from "lucide-svelte/icons/chevron-down";
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
 
-  import type { Request } from "$lib/server/database";
   import RequestTableEntry from "./RequestTableEntry.svelte";
 
   export let requests: Request[];
   export let classification: "pending" | "finished" | "discontinued";
 
   let searchTerm: string = "";
-  let filteredRequests: Request[] = [];
+  let searchItems: RequestSearchItem[] = [];
+  let filteredRequests: RequestSearchItem[] = [];
   let sortBy: string = "Newest";
 
   $: {
-    filteredRequests = requests.filter((request: Request) => {
-      for (const key in request) {
-        const userKey = key as keyof Request;
-        // check date available in the table
-        if (!request.isFinished) {
-          const date =
-            request.history.length > 0
-              ? request.history[0].dateStarted.toDateString()
-              : request.currentStage.dateStarted.toDateString();
-          if (date.toLowerCase().includes(searchTerm.trim().toLowerCase()))
-            return request;
-        } else if (
-          request.isFinished &&
-          request.currentStage.dateFinished
-            .toDateString()
-            .toLowerCase()
-            .includes(searchTerm.trim().toLowerCase())
-        ) {
-          return request;
-        }
+    searchItems = requests.map((r) => ({
+      ...r,
+      requestTitle:
+        $page.data.requestTypes.find(
+          (rt: RequestType) => rt._id === r.requestTypeId,
+        )?.title || "",
+      date: r.isFinished
+        ? r.currentStage.dateFinished.toDateString()
+        : r.history.length > 0
+          ? r.history[0].dateStarted.toDateString()
+          : r.currentStage.dateStarted.toDateString(),
+    }));
 
-        // check other properties
+    filteredRequests = searchItems.filter((request: RequestSearchItem) => {
+      for (const key in request) {
+        const userKey = key as keyof RequestSearchItem;
         if (
           String(request[userKey])
             .toLowerCase()
@@ -70,8 +74,6 @@
       else if (sortBy === "Oldest")
         filteredRequests = filteredRequests.sort(sortFinishedOldest);
     }
-
-    console.log(filteredRequests);
   }
 </script>
 
@@ -127,18 +129,20 @@
       >
       <Table.Header>
         <Table.Row class="auto-rows grid w-full grid-cols-12 text-left">
-          <Table.Head class="col-span-1 grid items-center pl-10"
-            >Student Number</Table.Head
+          <Table.Head class="col-span-1"></Table.Head>
+          <Table.Head class="col-span-1 grid items-center p-0"
+            >Student Num.</Table.Head
           >
-          <Table.Head class="col-span-1 grid items-center"
+          <Table.Head class="col-span-2 grid items-center"
             >Student Name</Table.Head
           >
           <Table.Head class="col-span-2 grid items-center"
             >Student Email</Table.Head
           >
-          <Table.Head class="col-span-1 grid items-center"
-            >Number of Copies</Table.Head
+          <Table.Head class="col-span-2 grid items-center"
+            >Request Type</Table.Head
           >
+          <Table.Head class="col-span-1 grid items-center">Copies</Table.Head>
           {#if classification !== "finished"}
             <Table.Head class="col-span-2 grid items-center">
               Date Requested
@@ -148,16 +152,14 @@
               Date Completed
             </Table.Head>
           {/if}
-          <Table.Head class="col-span-2 grid items-center">Purpose</Table.Head>
-          <Table.Head class="col-span-2 grid items-center">Remarks</Table.Head>
-          <Table.Head class="col-span-2 hidden items-center">Actions</Table.Head
+          <Table.Head class="col-span-1 hidden items-center">Actions</Table.Head
           >
         </Table.Row>
       </Table.Header>
       <ScrollArea class="h-[28rem]">
         <Table.Body>
           {#each filteredRequests as request, index}
-            <RequestTableEntry {request} {index} {classification} />
+            <RequestTableEntry {request} {index} />
           {/each}
         </Table.Body>
       </ScrollArea>

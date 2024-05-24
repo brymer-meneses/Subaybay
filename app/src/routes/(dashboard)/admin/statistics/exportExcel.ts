@@ -30,7 +30,11 @@ export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: 
   let finished: Request[] = [];
   let stale: Request[] = [];
   let counts: RequestTypeInstancesCount[] = [];
-  let summary: Summary[] = [{type: "finished", count: 0, countThisMonth:0},{type: "pending", count: 0, countThisMonth:0},{type: "stale", count: 0, countThisMonth:0}];
+  let summary: Summary[] = [
+    {type: "finished", count: 0, countThisMonth:0},
+    {type: "pending", count: 0, countThisMonth:0},
+    {type: "stale", count: 0, countThisMonth:0}
+  ];
   
   // Separate pending to archived requests
   for (const request of requests) {
