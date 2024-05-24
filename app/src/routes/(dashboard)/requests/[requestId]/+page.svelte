@@ -83,12 +83,13 @@
   </div>
 
   <div class="flex flex-col gap-4">
-    <Card class="mt-12 h-[46.5rem]  pt-6">
+    <Card class="mt-12 h-[45rem]  pt-6">
       <CardContent>
         <div class="flex flex-col gap-4">
-          <EditForm bind:data={formData} bind:processing={processing} />
-
-          <p class="font-semibold">Student Information</p>
+          <div class="flex justify-between">
+            <p class="font-semibold">Student Information</p>
+            <EditForm bind:data={formData} bind:processing />
+          </div>
           {#if processing}
             Processing... Please Wait
           {/if}
@@ -110,7 +111,7 @@
           <Textarea disabled value={data.purpose} />
           <p class="font-semibold">Remarks</p>
           <Textarea disabled value={data.remarks} />
-          <ChatArea requestId={data.requestId} height="h-60" />
+          <ChatArea requestId={data.requestId} height="h-56" />
         </div>
       </CardContent>
     </Card>

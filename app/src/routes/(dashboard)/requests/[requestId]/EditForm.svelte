@@ -35,7 +35,7 @@
 
 <Dialog.Root bind:open>
   <Dialog.Trigger>
-    <Button class="h-9 gap-2">
+    <Button class="gap-2">
       <!--todo change icon to be more relevant-->
       <FilePlus size="18" /> Edit Request
     </Button>
