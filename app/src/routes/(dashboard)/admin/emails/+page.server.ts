@@ -34,7 +34,7 @@ export const actions: Actions = {
 
     const existingEmail = await permittedEmail.findOne({ email }, { projection: { _id:0 } });
     if (!existingEmail) {
-      await permittedEmail.insertOne({ email });
+      await permittedEmail.insertOne({ email, dateAdded: new Date() });
       setFlash(
         { type: "success", message: `${email} successfully added.` },
         cookies,

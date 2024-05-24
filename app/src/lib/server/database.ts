@@ -39,6 +39,7 @@ export interface User {
 
 export interface PermittedEmail {
   email: string;
+  dateAdded: Date;
 }
 
 // camelcase needs to stay since `lucia` requires so

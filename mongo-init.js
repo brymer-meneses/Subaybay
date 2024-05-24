@@ -2,11 +2,11 @@
 db = new Mongo().getDB("subaybay");
 
 db.permittedEmails.insertMany([
-  { email: "yuumi@lol.com" },
-  { email: "smolder@lol.com" },
-  { email: "gnar@lol.com" },
-  { email: "sol@lol.com" },
-  { email: "kogmaw@lol.com" },
+  { email: "yuumi@lol.com", dateAdded: new Date() },
+  { email: "smolder@lol.com", dateAdded: new Date() },
+  { email: "gnar@lol.com", dateAdded: new Date() },
+  { email: "sol@lol.com", dateAdded: new Date() },
+  { email: "kogmaw@lol.com", dateAdded: new Date() },
 ])
 
 db.users.insertMany([
