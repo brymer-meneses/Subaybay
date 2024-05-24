@@ -18,10 +18,8 @@
     <DataVisualization data={overviewData} />
   </Card.Content>
   <Card.Footer class="flex justify-end gap-4 ">
-    <Button
-      class="gap-1 p-4"
-      variant="outline"
-      on:click={() => goto("admin/statistics")}>View Statistics</Button
+    <Button class="gap-1 p-4" on:click={() => goto("admin/statistics")}
+      >View Statistics</Button
     >
   </Card.Footer>
 </Card.Root>
