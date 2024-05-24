@@ -1,4 +1,4 @@
-FROM rust:1.77
+FROM rust:1.77 AS build
 
 WORKDIR /backend
 
@@ -13,6 +13,11 @@ COPY src src
 RUN touch ./src/main.rs
 RUN cargo build --release
 
-CMD ["./target/release/backend"]
+FROM rust:1.77 AS run
+
+WORKDIR /backend
+COPY --from=build /backend/target/release/backend ./backend
+
+CMD ["./backend"]
 
 EXPOSE 8080
