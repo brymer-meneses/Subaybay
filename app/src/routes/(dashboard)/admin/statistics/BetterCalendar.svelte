@@ -15,7 +15,9 @@
   export let value: $$Props["value"] = undefined;
   export let placeholder: $$Props["placeholder"] = today(getLocalTimeZone());
   export let weekdayFormat: $$Props["weekdayFormat"] = "short";
+  export let minDate: Date | null;
 
+  $: minDate;
   const monthOptions = [
     "January",
     "February",
@@ -131,9 +133,22 @@
           {#each month.weeks as weekDates}
             <Calendar.GridRow class="mt-2 w-full">
               {#each weekDates as date}
-                <Calendar.Cell {date}>
-                  <Calendar.Day {date} month={month.value} />
-                </Calendar.Cell>
+                {#if minDate && minDate.getTime() - 86400000 > date
+                      .toDate(getLocalTimeZone())
+                      .getTime()}
+                  <div class="cursor-not-allowed">
+                    <Calendar.Cell
+                      {date}
+                      class="pointer-events-none opacity-50"
+                    >
+                      <Calendar.Day {date} month={month.value} />
+                    </Calendar.Cell>
+                  </div>
+                {:else}
+                  <Calendar.Cell {date}>
+                    <Calendar.Day {date} month={month.value} />
+                  </Calendar.Cell>
+                {/if}
               {/each}
             </Calendar.GridRow>
           {/each}

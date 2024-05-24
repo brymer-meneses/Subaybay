@@ -15,6 +15,7 @@
   import Separator from "$lib/components/ui/separator/separator.svelte";
   import DateRangePicker from "./DateRangePicker.svelte";
   import Download from "lucide-svelte/icons/download";
+  import clsx from "clsx";
 
   export let count: RequestTypeInstancesCount[];
   export let summary: Summary[];
@@ -35,6 +36,10 @@
   };
 
   $: {
+    if (JSON.parse(dateRange) && startDate.getTime() === 0) {
+      endDate = startDate;
+    }
+
     if (sortBy === "requestType") {
       sortType = "request";
     }
@@ -52,7 +57,7 @@
     };
   }
 
-  let statDiagOpen = false;
+  let statDiagOpen = true;
 </script>
 
 <Dialog.Root bind:open={statDiagOpen}>
@@ -71,7 +76,10 @@
     </Dialog.Header>
     <!-- <p>
       <span class="text-red-600">DEBUG:</span> <br />
-      {JSON.stringify(params, null, 2)}
+      {JSON.stringify(params, null, 2)} <br />
+      {startDate.getTime()} <br />
+      {endDate.getTime()} <br />
+      {dateRange} <br />
     </p> -->
     <Separator />
     <div class="space-y-8">
@@ -90,23 +98,49 @@
         </RadioGroup.Root>
       </div>
       {#if JSON.parse(dateRange)}
-        <div class="my-4 flex flex-col gap-4">
+        <div class="flex flex-col gap-2">
           <Label>Start Date</Label>
           <DateRangePicker
+            type={"start"}
+            minDate={null}
             on:dateSelect={(event) => {
               startDate = new Date(event.detail);
-            }}
-          />
-          <Label>End Date</Label>
-          <DateRangePicker
-            on:dateSelect={(event) => {
-              if (startDate.getTime() <= new Date(event.detail).getTime()) {
-                endDate = new Date(event.detail);
-              } else {
+              if (startDate.getTime() > endDate.getTime()) {
                 endDate = startDate;
               }
             }}
           />
+        </div>
+        <div class="flex flex-col gap-2">
+          <Label>End Date</Label>
+          <div
+            class={clsx(
+              "w-[280px]",
+              startDate.getTime() === 0 && JSON.parse(dateRange)
+                ? "cursor-not-allowed"
+                : "",
+            )}
+          >
+            <div
+              class={clsx(
+                startDate.getTime() === 0 && JSON.parse(dateRange)
+                  ? "text-muted-foreground pointer-events-none"
+                  : "",
+              )}
+            >
+              <DateRangePicker
+                type={"end"}
+                bind:minDate={startDate}
+                on:dateSelect={(event) => {
+                  if (startDate.getTime() <= new Date(event.detail).getTime()) {
+                    endDate = new Date(event.detail);
+                  } else {
+                    endDate = startDate;
+                  }
+                }}
+              />
+            </div>
+          </div>
         </div>
       {/if}
       <div class="flex flex-col gap-4">
