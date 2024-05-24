@@ -43,10 +43,10 @@
           (rt: RequestType) => rt._id === r.requestTypeId,
         )?.title || "",
       date: r.isFinished
-        ? r.currentStage.dateFinished.toDateString()
+        ? r.currentStage.dateFinished.toLocaleString()
         : r.history.length > 0
-          ? r.history[0].dateStarted.toDateString()
-          : r.currentStage.dateStarted.toDateString(),
+          ? r.history[0].dateStarted.toLocaleString()
+          : r.currentStage.dateStarted.toLocaleString(),
     }));
 
     filteredRequests = searchItems.filter((request: RequestSearchItem) => {

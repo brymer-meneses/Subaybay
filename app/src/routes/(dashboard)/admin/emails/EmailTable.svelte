@@ -34,7 +34,7 @@
           </Table.Cell>
           <Table.Cell class="col-span-2">
             <div class="mb-4 flex items-center justify-between space-x-4">
-              {email.dateAdded.toLocaleString()}
+              {email.dateAdded.toDateString()}
             </div>
           </Table.Cell>
           <Table.Cell class="col-span-2">
