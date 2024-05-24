@@ -15,8 +15,22 @@
   import UserRound from "lucide-svelte/icons/user-round";
   import Mail from "lucide-svelte/icons/mail";
   import { Textarea } from "$lib/components/ui/textarea";
+  import EditForm from "./EditForm.svelte";
 
   export let data: any;
+  export let processing: boolean;
+
+  let formData = data.form;
+
+  $: {
+    formData = data.form;
+
+    formData.data.studentNumber = data.studentNumber;
+    formData.data.studentName = data.studentName;
+    formData.data.studentEmail = data.studentEmail;
+    formData.data.purpose = data.purpose;
+    formData.data.remarks = data.remarks;
+  }
 </script>
 
 <!--TODO add an error page?-->
@@ -72,7 +86,12 @@
     <Card class="mt-12 h-[46.5rem]  pt-6">
       <CardContent>
         <div class="flex flex-col gap-4">
+          <EditForm bind:data={formData} bind:processing={processing} />
+
           <p class="font-semibold">Student Information</p>
+          {#if processing}
+            Processing... Please Wait
+          {/if}
           <div class="flex flex-wrap gap-4">
             <Badge variant="secondary" class="flex gap-2 text-sm">
               <GraduationCap size={18} />
@@ -91,7 +110,7 @@
           <Textarea disabled value={data.purpose} />
           <p class="font-semibold">Remarks</p>
           <Textarea disabled value={data.remarks} />
-          <ChatArea roomId="abcd" height="h-60" />
+          <ChatArea requestId={data.requestId} height="h-60" />
         </div>
       </CardContent>
     </Card>

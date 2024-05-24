@@ -28,6 +28,7 @@ export const load: PageServerLoad = async (event) => {
 };
 
 export const actions: Actions = {
+  // todo move out to individual request's page
   edit: async ({ request, cookies }) => {
     const formData = await request.formData();
 

@@ -1,5 +1,9 @@
-import type { PageServerLoad } from "./$types";
+import type { Actions, PageServerLoad } from "./$types";
 import * as db from "$lib/server/database";
+import { fail, superValidate } from "sveltekit-superforms";
+import { formSchema } from "./schema";
+import { zod } from "sveltekit-superforms/adapters";
+import { setFlash } from "sveltekit-flash-message/server";
 
 export const load: PageServerLoad = async (event) => {
   const requestId = event.params.requestId;
@@ -7,6 +11,7 @@ export const load: PageServerLoad = async (event) => {
   const storedData = await retrieveData(requestId);
 
   return {
+    form: await superValidate(zod(formSchema)),
     userInfo: event.locals.user,
     request: storedData.request,
     requestType: storedData.requestType,
@@ -64,4 +69,45 @@ const retrieveData = async (requestId: string) => {
     purpose: request.purpose,
     remarks: request.remarks,
   };
+};
+
+export const actions: Actions = {
+  edit: async (event) => {
+    const cookies = event.cookies;
+    const requestId = event.params.requestId;
+
+    const form = await superValidate(event, zod(formSchema));
+    if (!form.valid) {
+      setFlash({ type: "error", message: "Invalid form sent" }, cookies);
+      return fail(400, {
+        form,
+      });
+    }
+
+    const data = form.data;
+    const studentName = data.studentName;
+    const studentEmail = data.studentEmail;
+    const studentNumber = data.studentNumber;
+    const purpose = data.purpose;
+    const remarks = data.remarks;
+
+    const request = await db.request.findOneAndUpdate(
+      { _id: requestId },
+      {
+        $set: {
+          studentName: studentName,
+          studentEmail: studentEmail,
+          studentNumber: studentNumber,
+          purpose: purpose,
+          remarks: remarks,
+        },
+      },
+    );
+
+    if (request) {
+      setFlash({ type: "success", message: "Edited request" }, cookies);
+    } else {
+      setFlash({ type: "error", message: "Failed to update request" }, cookies);
+    }
+  },
 };
