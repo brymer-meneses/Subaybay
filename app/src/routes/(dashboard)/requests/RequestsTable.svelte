@@ -95,7 +95,6 @@
       else if (sortBy === "Oldest")
         filteredRequests = filteredRequests.sort(sortFinishedOldest);
     }
-    if (classification === "discontinued") console.log(searchItems);
   }
 </script>
 
