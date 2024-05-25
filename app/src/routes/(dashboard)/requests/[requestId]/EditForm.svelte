@@ -6,7 +6,7 @@
   import * as Dialog from "$lib/components/ui/dialog/index.js";
   import * as Form from "$lib/components/ui/form";
 
-  import FilePlus from "lucide-svelte/icons/file-plus";
+  import Pencil from "lucide-svelte/icons/pencil";
 
   import { formSchema, type FormSchema } from "./schema";
   import {
@@ -27,17 +27,13 @@
   const { form: formData } = form;
 
   let open: boolean;
-
-  function onSubmitClicked() {
-    open = false;
-  }
 </script>
 
 <Dialog.Root bind:open>
   <Dialog.Trigger>
     <Button class="gap-2">
       <!--todo change icon to be more relevant-->
-      <FilePlus size="18" /> Edit Request
+      <Pencil size="18" /> Edit Request
     </Button>
   </Dialog.Trigger>
   <Dialog.Content>
@@ -47,9 +43,11 @@
       use:enhance={() => {
         processing = true;
 
-        return async ({ update }) => {
+        return async ({ update, result }) => {
           await update();
           processing = false;
+          if (result.type === "success")
+            open = false;
         };
       }}
     >
@@ -68,6 +66,7 @@
               class="col-span-3"
               {...attrs}
               bind:value={$formData.studentNumber}
+              disabled={processing}
             />
           </Form.Control>
           <Form.FieldErrors />
@@ -84,6 +83,7 @@
               class="col-span-3"
               {...attrs}
               bind:value={$formData.studentName}
+              disabled={processing}
             />
           </Form.Control>
           <Form.FieldErrors />
@@ -100,6 +100,7 @@
               class="col-span-3"
               {...attrs}
               bind:value={$formData.studentEmail}
+              disabled={processing}
             />
           </Form.Control>
           <Form.FieldErrors />
@@ -112,6 +113,7 @@
               class="col-span-3"
               {...attrs}
               bind:value={$formData.purpose}
+              disabled={processing}
             />
           </Form.Control>
           <Form.FieldErrors />
@@ -124,6 +126,7 @@
               class="col-span-3"
               {...attrs}
               bind:value={$formData.remarks}
+              disabled={processing}
             />
           </Form.Control>
           <Form.FieldErrors />
@@ -131,9 +134,9 @@
       </div>
 
       <Dialog.Footer>
-        <Button type="submit" on:click={onSubmitClicked} class="h-9 gap-2 "
-          >Confirm Changes</Button
-        >
+        <Button type="submit" class="h-9 gap-2" disabled={processing}>
+          Confirm Changes
+        </Button>
       </Dialog.Footer>
     </form>
   </Dialog.Content>
