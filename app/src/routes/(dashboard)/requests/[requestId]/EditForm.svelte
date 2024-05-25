@@ -32,7 +32,6 @@
 <Dialog.Root bind:open>
   <Dialog.Trigger>
     <Button class="gap-2">
-      <!--todo change icon to be more relevant-->
       <Pencil size="18" /> Edit Request
     </Button>
   </Dialog.Trigger>
@@ -46,8 +45,7 @@
         return async ({ update, result }) => {
           await update();
           processing = false;
-          if (result.type === "success")
-            open = false;
+          if (result.type === "success") open = false;
         };
       }}
     >
@@ -134,9 +132,13 @@
       </div>
 
       <Dialog.Footer>
-        <Button type="submit" class="h-9 gap-2" disabled={processing}>
-          Confirm Changes
-        </Button>
+        {#if processing}
+          Processing... Please Wait
+        {:else}
+          <Button type="submit" class="h-9 gap-2" disabled={processing}>
+            Confirm Changes
+          </Button>
+        {/if}
       </Dialog.Footer>
     </form>
   </Dialog.Content>
