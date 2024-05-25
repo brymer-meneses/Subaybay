@@ -7,7 +7,7 @@
     type Request,
     type Params,
   } from "./types";
-
+  import * as Tooltip from "$lib/components/ui/tooltip/index.js";
   import * as Dialog from "$lib/components/ui/dialog";
   import * as RadioGroup from "$lib/components/ui/radio-group/index.js";
   import Label from "$lib/components/ui/label/label.svelte";
@@ -15,6 +15,7 @@
   import Separator from "$lib/components/ui/separator/separator.svelte";
   import DateRangePicker from "./DateRangePicker.svelte";
   import Download from "lucide-svelte/icons/download";
+  import CircleHelp from "lucide-svelte/icons/circle-help";
   import clsx from "clsx";
 
   export let count: RequestTypeInstancesCount[];
@@ -57,7 +58,7 @@
     };
   }
 
-  let statDiagOpen = false;
+  let statDiagOpen = true;
 </script>
 
 <Dialog.Root bind:open={statDiagOpen}>
@@ -70,9 +71,9 @@
   <Dialog.Content>
     <Dialog.Header>
       <Dialog.Title>Download Report</Dialog.Title>
-      <Dialog.Description
-        >Please set the following parameters.</Dialog.Description
-      >
+      <Dialog.Description>
+        Please set the following parameters.
+      </Dialog.Description>
     </Dialog.Header>
     <!-- <p>
       <span class="text-red-600">DEBUG:</span> <br />
@@ -84,7 +85,22 @@
     <Separator />
     <div class="space-y-8">
       <div class="flex flex-col gap-4">
-        <Label>Download all request details during:</Label>
+        <Label class="items-middle flex gap-2"
+          >Download all request details during:
+          <Tooltip.Root>
+            <Tooltip.Trigger>
+              <CircleHelp size="16" />
+            </Tooltip.Trigger>
+            <Tooltip.Content class="w-64">
+              <p class="font-semibold">NOTE:</p>
+              <p class="text-muted-foreground">
+                Pending and Stale Requests will be based on the creation date of
+                the request, while Finished requests will be based on the
+                completion date.
+              </p>
+            </Tooltip.Content>
+          </Tooltip.Root></Label
+        >
         <RadioGroup.Root bind:value={dateRange} class="flex">
           <div class="flex items-center space-x-2">
             <RadioGroup.Item value={"false"} id="dateRange2" />
