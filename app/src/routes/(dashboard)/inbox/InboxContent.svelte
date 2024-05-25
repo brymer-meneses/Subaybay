@@ -63,6 +63,11 @@
                 </div>
                 <p>{users[stage.prevHandlerId].name}</p>
                 <p />
+                {#if stage.remarks}
+                  <Badge>
+                    {stage.remarks}
+                  </Badge>
+                {/if}
               </div>
             {/if}
             Currently at Stage {stage.currentStageTypeIndex}: {stage.stageTitle}

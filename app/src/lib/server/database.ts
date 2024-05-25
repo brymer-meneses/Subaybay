@@ -87,6 +87,7 @@ export interface Stage {
   finished: boolean;
   dateStarted: Date;
   dateFinished: Date;
+  remarks: string;
 }
 
 export interface Message {

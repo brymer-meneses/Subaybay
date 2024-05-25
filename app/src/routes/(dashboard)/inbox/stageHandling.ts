@@ -71,6 +71,7 @@ export async function passRequest(
     finished: false,
     dateStarted: new Date(),
     dateFinished: new Date(0),
+    remarks: ""
   };
   const newNextHandlerId =
     requestType.stages[newNextStageIndex]?.defaultHandlerId ?? "";
@@ -189,6 +190,7 @@ export async function rollbackStage(
     finished: false,
     dateStarted: new Date(),
     dateFinished: new Date(0),
+    remarks: "Rolled Back"
   };
   const newNextStageIndex = newCurrentStageIndex + 1;
   let newNextHandlerId = "";
@@ -260,6 +262,7 @@ export async function reassign(request: db.Request, newHandlerId: string) {
     finished: false,
     dateStarted: new Date(),
     dateFinished: new Date(0),
+    remarks: "Reassigned"
   };
 
   const newHistory = [...request.history, oldStage];
