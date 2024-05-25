@@ -6,20 +6,25 @@
   import { Button } from "$lib/components/ui/button";
   import PopoverButton from "./PopoverButton.svelte";
 
-  import { User, CheckCheck } from "lucide-svelte";
+  import { CheckCheck } from "lucide-svelte";
 
   export let users: { [key: string]: UserInfo };
   export let stage: InboxStageData;
   export let request: Request | null;
   export let enhanceFunc: any;
 
-  let nextHandlerId: string = request?.nextHandlerId ?? "";
+  $: nextHandlerId = request?.nextHandlerId ?? "";
   let processing: boolean;
 </script>
 
-<PopoverButton {users} {processing} bind:nextHandlerId>
+<PopoverButton
+  {users}
+  {processing}
+  handlerSelectTitle={"Select Next Handler"}
+  bind:nextHandlerId
+>
   <Button slot="button" class="h-9 gap-2">
-    <CheckCheck size="18" /> Finish
+    <CheckCheck size="18" /> Pass to Next
   </Button>
   <form action="?/finish_stage" method="POST" use:enhance={enhanceFunc}>
     <input type="hidden" name="requestId" value={stage.requestId} />

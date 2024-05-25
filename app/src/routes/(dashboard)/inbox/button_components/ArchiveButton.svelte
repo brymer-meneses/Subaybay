@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import type { InboxStageData, UserInfo } from "../inboxTypes";
+  import type { InboxStageData } from "../inboxTypes";
 
   import * as Dialog from "$lib/components/ui/dialog";
   import { Button } from "$lib/components/ui/button";
