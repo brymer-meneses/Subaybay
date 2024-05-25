@@ -3,7 +3,7 @@ import { lucia } from "$lib/server/auth";
 import { requestType } from "$lib/server/database";
 
 interface HeaderData {
-  href: string | undefined;
+  href?: string;
   content: string;
 }
 
@@ -21,32 +21,29 @@ export const load: LayoutServerLoad = async (event) => {
     case "inbox":
       headerData = [
         { href: "/inbox", content: "Inbox" },
-        { href: undefined, content: "Manage Recent Tasks" },
+        { content: "Manage Recent Tasks" },
       ];
       break;
     case "requests":
       headerData = [{ href: "/requests", content: "Requests" }];
 
       if (routes.at(-1) !== "requests") {
-        headerData.push({ href: undefined, content: routes.at(-1)! });
+        headerData.push({ content: routes.at(-1)! });
       } else {
-        headerData.push({ href: undefined, content: "Manage Requests" });
+        headerData.push({ content: "Manage Requests" });
       }
       break;
     case "configuration":
       headerData = [
         { href: "/configuration", content: "Configuration" },
-        { href: undefined, content: "Configure Request Type" },
+        { content: "Configure Request Type" },
       ];
       if (routes.length > 1) {
         const title = (await requestType.findOne({ _id: routes[1] }))?.title;
         if (title) {
-          headerData.push({ href: undefined, content: title });
+          headerData.push({ content: title });
         } else {
-          headerData.push({
-            href: undefined,
-            content: "Request Type Does Not Exist",
-          });
+          headerData.push({ content: "Request Type Does Not Exist" });
         }
       }
       break;
@@ -54,7 +51,6 @@ export const load: LayoutServerLoad = async (event) => {
       headerData = [
         { href: "/admin", content: "Administrator" },
         {
-          href: undefined,
           content: routes[1]
             ? routes[1][0].toUpperCase() + routes[1].substring(1)
             : "Overview",
