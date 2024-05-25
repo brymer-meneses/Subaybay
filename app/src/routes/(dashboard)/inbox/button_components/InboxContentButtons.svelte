@@ -7,7 +7,7 @@
   import type { InboxStageData } from "../inboxTypes";
   import type { Request } from "$lib/server/database";
 
-  export let request: Request | null;
+  export let request: Request;
   export let stage: InboxStageData;
   export let users: any;
   export let updateSelectedStage: () => void;

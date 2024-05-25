@@ -72,6 +72,7 @@ export const actions: Actions = {
       _id: new ObjectId().toString(),
       title: title,
       stages: stages,
+      deprecated: false,
       version: 1,
     };
 

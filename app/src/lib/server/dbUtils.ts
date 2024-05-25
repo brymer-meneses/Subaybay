@@ -1,7 +1,8 @@
 import { ObjectId } from "mongodb";
 import * as db from "./database";
+import { removeFromInbox } from "./inboxUtils";
 
-export const getArchive = async () => {
+export async function getArchive () {
   let archive = await db.archive.findOne();
   if (!archive) {
     archive = {
@@ -14,7 +15,7 @@ export const getArchive = async () => {
   return archive;
 };
 
-export const getLatestRequestTypes = async (): Promise<db.RequestType[]> => {
+export async function getLatestRequestTypes () {
   let requestTypes: { [title: string]: db.RequestType } = {};
   var cursor = db.requestType.find();
   for await (const reqType of cursor) {
@@ -25,16 +26,22 @@ export const getLatestRequestTypes = async (): Promise<db.RequestType[]> => {
     }
   }
 
-  // return as list
-  return Object.keys(requestTypes).map((title) => {
+  // to be returned as list
+  let reqTypeList = Object.keys(requestTypes).map((title) => {
     return requestTypes[title];
   });
+
+  reqTypeList = reqTypeList.filter((reqType) => {
+    return !reqType.deprecated;
+  });
+
+  return reqTypeList;
 };
 
 /**
  * accessed by request type id
  */
-export const getRequestTypes = async () => {
+export async function getRequestTypes() {
   let requestTypes: { [id: string]: db.RequestType } = {};
   let cursor = db.requestType.find();
   for await (const reqType of cursor) {
@@ -43,3 +50,20 @@ export const getRequestTypes = async () => {
 
   return requestTypes;
 };
+
+export async function removeFromPendingInboxes(request: db.Request) {
+  // Remove request from pending of all inboxes that would still have it
+  let index = request.currentStage.stageTypeIndex - 1;
+  for (let i = request.history.length - 1; i >= 0; i--) {
+    if (index < 0) break;
+    if (request.history[i].stageTypeIndex != index) continue;
+
+    const handlerId = request.history[i].handlerId;
+    await removeFromInbox(handlerId, "recallable", {
+      requestId: request._id,
+      stageTypeIndex: index,
+    });
+
+    index--;
+  }
+}

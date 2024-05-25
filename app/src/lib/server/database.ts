@@ -58,6 +58,7 @@ export interface RequestType {
   _id: string;
   title: string;
   version: number;
+  deprecated: boolean;
   stages: Array<StageType>;
 }
 

@@ -1,6 +1,7 @@
 import * as db from "$lib/server/database";
 import { ObjectId } from "mongodb";
-import { addToInbox, moveInInbox, removeFromInbox } from "./inboxUtils";
+import { addToInbox, moveInInbox, removeFromInbox } from "$lib/server/inboxUtils";
+import { removeFromPendingInboxes } from "$lib/server/dbUtils";
 
 class Result {
   type: "error" | "success";
@@ -102,7 +103,7 @@ export async function passRequest(
   return new Result("success", "Request passed to next handler");
 }
 
-export async function fullyFinishRequest(request: db.Request) {
+export async function finishRequest(request: db.Request) {
   // Update request
   request.currentStage.finished = true;
   request.currentStage.dateFinished = new Date();
@@ -129,19 +130,7 @@ export async function fullyFinishRequest(request: db.Request) {
   }
 
   // Remove request from pending of all inboxes that would still have it
-  let index = request.currentStage.stageTypeIndex - 1;
-  for (let i = request.history.length - 1; i >= 0; i--) {
-    if (index < 0) break;
-    if (request.history[i].stageTypeIndex != index) continue;
-
-    const handlerId = request.history[i].handlerId;
-    await removeFromInbox(handlerId, "recallable", {
-      requestId: request._id,
-      stageTypeIndex: index,
-    });
-
-    index--;
-  }
+  await removeFromPendingInboxes(request);
 
   //Remove request from current handler
   await removeFromInbox(request.currentStage.handlerId, "current", {

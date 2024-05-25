@@ -36,7 +36,7 @@
   $: info = stage ? requests[stage.requestId] : null;
 </script>
 
-{#if stage && info}
+{#if stage && info && requests[stage.requestId]}
   <Card.Root class="overflow-hidden">
     <Card.Header class="bg-muted/50 flex flex-row items-start">
       <div class="grid gap-0.5">
