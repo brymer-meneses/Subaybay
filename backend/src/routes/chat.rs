@@ -188,7 +188,7 @@ async fn process_notifications(
         .await;
 
     let send_notification = |handler_id: String| async {
-        if handler_id == message.user_id {
+        if handler_id == message.user_id || handler_id.is_empty() {
             return;
         }
 
