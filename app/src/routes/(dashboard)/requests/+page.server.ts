@@ -8,15 +8,24 @@ export const load: PageServerLoad = async (event) => {
   const staleRequests: db.Request[] = [];
   const requestTypes: db.RequestType[] = await db.requestType.find({}).toArray();
 
+
   for (const request of allReq) {
     if (!request.isFinished) {
       activeRequests.push(request);
-    } else if (request.currentStage.finished) {
-      finishedRequests.push(request);
     } else {
-      staleRequests.push(request);
+      const stageTypeIndex = request.currentStage.stageTypeIndex;
+      const requestType = requestTypes.find((rt: db.RequestType) => rt._id === request.requestTypeId)
+      if (requestType) {
+        const lastStageIndex = requestType?.stages.length-1;
+        if (stageTypeIndex < lastStageIndex) {
+          staleRequests.push(request);
+        } else {
+          finishedRequests.push(request);
+        }
+      }
     }
   }
+  console.log(finishedRequests)
 
   return {
     userInfo: event.locals.user,

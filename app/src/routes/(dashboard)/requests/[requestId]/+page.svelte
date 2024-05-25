@@ -15,10 +15,13 @@
   import UserRound from "lucide-svelte/icons/user-round";
   import Mail from "lucide-svelte/icons/mail";
   import { Textarea } from "$lib/components/ui/textarea";
-  import EditForm from "./EditForm.svelte";
+  // import EditForm from "./EditForm.svelte";
+  import Options from "./Options.svelte";
+  import type { Request, RequestType } from "$lib/server/database";
 
   export let data: any;
   export let processing: boolean;
+  let classification: "pending" | "finished" | "discontinued";
 
   let formData = data.form;
 
@@ -30,6 +33,21 @@
     formData.data.studentEmail = data.studentEmail;
     formData.data.purpose = data.purpose;
     formData.data.remarks = data.remarks;
+
+    classification = checkClassification(data.request, data.requestType);
+  }
+
+  function checkClassification(
+    request: Request,
+    requestType: RequestType,
+  ): "pending" | "finished" | "discontinued" {
+    if (!request.isFinished) {
+      return "pending";
+    } else {
+      const stageTypeIndex = request.currentStage.stageTypeIndex;
+      const lastStage = requestType.stages.length - 1;
+      return stageTypeIndex < lastStage ? "discontinued" : "finished";
+    }
   }
 </script>
 
@@ -87,8 +105,13 @@
       <CardContent>
         <div class="flex flex-col gap-4">
           <div class="flex justify-between">
-            <p class="font-semibold">Student Information</p>
-            <EditForm bind:data={formData} bind:processing />
+            <p class="font-semibold">
+              Student Information <Badge variant="outline"
+                >{classification[0].toUpperCase() +
+                  classification.slice(1, classification.length)}</Badge
+              >
+            </p>
+            <Options bind:data={formData} bind:processing />
           </div>
           {#if processing}
             Processing... Please Wait

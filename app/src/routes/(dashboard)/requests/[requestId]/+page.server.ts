@@ -4,6 +4,7 @@ import { fail, superValidate } from "sveltekit-superforms";
 import { formSchema } from "./schema";
 import { zod } from "sveltekit-superforms/adapters";
 import { setFlash } from "sveltekit-flash-message/server";
+import { markRequestAsStale } from "../../inbox/stageHandling";
 
 export const load: PageServerLoad = async (event) => {
   const requestId = event.params.requestId;
@@ -110,4 +111,12 @@ export const actions: Actions = {
       setFlash({ type: "error", message: "Failed to update request" }, cookies);
     }
   },
+  mark_stale: async ({request, cookies}) => {
+    const data = await request.formData();
+    const requestId = data.get("requestId") as string;
+    const requestInstance = await db.request.findOne({_id: requestId}) as db.Request;
+
+    const req = await markRequestAsStale(requestInstance);
+    setFlash({ type: req.type, message: req.message }, cookies);
+  }
 };
