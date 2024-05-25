@@ -109,6 +109,8 @@ export async function passRequest(
   return new Result("success", "Request passed to next handler");
 }
 
+// Mark as finished and update stages and history
+// Remove from all inboxes
 export async function finishRequest(request: db.Request) {
   // Update request
   request.currentStage.finished = true;
@@ -143,17 +145,13 @@ export async function markRequestAsStale(request: db.Request) {
     { $set: { isFinished: true }
     },
   );
+
   if (!requestUpdateResult)
     return new Result("error", "Database failed to update stage's request");
 
-  // Remove request from pending of all inboxes that would still have it
-  await removeFromPendingInboxes(request);
+  await removeFromAllInboxes(request);
 
-  //Remove request from current handler
-  await removeFromInbox(request.currentStage.handlerId, "current", {
-    requestId: request._id,
-    stageTypeIndex: request.currentStage.stageTypeIndex,
-  });
+  return new Result("success", "Request marked as stale");
 }
 
 export async function rollbackStage(
