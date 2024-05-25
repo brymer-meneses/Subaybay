@@ -8,6 +8,7 @@
     CardHeader,
   } from "$lib/components/ui/card";
   import ChatArea from "../../ChatArea.svelte";
+  import Button from "$lib/components/ui/button/button.svelte";
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
   import * as Tabs from "$lib/components/ui/tabs";
   import { Badge } from "$lib/components/ui/badge";
@@ -15,15 +16,14 @@
   import UserRound from "lucide-svelte/icons/user-round";
   import Mail from "lucide-svelte/icons/mail";
   import { Textarea } from "$lib/components/ui/textarea";
-  // import EditForm from "./EditForm.svelte";
   import Options from "./Options.svelte";
   import type { Request, RequestType } from "$lib/server/database";
+  import { goto } from "$app/navigation";
 
   export let data: any;
   export let processing: boolean;
-  let classification: "pending" | "finished" | "discontinued";
-
   let formData = data.form;
+  let classification: "pending" | "finished" | "discontinued";
 
   $: {
     formData = data.form;
@@ -34,7 +34,9 @@
     formData.data.purpose = data.purpose;
     formData.data.remarks = data.remarks;
 
-    classification = checkClassification(data.request, data.requestType);
+    if (!data.error.error) {
+      classification = checkClassification(data.request, data.requestType);
+    }
   }
 
   function checkClassification(
@@ -51,93 +53,99 @@
   }
 </script>
 
-<!--TODO add an error page?-->
-<main class="mx-5 grid grid-cols-2 gap-4">
-  <div class="flex flex-col">
-    <Tabs.Root value="progress">
-      <Tabs.List>
-        <Tabs.Trigger value="progress">Progress</Tabs.Trigger>
-        <Tabs.Trigger value="history">History</Tabs.Trigger>
-      </Tabs.List>
+{#if data.error.error}
+  <main class="mx-6 space-y-4">
+    <p class="">{data.error.message}</p>
+    <Button on:click={() => goto("/requests")}>Go back.</Button>
+  </main>
+{:else}
+  <main class="mx-5 grid grid-cols-2 gap-4">
+    <div class="flex flex-col">
+      <Tabs.Root value="progress">
+        <Tabs.List>
+          <Tabs.Trigger value="progress">Progress</Tabs.Trigger>
+          <Tabs.Trigger value="history">History</Tabs.Trigger>
+        </Tabs.List>
 
-      <Tabs.Content value="progress">
-        <Card>
-          <CardHeader>
-            <CardTitle class="flex gap-2">
-              {data.requestType.title}<Badge variant="outline"
-                >{classification[0].toUpperCase() +
-                  classification.slice(1, classification.length)}</Badge
-              >
-            </CardTitle>
-          </CardHeader>
-          <CardContent class="flex flex-col gap-2">
-            <ScrollArea class="h-[39rem] px-4">
-              <ProgressView
-                request={data.request}
-                requestType={data.requestType}
-                users={data.users}
-              />
-            </ScrollArea>
-          </CardContent>
-        </Card>
-      </Tabs.Content>
+        <Tabs.Content value="progress">
+          <Card>
+            <CardHeader>
+              <CardTitle class="flex gap-2">
+                {data.requestType.title}<Badge variant="outline"
+                  >{classification[0].toUpperCase() +
+                    classification.slice(1, classification.length)}</Badge
+                >
+              </CardTitle>
+            </CardHeader>
+            <CardContent class="flex flex-col gap-2">
+              <ScrollArea class="h-[39rem] px-4">
+                <ProgressView
+                  request={data.request}
+                  requestType={data.requestType}
+                  users={data.users}
+                />
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        </Tabs.Content>
 
-      <Tabs.Content value="history">
-        <Card>
-          <CardHeader>
-            <CardTitle class="flex gap-2">
-              {data.requestType.title}<Badge variant="outline"
-                >{classification[0].toUpperCase() +
-                  classification.slice(1, classification.length)}</Badge
-              >
-            </CardTitle>
-          </CardHeader>
-          <CardContent class="flex flex-col gap-2">
-            <ScrollArea class="h-[39rem] px-4">
-              <HistoryView
-                request={data.request}
-                requestType={data.requestType}
-                users={data.users}
-              />
-            </ScrollArea>
-          </CardContent>
-        </Card>
-      </Tabs.Content>
-    </Tabs.Root>
-  </div>
+        <Tabs.Content value="history">
+          <Card>
+            <CardHeader>
+              <CardTitle class="flex gap-2">
+                {data.requestType.title}<Badge variant="outline"
+                  >{classification[0].toUpperCase() +
+                    classification.slice(1, classification.length)}</Badge
+                >
+              </CardTitle>
+            </CardHeader>
+            <CardContent class="flex flex-col gap-2">
+              <ScrollArea class="h-[39rem] px-4">
+                <HistoryView
+                  request={data.request}
+                  requestType={data.requestType}
+                  users={data.users}
+                />
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        </Tabs.Content>
+      </Tabs.Root>
+    </div>
 
-  <div class="flex flex-col gap-4">
-    <Card class="mt-12 h-[45rem]  pt-6">
-      <CardContent>
-        <div class="flex flex-col gap-4">
-          <div class="flex justify-between">
-            <p class="font-semibold">Student Information</p>
-            <Options bind:data={formData} bind:processing />
+    <div class="flex flex-col gap-4">
+      <Card class="mt-12 h-[45rem]  pt-6">
+        <CardContent>
+          <div class="flex flex-col gap-4">
+            <div class="flex justify-between">
+              <p class="font-semibold">Student Information</p>
+              <Options bind:data={formData} bind:processing />
+            </div>
+            {#if processing}
+              Processing... Please Wait
+            {/if}
+            <div class="flex flex-wrap gap-4">
+              <Badge variant="secondary" class="flex gap-2 text-sm">
+                <GraduationCap size={18} />
+                {data.studentNumber}
+              </Badge>
+              <Badge variant="secondary" class="flex gap-2 text-sm">
+                <UserRound size={18} />
+                {data.studentName}
+              </Badge>
+              <Badge variant="secondary" class="flex gap-2 text-sm">
+                <Mail size={18} />
+                {data.studentEmail}
+              </Badge>
+            </div>
+            <p class="font-semibold">Purpose</p>
+            <Textarea disabled value={data.purpose} />
+            <p class="font-semibold">Remarks</p>
+            <Textarea disabled value={data.remarks} />
+            <ChatArea requestId={data.requestId} height="h-56" />
           </div>
-          {#if processing}
-            Processing... Please Wait
-          {/if}
-          <div class="flex flex-wrap gap-4">
-            <Badge variant="secondary" class="flex gap-2 text-sm">
-              <GraduationCap size={18} />
-              {data.studentNumber}
-            </Badge>
-            <Badge variant="secondary" class="flex gap-2 text-sm">
-              <UserRound size={18} />
-              {data.studentName}
-            </Badge>
-            <Badge variant="secondary" class="flex gap-2 text-sm">
-              <Mail size={18} />
-              {data.studentEmail}
-            </Badge>
-          </div>
-          <p class="font-semibold">Purpose</p>
-          <Textarea disabled value={data.purpose} />
-          <p class="font-semibold">Remarks</p>
-          <Textarea disabled value={data.remarks} />
-          <ChatArea requestId={data.requestId} height="h-56" />
-        </div>
-      </CardContent>
-    </Card>
-  </div>
-</main>
+        </CardContent>
+      </Card>
+    </div>
+  </main>
+{/if}

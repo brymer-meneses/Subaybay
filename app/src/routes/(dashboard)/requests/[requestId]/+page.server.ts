@@ -8,10 +8,20 @@ import { markRequestAsStale } from "../../inbox/stageHandling";
 
 export const load: PageServerLoad = async (event) => {
   const requestId = event.params.requestId;
+  let error = {error: false, message: ""};
 
+  const existing = await db.request.findOne({ _id: requestId });
+  
+  if (!existing){
+    setFlash({type: "error", message: "Page Does Not Exist."}, event.cookies);
+    error.message = `Unable to find request with ID (${requestId}).`;
+    error.error = true;
+  } 
+  
   const storedData = await retrieveData(requestId);
-
+  
   return {
+    error: error,
     form: await superValidate(zod(formSchema)),
     userInfo: event.locals.user,
     request: storedData.request,
@@ -23,6 +33,7 @@ export const load: PageServerLoad = async (event) => {
     purpose: storedData.purpose,
     remarks: storedData.remarks,
   };
+  
 };
 
 const retrieveData = async (requestId: string) => {
@@ -31,7 +42,7 @@ const retrieveData = async (requestId: string) => {
   for await (const user of cursor) {
     users[user._id] = { name: user.name, profileUrl: user.profileUrl };
   }
-
+  
   const request = await db.request.findOne({ _id: requestId });
   if (!request)
     return {
