@@ -36,18 +36,39 @@
   let sortBy: string = "Newest";
 
   $: {
-    searchItems = requests.map((r) => ({
-      ...r,
-      requestTitle:
-        $page.data.requestTypes.find(
+    searchItems = requests.map((r) => {
+      let date: string = "";
+      if (!r.isFinished) {
+        date =
+          r.history.length > 0
+            ? r.history[0].dateStarted.toLocaleString()
+            : r.currentStage.dateStarted.toLocaleString();
+      } else {
+        const stageTypeIndex = r.currentStage.stageTypeIndex;
+        const requestType = $page.data.requestTypes.find(
           (rt: RequestType) => rt._id === r.requestTypeId,
-        )?.title || "",
-      date: r.isFinished
-        ? r.currentStage.dateFinished.toLocaleString()
-        : r.history.length > 0
-          ? r.history[0].dateStarted.toLocaleString()
-          : r.currentStage.dateStarted.toLocaleString(),
-    }));
+        );
+        if (requestType) {
+          const lastStageIndex = requestType?.stages.length - 1;
+          if (stageTypeIndex < lastStageIndex) {
+            date =
+              r.history.length > 0
+                ? r.history[0].dateStarted.toLocaleString()
+                : r.currentStage.dateStarted.toLocaleString();
+          } else {
+            date = r.currentStage.dateFinished.toLocaleString();
+          }
+        }
+      }
+      return {
+        ...r,
+        requestTitle:
+          $page.data.requestTypes.find(
+            (rt: RequestType) => rt._id === r.requestTypeId,
+          )?.title || "",
+        date: date,
+      };
+    });
 
     filteredRequests = searchItems.filter((request: RequestSearchItem) => {
       for (const key in request) {
@@ -74,6 +95,7 @@
       else if (sortBy === "Oldest")
         filteredRequests = filteredRequests.sort(sortFinishedOldest);
     }
+    if (classification === "discontinued") console.log(searchItems);
   }
 </script>
 
