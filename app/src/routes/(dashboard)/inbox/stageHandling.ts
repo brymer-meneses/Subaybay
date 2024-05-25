@@ -1,7 +1,12 @@
 import * as db from "$lib/server/database";
 import { ObjectId } from "mongodb";
-import { addToInbox, moveInInbox, removeFromInbox } from "$lib/server/inboxUtils";
-import { removeFromPendingInboxes } from "$lib/server/dbUtils";
+import {
+  addToInbox,
+  moveInInbox,
+  removeFromAllInboxes,
+  removeFromInbox,
+  removeFromPendingInboxes,
+} from "$lib/server/inboxUtils";
 
 class Result {
   type: "error" | "success";
@@ -71,7 +76,7 @@ export async function passRequest(
     finished: false,
     dateStarted: new Date(),
     dateFinished: new Date(0),
-    remarks: ""
+    remarks: "",
   };
   const newNextHandlerId =
     requestType.stages[newNextStageIndex]?.defaultHandlerId ?? "";
@@ -125,10 +130,21 @@ export async function finishRequest(request: db.Request) {
   if (!requestUpdateResult)
     return new Result("error", "Database failed to update stage's request");
 
-  const archiveResult = await addToArchive(request._id);
-  if (archiveResult.type === "error") {
-    return archiveResult;
-  }
+  await removeFromAllInboxes(request);
+
+  return new Result("success", "Request fully finished");
+}
+
+// Mark as finished without updating anything else
+// Remove from all inboxes
+export async function markRequestAsStale(request: db.Request) {
+  let requestUpdateResult = await db.request.findOneAndUpdate(
+    { _id: request._id },
+    { $set: { isFinished: true }
+    },
+  );
+  if (!requestUpdateResult)
+    return new Result("error", "Database failed to update stage's request");
 
   // Remove request from pending of all inboxes that would still have it
   await removeFromPendingInboxes(request);
@@ -138,33 +154,6 @@ export async function finishRequest(request: db.Request) {
     requestId: request._id,
     stageTypeIndex: request.currentStage.stageTypeIndex,
   });
-
-  return new Result("success", "Request moved to archive");
-}
-
-async function addToArchive(requestId: string) {
-  let archive: db.Archive | null = await db.archive.findOne();
-  if (!archive) {
-    archive = {
-      _id: new ObjectId().toString(),
-      requestIds: [requestId],
-    };
-    await db.archive.insertOne(archive);
-    return new Result("success", "Updated archive");
-  }
-
-  archive.requestIds.push(requestId);
-
-  const updateResult = await db.archive.updateOne(
-    { _id: archive._id },
-    {
-      $set: { requestIds: archive.requestIds },
-    },
-  );
-
-  if (!updateResult.acknowledged)
-    return new Result("error", "Database failed to update archive");
-  else return new Result("success", "Successfully updated archive");
 }
 
 export async function rollbackStage(
@@ -190,7 +179,7 @@ export async function rollbackStage(
     finished: false,
     dateStarted: new Date(),
     dateFinished: new Date(0),
-    remarks: "Rolled Back"
+    remarks: "Rolled Back",
   };
   const newNextStageIndex = newCurrentStageIndex + 1;
   let newNextHandlerId = "";
@@ -262,7 +251,7 @@ export async function reassign(request: db.Request, newHandlerId: string) {
     finished: false,
     dateStarted: new Date(),
     dateFinished: new Date(0),
-    remarks: "Reassigned"
+    remarks: "Reassigned",
   };
 
   const newHistory = [...request.history, oldStage];

@@ -24,7 +24,7 @@
       <Dialog.Description>
         This will mark the request as finished and remove it from all inboxes. <br
         />
-        It will still be accessible from the archives page. <br />
+        It will still be accessible from the 'Finished' requests page. <br />
         <br />
         This cannot be undone.
         <br />
