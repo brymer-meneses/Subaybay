@@ -63,8 +63,11 @@
       <Tabs.Content value="progress">
         <Card>
           <CardHeader>
-            <CardTitle>
-              {data.requestType.title}
+            <CardTitle class="flex gap-2">
+              {data.requestType.title}<Badge variant="outline"
+                >{classification[0].toUpperCase() +
+                  classification.slice(1, classification.length)}</Badge
+              >
             </CardTitle>
           </CardHeader>
           <CardContent class="flex flex-col gap-2">
@@ -82,8 +85,11 @@
       <Tabs.Content value="history">
         <Card>
           <CardHeader>
-            <CardTitle>
-              {data.requestType.title}
+            <CardTitle class="flex gap-2">
+              {data.requestType.title}<Badge variant="outline"
+                >{classification[0].toUpperCase() +
+                  classification.slice(1, classification.length)}</Badge
+              >
             </CardTitle>
           </CardHeader>
           <CardContent class="flex flex-col gap-2">
@@ -105,12 +111,7 @@
       <CardContent>
         <div class="flex flex-col gap-4">
           <div class="flex justify-between">
-            <p class="font-semibold">
-              Student Information <Badge variant="outline"
-                >{classification[0].toUpperCase() +
-                  classification.slice(1, classification.length)}</Badge
-              >
-            </p>
+            <p class="font-semibold">Student Information</p>
             <Options bind:data={formData} bind:processing />
           </div>
           {#if processing}
