@@ -161,6 +161,9 @@
 
                 <p class="text-sm font-semibold">Progress</p>
                 <Progress value={33} />
+                <p class="text-sm font-semibold">
+                  Copies: <span class="font-normal">{info.copies}</span>
+                </p>
               </div>
             </Card.Content>
           </Card.Root>
