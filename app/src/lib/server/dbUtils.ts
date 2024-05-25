@@ -1,22 +1,10 @@
-import { ObjectId } from "mongodb";
 import * as db from "./database";
 
-export const getArchive = async () => {
-  let archive = await db.archive.findOne();
-  if (!archive) {
-    archive = {
-      _id: new ObjectId().toString(),
-      requestIds: [],
-    };
-    await db.archive.insertOne(archive);
-  }
-
-  return archive;
-};
-
-export const getLatestRequestTypes = async (): Promise<db.RequestType[]> => {
+export async function getLatestRequestTypes () {
   let requestTypes: { [title: string]: db.RequestType } = {};
   var cursor = db.requestType.find();
+
+  // only get highest version
   for await (const reqType of cursor) {
     if (!(reqType.title in requestTypes)) {
       requestTypes[reqType.title] = reqType;
@@ -25,16 +13,23 @@ export const getLatestRequestTypes = async (): Promise<db.RequestType[]> => {
     }
   }
 
-  // return as list
-  return Object.keys(requestTypes).map((title) => {
+  // to be returned as list
+  let reqTypeList = Object.keys(requestTypes).map((title) => {
     return requestTypes[title];
   });
+
+  // remove all deprecated
+  reqTypeList = reqTypeList.filter((reqType) => {
+    return !reqType.deprecated;
+  });
+
+  return reqTypeList;
 };
 
 /**
  * accessed by request type id
  */
-export const getRequestTypes = async () => {
+export async function getRequestTypes() {
   let requestTypes: { [id: string]: db.RequestType } = {};
   let cursor = db.requestType.find();
   for await (const reqType of cursor) {

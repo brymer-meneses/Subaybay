@@ -5,7 +5,7 @@ import * as db from "$lib/server/database";
 import { ObjectId } from "mongodb";
 import { UserData } from "../configClasses";
 import { setFlash } from "sveltekit-flash-message/server";
-import { fail } from "@sveltejs/kit";
+import { fail, redirect } from "@sveltejs/kit";
 
 export const load: PageServerLoad = async (event) => {
   let cursor = db.user.find();
@@ -27,12 +27,8 @@ export const load: PageServerLoad = async (event) => {
       title: "Request Type Does Not Exist",
       stages: [],
       version: -1,
+      deprecated: true,
     };
-
-    setFlash(
-      { type: "error", message: "Request Type not found" },
-      event.cookies,
-    );
   }
 
   return { userInfo: event.locals.user, users, requestType };
@@ -94,6 +90,7 @@ export const actions: Actions = {
         title: requestType.title,
         version: requestType.version + 1,
         stages: newStages,
+        deprecated: false,
       };
       db.requestType.insertOne(newVersion);
     } else {
@@ -104,7 +101,38 @@ export const actions: Actions = {
     }
 
     setFlash(
-      { type: "error", message: "Successfully edited request." },
+      { type: "success", message: "Successfully edited request." },
+      cookies,
+    );
+  },
+  delete: async (event) => {
+    const { request, locals, cookies } = event;
+    const requestTypeId = event.params.requestTypeId;
+
+    let requestType = await db.requestType.findOne({ _id: requestTypeId });
+    if (!requestType) {
+      setFlash(
+        { type: "error", message: "Error. Request Type not found" },
+        cookies,
+      );
+      return fail(400);
+    }
+
+    if (!(await isUsedByAnyRequest(requestTypeId))) {
+      db.requestType.deleteOne({ _id: requestTypeId });
+    } else {
+      db.requestType.updateMany(
+        { title: requestType.title },
+        {
+          $set: {
+            deprecated: true,
+          },
+        },
+      );
+    }
+
+    setFlash(
+      { type: "success", message: "Successfully deleted request." },
       cookies,
     );
   },

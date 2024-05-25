@@ -9,9 +9,10 @@
 
   export let users: { [key: string]: User };
   export let selectedUserId: string;
+  export let title;
 </script>
 
-<div>Select Next Handler</div>
+<div>{title}</div>
 <div class="flex flex-col">
   <DD.DropdownMenu>
     <DD.DropdownMenuTrigger>
@@ -19,7 +20,7 @@
         class="flex flex-row items-center gap-x-4 rounded-lg border border-gray-300 p-1"
       >
         {#if !(selectedUserId in users)}
-          <CircleUserRound class="h-8 w-8 stroke-muted-foreground stroke-1" />
+          <CircleUserRound class="stroke-muted-foreground h-8 w-8 stroke-1" />
         {:else}
           <Avatar.Avatar class="h-8 w-8">
             <Avatar.AvatarImage

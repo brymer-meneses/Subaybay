@@ -18,7 +18,12 @@
   let processing: boolean;
 </script>
 
-<PopoverButton {users} {processing} bind:nextHandlerId>
+<PopoverButton
+  {users}
+  {processing}
+  handlerSelectTitle={"Select Replacement Handler"}
+  bind:nextHandlerId
+>
   <Button variant="outline" slot="button" class="h-9.5 gap-2">
     <User size={18} /> Reassign
   </Button>

@@ -5,6 +5,7 @@ export interface InboxStageData {
   dateSent: Date;
   requestId: string;
   handlerId: string;
+  remarks: string;
   prevHandlerId: string;
   currentStageTypeIndex: number;
   inboxStageTypeIndex: number;

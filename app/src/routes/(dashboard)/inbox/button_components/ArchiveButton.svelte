@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import type { InboxStageData, UserInfo } from "../inboxTypes";
+  import type { InboxStageData } from "../inboxTypes";
 
   import * as Dialog from "$lib/components/ui/dialog";
   import { Button } from "$lib/components/ui/button";
@@ -24,7 +24,7 @@
       <Dialog.Description>
         This will mark the request as finished and remove it from all inboxes. <br
         />
-        It will still be accessible from the archives page. <br />
+        It will still be accessible from the 'Finished' requests page. <br />
         <br />
         This cannot be undone.
         <br />

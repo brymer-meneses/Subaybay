@@ -1,8 +1,9 @@
 
-name: subaybay
+name: subaybay-production
 
 services:
   app:
+    image: brymermeneses/subaybay-app:latest
     restart: unless-stopped
     ports: 
       - ${APP_PORT}:3000
@@ -13,7 +14,17 @@ services:
         condition: service_started
       backend:
         condition: service_started
-    build: app
+
+  backend:
+    image: brymermeneses/subaybay-backend:latest
+    restart: unless-stopped
+    ports: 
+      - ${BACKEND_PORT}:8080
+    env_file:
+      - ./.env
+    depends_on:
+      database:
+        condition: service_started
 
   database:
     image: mongo
@@ -28,16 +39,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DATABASE_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-
-  backend:
-    build: backend
-    restart: unless-stopped
-    ports: 
-      - ${BACKEND_PORT}:8080
-    env_file:
-      - ./.env
-    depends_on:
-      - database
 
   watchtower:
     image: containrrr/watchtower

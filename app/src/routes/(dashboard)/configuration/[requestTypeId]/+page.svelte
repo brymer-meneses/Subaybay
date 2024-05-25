@@ -1,7 +1,10 @@
 <script lang="ts">
-  import { Button } from "$lib/components/ui/button";
-  import Input from "$lib/components/ui/input/input.svelte";
   import type { PageServerData } from "./$types";
+  import { enhance } from "$app/forms";
+  import { goto } from "$app/navigation";
+
+  import { Button } from "$lib/components/ui/button";
+  import * as Dialog from "$lib/components/ui/dialog";
   import {
     Card,
     CardContent,
@@ -9,11 +12,13 @@
     CardHeader,
     CardTitle,
   } from "$lib/components/ui/card";
+
   import Plus from "lucide-svelte/icons/plus";
-  import { enhance } from "$app/forms";
-  import { UserData, StageType } from "../configClasses";
+  import Eraser from "lucide-svelte/icons/eraser";
+  import Pencil from "lucide-svelte/icons/pencil";
+
   import ConfigStage from "../ConfigStage.svelte";
-  import Label from "$lib/components/ui/label/label.svelte";
+  import { UserData, StageType } from "../configClasses";
 
   export let data: PageServerData;
 
@@ -72,7 +77,7 @@
 
 <main class="flex justify-center">
   <div class="flex w-[40%] flex-col gap-4">
-    <h1 class="text-center flex-grow font-semibold">
+    <h1 class="flex-grow text-center font-semibold">
       {requestType.title}
     </h1>
     <Card class="flex flex-col border-gray-300">
@@ -103,21 +108,66 @@
       </CardContent>
     </Card>
 
-    <div class="flex justify-center">
-      <form
-        action="?/edit"
-        method="POST"
-        use:enhance={(event) => {
-          return handleSubmit(event);
-        }}
-      >
-        {#if !processing}
-          <!--Todo add confirmation-->
-          <Button type="submit">Accept Changes</Button>
-        {:else}
-          Processing... Please Wait
-        {/if}
-      </form>
-    </div>
+    {#if !processing}
+      <div class="flex justify-center">
+        <form
+          action="?/edit"
+          method="POST"
+          use:enhance={(event) => {
+            return handleSubmit(event);
+          }}
+        >
+          <Button type="submit">
+            <Pencil size="18" />
+            Accept Changes
+          </Button>
+        </form>
+      </div>
+      <!--Delete Button-->
+      <div class="flex justify-center">
+        <Dialog.Root>
+          <Dialog.Trigger>
+            <Button variant="destructive" class="h-9 gap-2">
+              <Eraser size="18" />
+              Delete
+            </Button>
+          </Dialog.Trigger>
+          <Dialog.Content>
+            <Dialog.Header>
+              <Dialog.Title>Are you sure?</Dialog.Title>
+              <Dialog.Description>
+                This will delete this request type, so that no new requests of
+                this type can be created
+                <br /><br />
+                Requests already using it will not be affected
+                <br />
+                This cannot be undone
+                <br />
+                Are you sure?
+              </Dialog.Description>
+            </Dialog.Header>
+
+            <Dialog.Footer>
+              <form
+                action="?/delete"
+                method="POST"
+                use:enhance={() => {
+                  processing = true;
+                  return async ({ update, result }) => {
+                    await update();
+                    processing = false;
+                    if (result.type === "success") goto("../configuration");
+                  };
+                }}
+              >
+                <Button variant="destructive" type="submit">Delete</Button>
+              </form>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog.Root>
+      </div>
+    {:else}
+      Processing... Please Wait
+    {/if}
   </div>
 </main>

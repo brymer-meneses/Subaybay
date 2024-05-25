@@ -25,7 +25,6 @@ export const session = database.collection<Session>("sessions");
 export const request = database.collection<Request>("requests");
 export const requestType = database.collection<RequestType>("requestTypes");
 export const inbox = database.collection<Inbox>("inboxes");
-export const archive = database.collection<Archive>("archive");
 export const permittedEmail =
   database.collection<PermittedEmail>("permittedEmails");
 
@@ -58,6 +57,7 @@ export interface RequestType {
   _id: string;
   title: string;
   version: number;
+  deprecated: boolean;
   stages: Array<StageType>;
 }
 
@@ -86,6 +86,7 @@ export interface Stage {
   finished: boolean;
   dateStarted: Date;
   dateFinished: Date;
+  remarks: string;
 }
 
 export interface Message {
@@ -114,9 +115,4 @@ export interface InboxStageData {
   stageTitle: string;
   dateSent: Date;
   requestId: string;
-}
-
-export interface Archive {
-  _id: string;
-  requestIds: Array<string>;
 }

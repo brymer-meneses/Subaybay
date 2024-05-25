@@ -10,9 +10,9 @@ import { fail } from "@sveltejs/kit";
 import { lucia } from "$lib/server/auth";
 
 import type { InboxStageData, UserInfo } from "./inboxTypes";
-import { addToInbox, existsInInbox, getInbox } from "./inboxUtils";
+import { addToInbox, existsInInbox, getInbox } from "../../../lib/server/inboxUtils";
 import {
-  fullyFinishRequest,
+  finishRequest,
   getRequestAndType,
   passRequest,
   reassign,
@@ -106,6 +106,7 @@ const addStage = (
     dateSent: stage.dateStarted,
     requestId: stageIdentifier.requestId,
     handlerId: stage.handlerId,
+    remarks: stage.remarks,
     prevHandlerId: stage.prevHandlerId,
     currentStageTypeIndex: stage.stageTypeIndex,
     inboxStageTypeIndex: stageIdentifier.stageTypeIndex,
@@ -148,13 +149,14 @@ export const actions: Actions = {
 
     const reqTypeIdCounts = JSON.parse(selectedRequestTypeIds);
 
-    const currentStage = {
+    const currentStage: db.Stage = {
       stageTypeIndex: 0,
       handlerId: userId,
       prevHandlerId: "",
       finished: false,
       dateStarted: new Date(),
       dateFinished: new Date(0),
+      remarks: ""
     };
 
     let successCount = 0;
@@ -249,7 +251,7 @@ export const actions: Actions = {
     const onFinalStage =
       req.currentStage.stageTypeIndex == reqType.stages.length - 1;
     if (onFinalStage) {
-      result = await fullyFinishRequest(req);
+      result = await finishRequest(req);
     } else {
       result = await passRequest(req, reqType, nextHandlerId);
     }
