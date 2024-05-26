@@ -48,7 +48,9 @@
     } else {
       const stageTypeIndex = request.currentStage.stageTypeIndex;
       const lastStage = requestType.stages.length - 1;
-      return stageTypeIndex < lastStage ? "discontinued" : "finished";
+      return stageTypeIndex <= lastStage && !request.currentStage.finished
+        ? "discontinued"
+        : "finished";
     }
   }
 </script>
