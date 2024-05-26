@@ -45,7 +45,7 @@ export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: 
       const requestType = reqTypes.find((rt: RequestType) => rt._id === request.requestTypeId)
       if (requestType) {
         const lastStageIndex = requestType?.stages.length - 1;
-        if (stageTypeIndex < lastStageIndex) {
+        if (stageTypeIndex <= lastStageIndex && !request.currentStage.finished) {
           stale.push(request);
         } else {
           finished.push(request);

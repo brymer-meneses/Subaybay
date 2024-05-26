@@ -50,7 +50,7 @@
         );
         if (requestType) {
           const lastStageIndex = requestType?.stages.length - 1;
-          if (stageTypeIndex < lastStageIndex) {
+          if (stageTypeIndex <= lastStageIndex && !r.currentStage.finished) {
             date =
               r.history.length > 0
                 ? r.history[0].dateStarted.toLocaleString()

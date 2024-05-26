@@ -17,7 +17,7 @@ export const load: PageServerLoad = async (event) => {
       const requestType = requestTypes.find((rt: db.RequestType) => rt._id === request.requestTypeId)
       if (requestType) {
         const lastStageIndex = requestType?.stages.length-1;
-        if (stageTypeIndex < lastStageIndex) {
+        if (stageTypeIndex <= lastStageIndex && !request.currentStage.finished) {
           staleRequests.push(request);
         } else {
           finishedRequests.push(request);
