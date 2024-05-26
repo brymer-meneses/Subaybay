@@ -3,6 +3,7 @@
   import { page } from "$app/stores";
   import { toast } from "svelte-sonner";
   import * as Card from "$lib/components/ui/card/index.js";
+  import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
 
   import ChatMessage from "./ChatMessage.svelte";
   import SendHorizontal from "lucide-svelte/icons/send-horizontal";
@@ -105,18 +106,20 @@
 
 <Card.Root>
   <Card.Content class="flex w-full flex-col gap-5 p-3">
-    <div bind:this={messageContainer}>
-      <div class={height + " flex w-[96%] flex-col gap-2"}>
-        {#each messages as message, _}
-          <ChatMessage
-            message={message.content}
-            byYou={message.userId == userId ? true : false}
-            dateTime={message.dateTime}
-            profileUrl={message.profileUrl}
-          />
-        {/each}
+    <ScrollArea>
+      <div bind:this={messageContainer}>
+        <div class={height + " flex w-[96%] flex-col gap-2"}>
+          {#each messages as message, _}
+            <ChatMessage
+              message={message.content}
+              byYou={message.userId == userId ? true : false}
+              dateTime={message.dateTime}
+              profileUrl={message.profileUrl}
+            />
+          {/each}
+        </div>
       </div>
-    </div>
+    </ScrollArea>
 
     <div class="flex w-full items-center space-x-2">
       <Input
