@@ -8,8 +8,15 @@ stop:
 	docker compose down
 
 reset-database:
-	docker compose down database
-	docker volume rm subaybay_db-data
+ifeq ($(MODE), dev)
+	docker compose -f compose.local.yaml down database
+	docker volume rm subaybay-local_db-data
+else ifeq ($(MODE), prod)
+	docker compose -f compose.production.yaml down database
+	docker volume rm subaybay-production-data
+else
+	$(error Invalid argument `$(MODE)` for `MODE`. Expected either `prod` or `dev`.)
+endif
 
 format:
 	cd app && npx prettier --write .
