@@ -15,6 +15,7 @@
   import GraduationCap from "lucide-svelte/icons/graduation-cap";
   import UserRound from "lucide-svelte/icons/user-round";
   import Mail from "lucide-svelte/icons/mail";
+  import ArrowRight from "lucide-svelte/icons/arrow-right";
   import { Textarea } from "$lib/components/ui/textarea";
   import Options from "./Options.svelte";
   import type { Request, RequestType } from "$lib/server/database";
@@ -56,9 +57,24 @@
 </script>
 
 {#if data.error.error}
-  <main class="mx-6 space-y-4">
-    <p class="">{data.error.message}</p>
-    <Button on:click={() => goto("/requests")}>Go back.</Button>
+  <main
+    class="mx-6 flex h-[60vh] flex-col items-center justify-center space-y-1"
+  >
+    <div>
+      <p class="text-9xl">404</p>
+    </div>
+    <p class="inline pb-10 font-semibold">Page not Found</p>
+
+    <div class="">
+      <details class="">
+        <summary><pre class="inline">Details</pre></summary>
+        <p class="">{data.error.message}</p>
+        <pre>Request with ID of {data.error.requestId} does not exist.</pre>
+      </details>
+    </div>
+    <Button variant="link" on:click={() => goto("/requests")}
+      ><ArrowRight size="16" />Back To Requests</Button
+    >
   </main>
 {:else}
   <main class="mx-5 grid grid-cols-2 gap-4">

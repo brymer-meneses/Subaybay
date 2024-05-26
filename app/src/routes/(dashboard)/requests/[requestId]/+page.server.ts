@@ -8,13 +8,13 @@ import { markRequestAsStale } from "../../inbox/stageHandling";
 
 export const load: PageServerLoad = async (event) => {
   const requestId = event.params.requestId;
-  let error = {error: false, message: ""};
+  let error = {error: false, message: "", requestId};
 
   const existing = await db.request.findOne({ _id: requestId });
   
   if (!existing){
     setFlash({type: "error", message: "Page Does Not Exist."}, event.cookies);
-    error.message = `Unable to find request with ID (${requestId}).`;
+    error.message = 'Unable to find a request with the specified ID.';
     error.error = true;
   } 
   

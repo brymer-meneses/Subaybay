@@ -25,7 +25,6 @@ export const load: PageServerLoad = async (event) => {
       }
     }
   }
-  console.log(finishedRequests)
 
   return {
     userInfo: event.locals.user,
