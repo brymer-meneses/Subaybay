@@ -16,11 +16,13 @@
   class="relative flex h-[50px] w-[370px] flex-row items-center justify-between gap-2 rounded-full p-3"
 >
   <div class="flex flex-row items-center gap-4">
-    <Avatar.Root class="h-5 w-5">
+    <Avatar.Root class="h-7 w-7">
       <Avatar.Image src={from.profileUrl} alt="sender" />
       <Avatar.Fallback>CN</Avatar.Fallback>
     </Avatar.Root>
-    <p class="text-md text-muted-foreground">{message.content}</p>
+    <p class="text-md text-muted-foreground">
+      {from.name.split(" ")[0]} sent you a message
+    </p>
   </div>
 
   <Button
