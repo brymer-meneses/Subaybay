@@ -5,15 +5,13 @@
   import { Button } from "$lib/components/ui/button";
   import { X } from "lucide-svelte";
 
-  export let message: Message;
-  export let request: Request;
   export let from: User;
 
   const dispatch = createEventDispatcher();
 </script>
 
 <div
-  class="flex h-[50px] w-[370px] flex-row items-center justify-between gap-2 rounded-full p-3"
+  class="mr-[14rem] flex h-[50px] w-full flex-row items-center justify-between gap-2 rounded-full p-3"
 >
   <div class="flex flex-row items-center gap-4">
     <Avatar.Root class="h-7 w-7">
