@@ -1,17 +1,13 @@
 <script lang="ts">
-  import * as Card from "$lib/components/ui/card";
-  import * as Avatar from "$lib/components/ui/avatar";
-  import { Label } from "$lib/components/ui/label";
-  import { ScrollArea } from "$lib/components/ui/scroll-area";
-
-  import { CircleUserRound } from "lucide-svelte";
-
   import type { Request, RequestType } from "$lib/server/database";
+  import HistoryViewEntry from "./HistoryViewEntry.svelte";
 
+  // A copy of Stage, with less data
   interface StageData {
     title: string;
     handlerId: string;
-    dateFinished: Date;
+    date: Date;
+    remarks: string;
   }
 
   export let request: Request;
@@ -24,44 +20,36 @@
     const historicalStage: StageData = {
       title: requestType.stages[storedStage.stageTypeIndex].stageTitle,
       handlerId: storedStage.handlerId,
-      dateFinished: storedStage.dateFinished,
+      date: storedStage.dateFinished,
+      remarks: storedStage.remarks,
     };
     history.push(historicalStage);
   }
+
+  const currentStage: StageData = {
+    title: requestType.stages[request.currentStage.stageTypeIndex].stageTitle,
+    handlerId: request.currentStage.handlerId,
+    date: request.currentStage.dateStarted,
+    remarks: "Current",
+  };
 </script>
 
 <div class="flex flex-col gap-2 p-2">
-  {#if history.length > 0}
-    {#each history as substage}
-      <Card.Card>
-        <Card.CardContent class="flex flex-col gap-2 p-2">
-          <div class="margin-top-1 flex flex-row items-center gap-2">
-            <div class="ml-2">
-              {#if !substage.handlerId}
-                <CircleUserRound
-                  class="stroke-muted-foreground h-8 w-8 stroke-1"
-                />
-              {:else}
-                <Avatar.Avatar class="h-8 w-8">
-                  <Avatar.AvatarImage
-                    src={users[substage.handlerId].profileUrl}
-                    alt={users[substage.handlerId].name}
-                  />
-                </Avatar.Avatar>
-              {/if}
-            </div>
-
-            <Label class="flex flex-grow flex-row" placeholder="No Name">
-              {substage.title}
-            </Label>
-          </div>
-        </Card.CardContent>
-        <Card.CardFooter class="text-xs text-gray-500">
-          {substage.dateFinished}
-        </Card.CardFooter>
-      </Card.Card>
-    {/each}
-  {:else}
-    <p class="text-muted-foreground">No History available yet...</p>
-  {/if}
+  {#each history as stage}
+    <HistoryViewEntry
+      avatarSrc={users[stage.handlerId]?.profileUrl}
+      avatarAlt={users[stage.handlerId]?.name}
+      title={stage.title}
+      date={"Finished " + stage.date.toString()}
+      badge={stage.remarks}
+    />
+  {/each}
+  <!--Current Stage-->
+  <HistoryViewEntry
+    avatarSrc={users[currentStage.handlerId]?.profileUrl}
+    avatarAlt={users[currentStage.handlerId]?.name}
+    title={currentStage.title}
+    date={"Started " + currentStage.date.toString()}
+    badge={currentStage.remarks}
+  />
 </div>
