@@ -50,7 +50,6 @@
 
   onMount(async () => {
     const params = {
-      sessionId,
       userId,
       requestId,
     };
@@ -58,6 +57,24 @@
     socket = new WebSocket(
       `ws://localhost:8080/chat/ws?${queryString.stringify(params)}`,
     );
+
+    socket.onopen = () => {
+      socket.send(
+        JSON.stringify({
+          type: "authenticate",
+          content: {
+            sessionId,
+          },
+        }),
+      );
+    };
+
+    socket.onclose = () => {
+      toast.error("The chat server closed unexpectedly", {
+        description: "Chat will not work properly",
+      });
+    };
+
     socket.onerror = (ev) => {
       toast.error("Failed to connect to the chat server", {
         description: "Sending and receiving messages will not work",
@@ -123,7 +140,7 @@
 
     <div class="flex w-full items-center space-x-2">
       <Input
-        class="border-b-1 bg-accent w-full focus:ring-0 focus:ring-offset-0"
+        class="border-b-1 w-full bg-accent focus:ring-0 focus:ring-offset-0"
         placeholder="Send a message ..."
         bind:value={messageContent}
       />

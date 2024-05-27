@@ -7,6 +7,7 @@ import {
   removeFromInbox,
   removeFromPendingInboxes,
 } from "$lib/server/inboxUtils";
+import { sendInboxNotification } from "$lib/notifications";
 
 class Result {
   type: "error" | "success";
@@ -106,6 +107,7 @@ export async function passRequest(
     stageTypeIndex: oldStageIndex,
   });
 
+
   return new Result("success", "Request passed to next handler");
 }
 
@@ -142,7 +144,8 @@ export async function finishRequest(request: db.Request) {
 export async function markRequestAsStale(request: db.Request) {
   let requestUpdateResult = await db.request.findOneAndUpdate(
     { _id: request._id },
-    { $set: { isFinished: true }
+    {
+      $set: { isFinished: true }
     },
   );
 
@@ -218,6 +221,7 @@ export async function rollbackStage(
     stageTypeIndex: rollbackStageIndex,
   });
 
+
   return new Result(
     "success",
     `Rolled back request to stage ${rollbackStageIndex}`,
@@ -267,6 +271,7 @@ export async function reassign(request: db.Request, newHandlerId: string) {
   };
 
   await addToInbox(newHandlerId, "current", stageIdentifier);
+  await sendInboxNotification({ type: "ReassignedStage", requestId: request._id, stageTypeIndex: request.currentStage.stageTypeIndex })
 
   await removeFromInbox(oldHandlerId, "current", stageIdentifier);
 

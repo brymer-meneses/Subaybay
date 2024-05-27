@@ -8,6 +8,7 @@ import { formSchema } from "./schema";
 import { zod } from "sveltekit-superforms/adapters";
 import { fail } from "@sveltejs/kit";
 import { lucia } from "$lib/server/auth";
+import { sendInboxNotification } from "$lib/notifications";
 
 import type { InboxStageData, UserInfo } from "./inboxTypes";
 import { addToInbox, existsInInbox, getInbox } from "../../../lib/server/inboxUtils";
@@ -215,6 +216,7 @@ export const actions: Actions = {
   },
   finish_stage: async ({ request, locals, cookies }) => {
     const userId = locals.user?.id ?? "0";
+    const sessionId = cookies.get(lucia.sessionCookieName)!;
     const data = await request.formData();
     const requestId: string = data.get("requestId")?.toString() ?? "";
     const nextHandlerId: string = data.get("nextHandlerId")?.toString() ?? "0";
@@ -250,10 +252,15 @@ export const actions: Actions = {
     let result: any;
     const onFinalStage =
       req.currentStage.stageTypeIndex == reqType.stages.length - 1;
-    if (onFinalStage) {
-      result = await finishRequest(req);
-    } else {
+
+    if (!onFinalStage) {
+
+      const credentials = { sessionId, userId }
+      await sendInboxNotification({ type: "NewStage", requestId, stageTypeIndex: req.currentStage.stageTypeIndex }, nextHandlerId, credentials);
+
       result = await passRequest(req, reqType, nextHandlerId);
+    } else {
+      result = await finishRequest(req);
     }
 
     setFlash(result, cookies);
@@ -311,6 +318,12 @@ export const actions: Actions = {
       userId,
       rollbackStageIndex,
     );
+    const credentials = {
+      sessionId: cookies.get(lucia.sessionCookieName)!,
+      userId: locals.user?.id!
+    }
+
+    await sendInboxNotification({ type: "RolledBackStage", requestId, stageTypeIndex: rollbackStageIndex }, req.currentStage.prevHandlerId, credentials);
     setFlash(result, cookies);
   },
   reassign_stage: async ({ locals, request, cookies }) => {
@@ -329,6 +342,11 @@ export const actions: Actions = {
 
     const result = await reassign(req, nextHandlerId);
 
+    const credentials = {
+      sessionId: cookies.get(lucia.sessionCookieName)!,
+      userId: locals.user?.id!
+    }
+    await sendInboxNotification({ type: "ReassignedStage", requestId, stageTypeIndex: req.currentStage.stageTypeIndex }, nextHandlerId, credentials);
     setFlash(result, cookies);
   },
 };

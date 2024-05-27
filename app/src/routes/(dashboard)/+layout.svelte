@@ -47,16 +47,33 @@
   $: sessionId = data.sessionId;
 
   onMount(() => {
-    const params = { userId, sessionId };
-
     socket = new WebSocket(
-      `ws://localhost:8080/notifications/ws?${queryString.stringify(params)}`,
+      `ws://localhost:8080/notifications/ws?userId=${userId}`,
     );
+
     socket.onerror = (ev) => {
       toast.error("Failed to connect to the notifications server", {
         description: "Notifications will not work properly",
       });
     };
+
+    socket.onclose = () => {
+      toast.error("The notifications server closed unexpectedly", {
+        description: "Notifications will not work properly",
+      });
+    };
+
+    socket.onopen = () => {
+      socket.send(
+        JSON.stringify({
+          type: "authenticate",
+          content: {
+            sessionId,
+          },
+        }),
+      );
+    };
+
     socket.onmessage = wsReceiveHandler;
   });
 
@@ -83,8 +100,6 @@
           toast.custom(NewMessageNotification, {
             componentProps: {
               from,
-              request,
-              message,
             },
             duration: 10000000, // TODO: remove this
             classes: {

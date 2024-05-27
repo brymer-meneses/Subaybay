@@ -7,7 +7,11 @@ use futures::{stream::SplitSink, SinkExt, StreamExt};
 use mongodb::bson::oid::ObjectId;
 
 use crate::error::Result;
-use crate::{database as db, state::AppState};
+use crate::{
+    database as db,
+    state::AppState,
+    utils::{authenticate_user, AuthenticationStatus},
+};
 use mongodb::bson::{self, doc};
 use std::sync::Arc;
 use tokio::sync::broadcast;
@@ -17,15 +21,38 @@ pub async fn websocket(
     Query(params): Query<ConnectionArgs>,
     ws: WebSocketUpgrade<ServerMessage, ClientMessage>,
 ) -> impl IntoResponse {
-    ws.on_upgrade(move |socket| handle_connection(state, socket, params))
+    ws.on_upgrade(move |socket| handle_connection(params, state, socket))
 }
 
 async fn handle_connection(
+    params: ConnectionArgs,
     state: Arc<AppState>,
     socket: WebSocket<ServerMessage, ClientMessage>,
-    params: ConnectionArgs,
 ) {
     let (mut ws_sender, mut ws_receiver) = socket.split();
+
+    if let Some(Ok(Message::Item(ClientMessage::Authenticate { session_id }))) =
+        ws_receiver.next().await
+    {
+        match authenticate_user(&state.database, &session_id, &params.user_id).await {
+            Ok(AuthenticationStatus::Authorized) => {
+                tracing::debug!("Authenticated!");
+            }
+            Ok(AuthenticationStatus::Unauthorized) => {
+                let _ = ws_sender.send(Message::Close(None)).await;
+                tracing::debug!("Client did not authenticate properly");
+                return;
+            }
+            Err(err) => {
+                tracing::error!("Error {err}");
+                let _ = ws_sender.send(Message::Close(None)).await;
+                return;
+            }
+        };
+    } else {
+        tracing::error!("Client did not authenticate");
+        return;
+    }
 
     match get_previous_messages(&params, state.database.clone()).await {
         Ok(messages) => {
@@ -129,7 +156,12 @@ async fn send_server_message(
             }
         }
 
-        ClientMessage::Event { date_time: _, content: _ } => {}
+        ClientMessage::Authenticate { .. } => {}
+
+        ClientMessage::Event {
+            date_time: _,
+            content: _,
+        } => {}
     }
 }
 
@@ -141,6 +173,7 @@ async fn process_client_message(
     request_id: &String,
 ) {
     match message {
+        ClientMessage::Authenticate { .. } => {}
         ClientMessage::Message {
             date_time,
             content,
@@ -172,7 +205,10 @@ async fn process_client_message(
             });
         }
 
-        ClientMessage::Event { date_time: _, content: _ } => {}
+        ClientMessage::Event {
+            date_time: _,
+            content: _,
+        } => {}
     }
 }
 
@@ -305,6 +341,9 @@ pub enum ClientMessage {
         date_time: u64,
         content: String,
     },
+
+    #[serde(rename_all = "camelCase")]
+    Authenticate { session_id: String },
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

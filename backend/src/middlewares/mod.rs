@@ -1,6 +1,6 @@
 use axum::{
-    extract::{Query, Request, State},
-    http::StatusCode,
+    extract::{Request, State},
+    http::{header::HeaderMap, StatusCode},
     middleware::Next,
     response::Response,
 };
@@ -8,10 +8,13 @@ use axum::{
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
-use crate::{database::Session, state::AppState};
+use crate::{
+    state::AppState,
+    utils::{authenticate_user, AuthenticationStatus},
+};
 use mongodb::bson::doc;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AuthParam {
     session_id: String,
@@ -20,45 +23,35 @@ pub struct AuthParam {
 
 pub async fn authentication(
     State(state): State<Arc<AppState>>,
-    Query(AuthParam {
-        session_id,
-        user_id,
-    }): Query<AuthParam>,
+    headers: HeaderMap,
     request: Request,
     next: Next,
 ) -> Result<Response, (StatusCode, &'static str)> {
-    use std::time::SystemTime;
+    let session_id = headers.get("sessionId").map(|v| v.to_str().ok()).flatten();
+    let user_id = headers.get("userId").map(|v| v.to_str().ok()).flatten();
 
-    let sessions = state.database.collection::<Session>("sessions");
-    let session = sessions
-        .find_one(doc! {"_id": session_id.to_string()}, None)
-        .await;
+    match (user_id, session_id) {
+        (Some(user_id), Some(session_id)) => {
+            match authenticate_user(&state.database, session_id, user_id).await {
+                Ok(AuthenticationStatus::Unauthorized) => {
+                    tracing::debug!("Unauthorized");
+                    return Err((StatusCode::UNAUTHORIZED, "Unauthorized"));
+                }
 
-    if let Ok(Some(session)) = session {
-        let expires_at = session.expires_at.to_system_time();
-        let now = SystemTime::now();
+                Ok(AuthenticationStatus::Authorized) => {
+                    let response = next.run(request).await;
+                    return Ok(response);
+                }
 
-        if expires_at <= now {
-            return Err((
-                StatusCode::UNAUTHORIZED,
-                "The `sessionId` passed is not valid",
-            ));
+                Err(err) => {
+                    tracing::error!("{err}");
+                    return Err((StatusCode::INTERNAL_SERVER_ERROR, "Internal server error"));
+                }
+            }
         }
 
-        if user_id != session.user_id {
-            return Err((
-                StatusCode::UNAUTHORIZED,
-                "The `sessionId` passed is not valid",
-            ));
+        _ => {
+            return Err((StatusCode::UNAUTHORIZED, "Unauthorized"));
         }
-
-        let response = next.run(request).await;
-        return Ok(response);
-    };
-
-    println!("UNAUTHORIZED");
-    Err((
-        StatusCode::UNAUTHORIZED,
-        "The `sessionId` passed is not valid",
-    ))
+    }
 }

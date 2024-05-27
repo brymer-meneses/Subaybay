@@ -28,6 +28,31 @@ pub struct Notification {
 pub enum NotificationBody {
     #[serde(rename_all = "camelCase")]
     Message { message_id: ObjectId },
+
+    #[serde(rename_all = "camelCase")]
+    Event(Event),
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(tag = "type")]
+pub enum Event {
+    #[serde(rename_all = "camelCase")]
+    NewStage {
+        stage: StageIdentifier,
+        receiver_id: String,
+    },
+
+    #[serde(rename_all = "camelCase")]
+    RolledBackStage {
+        stage: StageIdentifier,
+        receiver_id: String,
+    },
+
+    #[serde(rename_all = "camelCase")]
+    ReassignedStage {
+        stage: StageIdentifier,
+        receiver_id: String,
+    },
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -52,7 +77,7 @@ pub struct Session {
 /// What is needed to query the inbox
 #[derive(Deserialize, Serialize, Debug, Clone, Hash, Eq, PartialEq)]
 #[serde(rename_all = "camelCase")]
-pub struct InboxItemIdentifier {
+pub struct StageIdentifier {
     pub request_id: String,
     pub stage_type_index: u64,
 }
@@ -84,4 +109,14 @@ pub struct Stage {
     pub finished: bool,
     pub date_started: DateTime,
     pub date_finished: DateTime,
+}
+
+impl Event {
+    pub fn get_receiver_id(&self) -> &str {
+        match self {
+            Self::NewStage { receiver_id, .. } => receiver_id,
+            Self::RolledBackStage { receiver_id, .. } => receiver_id,
+            Self::ReassignedStage { receiver_id, .. } => receiver_id,
+        }
+    }
 }

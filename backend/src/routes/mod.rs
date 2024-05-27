@@ -28,13 +28,13 @@ pub async fn root(config: &Config) -> Router {
     let state = Arc::new(AppState::new(config).await);
 
     Router::new()
-        .route("/notifications/ws", get(notifications::websocket))
-        .route("/notifications/events", post(notifications::event))
-        .route("/chat/ws", get(chat::websocket))
+        .route("/notifications/events", post(notifications::events))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             authentication,
         ))
+        .route("/notifications/ws", get(notifications::websocket))
+        .route("/chat/ws", get(chat::websocket))
         .route("/status", get(status))
         .layer(cors_layer)
         .layer(trace_layer)

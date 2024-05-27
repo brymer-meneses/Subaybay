@@ -1,21 +1,28 @@
 use axum::{
     extract::{Query, State},
     response::IntoResponse,
+    Json,
 };
 use axum_typed_websockets::{Message, WebSocket, WebSocketUpgrade};
 use futures::{SinkExt, StreamExt, TryStreamExt};
+use serde_json::json;
 
 use crate::{
-    database::{self as db, InboxItemIdentifier, Notification, NotificationBody},
+    database::{self as db, Notification, NotificationBody, StageIdentifier},
     state::AppState,
+    utils::{authenticate_user, AuthenticationStatus},
 };
 
 use mongodb::bson::doc;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, sync::Arc};
 
-pub async fn event() -> impl IntoResponse {
-    "ok"
+pub async fn events(Json(event): Json<db::Event>) -> impl IntoResponse {
+    match event {
+        db::Event::NewStage { stage, receiver_id } => {}
+        db::Event::RolledBackStage { stage, receiver_id } => {}
+        db::Event::ReassignedStage { stage, receiver_id } => {}
+    }
 }
 
 pub async fn websocket(
@@ -31,8 +38,32 @@ async fn handle_connection(
     args: ConnectionArgs,
     socket: WebSocket<ServerMessage, ClientMessage>,
 ) {
-    let (mut ws_sender, _ws_receiver) = socket.split();
+    let (mut ws_sender, mut ws_receiver) = socket.split();
     let mut notification_tx = state.notification_tx.subscribe();
+
+    if let Some(Ok(Message::Item(ClientMessage::Authenticate { session_id }))) =
+        ws_receiver.next().await
+    {
+        tracing::debug!("{}", args.user_id);
+        match authenticate_user(&state.database, &session_id, &args.user_id).await {
+            Ok(AuthenticationStatus::Authorized) => {
+                tracing::debug!("Authenticated!");
+            }
+            Ok(AuthenticationStatus::Unauthorized) => {
+                let _ = ws_sender.send(Message::Close(None)).await;
+                tracing::debug!("Client did not authenticate properly");
+                return;
+            }
+            Err(err) => {
+                tracing::error!("Error {err}");
+                let _ = ws_sender.send(Message::Close(None)).await;
+                return;
+            }
+        };
+    } else {
+        tracing::error!("Client did not authenticate");
+        return;
+    }
 
     match get_unseen_notifications(state.database.clone(), &args.user_id).await {
         Ok(notifications) => {
@@ -54,28 +85,29 @@ async fn handle_connection(
 
     let _receive_task = tokio::spawn(async move {
         while let Ok(notification) = notification_tx.recv().await {
-            let _notifications_collection = state
+            let notifications_collection = state
                 .database
                 .collection::<db::Notification>("notifications");
 
             // set the notification to be seen
-            // if notification.user_id == args.user_id {
-            //     let update_result = notifications_collection
-            //         .update_one(
-            //             doc! { "_id": notification._id},
-            //             doc! {"$set": doc! {
-            //                 "seen": true,
-            //             } },
-            //             None,
-            //         )
-            //         .await;
-            //
-            //     if let Err(err) = update_result {
-            //         tracing::error!("{err}");
-            //     }
-            // }
+            if notification.user_id == args.user_id {
+                let update_result = notifications_collection
+                    .update_one(
+                        doc! { "_id": notification._id},
+                        doc! {"$set": doc! {
+                            "seen": true,
+                        } },
+                        None,
+                    )
+                    .await;
+
+                if let Err(err) = update_result {
+                    tracing::error!("{err}");
+                }
+            }
 
             match notification.body {
+                NotificationBody::Event(event) => {}
                 NotificationBody::Message { message_id } => {
                     let message_collection = state.database.collection::<db::Message>("messages");
                     let message = message_collection
@@ -172,6 +204,7 @@ async fn get_unseen_notifications(
 
     for notification in notifications {
         match notification.body {
+            NotificationBody::Event(event) => {}
             NotificationBody::Message { message_id } => {
                 let message = messages_collection
                     .find_one(doc! {"_id": &message_id}, None)
@@ -188,7 +221,7 @@ async fn get_unseen_notifications(
                             let current_handler = request.current_stage.handler_id;
 
                             if previous_handler != *user_id {
-                                let identifier = InboxItemIdentifier {
+                                let identifier = StageIdentifier {
                                     request_id: request._id.clone(),
                                     stage_type_index: request.current_stage.stage_type_index,
                                 };
@@ -199,7 +232,7 @@ async fn get_unseen_notifications(
                             }
 
                             if current_handler != *user_id {
-                                let identifier = InboxItemIdentifier {
+                                let identifier = StageIdentifier {
                                     request_id: request._id,
                                     stage_type_index: request.current_stage.stage_type_index,
                                 };
@@ -230,7 +263,11 @@ pub struct ConnectionArgs {
 }
 
 #[derive(Serialize, Deserialize, Clone)]
-pub enum ClientMessage {}
+#[serde(tag = "type", content = "content", rename_all = "camelCase")]
+pub enum ClientMessage {
+    #[serde(rename_all = "camelCase")]
+    Authenticate { session_id: String },
+}
 
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", tag = "type", content = "content")]
@@ -241,7 +278,21 @@ pub enum ServerMessage {
         from: db::User,
     },
 
-    NewInboxItem {
+    NewRolledBackStage {
+        from: db::User,
+        stage_type_index: u64,
+        request: db::Request,
+    },
+
+    NewReassignedStage {
+        from: db::User,
+        stage_type_index: u64,
+        request: db::Request,
+    },
+
+    NewStage {
+        from: db::User,
+        stage_type_index: u64,
         request: db::Request,
     },
 
@@ -260,9 +311,9 @@ use serde_with::serde_as;
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InboxCount {
     #[serde_as(as = "Vec<(_, _)>")]
-    pub active: HashMap<InboxItemIdentifier, u64>,
+    pub active: HashMap<StageIdentifier, u64>,
     #[serde_as(as = "Vec<(_, _)>")]
-    pub pending: HashMap<InboxItemIdentifier, u64>,
+    pub pending: HashMap<StageIdentifier, u64>,
 }
 
 #[derive(Serialize, Deserialize)]
