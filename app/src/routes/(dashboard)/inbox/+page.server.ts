@@ -11,7 +11,12 @@ import { lucia } from "$lib/server/auth";
 import { sendInboxNotification } from "$lib/notifications";
 
 import type { InboxStageData, UserInfo } from "./inboxTypes";
-import { addToInbox, existsInInbox, getInbox } from "../../../lib/server/inboxUtils";
+import {
+  addToInbox,
+  existsInInbox,
+  getInbox,
+  removeFromInbox,
+} from "../../../lib/server/inboxUtils";
 import {
   finishRequest,
   getRequestAndType,
@@ -22,14 +27,26 @@ import {
 
 export const load: PageServerLoad = async ({ cookies, locals }) => {
   const sessionId = cookies.get(lucia.sessionCookieName);
-  const userId = locals.user?.id ?? "0";
+  const userId = locals.user?.id ?? "-1";
+
+  if (userId === "-1") {
+    setFlash(
+      { type: "error", message: "Something went wrong. Invalid userId" },
+      cookies,
+    );
+    return fail(400);
+  }
 
   const users = await getUsers();
   const userInbox: db.Inbox = await getInbox(userId);
   const requestTypes = await dbUtils.getRequestTypes();
   const latestRequestTypes = await dbUtils.getLatestRequestTypes();
 
-  const reqAndStages = await getRequestsAndStages(userInbox, requestTypes);
+  const reqAndStages = await getRequestsAndStages(
+    userId,
+    userInbox,
+    requestTypes,
+  );
   const requests = reqAndStages.requests;
   const activeStages = reqAndStages.activeStages;
   const pendingStages = reqAndStages.pendingStages;
@@ -57,7 +74,9 @@ const getUsers = async () => {
 };
 
 // get all requests that are relevant to user - either active or pending
+// also removes requests that are misplaced current inbox if it finds any
 const getRequestsAndStages = async (
+  userId: string,
   userInbox: db.Inbox,
   requestTypes: { [key: string]: db.RequestType },
 ) => {
@@ -71,7 +90,15 @@ const getRequestsAndStages = async (
 
     requests[stageIdentifier.requestId] = req;
     const requestType = requestTypes[req.requestTypeId];
-    addStage(stageIdentifier, req, requestType, activeStages, "active");
+
+    if (req.currentStage.handlerId !== userId) {
+      await removeFromInbox(userId, "current", {
+        requestId: req._id,
+        stageTypeIndex: req.currentStage.stageTypeIndex,
+      });
+    } else {
+      addStage(stageIdentifier, req, requestType, activeStages, "active");
+    }
   }
 
   for (const stageIdentifier of userInbox.recallable) {
@@ -157,7 +184,7 @@ export const actions: Actions = {
       finished: false,
       dateStarted: new Date(),
       dateFinished: new Date(0),
-      remarks: ""
+      remarks: "",
     };
 
     let successCount = 0;
@@ -197,7 +224,10 @@ export const actions: Actions = {
         continue;
       }
 
-      await addToInbox(userId, "current", { requestId: req._id, stageTypeIndex: 0 });
+      await addToInbox(userId, "current", {
+        requestId: req._id,
+        stageTypeIndex: 0,
+      });
 
       successCount++;
     }
@@ -208,7 +238,7 @@ export const actions: Actions = {
         cookies,
       );
     } else {
-      let message = `Successfully created ${successCount} request${successCount > 1 ? 's' : ''}. `;
+      let message = `Successfully created ${successCount} request${successCount > 1 ? "s" : ""}. `;
       if (failureCount > 0)
         message += `Failed to create ${failureCount} requests.`;
       setFlash({ type: "success", message: message }, cookies);
@@ -254,9 +284,16 @@ export const actions: Actions = {
       req.currentStage.stageTypeIndex == reqType.stages.length - 1;
 
     if (!onFinalStage) {
-
-      const credentials = { sessionId, userId }
-      await sendInboxNotification({ type: "NewStage", requestId, stageTypeIndex: req.currentStage.stageTypeIndex }, nextHandlerId, credentials);
+      const credentials = { sessionId, userId };
+      await sendInboxNotification(
+        {
+          type: "NewStage",
+          requestId,
+          stageTypeIndex: req.currentStage.stageTypeIndex,
+        },
+        nextHandlerId,
+        credentials,
+      );
 
       result = await passRequest(req, reqType, nextHandlerId);
     } else {
@@ -320,10 +357,18 @@ export const actions: Actions = {
     );
     const credentials = {
       sessionId: cookies.get(lucia.sessionCookieName)!,
-      userId: locals.user?.id!
-    }
+      userId: locals.user?.id!,
+    };
 
-    await sendInboxNotification({ type: "RolledBackStage", requestId, stageTypeIndex: rollbackStageIndex }, req.currentStage.prevHandlerId, credentials);
+    await sendInboxNotification(
+      {
+        type: "RolledBackStage",
+        requestId,
+        stageTypeIndex: rollbackStageIndex,
+      },
+      req.currentStage.prevHandlerId,
+      credentials,
+    );
     setFlash(result, cookies);
   },
   reassign_stage: async ({ locals, request, cookies }) => {
@@ -341,12 +386,24 @@ export const actions: Actions = {
     }
 
     const result = await reassign(req, nextHandlerId);
+    if (result.type === "error") {
+      setFlash(result, cookies);
+      return;
+    }
 
     const credentials = {
       sessionId: cookies.get(lucia.sessionCookieName)!,
-      userId: locals.user?.id!
-    }
-    await sendInboxNotification({ type: "ReassignedStage", requestId, stageTypeIndex: req.currentStage.stageTypeIndex }, nextHandlerId, credentials);
+      userId: locals.user?.id!,
+    };
+    await sendInboxNotification(
+      {
+        type: "ReassignedStage",
+        requestId,
+        stageTypeIndex: req.currentStage.stageTypeIndex,
+      },
+      nextHandlerId,
+      credentials,
+    );
     setFlash(result, cookies);
   },
 };

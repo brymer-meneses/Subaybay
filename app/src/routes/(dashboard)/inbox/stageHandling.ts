@@ -268,10 +268,9 @@ export async function reassign(request: db.Request, newHandlerId: string) {
     stageTypeIndex: request.currentStage.stageTypeIndex,
   };
 
-  await addToInbox(newHandlerId, "current", stageIdentifier);
-  await sendInboxNotification({ type: "ReassignedStage", requestId: request._id, stageTypeIndex: request.currentStage.stageTypeIndex })
-
   await removeFromInbox(oldHandlerId, "current", stageIdentifier);
+
+  await addToInbox(newHandlerId, "current", stageIdentifier);
 
   return new Result("success", "Reassigned request");
 }
