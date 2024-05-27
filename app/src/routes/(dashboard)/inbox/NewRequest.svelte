@@ -74,16 +74,6 @@
     $formData.selectedReqTypeIds = JSON.stringify(nonzeros);
     console.log($formData.selectedReqTypeIds);
   }
-
-  // We want to refocus the trigger button when the user selects
-  // an item from the list so users can continue navigating the
-  // rest of the form with the keyboard.
-  function closeAndFocusTrigger(triggerId: string) {
-    open = false;
-    tick().then(() => {
-      document.getElementById(triggerId)?.focus();
-    });
-  }
 </script>
 
 <Dialog.Root>

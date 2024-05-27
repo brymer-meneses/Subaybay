@@ -33,6 +33,10 @@
 
   let editRequestDialogOpen: boolean;
   let confirmMarkStaleDialogOpen: boolean = false;
+
+  let copiesInput = $formData.copies.toString();
+
+  $: $formData.copies = parseInt(copiesInput) || 0;
 </script>
 
 <DropdownMenu.Root>
@@ -202,6 +206,27 @@
           <Form.FieldErrors />
         </Form.Field>
       </div>
+
+      <Form.Field
+          {form}
+          name="copies"
+          class="gap-cols-4 grid items-center"
+        >
+          <Form.Control let:attrs>
+            <Form.Label>Copies</Form.Label>
+            <Input
+            disabled={processing}
+            type="number"
+            class="col-span-3"
+            {...attrs}
+            bind:value={copiesInput}
+            on:input={() => {
+              copiesInput = copiesInput.replace(/[^\-0-9]/gm, "");
+            }}
+            />
+          </Form.Control>
+          <Form.FieldErrors />
+        </Form.Field>
 
       <Dialog.Footer>
         {#if processing}

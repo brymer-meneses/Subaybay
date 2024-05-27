@@ -12,10 +12,15 @@
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
   import * as Tabs from "$lib/components/ui/tabs";
   import { Badge } from "$lib/components/ui/badge";
-  import GraduationCap from "lucide-svelte/icons/graduation-cap";
-  import UserRound from "lucide-svelte/icons/user-round";
-  import Mail from "lucide-svelte/icons/mail";
-  import ArrowRight from "lucide-svelte/icons/arrow-right";
+
+  import {
+    GraduationCap,
+    UserRound,
+    Mail,
+    ArrowRight,
+    FileText,
+  } from "lucide-svelte/icons";
+
   import { Textarea } from "$lib/components/ui/textarea";
   import Options from "./Options.svelte";
   import type { Request, RequestType } from "$lib/server/database";
@@ -23,7 +28,7 @@
 
   export let data: any;
   export let processing: boolean;
-  let formData = data.form;
+  let formData: any = data.form;
   let classification: "pending" | "finished" | "discontinued";
 
   $: {
@@ -34,6 +39,7 @@
     formData.data.studentEmail = data.studentEmail;
     formData.data.purpose = data.purpose;
     formData.data.remarks = data.remarks;
+    formData.data.copies = data.copies;
 
     if (!data.error.error) {
       classification = checkClassification(data.request, data.requestType);
@@ -154,6 +160,10 @@
               <Badge variant="secondary" class="flex gap-2 text-sm">
                 <Mail size={18} />
                 {data.studentEmail}
+              </Badge>
+              <Badge variant="secondary" class="flex gap-2 text-sm">
+                <FileText size={18} />
+                {data.copies}
               </Badge>
             </div>
             <p class="font-semibold">Purpose</p>

@@ -32,6 +32,7 @@ export const load: PageServerLoad = async (event) => {
     studentEmail: storedData.studentEmail,
     purpose: storedData.purpose,
     remarks: storedData.remarks,
+    copies: storedData.copies,
   };
   
 };
@@ -46,14 +47,15 @@ const retrieveData = async (requestId: string) => {
   const request = await db.request.findOne({ _id: requestId });
   if (!request)
     return {
-      users: null,
-      request: null,
-      requestType: null,
-      studentNumber: null,
-      studentName: null,
-      studentEmail: null,
-      purpose: null,
-      remarks: null,
+      users: [],
+      request: request,
+      requestType: "",
+      studentNumber: "",
+      studentName: "",
+      studentEmail: "",
+      purpose: "",
+      remarks: "",
+      copies: 0
     };
 
   const requestType = await db.requestType.findOne({
@@ -61,14 +63,15 @@ const retrieveData = async (requestId: string) => {
   });
   if (!requestType)
     return {
-      users: null,
+      users: [],
       request: request,
-      requestType: null,
-      studentNumber: null,
-      studentName: null,
-      studentEmail: null,
-      purpose: null,
-      remarks: null,
+      requestType: "",
+      studentNumber: "",
+      studentName: "",
+      studentEmail: "",
+      purpose: "",
+      remarks: "",
+      copies: 0
     };
 
   return {
@@ -80,6 +83,7 @@ const retrieveData = async (requestId: string) => {
     studentEmail: request.studentEmail,
     purpose: request.purpose,
     remarks: request.remarks,
+    copies: request.copies,
   };
 };
 
@@ -102,6 +106,7 @@ export const actions: Actions = {
     const studentNumber = data.studentNumber;
     const purpose = data.purpose;
     const remarks = data.remarks;
+    const copies = data.copies;
 
     const request = await db.request.findOneAndUpdate(
       { _id: requestId },
@@ -112,6 +117,7 @@ export const actions: Actions = {
           studentNumber: studentNumber,
           purpose: purpose,
           remarks: remarks,
+          copies: copies,
         },
       },
     );
