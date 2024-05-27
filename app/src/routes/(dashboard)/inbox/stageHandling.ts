@@ -1,11 +1,9 @@
 import * as db from "$lib/server/database";
-import { ObjectId } from "mongodb";
 import {
   addToInbox,
   moveInInbox,
   removeFromAllInboxes,
   removeFromInbox,
-  removeFromPendingInboxes,
 } from "$lib/server/inboxUtils";
 import { sendInboxNotification } from "$lib/notifications";
 

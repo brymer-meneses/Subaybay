@@ -197,7 +197,7 @@ export const actions: Actions = {
         continue;
       }
 
-      addToInbox(userId, "current", { requestId: req._id, stageTypeIndex: 0 });
+      await addToInbox(userId, "current", { requestId: req._id, stageTypeIndex: 0 });
 
       successCount++;
     }
