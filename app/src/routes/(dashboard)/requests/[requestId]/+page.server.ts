@@ -4,22 +4,24 @@ import { fail, superValidate } from "sveltekit-superforms";
 import { formSchema } from "./schema";
 import { zod } from "sveltekit-superforms/adapters";
 import { setFlash } from "sveltekit-flash-message/server";
-import { markRequestAsStale } from "../../inbox/stageHandling";
+import { markRequestAsStale, reassign } from "../../inbox/stageHandling";
+import { sendInboxNotification } from "$lib/notifications";
+import { lucia } from "$lib/server/auth";
 
 export const load: PageServerLoad = async (event) => {
   const requestId = event.params.requestId;
-  let error = {error: false, message: "", requestId};
+  let error = { error: false, message: "", requestId };
 
   const existing = await db.request.findOne({ _id: requestId });
-  
-  if (!existing){
-    setFlash({type: "error", message: "Page Does Not Exist."}, event.cookies);
-    error.message = 'Unable to find a request with the specified ID.';
+
+  if (!existing) {
+    setFlash({ type: "error", message: "Page Does Not Exist." }, event.cookies);
+    error.message = "Unable to find a request with the specified ID.";
     error.error = true;
-  } 
-  
+  }
+
   const storedData = await retrieveData(requestId);
-  
+
   return {
     error: error,
     form: await superValidate(zod(formSchema)),
@@ -34,7 +36,6 @@ export const load: PageServerLoad = async (event) => {
     remarks: storedData.remarks,
     copies: storedData.copies,
   };
-  
 };
 
 const retrieveData = async (requestId: string) => {
@@ -43,7 +44,7 @@ const retrieveData = async (requestId: string) => {
   for await (const user of cursor) {
     users[user._id] = { name: user.name, profileUrl: user.profileUrl };
   }
-  
+
   const request = await db.request.findOne({ _id: requestId });
   if (!request)
     return {
@@ -55,7 +56,7 @@ const retrieveData = async (requestId: string) => {
       studentEmail: "",
       purpose: "",
       remarks: "",
-      copies: 0
+      copies: 0,
     };
 
   const requestType = await db.requestType.findOne({
@@ -71,7 +72,7 @@ const retrieveData = async (requestId: string) => {
       studentEmail: "",
       purpose: "",
       remarks: "",
-      copies: 0
+      copies: 0,
     };
 
   return {
@@ -128,12 +129,50 @@ export const actions: Actions = {
       setFlash({ type: "error", message: "Failed to update request" }, cookies);
     }
   },
-  mark_stale: async ({request, cookies}) => {
+  mark_stale: async ({ request, cookies }) => {
     const data = await request.formData();
     const requestId = data.get("requestId") as string;
-    const requestInstance = await db.request.findOne({_id: requestId}) as db.Request;
+    const requestInstance = (await db.request.findOne({
+      _id: requestId,
+    })) as db.Request;
 
     const req = await markRequestAsStale(requestInstance);
     setFlash({ type: req.type, message: req.message }, cookies);
-  }
+  },
+  reassign: async ({ request, locals, cookies, params }) => {
+    const data = await request.formData();
+    const requestId: string = params.requestId;
+    const nextHandlerId: string = data.get("nextHandlerId")?.toString() ?? "";
+
+    const req = await db.request.findOne({ _id: requestId });
+    if (!req) {
+      setFlash(
+        { type: "error", message: "Error. Request not found in database." },
+        cookies,
+      );
+      return;
+    }
+
+    const result = await reassign(req, nextHandlerId);
+    if (result.type === "error") {
+      setFlash(result, cookies);
+      return;
+    }
+
+    const credentials = {
+      sessionId: cookies.get(lucia.sessionCookieName)!,
+      userId: locals.user?.id!,
+    };
+    await sendInboxNotification(
+      {
+        type: "ReassignedStage",
+        requestId,
+        stageTypeIndex: req.currentStage.stageTypeIndex,
+      },
+      nextHandlerId,
+      credentials,
+    );
+
+    setFlash(result, cookies);
+  },
 };

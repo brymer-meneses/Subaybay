@@ -2,8 +2,6 @@
   import { page } from "$app/stores";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
   import Separator from "$lib/components/ui/separator/separator.svelte";
-  import UsersRound from "lucide-svelte/icons/users-round";
-  import EllipsisVertical from "lucide-svelte/icons/ellipsis-vertical";
   import { Button } from "$lib/components/ui/button/index.js";
   import { Input } from "$lib/components/ui/input/index.js";
   import { Textarea } from "$lib/components/ui/textarea/index.js";
@@ -12,6 +10,11 @@
   import * as Form from "$lib/components/ui/form";
 
   import Pencil from "lucide-svelte/icons/pencil";
+  import UsersRound from "lucide-svelte/icons/users-round";
+  import EllipsisVertical from "lucide-svelte/icons/ellipsis-vertical";
+
+  import type { User } from "$lib/server/database";
+  import ReassignDialog from "./ReassignDialog.svelte";
 
   import { formSchema, type FormSchema } from "./schema";
   import {
@@ -22,6 +25,7 @@
   import { zodClient } from "sveltekit-superforms/adapters";
   import { enhance } from "$app/forms";
 
+  export let users: { [key: string]: User };
   export let data: SuperValidated<Infer<FormSchema>>;
   export let processing: boolean = false;
 
@@ -31,8 +35,9 @@
 
   const { form: formData } = form;
 
-  let editRequestDialogOpen: boolean;
+  let editRequestDialogOpen: boolean = false;
   let confirmMarkStaleDialogOpen: boolean = false;
+  let reassignDialogOpen: boolean = false;
 
   let copiesInput = $formData.copies.toString();
 
@@ -59,9 +64,17 @@
         <UsersRound size="18" />Mark as stale</DropdownMenu.Item
       >
     {/if}
+    <!--todo admin only? -->
+    <DropdownMenu.Item
+      class="flex gap-4"
+      on:click={() => (reassignDialogOpen = !reassignDialogOpen)}
+    >
+      <UsersRound size="18" />Reassign</DropdownMenu.Item
+    >
   </DropdownMenu.Content>
 </DropdownMenu.Root>
 
+<!--Mark as Stale-->
 {#if !$page.data.request.isFinished}
   <Dialog.Root bind:open={confirmMarkStaleDialogOpen}>
     <Dialog.Content>
@@ -110,6 +123,8 @@
     </Dialog.Content>
   </Dialog.Root>
 {/if}
+
+<!--Edit Request-->
 <Dialog.Root bind:open={editRequestDialogOpen}>
   <Dialog.Content>
     <form
@@ -207,14 +222,10 @@
         </Form.Field>
       </div>
 
-      <Form.Field
-          {form}
-          name="copies"
-          class="gap-cols-4 grid items-center"
-        >
-          <Form.Control let:attrs>
-            <Form.Label>Copies</Form.Label>
-            <Input
+      <Form.Field {form} name="copies" class="gap-cols-4 grid items-center">
+        <Form.Control let:attrs>
+          <Form.Label>Copies</Form.Label>
+          <Input
             disabled={processing}
             type="number"
             class="col-span-3"
@@ -223,10 +234,10 @@
             on:input={() => {
               copiesInput = copiesInput.replace(/[^\-0-9]/gm, "");
             }}
-            />
-          </Form.Control>
-          <Form.FieldErrors />
-        </Form.Field>
+          />
+        </Form.Control>
+        <Form.FieldErrors />
+      </Form.Field>
 
       <Dialog.Footer>
         {#if processing}
@@ -240,3 +251,8 @@
     </form>
   </Dialog.Content>
 </Dialog.Root>
+
+<!--Reassign-->
+<!--todo ? only if admin-->
+<!--todo fix request page not updating to reflect reassignment-->
+<ReassignDialog {users} bind:open={reassignDialogOpen} />

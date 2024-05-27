@@ -74,7 +74,7 @@ const getUsers = async () => {
 };
 
 // get all requests that are relevant to user - either active or pending
-// also removes requests that are misplaced current inbox if it finds any
+// also removes requests that are misplaced current if it finds any
 const getRequestsAndStages = async (
   userId: string,
   userInbox: db.Inbox,
@@ -86,16 +86,16 @@ const getRequestsAndStages = async (
   let requests: { [key: string]: db.Request } = {};
   for (const stageIdentifier of userInbox.current) {
     const req = await db.request.findOne({ _id: stageIdentifier.requestId });
-    if (!req) continue;
+    if (!req) {
+      await removeFromInbox(userId, "current", stageIdentifier);
+      continue;
+    }
 
     requests[stageIdentifier.requestId] = req;
     const requestType = requestTypes[req.requestTypeId];
 
     if (req.currentStage.handlerId !== userId) {
-      await removeFromInbox(userId, "current", {
-        requestId: req._id,
-        stageTypeIndex: req.currentStage.stageTypeIndex,
-      });
+      await removeFromInbox(userId, "current", stageIdentifier);
     } else {
       addStage(stageIdentifier, req, requestType, activeStages, "active");
     }
@@ -103,7 +103,10 @@ const getRequestsAndStages = async (
 
   for (const stageIdentifier of userInbox.recallable) {
     const req = await db.request.findOne({ _id: stageIdentifier.requestId });
-    if (!req) continue;
+    if (!req) {
+      await removeFromInbox(userId, "recallable", stageIdentifier);
+      continue;
+    }
 
     requests[stageIdentifier.requestId] = req;
     const requestType = requestTypes[req.requestTypeId];

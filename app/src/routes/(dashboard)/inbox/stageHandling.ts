@@ -105,7 +105,6 @@ export async function passRequest(
     stageTypeIndex: oldStageIndex,
   });
 
-
   return new Result("success", "Request passed to next handler");
 }
 
@@ -143,7 +142,7 @@ export async function markRequestAsStale(request: db.Request) {
   let requestUpdateResult = await db.request.findOneAndUpdate(
     { _id: request._id },
     {
-      $set: { isFinished: true }
+      $set: { isFinished: true },
     },
   );
 
@@ -219,7 +218,6 @@ export async function rollbackStage(
     stageTypeIndex: rollbackStageIndex,
   });
 
-
   return new Result(
     "success",
     `Rolled back request to stage ${rollbackStageIndex}`,
@@ -263,14 +261,16 @@ export async function reassign(request: db.Request, newHandlerId: string) {
   );
 
   // Add and remove from inboxes
-  const stageIdentifier: db.StageIdentifier = {
+
+  await removeFromInbox(oldHandlerId, "current", {
     requestId: request._id,
-    stageTypeIndex: request.currentStage.stageTypeIndex,
-  };
+    stageTypeIndex: oldStage.stageTypeIndex,
+  });
 
-  await removeFromInbox(oldHandlerId, "current", stageIdentifier);
-
-  await addToInbox(newHandlerId, "current", stageIdentifier);
+  await addToInbox(newHandlerId, "current", {
+    requestId: request._id,
+    stageTypeIndex: newCurrentStage.stageTypeIndex,
+  });
 
   return new Result("success", "Reassigned request");
 }
