@@ -64,13 +64,13 @@
         <UsersRound size="18" />Mark as stale</DropdownMenu.Item
       >
     {/if}
-    <!--todo admin only? -->
     <DropdownMenu.Item
       class="flex gap-4"
       on:click={() => (reassignDialogOpen = !reassignDialogOpen)}
     >
-      <UsersRound size="18" />Reassign</DropdownMenu.Item
-    >
+      <UsersRound size="18" />
+      Reassign
+    </DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>
 
@@ -253,6 +253,4 @@
 </Dialog.Root>
 
 <!--Reassign-->
-<!--todo ? only if admin-->
-<!--todo fix request page not updating to reflect reassignment-->
 <ReassignDialog {users} bind:open={reassignDialogOpen} />

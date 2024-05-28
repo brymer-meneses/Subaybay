@@ -257,11 +257,16 @@ export async function reassign(request: db.Request, newHandlerId: string) {
   // Update request's currentStage and history.
   await db.request.updateOne(
     { _id: request._id },
-    { $set: { currentStage: newCurrentStage, history: newHistory } },
+    {
+      $set: {
+        isFinished: false,
+        currentStage: newCurrentStage,
+        history: newHistory,
+      },
+    },
   );
 
   // Add and remove from inboxes
-
   await removeFromInbox(oldHandlerId, "current", {
     requestId: request._id,
     stageTypeIndex: oldStage.stageTypeIndex,

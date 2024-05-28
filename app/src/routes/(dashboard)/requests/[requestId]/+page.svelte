@@ -85,56 +85,58 @@
 {:else}
   <main class="mx-5 grid grid-cols-2 gap-4">
     <div class="flex flex-col">
-      <Tabs.Root value="progress">
-        <Tabs.List>
-          <Tabs.Trigger value="progress">Progress</Tabs.Trigger>
-          <Tabs.Trigger value="history">History</Tabs.Trigger>
-        </Tabs.List>
+      {#key data}
+        <Tabs.Root value="progress">
+          <Tabs.List>
+            <Tabs.Trigger value="progress">Progress</Tabs.Trigger>
+            <Tabs.Trigger value="history">History</Tabs.Trigger>
+          </Tabs.List>
 
-        <Tabs.Content value="progress">
-          <Card>
-            <CardHeader>
-              <CardTitle class="flex gap-2">
-                {data.requestType.title}<Badge variant="outline"
-                  >{classification[0].toUpperCase() +
-                    classification.slice(1, classification.length)}</Badge
-                >
-              </CardTitle>
-            </CardHeader>
-            <CardContent class="flex flex-col gap-2">
-              <ScrollArea class="h-[39rem] px-4">
-                <ProgressView
-                  request={data.request}
-                  requestType={data.requestType}
-                  users={data.users}
-                />
-              </ScrollArea>
-            </CardContent>
-          </Card>
-        </Tabs.Content>
+          <Tabs.Content value="progress">
+            <Card>
+              <CardHeader>
+                <CardTitle class="flex gap-2">
+                  {data.requestType.title}<Badge variant="outline"
+                    >{classification[0].toUpperCase() +
+                      classification.slice(1, classification.length)}</Badge
+                  >
+                </CardTitle>
+              </CardHeader>
+              <CardContent class="flex flex-col gap-2">
+                <ScrollArea class="h-[39rem] px-4">
+                  <ProgressView
+                    request={data.request}
+                    requestType={data.requestType}
+                    users={data.users}
+                  />
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </Tabs.Content>
 
-        <Tabs.Content value="history">
-          <Card>
-            <CardHeader>
-              <CardTitle class="flex gap-2">
-                {data.requestType.title}<Badge variant="outline"
-                  >{classification[0].toUpperCase() +
-                    classification.slice(1, classification.length)}</Badge
-                >
-              </CardTitle>
-            </CardHeader>
-            <CardContent class="flex flex-col gap-2">
-              <ScrollArea class="h-[39rem] px-4">
-                <HistoryView
-                  request={data.request}
-                  requestType={data.requestType}
-                  users={data.users}
-                />
-              </ScrollArea>
-            </CardContent>
-          </Card>
-        </Tabs.Content>
-      </Tabs.Root>
+          <Tabs.Content value="history">
+            <Card>
+              <CardHeader>
+                <CardTitle class="flex gap-2">
+                  {data.requestType.title}<Badge variant="outline"
+                    >{classification[0].toUpperCase() +
+                      classification.slice(1, classification.length)}</Badge
+                  >
+                </CardTitle>
+              </CardHeader>
+              <CardContent class="flex flex-col gap-2">
+                <ScrollArea class="h-[39rem] px-4">
+                  <HistoryView
+                    request={data.request}
+                    requestType={data.requestType}
+                    users={data.users}
+                  />
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </Tabs.Content>
+        </Tabs.Root>
+      {/key}
     </div>
 
     <div class="flex flex-col gap-4">
@@ -143,7 +145,11 @@
           <div class="flex flex-col gap-4">
             <div class="flex justify-between">
               <p class="font-semibold">Student Information</p>
-              <Options bind:data={formData} users={data.users} bind:processing />
+              <Options
+                bind:data={formData}
+                users={data.users}
+                bind:processing
+              />
             </div>
             {#if processing}
               Processing... Please Wait
