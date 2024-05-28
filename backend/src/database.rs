@@ -119,4 +119,12 @@ impl Event {
             Self::ReassignedStage { receiver_id, .. } => receiver_id,
         }
     }
+
+    pub fn get_stage(&self) -> &StageIdentifier {
+        match self {
+            Self::NewStage { stage, .. } => stage,
+            Self::RolledBackStage { stage, .. } => stage,
+            Self::ReassignedStage { stage, .. } => stage,
+        }
+    }
 }
