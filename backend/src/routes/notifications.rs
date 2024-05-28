@@ -93,10 +93,10 @@ async fn handle_connection(
         }
     };
 
-    let _receive_task = tokio::spawn(async move {
+    tokio::spawn(async move {
         while let Ok(notification) = notification_tx.recv().await {
             if let Err(err) =
-                process_notification(notification, &state.database, &args, &mut ws_sender).await
+                send_notification(notification, &state.database, &args, &mut ws_sender).await
             {
                 tracing::error!("{err}");
             }
@@ -104,7 +104,7 @@ async fn handle_connection(
     });
 }
 
-async fn process_notification(
+async fn send_notification(
     notification: Notification,
     database: &mongodb::Database,
     args: &ConnectionArgs,
@@ -183,7 +183,7 @@ async fn process_notification(
             match message {
                 Some(message) => {
                     // don't send notification to ourselves
-                    if message.user_id != args.user_id {
+                    if message.user_id == args.user_id {
                         return Ok(());
                     }
 
