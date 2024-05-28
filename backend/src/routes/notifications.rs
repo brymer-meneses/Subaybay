@@ -8,6 +8,7 @@ use futures::{stream::SplitSink, SinkExt, StreamExt, TryStreamExt};
 
 use crate::{
     database::{self as db, Event, Notification, NotificationBody, StageIdentifier},
+    error::Result,
     state::AppState,
     utils::{authenticate_user, AuthenticationStatus},
 };
@@ -108,7 +109,7 @@ async fn process_notification(
     database: &mongodb::Database,
     args: &ConnectionArgs,
     ws_sender: &mut SplitSink<WebSocket<ServerMessage, ClientMessage>, Message<ServerMessage>>,
-) -> mongodb::error::Result<()> {
+) -> Result<()> {
     let notifications_collection = database.collection::<db::Notification>("notifications");
     let requests_collection = database.collection::<db::Request>("requests");
     let users_collection = database.collection::<db::User>("users");
@@ -232,7 +233,7 @@ async fn process_notification(
 async fn get_unseen_notifications(
     database: mongodb::Database,
     user_id: &String,
-) -> mongodb::error::Result<NotificationsCount> {
+) -> Result<NotificationsCount> {
     let notifications_collection = database.collection::<db::Notification>("notifications");
     let notifications = notifications_collection
         .find(
