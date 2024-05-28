@@ -42,6 +42,8 @@
   let copiesInput = $formData.copies.toString();
 
   $: $formData.copies = parseInt(copiesInput) || 0;
+  $: isFinished = $page.data.request.isFinished;
+  $: isStale = isFinished && !$page.data.request.currentStage.finished;
 </script>
 
 <DropdownMenu.Root>
@@ -55,7 +57,7 @@
     >
       <Pencil size="18" /> Edit Request
     </DropdownMenu.Item>
-    {#if !$page.data.request.isFinished}
+    {#if !isFinished}
       <DropdownMenu.Item
         class="flex gap-4"
         on:click={() =>
@@ -64,13 +66,15 @@
         <UsersRound size="18" />Mark as stale</DropdownMenu.Item
       >
     {/if}
-    <DropdownMenu.Item
-      class="flex gap-4"
-      on:click={() => (reassignDialogOpen = !reassignDialogOpen)}
-    >
-      <UsersRound size="18" />
-      Reassign
-    </DropdownMenu.Item>
+    {#if isStale || !isFinished}
+      <DropdownMenu.Item
+        class="flex gap-4"
+        on:click={() => (reassignDialogOpen = !reassignDialogOpen)}
+      >
+        <UsersRound size="18" />
+        Reassign
+      </DropdownMenu.Item>
+    {/if}
   </DropdownMenu.Content>
 </DropdownMenu.Root>
 
@@ -88,7 +92,6 @@
       </Dialog.Description>
       <Separator />
       <div class="flex flex-col gap-4">
-        <!-- TODO fix layout -->
         <p class="ml-4">
           <span class="-mx-4 font-semibold">Request ID:</span> <br />{$page.data
             .request._id}
@@ -253,4 +256,6 @@
 </Dialog.Root>
 
 <!--Reassign-->
-<ReassignDialog {users} bind:open={reassignDialogOpen} />
+{#if isStale || !isFinished}
+  <ReassignDialog {users} bind:open={reassignDialogOpen} />
+{/if}
