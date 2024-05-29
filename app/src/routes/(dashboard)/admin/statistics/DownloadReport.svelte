@@ -58,7 +58,7 @@
     };
   }
 
-  let statDiagOpen = true;
+  let statDiagOpen = false;
 </script>
 
 <Dialog.Root bind:open={statDiagOpen}>

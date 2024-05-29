@@ -143,7 +143,11 @@
           <div class="flex flex-col gap-4">
             <div class="flex justify-between">
               <p class="font-semibold">Student Information</p>
-              <Options bind:data={formData} users={data.users} bind:processing />
+              <Options
+                bind:data={formData}
+                users={data.users}
+                bind:processing
+              />
             </div>
             {#if processing}
               Processing... Please Wait
