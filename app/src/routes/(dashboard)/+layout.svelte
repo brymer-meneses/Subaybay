@@ -88,6 +88,21 @@
           break;
         }
 
+        case "newStage": {
+          console.log(payload);
+          break;
+        }
+
+        case "newReassignedStage": {
+          console.log(payload);
+          break;
+        }
+
+        case "newRolledBackStage": {
+          console.log(payload);
+          break;
+        }
+
         case "newMessage": {
           interface NewMessage {
             request: Request;

@@ -4,24 +4,34 @@ use axum::{
     Json,
 };
 use axum_typed_websockets::{Message, WebSocket, WebSocketUpgrade};
-use futures::{SinkExt, StreamExt, TryStreamExt};
-use serde_json::json;
+use futures::{stream::SplitSink, SinkExt, StreamExt, TryStreamExt};
 
 use crate::{
-    database::{self as db, Notification, NotificationBody, StageIdentifier},
+    database::{self as db, Event, Notification, NotificationBody, StageIdentifier},
+    error::Result,
     state::AppState,
     utils::{authenticate_user, AuthenticationStatus},
 };
 
-use mongodb::bson::doc;
+use mongodb::bson::{doc, oid::ObjectId};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, sync::Arc};
 
-pub async fn events(Json(event): Json<db::Event>) -> impl IntoResponse {
-    match event {
-        db::Event::NewStage { stage, receiver_id } => {}
-        db::Event::RolledBackStage { stage, receiver_id } => {}
-        db::Event::ReassignedStage { stage, receiver_id } => {}
+pub async fn events(
+    State(state): State<Arc<AppState>>,
+    Json(event): Json<db::Event>,
+) -> impl IntoResponse {
+    let notification_tx = state.notification_tx.clone();
+
+    let status = notification_tx.send(Notification {
+        _id: ObjectId::new(),
+        seen: false,
+        user_id: event.get_receiver_id().to_owned(),
+        body: NotificationBody::Event(event),
+    });
+
+    if let Err(err) = status {
+        tracing::error!("{err}");
     }
 }
 
@@ -83,102 +93,147 @@ async fn handle_connection(
         }
     };
 
-    let _receive_task = tokio::spawn(async move {
+    tokio::spawn(async move {
         while let Ok(notification) = notification_tx.recv().await {
-            let notifications_collection = state
-                .database
-                .collection::<db::Notification>("notifications");
-
-            // set the notification to be seen
-            if notification.user_id == args.user_id {
-                let update_result = notifications_collection
-                    .update_one(
-                        doc! { "_id": notification._id},
-                        doc! {"$set": doc! {
-                            "seen": true,
-                        } },
-                        None,
-                    )
-                    .await;
-
-                if let Err(err) = update_result {
-                    tracing::error!("{err}");
-                }
-            }
-
-            match notification.body {
-                NotificationBody::Event(event) => {}
-                NotificationBody::Message { message_id } => {
-                    let message_collection = state.database.collection::<db::Message>("messages");
-                    let message = message_collection
-                        .find_one(doc! {"_id": message_id}, None)
-                        .await
-                        .ok()
-                        .flatten();
-
-                    match message {
-                        Some(message) => {
-                            if message.user_id == args.user_id {
-                                continue;
-                            }
-
-                            let requests_collection =
-                                state.database.collection::<db::Request>("requests");
-
-                            let request = match requests_collection
-                                .find_one(doc! {"_id": &message.request_id}, None)
-                                .await
-                            {
-                                Ok(Some(request)) => request,
-                                Ok(None) => {
-                                    tracing::error!("Invalid request_id `{}`", message.request_id);
-                                    continue;
-                                }
-                                Err(err) => {
-                                    tracing::error!("{err}");
-                                    continue;
-                                }
-                            };
-
-                            let users_collection = state.database.collection::<db::User>("users");
-
-                            let user = match users_collection
-                                .find_one(doc! {"_id": &message.user_id}, None)
-                                .await
-                            {
-                                Ok(Some(user)) => user,
-                                Ok(None) => {
-                                    tracing::error!("Invalid user_id `{}`", message.user_id);
-                                    continue;
-                                }
-                                Err(err) => {
-                                    tracing::error!("{err}");
-                                    continue;
-                                }
-                            };
-
-                            let server_message = ServerMessage::NewMessage {
-                                message,
-                                request,
-                                from: user,
-                            };
-
-                            let _ = ws_sender.send(Message::Item(server_message)).await;
-                        }
-                        None => {
-                            tracing::error!("Failed to get the message_id: `{}`", message_id);
-                        }
-                    }
-                }
+            if let Err(err) =
+                send_notification(notification, &state.database, &args, &mut ws_sender).await
+            {
+                tracing::error!("{err}");
             }
         }
     });
 }
 
+async fn send_notification(
+    notification: Notification,
+    database: &mongodb::Database,
+    args: &ConnectionArgs,
+    ws_sender: &mut SplitSink<WebSocket<ServerMessage, ClientMessage>, Message<ServerMessage>>,
+) -> Result<()> {
+    let notifications_collection = database.collection::<db::Notification>("notifications");
+    let requests_collection = database.collection::<db::Request>("requests");
+    let users_collection = database.collection::<db::User>("users");
+
+    // set the notification to be seen
+    if notification.user_id == args.user_id {
+        notifications_collection
+            .update_one(
+                doc! { "_id": notification._id},
+                doc! {"$set": doc! {
+                    "seen": true,
+                } },
+                None,
+            )
+            .await?;
+    }
+
+    let user = users_collection
+        .find_one(doc! {"_id": &args.user_id}, None)
+        .await?
+        .expect("Not a valid user?");
+
+    match notification.body {
+        NotificationBody::Event(event) => {
+            let stage = event.get_stage();
+            let request_id = &stage.request_id;
+            let request = requests_collection
+                .find_one(doc! {"_id": request_id}, None)
+                .await?;
+
+            if let Some(request) = request {
+                match event {
+                    Event::NewStage { stage, .. } => {
+                        let _ = ws_sender
+                            .send(Message::Item(ServerMessage::NewStage {
+                                from: user,
+                                stage_type_index: stage.stage_type_index,
+                                request,
+                            }))
+                            .await;
+                    }
+
+                    Event::RolledBackStage { stage, .. } => {
+                        let _ = ws_sender
+                            .send(Message::Item(ServerMessage::NewRolledBackStage {
+                                from: user,
+                                stage_type_index: stage.stage_type_index,
+                                request,
+                            }))
+                            .await;
+                    }
+
+                    Event::ReassignedStage { stage, .. } => {
+                        let _ = ws_sender
+                            .send(Message::Item(ServerMessage::NewReassignedStage {
+                                from: user,
+                                stage_type_index: stage.stage_type_index,
+                                request,
+                            }))
+                            .await;
+                    }
+                }
+            }
+        }
+        NotificationBody::Message { message_id } => {
+            let message_collection = database.collection::<db::Message>("messages");
+            let message = message_collection
+                .find_one(doc! {"_id": message_id}, None)
+                .await?;
+
+            match message {
+                Some(message) => {
+                    // don't send notification to ourselves
+                    if message.user_id == args.user_id {
+                        return Ok(());
+                    }
+
+                    let request = match requests_collection
+                        .find_one(doc! {"_id": &message.request_id}, None)
+                        .await?
+                    {
+                        Some(request) => request,
+                        None => {
+                            tracing::error!("Invalid request_id `{}`", message.request_id);
+                            return Ok(());
+                        }
+                    };
+
+                    let user = match users_collection
+                        .find_one(doc! {"_id": &message.user_id}, None)
+                        .await?
+                    {
+                        Some(user) => user,
+                        None => {
+                            tracing::error!("Invalid user_id `{}`", message.user_id);
+                            return Ok(());
+                        }
+                    };
+
+                    let server_message = ServerMessage::NewMessage {
+                        message,
+                        request,
+                        from: user,
+                    };
+
+                    let _ = ws_sender.send(Message::Item(server_message)).await;
+
+                    return Ok(());
+                }
+
+                _ => {
+                    tracing::error!("Failed to get the message_id: `{}`", message_id);
+                }
+            }
+        }
+    };
+
+    return Ok(());
+}
+
 async fn get_unseen_notifications(
     database: mongodb::Database,
     user_id: &String,
-) -> mongodb::error::Result<NotificationsCount> {
+) -> Result<NotificationsCount> {
     let notifications_collection = database.collection::<db::Notification>("notifications");
     let notifications = notifications_collection
         .find(
@@ -315,6 +370,3 @@ pub struct InboxCount {
     #[serde_as(as = "Vec<(_, _)>")]
     pub pending: HashMap<StageIdentifier, u64>,
 }
-
-#[derive(Serialize, Deserialize)]
-pub struct RequestsCount {}

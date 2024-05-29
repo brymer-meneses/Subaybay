@@ -6,9 +6,9 @@ use axum_typed_websockets::{Message, WebSocket, WebSocketUpgrade};
 use futures::{stream::SplitSink, SinkExt, StreamExt};
 use mongodb::bson::oid::ObjectId;
 
-use crate::error::Result;
 use crate::{
     database as db,
+    error::Result,
     state::AppState,
     utils::{authenticate_user, AuthenticationStatus},
 };
@@ -75,7 +75,9 @@ async fn handle_connection(
     // sends it to the client
     let mut send_task = tokio::spawn(async move {
         while let Ok(message) = message_tx.recv().await {
-            send_server_message(message, &database, &mut ws_sender).await;
+            if let Err(err) = send_server_message(message, &database, &mut ws_sender).await {
+                tracing::error!("{err}");
+            }
         }
     });
 
@@ -88,7 +90,7 @@ async fn handle_connection(
         while let Some(message) = ws_receiver.next().await {
             match message {
                 Ok(Message::Item(message)) => {
-                    process_client_message(
+                    if let Err(err) = process_client_message(
                         message,
                         &sender,
                         &database,
@@ -96,6 +98,9 @@ async fn handle_connection(
                         &request_id,
                     )
                     .await
+                    {
+                        tracing::error!("{err}");
+                    }
                 }
 
                 Ok(Message::Close(_)) => {
@@ -125,7 +130,7 @@ async fn send_server_message(
     message: ClientMessage,
     database: &mongodb::Database,
     ws_sender: &mut SplitSink<WebSocket<ServerMessage, ClientMessage>, Message<ServerMessage>>,
-) {
+) -> Result<()> {
     let users = database.collection::<db::User>("users");
     match message {
         ClientMessage::Message {
@@ -133,10 +138,10 @@ async fn send_server_message(
             content,
             user_id,
         } => {
-            let user = users.find_one(doc! {"_id": &user_id}, None).await;
+            let user = users.find_one(doc! {"_id": &user_id}, None).await?;
 
             match user {
-                Ok(Some(user)) => {
+                Some(user) => {
                     let _ = ws_sender
                         .send(Message::Item(ServerMessage::Reply(MessageWithProfile {
                             date_time,
@@ -146,12 +151,8 @@ async fn send_server_message(
                         })))
                         .await;
                 }
-                Ok(None) => {
+                None => {
                     tracing::error!("Got an invalid user_id `{}`", &user_id);
-                }
-
-                Err(err) => {
-                    tracing::error!("Error: {err}");
                 }
             }
         }
@@ -162,7 +163,9 @@ async fn send_server_message(
             date_time: _,
             content: _,
         } => {}
-    }
+    };
+
+    Ok(())
 }
 
 async fn process_client_message(
@@ -171,7 +174,7 @@ async fn process_client_message(
     database: &mongodb::Database,
     notification_tx: &broadcast::Sender<db::Notification>,
     request_id: &String,
-) {
+) -> Result<()> {
     match message {
         ClientMessage::Authenticate { .. } => {}
         ClientMessage::Message {
@@ -189,20 +192,18 @@ async fn process_client_message(
                 content,
             };
 
-            let messages_collection = database.collection::<db::Message>("messages");
-
-            messages_collection
+            database
+                .collection::<db::Message>("messages")
                 .insert_one(&chat_message, None)
-                .await
-                .unwrap();
+                .await?;
 
-            process_notifications(database, &chat_message, notification_tx).await;
+            process_notifications(database, &chat_message, notification_tx).await?;
 
-            let _ = sender.send(ClientMessage::Message {
+            sender.send(ClientMessage::Message {
                 date_time,
                 content: chat_message.content,
                 user_id: chat_message.user_id,
-            });
+            })?;
         }
 
         ClientMessage::Event {
@@ -210,22 +211,24 @@ async fn process_client_message(
             content: _,
         } => {}
     }
+
+    Ok(())
 }
 
 async fn process_notifications(
     database: &mongodb::Database,
     message: &db::Message,
     sender: &broadcast::Sender<db::Notification>,
-) {
+) -> Result<()> {
     let notifications_collection = database.collection::<db::Notification>("notifications");
     let requests_collection = database.collection::<db::Request>("requests");
     let request = requests_collection
         .find_one(doc! { "_id": &message.request_id}, None)
-        .await;
+        .await?;
 
     let send_notification = |handler_id: String| async {
         if handler_id == message.user_id || handler_id.is_empty() {
-            return;
+            return crate::error::Result::Ok(());
         }
 
         let notification = db::Notification {
@@ -236,36 +239,33 @@ async fn process_notifications(
             },
             user_id: handler_id,
         };
-        let result = notifications_collection
+
+        notifications_collection
             .insert_one(&notification, None)
-            .await;
+            .await?;
 
         if sender.send(notification).is_err() {
             tracing::error!("No channel to send notifications");
         }
 
-        if let Err(err) = result {
-            tracing::error!("Insertion error: {}", err);
-        }
+        Ok(())
     };
 
     match request {
-        Ok(Some(request)) => {
+        Some(request) => {
             let previous_handler = request.current_stage.prev_handler_id;
             let current_handler = request.current_stage.handler_id;
 
-            send_notification(previous_handler).await;
-            send_notification(current_handler).await;
+            send_notification(previous_handler).await?;
+            send_notification(current_handler).await?;
         }
 
-        Ok(None) => {
+        None => {
             tracing::error!("Invalid request._id: {}", message.request_id);
         }
-
-        Err(err) => {
-            tracing::error!("Error {err}");
-        }
     }
+
+    Ok(())
 }
 
 async fn get_previous_messages(
@@ -324,7 +324,7 @@ pub struct ConnectionArgs {
     user_id: String,
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(tag = "type", content = "content", rename_all = "camelCase")]
 pub enum ClientMessage {
     #[serde(rename_all = "camelCase")]
