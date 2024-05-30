@@ -1,37 +1,28 @@
 <script lang="ts">
-  import File from "lucide-svelte/icons/file";
-  import ListFilter from "lucide-svelte/icons/list-filter";
-
-  import { Button } from "$lib/components/ui/button/index.js";
-  import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   import * as Tabs from "$lib/components/ui/tabs/index.js";
   import Inbox from "./Inbox.svelte";
   import InboxContent from "./InboxContent.svelte";
   import NewRequest from "./NewRequest.svelte";
   import type { PageServerData } from "./$types";
-  import type { InboxStageData } from "./inboxTypes";
+  import type { MultiStageData } from "./inboxTypes";
 
   import { notifications } from "$lib/notifications";
   import Notifiable from "../Notifiable.svelte";
 
   export let data: PageServerData;
 
-  let latestReqTypes = data.latestRequestTypes;
+  let latestReqTypes = data.latestRequestTypes ?? [];
 
-  let selectedStage: InboxStageData | null = null;
-  let inboxes: { active: any; pending: any } = {
-    active: [],
-    pending: [],
+  let selected: MultiStageData | null = null;
+  let inboxes: { active: Inbox | null; pending: Inbox | null } = {
+    active: null,
+    pending: null,
   };
 
   let currentStageType: "active" | "pending" = "active";
 
-  if (inboxes[currentStageType].length > 0) {
-    selectedStage = inboxes[currentStageType];
-  }
-
-  function selectStage(stage: any) {
-    selectedStage = stage;
+  function selectStage(multiStage: MultiStageData) {
+    selected = multiStage;
   }
 
   function onTabChange(value: string | undefined) {
@@ -42,7 +33,7 @@
   }
 
   function updateSelectedStage() {
-    selectedStage = inboxes[currentStageType].getUpdatedSelection();
+    selected = inboxes[currentStageType]?.getUpdatedSelection() ?? null;
   }
 
   $: totalPending = $notifications.inbox.pending.reduce((accumulator, item) => {
@@ -79,6 +70,7 @@
           bind:this={inboxes.active}
           stages={data.activeStages}
           onSelectStage={selectStage}
+          type="active"
           isShown={currentStageType === "active"}
         />
       </Tabs.Content>
@@ -87,6 +79,7 @@
           bind:this={inboxes.pending}
           stages={data.pendingStages}
           onSelectStage={selectStage}
+          type="pending"
           isShown={currentStageType === "pending"}
         />
       </Tabs.Content>
@@ -96,9 +89,9 @@
   <div class="lg:col-span-2">
     <InboxContent
       {updateSelectedStage}
-      bind:stage={selectedStage}
-      requests={data.relevantRequests}
-      users={data.users}
+      bind:multiStage={selected}
+      requests={data.relevantRequests ?? {}}
+      users={data.users ?? {}}
     />
   </div>
 </main>

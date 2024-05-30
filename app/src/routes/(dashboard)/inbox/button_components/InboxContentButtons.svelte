@@ -4,15 +4,17 @@
   import RollbackButton from "./RollbackButton.svelte";
   import ArchiveButton from "./ArchiveButton.svelte";
 
-  import type { InboxStageData } from "../inboxTypes";
+  import type { MultiStageData } from "../inboxTypes";
   import type { Request } from "$lib/server/database";
 
   export let request: Request;
-  export let stage: InboxStageData;
+  export let multiStage: MultiStageData;
   export let users: any;
   export let updateSelectedStage: () => void;
   export let processing = false;
 
+  $: stage = multiStage.mainStage;
+  
   function enhanceFunc() {
     processing = true;
 
@@ -35,7 +37,7 @@
     {/if}
     <!--If in pending inbox-->
   {:else}
-    <RollbackButton {stage} {enhanceFunc} />
+    <RollbackButton {multiStage} {enhanceFunc} />
   {/if}
 {:else}
   Processing... Please Wait...

@@ -14,8 +14,6 @@
   import Plus from "lucide-svelte/icons/plus";
   import FilePlus from "lucide-svelte/icons/file-plus";
 
-  import { tick } from "svelte";
-
   import { formSchema, type FormSchema } from "./schema";
   import {
     type SuperValidated,
@@ -23,11 +21,9 @@
     superForm,
   } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
-  import { cn } from "$lib/utils.js";
 
   import CaretSort from "svelte-radix/CaretSort.svelte";
   import CopiesCountInput from "./CopiesCountInput.svelte";
-  import { json } from "@sveltejs/kit";
 
   export let data: SuperValidated<Infer<FormSchema>>;
   export let latestReqTypes: RequestType[];

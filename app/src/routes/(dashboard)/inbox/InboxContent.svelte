@@ -19,14 +19,16 @@
   import Locate from "lucide-svelte/icons/locate";
 
   import type { Request } from "$lib/server/database";
-  import type { InboxStageData, UserInfo } from "./inboxTypes";
+  import type { MultiStageData, UserInfo } from "./inboxTypes";
 
   import ChatArea from "../ChatArea.svelte";
   import InboxContentButtons from "./button_components/InboxContentButtons.svelte";
 
   export let requests: { [key: string]: Request };
-  export let stage: InboxStageData | null;
   export let users: { [key: string]: UserInfo };
+  export let multiStage: MultiStageData | null;
+
+  $: stage = multiStage?.mainStage;
 
   export let updateSelectedStage: () => void;
 
@@ -36,7 +38,7 @@
   $: info = stage ? requests[stage.requestId] : null;
 </script>
 
-{#if stage && info && requests[stage.requestId]}
+{#if multiStage && stage && info && requests[stage.requestId]}
   <Card.Root class="overflow-hidden">
     <Card.Header class="bg-muted/50 flex flex-row items-start">
       <div class="grid gap-0.5">
@@ -48,7 +50,15 @@
 
           <div>
             {#if stage.inboxType === "pending"}
-              You handled Stage {stage.inboxStageTypeIndex}: {stage.inboxStageTitle}
+              You Handled: <Badge variant="outline"
+                >{stage.inboxStageTypeIndex}: {stage.inboxStageTitle}</Badge
+              >
+              {#each multiStage.otherStages as otherStage}
+                <Badge variant="outline"
+                  >{otherStage.inboxStageTypeIndex}: {otherStage.inboxStageTitle}</Badge
+                >
+              {/each}
+              <br />
             {:else if stage.prevHandlerId in users}
               <div class="flex items-center gap-2">
                 <div class="flex items-center gap-1">
@@ -70,7 +80,8 @@
                 {/if}
               </div>
             {/if}
-            Currently at Stage {stage.currentStageTypeIndex}: {stage.stageTitle}
+            <br />
+            Current Stage: <Badge variant="secondary">{stage.currentStageTypeIndex}: {stage.stageTitle}</Badge>
           </div>
         </Card.Description>
       </div>
@@ -183,7 +194,7 @@
       <div class="mt-auto flex w-full justify-end gap-4 pt-4">
         <InboxContentButtons
           request={requests[stage.requestId]}
-          {stage}
+          {multiStage}
           {users}
           {updateSelectedStage}
           bind:processing

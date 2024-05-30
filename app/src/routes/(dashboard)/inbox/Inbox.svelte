@@ -4,15 +4,19 @@
   import Search from "lucide-svelte/icons/search";
   import InboxItem from "./InboxItem.svelte";
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
-  import type { InboxStageData } from "./inboxTypes";
+  import type { InboxStageData, MultiStageData } from "./inboxTypes";
 
-  export let onSelectStage: (stage: any) => void;
+  export let onSelectStage: (stage: MultiStageData) => void;
+
+  // these are the stages ungrouped
   export let stages: InboxStageData[] = [];
+  export let type: "active" | "pending";
   export let isShown;
 
   let selectedStageIndex: number = 0;
   let searchTerm: string = "";
-  let filteredStages: InboxStageData[] = stages;
+  let multiStages: MultiStageData[] = [];
+  let filtered: MultiStageData[] = multiStages;
   let skipThese: string[] = [
     "handlerId",
     "prevHandlerId",
@@ -24,7 +28,49 @@
   ];
 
   $: {
-    filteredStages = stages.filter((stage: InboxStageData) => {
+    if (type === "active") {
+      multiStages = stages.map<MultiStageData>((stage: InboxStageData) => {
+        return {
+          mainStage: stage,
+          otherStages: [],
+        };
+      });
+    } else {
+      // group stages according to request type
+      // 
+      let grouper: { [key: string]: MultiStageData } = {};
+      for (const stage of stages) {
+        if (stage.requestId in grouper) {
+          // use the most recent stage as the main stage
+          if (grouper[stage.requestId].mainStage.inboxStageTypeIndex < stage.inboxStageTypeIndex) {
+            grouper[stage.requestId].otherStages.push(grouper[stage.requestId].mainStage);
+            grouper[stage.requestId].mainStage = stage
+          }
+          else {
+            grouper[stage.requestId].otherStages.push(stage);
+          }
+        }
+        else {
+          grouper[stage.requestId] = {
+            mainStage: stage,
+            otherStages: [],
+          }
+        }
+      }
+
+      multiStages = Object.keys(grouper).map<MultiStageData>((key: string) => {
+        // sort other stages for organization purposes
+        grouper[key].otherStages.sort((a, b) => {
+          return a.inboxStageTypeIndex - b.inboxStageTypeIndex;
+        })
+        return grouper[key];
+      })
+    }
+  }
+
+  $: {
+    filtered = multiStages.filter((multiStage: MultiStageData) => {
+      const stage = multiStage.mainStage;
       for (const key in stage) {
         if (skipThese.includes(key as string)) continue;
         const stageKey = key as keyof InboxStageData;
@@ -33,18 +79,18 @@
             .toLowerCase()
             .includes(searchTerm.trim().toLowerCase())
         ) {
-          return stage;
+          return true;
         }
       }
-      return null;
+      return false;
     });
   }
 
-  if (isShown && filteredStages.length > 0) select(0);
+  if (isShown && filtered.length > 0) select(0);
 
   function select(stageIndex: number) {
     selectedStageIndex = stageIndex;
-    onSelectStage(stages[selectedStageIndex]);
+    onSelectStage(filtered[selectedStageIndex]);
   }
 
   export function getUpdatedSelection() {
@@ -53,9 +99,9 @@
       return null;
     } else if (selectedStageIndex >= stages.length) {
       selectedStageIndex = 0;
-      return stages[0];
+      return filtered[0];
     } else {
-      return stages[selectedStageIndex];
+      return filtered[selectedStageIndex];
     }
   }
 </script>
@@ -83,9 +129,9 @@
       class="flex h-[35rem] w-[98%] flex-grow flex-col sm:max-xl:h-96 lg:max-xl:w-full"
     >
       <div class="flex flex-col gap-2 transition-all">
-        {#each filteredStages as stage, index}
+        {#each filtered as multiStage, index}
           <InboxItem
-            {stage}
+            stage={multiStage.mainStage}
             isSelected={selectedStageIndex == index}
             onClick={() => select(index)}
           />

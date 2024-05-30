@@ -14,6 +14,11 @@ export interface InboxStageData {
   finished: boolean;
 }
 
+export interface MultiStageData {
+  mainStage: InboxStageData;
+  otherStages: InboxStageData[];
+}
+
 // only contains very basic user data
 export interface UserInfo {
   name: string;
