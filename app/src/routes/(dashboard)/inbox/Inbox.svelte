@@ -86,7 +86,7 @@
     });
   }
 
-  if (isShown && filtered.length > 0) select(0);
+  $: { if (isShown && filtered.length > 0) select(0);}
 
   function select(stageIndex: number) {
     selectedStageIndex = stageIndex;
