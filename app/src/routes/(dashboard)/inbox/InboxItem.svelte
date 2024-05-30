@@ -31,10 +31,5 @@
         >{stage.dateSent.toLocaleString()}</Badge
       >
     </div>
-    {#if stage.currentStageTypeIndex != stage.inboxStageTypeIndex}
-      <p class="text-xs">
-        You handled Step: {stage.inboxStageTypeIndex}
-      </p>
-    {/if}
   </div>
 </Button>
