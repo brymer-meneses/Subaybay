@@ -1,6 +1,4 @@
-import type { ObjectId } from "mongodb";
 import { writable } from "svelte/store";
-import type { RequestEvent } from "@sveltejs/kit"
 
 export interface StageIdentifier {
   requestId: string;
@@ -32,6 +30,7 @@ export async function sendInboxNotification(notification: InboxNotification, rec
       stageTypeIndex: notification.stageTypeIndex,
       requestId: notification.requestId,
     },
+    from: credentials.userId,
     receiverId,
   });
 

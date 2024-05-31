@@ -10,7 +10,7 @@
 
   import type { Message, Request, User } from "$lib/server/database";
   import NewMessageNotification from "$lib/components/notifications/NewMessageNotification.svelte";
-    import NewStageNotification from "$lib/components/notifications/NewStageNotification.svelte";
+  import NewStageNotification from "$lib/components/notifications/NewStageNotification.svelte";
 
   let isSidebarCollapsed = false;
   let clientWidth: number;
@@ -82,6 +82,8 @@
     try {
       let data = await event.data.text();
       let payload = JSON.parse(data);
+
+      console.log(payload.content);
 
       switch (payload.type) {
         case "unseenNotificationsCount": {

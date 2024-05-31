@@ -40,18 +40,21 @@ pub enum Event {
     NewStage {
         stage: StageIdentifier,
         receiver_id: String,
+        from: String,
     },
 
     #[serde(rename_all = "camelCase")]
     RolledBackStage {
         stage: StageIdentifier,
         receiver_id: String,
+        from: String,
     },
 
     #[serde(rename_all = "camelCase")]
     ReassignedStage {
         stage: StageIdentifier,
         receiver_id: String,
+        from: String,
     },
 }
 
@@ -129,6 +132,14 @@ pub struct Stage {
 }
 
 impl Event {
+    pub fn get_from(&self) -> &str {
+        match self {
+            Self::NewStage { from, .. } => from,
+            Self::RolledBackStage { from, .. } => from,
+            Self::ReassignedStage { from, .. } => from,
+        }
+    }
+
     pub fn get_receiver_id(&self) -> &str {
         match self {
             Self::NewStage { receiver_id, .. } => receiver_id,

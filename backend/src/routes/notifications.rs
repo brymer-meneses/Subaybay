@@ -128,11 +128,6 @@ async fn send_notification(
             .await?;
     }
 
-    let user = users_collection
-        .find_one(doc! {"_id": &args.user_id}, None)
-        .await?
-        .expect("Not a valid user?");
-
     match notification.body {
         NotificationBody::Event(event) => {
             let stage = event.get_stage();
@@ -141,17 +136,26 @@ async fn send_notification(
                 .find_one(doc! {"_id": request_id}, None)
                 .await?;
 
+            if args.user_id != event.get_receiver_id() {
+                return Ok(());
+            }
+
             if let Some(request) = request {
                 let request_type = request_types_collection
                     .find_one(doc! {"_id": &request.request_type_id}, None)
                     .await?
                     .expect("Invalid request_type");
 
+                let from = users_collection
+                    .find_one(doc! {"_id": &event.get_from()}, None)
+                    .await?
+                    .expect("Not a valid user?");
+
                 match event {
                     Event::NewStage { stage, .. } => {
                         let _ = ws_sender
                             .send(Message::Item(ServerMessage::NewStage {
-                                from: user,
+                                from,
                                 stage_type_index: stage.stage_type_index,
                                 request_type,
                                 request,
@@ -162,7 +166,7 @@ async fn send_notification(
                     Event::RolledBackStage { stage, .. } => {
                         let _ = ws_sender
                             .send(Message::Item(ServerMessage::NewRolledBackStage {
-                                from: user,
+                                from,
                                 stage_type_index: stage.stage_type_index,
                                 request_type,
                                 request,
@@ -173,7 +177,7 @@ async fn send_notification(
                     Event::ReassignedStage { stage, .. } => {
                         let _ = ws_sender
                             .send(Message::Item(ServerMessage::NewReassignedStage {
-                                from: user,
+                                from,
                                 request_type,
                                 stage_type_index: stage.stage_type_index,
                                 request,
