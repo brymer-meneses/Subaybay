@@ -113,6 +113,7 @@ async fn send_notification(
     let notifications_collection = database.collection::<db::Notification>("notifications");
     let requests_collection = database.collection::<db::Request>("requests");
     let users_collection = database.collection::<db::User>("users");
+    let request_types_collection = database.collection::<db::RequestType>("requestTypes");
 
     // set the notification to be seen
     if notification.user_id == args.user_id {
@@ -141,12 +142,18 @@ async fn send_notification(
                 .await?;
 
             if let Some(request) = request {
+                let request_type = request_types_collection
+                    .find_one(doc! {"_id": &request.request_type_id}, None)
+                    .await?
+                    .expect("Invalid request_type");
+
                 match event {
                     Event::NewStage { stage, .. } => {
                         let _ = ws_sender
                             .send(Message::Item(ServerMessage::NewStage {
                                 from: user,
                                 stage_type_index: stage.stage_type_index,
+                                request_type,
                                 request,
                             }))
                             .await;
@@ -157,6 +164,7 @@ async fn send_notification(
                             .send(Message::Item(ServerMessage::NewRolledBackStage {
                                 from: user,
                                 stage_type_index: stage.stage_type_index,
+                                request_type,
                                 request,
                             }))
                             .await;
@@ -166,6 +174,7 @@ async fn send_notification(
                         let _ = ws_sender
                             .send(Message::Item(ServerMessage::NewReassignedStage {
                                 from: user,
+                                request_type,
                                 stage_type_index: stage.stage_type_index,
                                 request,
                             }))
@@ -327,27 +336,34 @@ pub enum ClientMessage {
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", tag = "type", content = "content")]
 pub enum ServerMessage {
+    #[serde(rename_all = "camelCase")]
     NewMessage {
         message: db::Message,
         request: db::Request,
         from: db::User,
     },
 
+    #[serde(rename_all = "camelCase")]
     NewRolledBackStage {
         from: db::User,
         stage_type_index: u64,
+        request_type: db::RequestType,
         request: db::Request,
     },
 
+    #[serde(rename_all = "camelCase")]
     NewReassignedStage {
         from: db::User,
         stage_type_index: u64,
+        request_type: db::RequestType,
         request: db::Request,
     },
 
+    #[serde(rename_all = "camelCase")]
     NewStage {
         from: db::User,
         stage_type_index: u64,
+        request_type: db::RequestType,
         request: db::Request,
     },
 

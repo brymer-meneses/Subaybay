@@ -102,6 +102,23 @@ pub struct Request {
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
+pub struct RequestType {
+    #[serde(alias = "_id")]
+    pub _id: String,
+    pub title: String,
+    pub version: u64,
+    pub stages: Vec<StageType>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct StageType {
+    pub stage_title: String,
+    pub default_handler_id: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct Stage {
     pub stage_type_index: u64,
     pub handler_id: String,
