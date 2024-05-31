@@ -45,12 +45,7 @@
           It will NOT be moved to your pending inbox.
           <br />
           <br />
-          To get the stage back, {users[nextHandlerId].name} will have to reassign
-          the stage to you.
-          <br />
-          This cannot be undone.
-          <br />
-          Are you sure?
+          The stage can be reassigned back to you from the request's details page
         </Dialog.Description>
       </Dialog.Header>
 

@@ -57,7 +57,7 @@
               </div>
             </DD.DropdownMenuTrigger>
             <DD.DropdownMenuContent>
-              <DD.DropdownMenuLabel>Send to</DD.DropdownMenuLabel>
+              <DD.DropdownMenuLabel>Rollback to</DD.DropdownMenuLabel>
 
               <DD.DropdownMenuSeparator />
               <DD.DropdownMenuRadioGroup

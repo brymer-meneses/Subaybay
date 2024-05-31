@@ -37,7 +37,11 @@ export const actions: Actions = {
       return fail(400);
     }
 
-    const duplicate = await db.requestType.findOne({ title: title });
+    // uses getLatestRequestTypes since it needs to also ignore deprecated
+    const latestRequests = await getLatestRequestTypes();
+    const duplicate = latestRequests.find((requestType) => {
+      return title === requestType.title;
+    })
     if (duplicate) {
       setFlash(
         {
