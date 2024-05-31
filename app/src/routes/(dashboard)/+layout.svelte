@@ -10,6 +10,7 @@
 
   import type { Message, Request, User } from "$lib/server/database";
   import NewMessageNotification from "$lib/components/notifications/NewMessageNotification.svelte";
+    import NewStageNotification from "$lib/components/notifications/NewStageNotification.svelte";
 
   let isSidebarCollapsed = false;
   let clientWidth: number;
@@ -89,12 +90,36 @@
         }
 
         case "newStage": {
-          console.log(payload);
+          let { from, request, requestType } = payload.content;
+
+          toast.custom(NewStageNotification, {
+            componentProps: {
+              from,
+              request,
+              requestType,
+              type: "pass",
+            },
+            classes: {
+              toast: "rounded-lg",
+            },
+          });
           break;
         }
 
         case "newReassignedStage": {
-          console.log(payload);
+          let { from, request, requestType } = payload.content;
+
+          toast.custom(NewStageNotification, {
+            componentProps: {
+              from,
+              request,
+              requestType,
+              type: "reassign",
+            },
+            classes: {
+              toast: "rounded-lg",
+            },
+          });
           break;
         }
 
