@@ -94,9 +94,9 @@
             <Tooltip.Content class="w-64">
               <p class="font-semibold">NOTE:</p>
               <p class="text-muted-foreground">
-                Pending and Stale Requests will be based on the creation date of
-                the request, while Finished requests will be based on the
-                completion date.
+                Pending and Stale Requests are based on the creation date of the
+                request, while Finished requests are based on the completion
+                date.
               </p>
             </Tooltip.Content>
           </Tooltip.Root></Label

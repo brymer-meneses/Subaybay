@@ -1,50 +1,86 @@
 <script lang="ts">
   import UP from "$lib/assets/UP.png";
+  import Oble from "$lib/assets/oble-2.jpg";
 
   import { toast } from "svelte-sonner";
+  import { Button } from "$lib/components/ui/button/index.js";
+  import { Input } from "$lib/components/ui/input/index.js";
+  import { Label } from "$lib/components/ui/label/index.js";
+
+  import * as Tooltip from "$lib/components/ui/tooltip/index.js";
+  import Separator from "$lib/components/ui/separator/separator.svelte";
+  import CircleHelp from "lucide-svelte/icons/circle-help";
 </script>
 
 <div
-  class="flex h-screen w-screen flex-col items-center justify-center gap-28 lg:flex-row"
+  class="lg:min-h-[600px]xxx xl:min-h-[800px]xxx min-h-[100vh] w-full lg:grid lg:grid-cols-2"
 >
-  <div class="relative">
-    <img src={UP} alt="up-logo" class="absolute z-20 w-[500px]" />
-
-    <div
-      class="absolute bottom-20 left-40 top-10 z-0 aspect-square w-[400px] animate-pulse rounded-full bg-red-500 blur-[200px] transition"
-    />
-    <div
-      class="delayed-start left-5 z-10 aspect-square w-[400px] animate-pulse rounded-full bg-green-500 blur-[200px]"
-    />
+  <div class="flex h-[100vh] items-center justify-center border py-12">
+    <div class="mx-auto grid w-[350px] gap-6">
+      <div class="grid gap-2 text-center">
+        <div class="mb-2 flex justify-center">
+          <img src={UP} alt="up-logo" class="h-[80px] w-[80px]" />
+        </div>
+        <h1 class="text-3xl font-bold">Welcome to UPB Subaybay!</h1>
+        <p class="text-muted-foreground text-balance">
+          Internal Request Tracker for the Office of the University Registrar.
+        </p>
+        <Separator />
+      </div>
+      <div class="grid gap-4">
+        <div class="flex h-40 flex-col justify-end">
+          <p class="text-muted-foreground text-sm">
+            Sign in with Google to continue.
+          </p>
+        </div>
+        <form method="GET" action="/auth/login">
+          <Button
+            variant="outline"
+            class="w-full gap-2 py-6"
+            on:click={() => {
+              toast.loading("Logging in to Subaybay...");
+            }}
+            type="submit"
+          >
+            <img src="google.png" alt="google logo" class="w-8" />
+            <p class="font-inter font-semibold">Sign in</p>
+          </Button>
+        </form>
+      </div>
+    </div>
   </div>
-
-  <div class="z-30 flex flex-col gap-6">
-    <h1
-      class="font-poppins text-up_maroon text-center text-8xl font-extrabold lg:text-left"
-    >
-      Subaybay
-    </h1>
-    <h2 class="font-inter text-center text-4xl font-thin lg:text-left">
-      Request Monitoring System
-    </h2>
-
-    <form method="GET" action="/auth/login">
-      <button
-        class="z-20 flex h-full w-full flex-row items-center justify-center gap-4 rounded-lg bg-white p-4 drop-shadow-sm hover:bg-slate-100 lg:w-64"
-        on:click={() => {
-          toast.loading("Logging in to Subaybay...");
-        }}
-        type="submit"
-      >
-        <img src="google.png" alt="google logo" class="w-10" />
-        <p class="font-inter font-normal">Sign in with Google</p>
-      </button>
-    </form>
+  <div class="bg-muted relative hidden lg:block">
+    <img
+      src={Oble}
+      alt="placeholder"
+      width="1920"
+      height="1080"
+      class="h-full w-full object-cover brightness-50 dark:brightness-[0.2] dark:grayscale"
+    />
+    <Tooltip.Root>
+      <Tooltip.Trigger class="absolute bottom-4 right-4">
+        <CircleHelp size="20" class="text-white" />
+      </Tooltip.Trigger>
+      <Tooltip.Content class="">
+        <p>
+          The image used is licensed under the <a
+            href="https://en.wikipedia.org/wiki/Creative_Commons"
+            target="_blank">Creative Commons</a
+          >
+          <a
+            href="https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+            class="text-blue-500"
+            target="_blank"
+            >Attribution-Share Alike 4.0 International license.</a
+          >
+        </p>
+        <p>
+          TODO: Add Details:
+          https://meta.m.wikimedia.org/wiki/File:UPB_Oble-1.jpg
+        </p>
+        <p><span class="font-semibold">Date:</span></p>
+        <p><span class="font-semibold">Author:</span></p>
+      </Tooltip.Content>
+    </Tooltip.Root>
   </div>
 </div>
-
-<style>
-  .delayed-start {
-    animation-delay: 0.5s;
-  }
-</style>
