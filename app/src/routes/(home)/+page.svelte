@@ -4,8 +4,6 @@
 
   import { toast } from "svelte-sonner";
   import { Button } from "$lib/components/ui/button/index.js";
-  import { Input } from "$lib/components/ui/input/index.js";
-  import { Label } from "$lib/components/ui/label/index.js";
 
   import * as Tooltip from "$lib/components/ui/tooltip/index.js";
   import Separator from "$lib/components/ui/separator/separator.svelte";
@@ -74,12 +72,8 @@
             >Attribution-Share Alike 4.0 International license.</a
           >
         </p>
-        <p>
-          TODO: Add Details:
-          https://meta.m.wikimedia.org/wiki/File:UPB_Oble-1.jpg
-        </p>
-        <p><span class="font-semibold">Date:</span></p>
-        <p><span class="font-semibold">Author:</span></p>
+        <p><span class="font-semibold">Date:</span> 29 June 2023, 11:20:44</p>
+        <p><span class="font-semibold">Author:</span> Charrie Anne Nacor</p>
       </Tooltip.Content>
     </Tooltip.Root>
   </div>
