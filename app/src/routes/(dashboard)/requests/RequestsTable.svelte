@@ -135,7 +135,7 @@
         />
         <Input
           type="search"
-          placeholder="Search User"
+          placeholder="Search..."
           class="bg-background w-full rounded-lg pl-8"
           bind:value={searchTerm}
         />
