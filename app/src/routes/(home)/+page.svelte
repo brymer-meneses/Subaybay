@@ -39,6 +39,7 @@
       <p class="maintext font-serif text-8xl font-bold">
         UPB <br /> Subaybay
       </p>
+      <p class="subtext gap-2 text-xl">CMSC 128</p>
     </div>
     <div class="flex grow flex-row space-x-16 p-10">
       <div>
