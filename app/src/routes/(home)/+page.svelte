@@ -9,7 +9,7 @@
   <div
     class="pointer-events-none absolute flex h-full w-full items-center justify-center"
   >
-    <div class="ball h-[500px] w-[500px] rounded-full"></div>
+    <div class="ball h-[500px] w-[500px] rotate-[20deg]"></div>
   </div>
   <div
     class=" z-10 mx-auto flex h-full flex-col justify-between space-y-10 xl:block xl:w-[75%]"
@@ -30,21 +30,21 @@
       </div>
     </div>
     <div class="hero h-[350px] p-10 backdrop-blur-lg">
-      <p class="font-serif text-8xl font-bold">
-        UPB <br /> Subaybay
+      <p class="subtext gap-2 text-xl text-[#f43e01]">
+        Internal Request <span class="not-italic text-black">Tracker:</span>
       </p>
-      <p class="gap-2 text-xl italic text-[#f43e01]">
-        Internal Request <span class="not-italic text-black">Tracker</span>
+      <p class="maintext font-serif text-8xl font-bold">
+        UPB <br /> Subaybay
       </p>
     </div>
     <div class="flex grow flex-row space-x-16 p-10">
       <div>
         <p class="mb-2 text-xl font-semibold">Team ZEBrA:</p>
         <ul class="space-y-1">
-          <li>Andre Bryant Bagalso</li>
-          <li>Brymer Bernard Meneses</li>
-          <li>Grandemir Baysa-Pee</li>
           <li>Zedrick De Guzman</li>
+          <li>Grandemir Baysa-Pee</li>
+          <li>Brymer Bernard Meneses</li>
+          <li>Andre Bryant Bagalso</li>
         </ul>
       </div>
       <div>
@@ -64,5 +64,38 @@
       #f43e01
     );
     filter: blur(20px);
+    animation: 200s test-animate infinite linear;
+    /* uncomment for christmas light */
+    /* animation: 0.5s christmas-light infinite linear !important; */
+  }
+
+  @keyframes test-animate {
+    from {
+      rotate: 0deg;
+    }
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  @keyframes christmas-light {
+    from {
+      rotate: 0deg;
+      background: linear-gradient(
+        calc(180deg + 50deg),
+        #f8af7a 20%,
+        #f86217 40%,
+        #f43e01
+      );
+    }
+    to {
+      rotate: 360deg;
+      background: linear-gradient(
+        calc(180deg + 50deg),
+        #7af8af 20%,
+        #17f862 40%,
+        #01f43e
+      );
+    }
   }
 </style>
