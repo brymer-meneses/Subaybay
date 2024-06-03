@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
   import UP from "$lib/assets/UP.png";
+
+  import { goto } from "$app/navigation";
   import { Button } from "$lib/components/ui/button/index.js";
 </script>
 
-<main
-  class="bg-slate-50m border-lborder-r w-[80vw]m relative m-0 mx-auto block h-[100vh] bg-slate-50"
->
+<main class="bg-slate-50m relative m-0 mx-auto block h-[100vh] bg-slate-50">
   <div
     class="pointer-events-none absolute flex h-full w-full items-center justify-center"
   >
