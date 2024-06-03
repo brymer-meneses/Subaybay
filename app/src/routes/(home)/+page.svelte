@@ -53,7 +53,7 @@
       </div>
       <div>
         <p class="mb-2 text-xl font-semibold">Client:</p>
-        <p class="mb-2">Office of the University Registrar (UP Baguio)</p>
+        <p>Office of the University Registrar (UP Baguio)</p>
       </div>
     </div>
   </div>
@@ -68,9 +68,7 @@
       #760d11
     );
     filter: blur(20px);
-    animation: 200s test-animate infinite linear;
-    /* uncomment for christmas light */
-    /* animation: 1s christmas-light infinite linear !important; */
+    animation: 225s test-animate infinite linear;
   }
 
   @keyframes test-animate {
@@ -79,27 +77,6 @@
     }
     to {
       rotate: 360deg;
-    }
-  }
-
-  @keyframes christmas-light {
-    from {
-      rotate: 0deg;
-      background: linear-gradient(
-        calc(180deg + 50deg),
-        #f8af7a 20%,
-        #f86217 40%,
-        #760d11
-      );
-    }
-    to {
-      rotate: 360deg;
-      background: linear-gradient(
-        calc(180deg + 50deg),
-        #7af8af 20%,
-        #17f862 40%,
-        #01f43e
-      );
     }
   }
 </style>
