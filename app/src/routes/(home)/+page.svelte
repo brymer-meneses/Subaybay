@@ -11,8 +11,10 @@
   >
     <div class="ball h-[500px] w-[500px] rounded-full"></div>
   </div>
-  <div class=" z-10 mx-auto block flex h-full flex-col space-y-10 xl:w-[75%]">
-    <div class="flex h-64 flex-row items-end justify-between px-10 pb-5">
+  <div
+    class=" z-10 mx-auto flex h-full flex-col justify-between space-y-10 xl:block xl:w-[75%]"
+  >
+    <div class="flex h-60 flex-row items-end justify-between px-10 pb-5">
       <img src={UP} alt="" class="h-[75px] w-[75px]" />
       <div class="flex flex-row gap-4 xl:gap-6">
         <Button
@@ -29,18 +31,26 @@
     </div>
     <div class="hero h-[350px] p-10 backdrop-blur-lg">
       <p class="font-serif text-8xl font-bold">
-        Hi, I'm <br />Pawel Olek
+        UPB <br /> Subaybay
       </p>
       <p class="gap-2 text-xl italic text-[#f43e01]">
-        UI designer <span class="not-italic text-black">&</span> Illustrator
+        Internal Request <span class="not-italic text-black">Tracker</span>
       </p>
     </div>
-    <div class="grow p-10">
-      <p class="text-xl">
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Pariatur
-        aliquam alias at dolores totam tempore tempora? Velit dolorum impedit,
-        voluptatum deserunt facilis, in magnam quae vel maiores, cumque a odio!
-      </p>
+    <div class="flex grow flex-row space-x-16 p-10">
+      <div>
+        <p class="mb-2 text-xl font-semibold">Team ZEBrA:</p>
+        <ul class="space-y-1">
+          <li>Andre Bryant Bagalso</li>
+          <li>Brymer Bernard Meneses</li>
+          <li>Grandemir Baysa-Pee</li>
+          <li>Zedrick De Guzman</li>
+        </ul>
+      </div>
+      <div>
+        <p class="mb-2 text-xl font-semibold">Client:</p>
+        <p class="mb-2">Office of the University Registrar (UP Baguio)</p>
+      </div>
     </div>
   </div>
 </main>

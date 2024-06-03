@@ -7,7 +7,7 @@
 
   import * as Tooltip from "$lib/components/ui/tooltip/index.js";
   import Separator from "$lib/components/ui/separator/separator.svelte";
-  import CircleHelp from "lucide-svelte/icons/circle-help";
+  import Copyright from "lucide-svelte/icons/copyright";
 </script>
 
 <div
@@ -57,7 +57,7 @@
     />
     <Tooltip.Root>
       <Tooltip.Trigger class="absolute bottom-4 right-4">
-        <CircleHelp size="20" class="text-white" />
+        <Copyright size="20" class="text-white" />
       </Tooltip.Trigger>
       <Tooltip.Content class="">
         <p>
