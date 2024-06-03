@@ -9,7 +9,9 @@
   <div
     class="pointer-events-none absolute flex h-full w-full items-center justify-center"
   >
-    <div class="ball h-[500px] w-[500px] rotate-[20deg]"></div>
+    <div
+      class="ball h-[300px] w-[300px] rotate-[20deg] md:h-[400px] md:w-[400px] xl:h-[500px] xl:w-[500px]"
+    ></div>
   </div>
   <div
     class=" z-10 mx-auto flex h-full flex-col justify-between space-y-10 xl:block xl:w-[75%]"
@@ -41,10 +43,10 @@
       <div>
         <p class="mb-2 text-xl font-semibold">Team ZEBrA:</p>
         <ul class="space-y-1">
-          <li>Zedrick De Guzman</li>
-          <li>Grandemir Baysa-Pee</li>
-          <li>Brymer Bernard Meneses</li>
-          <li>Andre Bryant Bagalso</li>
+          <li class="truncate">Zedrick De Guzman</li>
+          <li class="truncate">Grandemir Baysa-Pee</li>
+          <li class="truncate">Brymer Bernard Meneses</li>
+          <li class="truncate">Andre Bryant Bagalso</li>
         </ul>
       </div>
       <div>
