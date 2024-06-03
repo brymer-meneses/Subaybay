@@ -32,8 +32,9 @@
       </div>
     </div>
     <div class="hero h-[350px] p-10 backdrop-blur-lg">
-      <p class="subtext gap-2 text-xl text-[#f43e01]">
-        Internal Request <span class="not-italic text-black">Tracker:</span>
+      <p class="subtext gap-2 text-xl text-[#D69A22]">
+        Internal <span class="text-[#760d11]">Request</span>
+        <span class="not-italic text-black">Tracker:</span>
       </p>
       <p class="maintext font-serif text-8xl font-bold">
         UPB <br /> Subaybay
@@ -63,12 +64,12 @@
       calc(180deg + 50deg),
       #f8af7a 20%,
       #f86217 40%,
-      #f43e01
+      #760d11
     );
     filter: blur(20px);
     animation: 200s test-animate infinite linear;
     /* uncomment for christmas light */
-    /* animation: 0.5s christmas-light infinite linear !important; */
+    /* animation: 1s christmas-light infinite linear !important; */
   }
 
   @keyframes test-animate {
@@ -87,7 +88,7 @@
         calc(180deg + 50deg),
         #f8af7a 20%,
         #f86217 40%,
-        #f43e01
+        #760d11
       );
     }
     to {
