@@ -1,80 +1,59 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import UP from "$lib/assets/UP.png";
-  import Oble from "$lib/assets/oble-2.jpg";
-
-  import { toast } from "svelte-sonner";
   import { Button } from "$lib/components/ui/button/index.js";
-
-  import * as Tooltip from "$lib/components/ui/tooltip/index.js";
-  import Separator from "$lib/components/ui/separator/separator.svelte";
-  import CircleHelp from "lucide-svelte/icons/circle-help";
 </script>
 
-<div
-  class="lg:min-h-[600px]xxx xl:min-h-[800px]xxx min-h-[100vh] w-full lg:grid lg:grid-cols-2"
+<main
+  class="bg-slate-50m border-lborder-r w-[80vw]m relative m-0 mx-auto block h-[100vh] bg-slate-50"
 >
-  <div class="flex h-[100vh] items-center justify-center border py-12">
-    <div class="mx-auto grid w-[350px] gap-6">
-      <div class="grid gap-2 text-center">
-        <div class="mb-2 flex justify-center">
-          <img src={UP} alt="up-logo" class="h-[80px] w-[80px]" />
-        </div>
-        <h1 class="text-3xl font-bold">Welcome to UPB Subaybay!</h1>
-        <p class="text-muted-foreground text-balance">
-          Internal Request Tracker for the Office of the University Registrar.
-        </p>
-        <Separator />
-      </div>
-      <div class="grid gap-4">
-        <div class="flex h-40 flex-col justify-end">
-          <p class="text-muted-foreground text-sm">
-            Sign in with Google to continue.
-          </p>
-        </div>
-        <form method="GET" action="/auth/login">
-          <Button
-            variant="outline"
-            class="w-full gap-2 py-6"
-            on:click={() => {
-              toast.loading("Logging in to Subaybay...");
-            }}
-            type="submit"
-          >
-            <img src="google.png" alt="google logo" class="w-8" />
-            <p class="font-inter font-semibold">Sign in</p>
-          </Button>
-        </form>
+  <div
+    class="pointer-events-none absolute flex h-full w-full items-center justify-center"
+  >
+    <div class="ball h-[500px] w-[500px] rounded-full"></div>
+  </div>
+  <div class=" z-10 mx-auto block flex h-full flex-col space-y-10 xl:w-[75%]">
+    <div class="flex h-64 flex-row items-end justify-between px-10 pb-5">
+      <img src={UP} alt="" class="h-[75px] w-[75px]" />
+      <div class="flex flex-row gap-8">
+        <Button
+          variant="link"
+          class="text-lg font-semibold"
+          on:click={() => goto("/login")}>Login</Button
+        >
+        <Button
+          variant="link"
+          class="text-lg font-semibold"
+          on:click={() => goto("/login")}>Docs</Button
+        >
       </div>
     </div>
+    <div class="hero h-[350px] p-10 backdrop-blur-lg">
+      <p class="font-serif text-8xl font-bold">
+        Hi, I'm <br />Pawel Olek
+      </p>
+      <p class="gap-2 text-xl italic text-[#f43e01]">
+        UI designer <span class="not-italic text-black">&</span> Illustrator
+      </p>
+    </div>
+    <div class="grow p-10">
+      <p class="text-xl">
+        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Pariatur
+        aliquam alias at dolores totam tempore tempora? Velit dolorum impedit,
+        voluptatum deserunt facilis, in magnam quae vel maiores, cumque a odio!
+      </p>
+    </div>
   </div>
-  <div class="bg-muted relative hidden lg:block">
-    <img
-      src={Oble}
-      alt="placeholder"
-      width="1920"
-      height="1080"
-      class="h-full w-full object-cover brightness-50 dark:brightness-[0.2] dark:grayscale"
-    />
-    <Tooltip.Root>
-      <Tooltip.Trigger class="absolute bottom-4 right-4">
-        <CircleHelp size="20" class="text-white" />
-      </Tooltip.Trigger>
-      <Tooltip.Content class="">
-        <p>
-          The image used is licensed under the <a
-            href="https://en.wikipedia.org/wiki/Creative_Commons"
-            target="_blank">Creative Commons</a
-          >
-          <a
-            href="https://creativecommons.org/licenses/by-sa/4.0/deed.en"
-            class="text-blue-500"
-            target="_blank"
-            >Attribution-Share Alike 4.0 International license.</a
-          >
-        </p>
-        <p><span class="font-semibold">Date:</span> 29 June 2023, 11:20:44</p>
-        <p><span class="font-semibold">Author:</span> Charrie Anne Nacor</p>
-      </Tooltip.Content>
-    </Tooltip.Root>
-  </div>
-</div>
+</main>
+
+<style>
+  .ball {
+    background: linear-gradient(
+      calc(180deg + 50deg),
+      #f8af7a 20%,
+      #f86217 40%,
+      #f43e01
+    );
+    filter: blur(20px);
+  }
+</style>
