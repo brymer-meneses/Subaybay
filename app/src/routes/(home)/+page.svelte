@@ -14,7 +14,7 @@
   <div class=" z-10 mx-auto block flex h-full flex-col space-y-10 xl:w-[75%]">
     <div class="flex h-64 flex-row items-end justify-between px-10 pb-5">
       <img src={UP} alt="" class="h-[75px] w-[75px]" />
-      <div class="flex flex-row gap-8">
+      <div class="flex flex-row gap-4 xl:gap-6">
         <Button
           variant="link"
           class="text-lg font-semibold"
