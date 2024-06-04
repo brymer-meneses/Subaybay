@@ -3,6 +3,7 @@
   import ListTodo from "lucide-svelte/icons/list-todo";
   import FileCog from "lucide-svelte/icons/file-cog";
   import UsersRound from "lucide-svelte/icons/users-round";
+  import Book from "lucide-svelte/icons/book";
 
   import ChevronLeft from "lucide-svelte/icons/chevron-left";
   import ChevronRight from "lucide-svelte/icons/chevron-right";
@@ -100,6 +101,19 @@
   </nav>
 
   <nav class="mt-auto flex w-full flex-col items-start p-2">
+    <Tooltip.Root>
+      <Tooltip.Trigger>
+        <div
+          class="text-muted-foreground hover:text-accent-foreground flex items-center"
+        >
+          <!-- Remove this div if may manual na -->
+          <div class="pointer-events-none">
+            <NavLink icon={Book} name="Manual" href="https://" {isCollapsed} />
+          </div>
+        </div>
+      </Tooltip.Trigger>
+      <Tooltip.Content side="right">Manual</Tooltip.Content>
+    </Tooltip.Root>
     <Separator class="w-full" />
     <Tooltip.Root>
       <Tooltip.Trigger>
