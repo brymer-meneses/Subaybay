@@ -7,6 +7,7 @@ const columns = [
   { header: "Email", key: "email", width: 30 },
   { header: "Date Requested", key: "startDate", width: 30 },
   { header: "Date Finished", key: "endDate", width: 30 },
+  { header: "Duration", key: "duration", width: 30 },
   { header: "Requested Form", key: "reqType", width: 60 },
   { header: "Copies", key: "copies", width: 30 },
   { header: "Purpose", key: "purpose", width: 80 },
@@ -15,7 +16,8 @@ const columns = [
 ]
 
 export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: Summary[], reqTypes: RequestType[], requests: Request[], params: Params) {
-  params.endDate = new Date(params.endDate.getTime() + 86399999);
+  params.endDate = new Date(params.endDate.getTime() + 86399999);//until 1s before the next day
+  
   const workbook = new ExcelJS.Workbook();
   const mainWorksheet = workbook.addWorksheet("Overview");
 
@@ -199,14 +201,25 @@ if (params.sortBy === "date" && params.sortType !== "request") {
 let fws = workbook.addWorksheet("Finished Requests");
 fws.state = "visible";
 fws.columns = columns;
+let spans: number[] = [];
 finished.forEach((r) => {
+  const start =  new Date(r.history[0].dateStarted);
+  const end = new Date(r.currentStage.dateFinished);
+  const span = Math.abs(end.getTime() - start.getTime()) ;
+  spans.push(span);
+
+  const mins = Math.floor(((span / 1000) / 60) % 60);
+  const hr = Math.floor((((span / 1000) / 60) / 60) % 24);
+  const days = Math.floor((((span / 1000) / 60) / 60) / 24);
+
   fws.addRow(
     {
       number: r.studentNumber,
       name: r.studentName,
       email: r.studentEmail,
-      startDate: new Date(r.history[0].dateStarted),
-      endDate: new Date(r.currentStage.dateFinished),
+      startDate: start,
+      endDate: end,
+      duration: `${(days > 0)? (days + ((days > 1)? "days": "day")) : ""} ${hr + (hr > 1? "hrs" : "hr")} ${mins + (mins > 1? "mins" : "min")}`, //spaghetti
       reqType: reqTypes.find((rt) => rt._id === r.requestTypeId)?.title,
       copies: r.copies,
       purpose: r.purpose,
@@ -214,6 +227,18 @@ finished.forEach((r) => {
     }
   )
 });
+// Add average duration
+const spansSum = spans.reduce((acc, curr) => acc + curr, 0) / spans.length;
+const mins = Math.floor(((spansSum / 1000) / 60) % 60);
+const hr = Math.floor((((spansSum / 1000) / 60) / 60) % 24);
+const days = Math.floor((((spansSum / 1000) / 60) / 60) / 24);
+
+fws.addRow(
+  {
+    duration: `Average: ${(days > 0)? (days + ((days > 1)? "days": "day")) : ""} ${hr + (hr > 1? "hrs" : "hr")} ${mins + (mins > 1? "mins" : "min")}`, 
+  }
+)
+
 
 let pws = workbook.addWorksheet("Pending Requests"); // pws = pending worksheet
 pws.state = "visible";
@@ -226,6 +251,7 @@ pending.forEach((r) => {
       email: r.studentEmail,
       startDate: new Date(r.history.length > 0 ? r.history[0].dateStarted : r.currentStage.dateStarted),
       endDate: "Ongoing",
+      duration: "Ongoing",
       reqType: reqTypes.find((rt) => rt._id === r.requestTypeId)?.title,
       copies: r.copies,
       purpose: r.purpose,
@@ -245,6 +271,7 @@ stale.forEach((r) => {
       email: r.studentEmail,
       startDate: new Date(r.history.length > 0 ? r.history[0].dateStarted : r.currentStage.dateStarted),
       endDate: "Discontinued",
+      duration: "Discontinued",
       reqType: reqTypes.find((rt) => rt._id === r.requestTypeId)?.title,
       copies: r.copies,
       purpose: r.purpose,
@@ -306,7 +333,7 @@ function formatRow(row: any, rowNumber: any) {
         color: { argb: "0000" },
         size: 12,
       };
-      if (cell.col === 4 || cell.col === 5 || cell.col === 7) {
+      if (cell.col === 4 || cell.col === 5 || cell.col === 6 || cell.col === 8) {
         cell.alignment = {
           horizontal: "center",
         };
