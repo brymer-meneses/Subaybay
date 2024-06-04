@@ -1,5 +1,6 @@
 import { sveltekit } from "@sveltejs/kit/vite";
 import { defineConfig, loadEnv } from "vite";
+import path from "path";
 
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
@@ -25,7 +26,7 @@ export default defineConfig(({ command, mode }) => {
         },
 
         "/docs": {
-          target: env.DOCS_URL,
+          target: loadEnv(mode, path.resolve(process.cwd(), '..'), '').DOCS_URL,
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/docs/, '')
         }
