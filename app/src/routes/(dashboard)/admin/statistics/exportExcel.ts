@@ -15,6 +15,7 @@ const columns = [
 ]
 
 export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: Summary[], reqTypes: RequestType[], requests: Request[], params: Params) {
+  params.endDate = new Date(params.endDate.getTime() + 86399999);
   const workbook = new ExcelJS.Workbook();
   const mainWorksheet = workbook.addWorksheet("Overview");
 
