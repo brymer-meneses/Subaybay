@@ -1,10 +1,10 @@
 <script lang="ts">
   import Sidebar from "./Sidebar.svelte";
   import Header from "./Header.svelte";
+  import { page } from "$app/stores";
   import clsx from "clsx";
   import { onMount } from "svelte";
   import type { LayoutServerData } from "./$types";
-  import queryString from "query-string";
   import { toast } from "svelte-sonner";
   import { notifications } from "$lib/notifications";
 
@@ -48,8 +48,9 @@
   $: sessionId = data.sessionId;
 
   onMount(() => {
+    const root = `${$page.url.hostname}:${$page.url.port}`;
     socket = new WebSocket(
-      `ws://localhost:8080/notifications/ws?userId=${userId}`,
+      `ws://${root}/socket/notifications/ws?userId=${userId}`,
     );
 
     socket.onerror = (ev) => {

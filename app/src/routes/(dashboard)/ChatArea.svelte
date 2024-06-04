@@ -54,8 +54,9 @@
       requestId,
     };
 
+    const root = `${$page.url.hostname}:${$page.url.port}`;
     socket = new WebSocket(
-      `ws://localhost:8080/chat/ws?${queryString.stringify(params)}`,
+      `ws://${root}/socket/chat/ws?${queryString.stringify(params)}`,
     );
 
     socket.onopen = () => {
