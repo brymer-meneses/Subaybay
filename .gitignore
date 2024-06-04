@@ -4,6 +4,7 @@ build
 .svelte-kit
 package
 
+docs/.vitepress/cache
 
 .env
 !.env.example
