@@ -11,28 +11,28 @@ db.permittedEmails.insertMany([
 
 db.users.insertMany([
   {
-    _id: "12345",
+    _id: "sampleid1",
     name: "Yuumi",
     email: "yuumi@lol.com",
     profileUrl: "https://www.mobafire.com/images/champion/square/yuumi.png",
     isAdmin: false,
   },
   {
-    _id: "mom",
+    _id: "sampleid2",
     name: "Smolder",
     email: "smolder@lol.com",
     profileUrl: "https://www.mobafire.com/images/champion/square/smolder.png",
     isAdmin: true,
   },
   {
-    _id: "gnar",
+    _id: "sampleid3",
     name: "Gnar",
     email: "gnar@lol.com",
     profileUrl: "https://www.mobafire.com/images/champion/square/gnar.png",
     isAdmin: true,
   },
   {
-    _id: "airylionsoul",
+    _id: "sampleid4",
     name: "Aurelion Sol",
     email: "sol@lol.com",
     profileUrl:
@@ -40,7 +40,7 @@ db.users.insertMany([
     isAdmin: false,
   },
   {
-    _id: "23523452345",
+    _id: "sampleid5",
     name: "Kog' Maw",
     email: "kogmaw@lol.com",
     profileUrl: "https://www.mobafire.com/images/champion/square/kogmaw.png",
@@ -48,21 +48,26 @@ db.users.insertMany([
   },
 ]);
 
-// [id, title]
+// [id, title, prepares]
 basicCerts = [
-  ["coe", "Certificate of Enrollment"],
-  ["cge", "Certificate of Grade Equivalence"],
-  ["cg", "Certificate of Graduation"],
-  ["cmi", "Certificate of Medium of Instruction"],
-  ["gmc", "Certificate of No Disciplinary Case (GMC)"],
-  ["cnhdg", "Certificate of Non-Issuance of Honorable Dismissal for Graduates"],
-  ["cue", "Certificate of Units Earned"],
-  ["cft", "Certificate of Free Tuition"],
-  ["cnstpsn", "Certificate of NSTP Serial No."],
-  ["cnson", "Certificate of No S.O. Number"],
-  ["ctc", "Certificate of Transfer Credential"],
-  ["tcg", "True Copy of Grades"],
-  ["cd", "Course Description"],
+  ["coe", "Certificate of Enrollment", "certifications"],
+  ["cge", "Certificate of Grade Equivalence", "certifications"],
+  ["cg", "Certificate of Graduation", "certifications"],
+  ["cmi", "Certificate of Medium of Instruction", "certifications"],
+  ["gmc", "Certificate of No Disciplinary Case (GMC)", "certifications"],
+  ["cnhdg", "Certificate of Non-Issuance of Honorable Dismissal for Graduates", "certifications"],
+  ["cue", "Certificate of Units Earned", "certifications"],
+  ["cft", "Certificate of Free Tuition", "certifications"],
+  ["cnstpsn", "Certificate of NSTP Serial No.", "certifications"],
+  ["cnson", "Certificate of No S.O. Number", "certifications"],
+  ["ctc", "Certificate of Transfer Credential", "certifications"],
+  ["tcg", "True Copy of Grades", "certifications"],
+  ["cd", "Course Description", "certifications"],
+  ["ctcotr", "Authentication of OTR", "CTC OTR"],
+  ["ctcd", "Authentication of Diploma", "CTC Diploma"],
+  ["dt", "Diploma Translation", "Diploma Translation"],
+  ["cttd", "Certified True Text of Diploma", "2nd copy of diploma"],
+  ["hd", "Honorable Dismissal", "HD and GMC"],
 ];
 
 let requestTypesToAdd = [];
@@ -78,7 +83,7 @@ for (const item of basicCerts) {
         defaultHandlerId: "",
       },
       {
-        stageTitle: "Prepare Certification",
+        stageTitle: "Prepare " + item[2],
         defaultHandlerId: "",
       },
       {
@@ -176,150 +181,79 @@ db.requestTypes.insertMany([
         defaultHandlerId: "",
       },
     ]
-  }
-]);
-
-db.requests.insertMany([
-  {
-    _id: "juststarted",
-    requestTypeId: "coe",
-    studentNumber: "2020",
-    studentName: "Hello World",
-    studentEmail: "student@student.com",
-    purpose: "Purpose",
-    remarks: "Good Morning",
-    copies: 1,
-    currentStage:
-    {
-      stageTypeIndex: 0,
-      handlerId: "airylionsoul",
-      prevHandlerId: "",
-      finished: false,
-      dateStarted: new Date('2024-04-27'),
-      dateFinished: new Date(0),
-      roomId: "134333412"
-    },
-    history: [],
-    nextHandlerId: ""
   },
   {
-    _id: "ongoing",
-    requestTypeId: "otr1",
-    studentNumber: "2021",
-    studentName: "Hello World",
-    studentEmail: "student@student.com",
-    purpose: "Purpose",
-    remarks: "Hello",
-    copies: 2,
-    currentStage:
-    {
-      stageTypeIndex: 2,
-      handlerId: "airylionsoul",
-      prevHandlerId: "airylionsoul",
-      finished: true,
-      dateStarted: new Date('2024-04-27'),
-      dateFinished: new Date(0),
-      roomId: "13212"
-    },
-    history: [
+    _id: "wes",
+    title: "WES",// todo find out what this means
+    version: 1,
+    stages: [
       {
-        stageTypeIndex: 0,
-        handlerId: "gnar",
-        prevHandlerId: "",
-        finished: true,
-        dateStarted: new Date('2024-04-27'),
-        dateFinished: new Date('2024-04-27'),
-        roomId: "1231232"
+        stageTitle: "Newly Created Request",
+        defaultHandlerId: "",
       },
       {
-        stageTypeIndex: 1,
-        handlerId: "airylionsoul",
-        prevHandlerId: "gnar",
-        finished: true,
-        dateStarted: new Date('2024-04-27'),
-        dateFinished: new Date('2024-04-27'),
-        roomId: "453435"
-      },
-    ],
-    nextHandlerId: "mom"
-  },
-  {
-    _id: "stale",
-    requestTypeId: "coe",
-    studentNumber: "2020",
-    studentName: "Hello World",
-    studentEmail: "student@student.com",
-    purpose: "Purpose",
-    remarks: "Good Morning",
-    copies: 3,
-    isFinished: true,
-    currentStage: {
-      stageTypeIndex: 0,
-      handlerId: "airylionsoul",
-      finished: false,
-      dateStarted: new Date("2024-04-27T00:00:00.000Z"),
-      dateFinished: new Date("1970-01-01T00:00:00.000Z"),
-      roomId: "134333412"
-    },
-    history: [],
-    nextHandlerId: ""
-  },
-  { //This should be modified to have all the stages in the history completed or delete this dummy data
-    _id: "finished",
-    requestTypeId: "coe",
-    studentNumber: "2020",
-    studentName: "Hello World",
-    studentEmail: "student@student.com",
-    purpose: "Purpose",
-    remarks: "Good Morning",
-    copies: 1,
-    isFinished: true,
-    currentStage: {
-      stageTypeIndex: 3,
-      handlerId: "airylionsoul",
-      finished: true,
-      dateStarted: new Date("2024-04-27T00:00:00.000Z"),
-      dateFinished: new Date("2024-05-13T08:00:00.000Z"),
-      roomId: "134333412"
-    },
-    history: [
-      {
-        stageTypeIndex: 0,
-        handlerId: "airylionsoul",
-        prevHandlerId: "gnar",
-        finished: true,
-        dateStarted: new Date('2024-04-27'),
-        dateFinished: new Date('2024-04-27'),
-        roomId: "453435"
+        stageTitle: "Preparation of OTR", //staff 2
+        defaultHandlerId: "",
       },
       {
-        stageTypeIndex: 1,
-        handlerId: "airylionsoul",
-        prevHandlerId: "gnar",
-        finished: true,
-        dateStarted: new Date('2024-04-27'),
-        dateFinished: new Date('2024-04-27'),
-        roomId: "453435"
+        stageTitle: "University Registrar Signature (OTR)",
+        defaultHandlerId: ""
       },
       {
-        stageTypeIndex: 2,
-        handlerId: "airylionsoul",
-        prevHandlerId: "gnar",
-        finished: true,
-        dateStarted: new Date('2024-04-27'),
-        dateFinished: new Date('2024-04-27'),
-        roomId: "453435"
+        stageTitle: "Preparation of WES", //staff 2
+        defaultHandlerId: ""
       },
       {
-        stageTypeIndex: 3,
-        handlerId: "airylionsoul",
-        prevHandlerId: "gnar",
-        finished: true,
-        dateStarted: new Date('2024-04-27'),
-        dateFinished: new Date('2024-04-27'),
-        roomId: "453435"
+        stageTitle: "University Registrar Signature (WES Verification)",
+        defaultHandlerId: ""
+      },
+      {
+        stageTitle: "Notify Requester",
+        defaultHandlerId: ""
       }
     ],
-    nextHandlerId: ""
+  },
+  {
+    _id: "cav",
+    title: "Certification, Authentication and Verification",
+    version: 1,
+    stages: [
+      {
+        stageTitle: "Newly Created Request",
+        defaultHandlerId: ""
+      },
+      {
+        stageTitle: "Preparation of CTC Diploma",
+        defaultHandlerId: ""
+      },
+      {
+        stageTitle: "University Registrar Signature (CTC Diploma)",
+        defaultHandlerId: ""
+      },
+      {
+        stageTitle: "Preparation of CTC Diploma Translation", // staff 1
+        defaultHandlerId: ""
+      },
+      {
+        stageTitle: "University Registrar Signature (CTC Diploma Translation)", // staff 1
+        defaultHandlerId: ""
+      },
+      {
+        stageTitle: "Preparation of OTR", // staff 2
+        defaultHandlerId: ""
+      },
+      {
+        stageTitle: "Preparation of CAV",
+        defaultHandlerId: ""
+      },
+      {
+        stageTitle: "University Registrar Signature", // staff 1
+        defaultHandlerId: ""
+      },
+      {
+        stageTitle: "Notify Requester",
+        defaultHandlerId: ""
+      },
+   ]
   }
 ]);
