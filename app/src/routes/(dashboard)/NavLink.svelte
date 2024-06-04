@@ -8,6 +8,7 @@
   export let icon: ComponentType;
   export let name: string;
   export let href: string;
+  export let target: string = "";
 
   export let isCollapsed: boolean;
 
@@ -17,6 +18,7 @@
 {#if !isCollapsed}
   <a
     {href}
+    {target}
     class={clsx(
       "hover:text-foreground flex h-10 items-center rounded-xl px-4",
       isSelected
@@ -34,6 +36,7 @@
     <Tooltip.Trigger asChild let:builder>
       <a
         {href}
+        {target}
         class={clsx(
           "hover:text-foreground flex h-10 items-center rounded-xl px-4",
           isSelected

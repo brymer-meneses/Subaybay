@@ -106,10 +106,13 @@
         <div
           class="text-muted-foreground hover:text-accent-foreground flex items-center"
         >
-          <!-- Remove this div if may manual na -->
-          <div class="pointer-events-none">
-            <NavLink icon={Book} name="Manual" href="https://" {isCollapsed} />
-          </div>
+          <NavLink
+            icon={Book}
+            name="Manual"
+            href="/docs"
+            {isCollapsed}
+            target={"_blank"}
+          />
         </div>
       </Tooltip.Trigger>
       <Tooltip.Content side="right">Manual</Tooltip.Content>

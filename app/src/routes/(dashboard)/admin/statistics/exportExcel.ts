@@ -205,6 +205,8 @@ let spans: number[] = [];
 finished.forEach((r) => {
   const start =  new Date(r.history[0].dateStarted);
   const end = new Date(r.currentStage.dateFinished);
+
+  // IF WEEKENDS SHOULD BE EXCLUDED FROM THE COUNT, create a variable n: number that stores the number of saturdays and sundays from start to end. then span = span - n * 86400000.
   const span = Math.abs(end.getTime() - start.getTime()) ;
   spans.push(span);
 

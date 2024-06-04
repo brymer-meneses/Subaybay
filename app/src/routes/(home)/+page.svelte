@@ -27,7 +27,7 @@
         <Button
           variant="link"
           class="text-lg font-semibold"
-          on:click={() => goto("/docs")}>Manual</Button
+          on:click={() => window.open("/docs", "_blank")}>Manual</Button
         >
       </div>
     </div>
