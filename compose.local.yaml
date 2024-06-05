@@ -3,17 +3,29 @@ name: subaybay-local
 
 services:
   app:
+    build: app
     restart: unless-stopped
     ports: 
       - ${APP_PORT}:3000
     env_file:
       - ./.env
+    environment:
+      ON_DOCKER: "true"
     depends_on:
       database:
         condition: service_started
       backend:
         condition: service_started
-    build: app
+      docs:
+        condition: service_started
+
+  docs:
+    build: docs
+    restart: unless-stopped
+    ports:
+      - ${DOCS_PORT}:4173
+    environment:
+      ON_DOCKER: "true"
 
   backend:
     build: backend
@@ -22,8 +34,11 @@ services:
       - ${BACKEND_PORT}:8080
     env_file:
       - ./.env
+    environment:
+      ON_DOCKER: "true"
     depends_on:
-      - database
+      database:
+        condition: service_started
 
   database:
     image: mongo

@@ -1,6 +1,6 @@
 
 MODE := dev
-SERVICES := backend
+SERVICES := backend docs
 
 all: run
 

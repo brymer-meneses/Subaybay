@@ -5,6 +5,7 @@ build
 package
 
 docs/.vitepress/cache
+docs/.vitepress/dist
 
 .env
 !.env.example
