@@ -171,7 +171,7 @@
                 <Textarea disabled value={info.remarks} />
 
                 <p class="text-sm font-semibold">Progress</p>
-                <Progress value={33} />
+                <Progress value={Math.floor(stage.currentStageTypeIndex / stage.finalStageTypeIndex * 100)} />
                 <p class="text-sm font-semibold">
                   Copies: <span class="font-normal">{info.copies}</span>
                 </p>

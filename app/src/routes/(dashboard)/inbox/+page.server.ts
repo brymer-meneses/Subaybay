@@ -142,7 +142,7 @@ const addStage = (
     currentStageTypeIndex: stage.stageTypeIndex,
     inboxStageTypeIndex: stageIdentifier.stageTypeIndex,
     inboxType: inboxType,
-    final: stage.stageTypeIndex == requestType.stages.length - 1,
+    finalStageTypeIndex: requestType.stages.length - 1,
     finished: stage.finished,
   });
 };

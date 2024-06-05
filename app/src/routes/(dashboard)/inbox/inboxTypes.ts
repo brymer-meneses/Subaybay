@@ -10,7 +10,7 @@ export interface InboxStageData {
   currentStageTypeIndex: number;
   inboxStageTypeIndex: number;
   inboxType: "active" | "pending";
-  final: boolean;
+  finalStageTypeIndex: number;
   finished: boolean;
 }
 

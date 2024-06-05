@@ -30,7 +30,7 @@
   <!--If in active inbox-->
   {#if stage.currentStageTypeIndex == stage.inboxStageTypeIndex}
     <ReassignButton {users} {stage} {request} {enhanceFunc} />
-    {#if stage.final}
+    {#if stage.finalStageTypeIndex == stage.currentStageTypeIndex}
       <ArchiveButton {stage} {enhanceFunc} />
     {:else}
       <FinishButton {users} {stage} {request} {enhanceFunc} />
