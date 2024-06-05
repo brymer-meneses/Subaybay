@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  srcDir: 'src',
   base: "/docs/",
   title: "UPB Subaybay Manual",
   description: "a documentation",
@@ -9,15 +10,17 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Examples', link: '/markdown-examples' }
+      { text: 'Glossary', link: '/glossary' }
     ],
 
     sidebar: [
       {
-        text: 'Examples',
+        text: 'Page Guides',
         items: [
-          { text: 'Markdown Examples', link: '/markdown-examples' },
-          { text: 'Runtime API Examples', link: '/api-examples' }
+          { text: 'Inbox', link: '/guides/adming' },
+          { text: 'Requests', link: '/guides/requests' },
+          { text: 'Configuration', link: '/guides/configuration' },
+          { text: 'Configuration', link: '/guides/configuration' },
         ]
       }
     ],
