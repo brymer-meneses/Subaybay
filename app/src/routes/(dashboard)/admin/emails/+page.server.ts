@@ -33,7 +33,9 @@ export const actions: Actions = {
     }
 
     const existingEmail = await permittedEmail.findOne({ email }, { projection: { _id:0 } });
-    if (!existingEmail) {
+    const existingUser = await user.findOne({ email }, { projection: { _id:0 } });
+
+    if (!existingEmail && !existingUser) {
       await permittedEmail.insertOne({ email, dateAdded: new Date() });
       setFlash(
         { type: "success", message: `${email} successfully added.` },
@@ -42,7 +44,7 @@ export const actions: Actions = {
 
     } else {
       setFlash(
-        { type: "error", message: `${email} is already in the list.` },
+        { type: "error", message: `${email} already has access.` },
         cookies,
       );
       return;
@@ -55,7 +57,7 @@ export const actions: Actions = {
     return { permittedEmails };
   },
 
-  remove_user: async ({ cookies, request }) => {
+  remove: async ({ cookies, request }) => {
     const data = await request.formData();
     const email: string = data.get("email") as string;
 
@@ -64,14 +66,13 @@ export const actions: Actions = {
       return;
     }
 
-    const staff = await user.findOne({ email });
+    const staff = await permittedEmail.findOne({ email });
 
     if (staff) {
-      await user.deleteOne({ email });
+      await permittedEmail.deleteOne({ email });
+      setFlash({ type: "success", message: `${email} removed` }, cookies);
     }
 
-    await permittedEmail.deleteOne({ email });
-    setFlash({ type: "success", message: `${email} removed` }, cookies);
 
     const res = await permittedEmail
       .find({}, { projection: { _id: 0 } })

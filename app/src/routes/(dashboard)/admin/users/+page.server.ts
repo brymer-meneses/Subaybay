@@ -1,4 +1,4 @@
-import type { PageServerLoad } from "./$types";
+import type { PageServerLoad, Actions } from "./$types";
 import { redirect } from "@sveltejs/kit";
 import { user, permittedEmail, type User } from "$lib/server/database";
 import { setFlash } from "sveltekit-flash-message/server";
@@ -26,10 +26,9 @@ export const actions: Actions = {
 
     if (staff) {
       await user.deleteOne({ email });
+      setFlash({ type: "success", message: `${email} removed` }, cookies);
     }
 
-    await permittedEmail.deleteOne({ email });
-    setFlash({ type: "success", message: `${email} removed` }, cookies);
 
     const res1 = await user.find({}).toArray();
     const res2 = await permittedEmail

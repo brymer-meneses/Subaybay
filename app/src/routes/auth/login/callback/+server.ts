@@ -43,16 +43,22 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
     );
 
     const account: GoogleAccount = await response.json();
-    const isWhitelisted = await permittedEmail.findOne({
-      email: account.email,
-    });
-    // if (!isWhitelisted) {
-    //   throw new Error(`${account.email} is not waitlisted.` );
-    // }
-
+    
     const googleId = account.sub;
     const existingAccount = await user.findOne({ _id: googleId });
-    if (!existingAccount) {
+    
+    if (!existingAccount) {  
+      const isWhitelisted = await permittedEmail.findOne({
+        email: account.email,
+      });
+
+      // Uncomment this para sa testing
+      // if (!isWhitelisted) {
+      //   throw new Error(`${account.email} is not waitlisted.` );
+      // } else {
+      //   await permittedEmail.deleteOne( {email: account.email }); // Remove the email in the permitted emails collection
+      // }
+
       await user.insertOne({
         _id: account.sub,
         name: account.name,

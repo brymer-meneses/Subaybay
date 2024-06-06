@@ -8,6 +8,7 @@ type User = {
 
 type PermittedEmail = {
   email: string;
+  dateAdded: Date;
 };
 
 type RequestTypeInstancesCount = {

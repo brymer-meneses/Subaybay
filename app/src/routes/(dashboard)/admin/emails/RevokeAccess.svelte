@@ -13,8 +13,7 @@
 <Dialog.Root bind:open={dialogOpened}>
   <Dialog.Trigger>
     <Button variant="link" class="gap-2 text-red-600"
-      ><CircleMinus /><span class="hidden lg:inline">Revoke Access</span
-      ></Button
+      ><CircleMinus /><span class="hidden lg:inline">Revoke</span></Button
     >
   </Dialog.Trigger>
   <Dialog.Content>
@@ -22,13 +21,13 @@
       <Dialog.Title>Are you sure?</Dialog.Title>
       <Dialog.Description>
         This action cannot be undone. The email {email.email} will be removed from
-        the list of permitted users. An administrator can add them back later. Are
+        the list of permitted emails. An administrator can add them back later. Are
         you sure you want to continue?
       </Dialog.Description>
     </Dialog.Header>
     <Dialog.Footer>
       <form
-        action="?/remove_user"
+        action="?/remove"
         method="POST"
         use:enhance={() => {
           return async ({ result }) => {
@@ -44,7 +43,7 @@
         <Button
           type="submit"
           variant="destructive"
-          on:click={() => (dialogOpened = !dialogOpened)}>Revoke Access</Button
+          on:click={() => (dialogOpened = !dialogOpened)}>Revoke</Button
         >
       </form>
     </Dialog.Footer>

@@ -1,14 +1,6 @@
 // https://www.mongodb.com/docs/mongodb-shell/reference/methods/
 db = new Mongo().getDB("subaybay");
 
-db.permittedEmails.insertMany([
-  { email: "yuumi@lol.com", dateAdded: new Date() },
-  { email: "smolder@lol.com", dateAdded: new Date() },
-  { email: "gnar@lol.com", dateAdded: new Date() },
-  { email: "sol@lol.com", dateAdded: new Date() },
-  { email: "kogmaw@lol.com", dateAdded: new Date() },
-])
-
 db.users.insertMany([
   {
     _id: "sampleid1",

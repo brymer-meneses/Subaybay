@@ -19,9 +19,9 @@
     <Dialog.Header>
       <Dialog.Title>Are you sure?</Dialog.Title>
       <Dialog.Description>
-        This action cannot be undone. The user below will be removed from the
-        list of permitted users. An administrator can add them back later. Are
-        you sure you want to continue?
+        This action cannot be undone. The user below will be removed. An
+        administrator can add them back later. Are you sure you want to
+        continue?
       </Dialog.Description>
     </Dialog.Header>
     <div class="flex h-20 items-center space-x-4">
@@ -34,9 +34,9 @@
         <div>
           <p class="text-sm font-bold leading-none">
             {user.name}
-            <span class="font-normal text-muted-foreground"> ({user._id})</span>
+            <span class="text-muted-foreground font-normal"> ({user._id})</span>
           </p>
-          <p class="text-sm text-muted-foreground">
+          <p class="text-muted-foreground text-sm">
             {user.email}
           </p>
         </div>
