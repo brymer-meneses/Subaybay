@@ -16,8 +16,12 @@ const columns = [
 ]
 
 export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: Summary[], reqTypes: RequestType[], requests: Request[], params: Params) {
-  params.endDate = new Date(params.endDate.getTime() + 86399999);//until 1s before the next day
-  
+  // set start date to be at 12 am
+  params.endDate = new Date (params.endDate.setHours(23, 59, 59, 999));
+  console.log("end Date", params.endDate)
+  params.startDate =  new Date (params.startDate.setHours(0, 0, 0, 0));
+  console.log("start Date", params.startDate)
+  console.log(params)
   const workbook = new ExcelJS.Workbook();
   const mainWorksheet = workbook.addWorksheet("Overview");
 
@@ -56,8 +60,6 @@ export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: 
       }
     }
   }
-
-
 
 // if has specified date range, filter requests
 if (params.dateRange) {
@@ -235,11 +237,13 @@ const mins = Math.floor(((spansSum / 1000) / 60) % 60);
 const hr = Math.floor((((spansSum / 1000) / 60) / 60) % 24);
 const days = Math.floor((((spansSum / 1000) / 60) / 60) / 24);
 
-fws.addRow(
-  {
-    duration: `Average: ${(days > 0)? (days + ((days > 1)? "days": "day")) : ""} ${hr + (hr > 1? "hrs" : "hr")} ${mins + (mins > 1? "mins" : "min")}`, 
-  }
-)
+if (finished.length > 0) {
+  fws.addRow(
+    {
+      duration: `Average: ${(days > 0)? (days + ((days > 1)? "days": "day")) : ""} ${hr + (hr > 1? "hrs" : "hr")} ${mins + (mins > 1? "mins" : "min")}`, 
+    }
+  )
+}
 
 
 let pws = workbook.addWorksheet("Pending Requests"); // pws = pending worksheet

@@ -59,6 +59,11 @@
   }
 
   let statDiagOpen = false;
+
+  function resetParamsDates() {
+    startDate = new Date(0);
+    endDate = new Date(0);
+  }
 </script>
 
 <Dialog.Root bind:open={statDiagOpen}>
@@ -196,6 +201,7 @@
           class="gap-2"
           on:click={() => {
             exportExcel(count, summary, reqTypes, requests, params);
+            resetParamsDates();
             statDiagOpen = !statDiagOpen;
           }}
         >

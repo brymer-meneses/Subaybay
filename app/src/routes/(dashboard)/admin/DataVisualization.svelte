@@ -2,33 +2,6 @@
   import { scaleLinear } from "d3-scale";
 
   export let data: { date: Date; value: number }[];
-  // dummy data
-  // const today = new Date();
-
-  // function subtractDays(date: Date, days: number) {
-  //   const result = new Date(date);
-  //   result.setDate(result.getDate() - days);
-  //   return result;
-  // }
-
-  // const data2 = [
-  //   { date: subtractDays(today, 13), value: 25 },
-  //   { date: subtractDays(today, 12), value: 20 },
-  //   { date: subtractDays(today, 11), value: 15 },
-  //   { date: subtractDays(today, 10), value: 10 },
-  //   { date: subtractDays(today, 9), value: 8 },
-  //   { date: subtractDays(today, 8), value: 5 },
-  //   { date: subtractDays(today, 7), value: 4 },
-  //   { date: subtractDays(today, 6), value: 3 },
-  //   { date: subtractDays(today, 5), value: 2 },
-  //   { date: subtractDays(today, 4), value: 1 },
-  //   { date: subtractDays(today, 3), value: 0 },
-  //   { date: subtractDays(today, 2), value: 1 },
-  //   { date: subtractDays(today, 1), value: 2 },
-  //   { date: subtractDays(today, 0), value: 3 },
-  // ];
-
-  // data = data2;
 
   const breakPoint = 640;
   let width = 1320;
