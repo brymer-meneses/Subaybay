@@ -232,8 +232,8 @@ export async function reassign(request: db.Request, newHandlerId: string) {
 
   const oldHandlerId = request.currentStage.handlerId;
 
-  // Don't allow reassigning to self
-  if (oldHandlerId === newHandlerId)
+  // Don't allow reassigning to self unless request is stale
+  if (oldHandlerId === newHandlerId && !request.isFinished)
     return new Result(
       "error",
       "Selected handler is already handling this stage",

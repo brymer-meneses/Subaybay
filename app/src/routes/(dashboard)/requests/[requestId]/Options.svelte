@@ -88,7 +88,9 @@
       <Dialog.Description class="">
         The request with details below will be marked as stale (discontinued).<br
         />
-        This action cannot be undone.
+        This action cannot be undone directly. However, after being marked as stale,
+        this request can still be reassigned to another person and will return to
+        a pending state.
       </Dialog.Description>
       <Separator />
       <div class="flex flex-col gap-4">
