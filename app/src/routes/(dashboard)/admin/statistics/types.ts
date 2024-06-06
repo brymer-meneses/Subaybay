@@ -63,11 +63,11 @@ type Stage = {
   dateFinished: Date;
 }
 
-
 export type Params = {
   sortBy: "date" | "requestType";
   sortType: "oldest" | "newest" | "request";
   startDate: Date;
   endDate: Date;
   dateRange: boolean;
+  excludeWeekends: boolean;
 };

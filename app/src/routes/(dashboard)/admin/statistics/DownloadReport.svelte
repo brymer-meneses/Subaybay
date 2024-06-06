@@ -17,12 +17,14 @@
   import Download from "lucide-svelte/icons/download";
   import CircleHelp from "lucide-svelte/icons/circle-help";
   import clsx from "clsx";
+  import Checkbox from "$lib/components/ui/checkbox/checkbox.svelte";
 
   export let count: RequestTypeInstancesCount[];
   export let summary: Summary[];
   export let requests: Request[];
   export let reqTypes: RequestType[];
 
+  let excludeWeekends = false;
   let sortBy: "date" | "requestType" = "date";
   let sortType: "oldest" | "newest" | "request" = "oldest";
   let startDate: Date = new Date(0);
@@ -33,6 +35,7 @@
     sortType,
     startDate,
     endDate,
+    excludeWeekends,
     dateRange: JSON.parse(dateRange),
   };
 
@@ -55,6 +58,7 @@
       startDate,
       endDate,
       dateRange: JSON.parse(dateRange),
+      excludeWeekends,
     };
   }
 
@@ -164,6 +168,7 @@
           </div>
         </div>
       {/if}
+
       <div class="flex flex-col gap-4">
         <Label>Sort by:</Label>
         <RadioGroup.Root bind:value={sortBy} class="flex">
@@ -193,22 +198,49 @@
         </div>
       {/if}
     </div>
-    <Dialog.Footer>
-      {#if (sortBy === "date" && sortType === "request") || ((startDate.getTime() === 0 || endDate.getTime() === 0) && JSON.parse(dateRange))}
-        <Button class="gap-2" disabled><Download /> Report</Button>
-      {:else}
-        <Button
-          class="gap-2"
-          on:click={() => {
-            exportExcel(count, summary, reqTypes, requests, params);
-            resetParamsDates();
-            statDiagOpen = !statDiagOpen;
-          }}
-        >
-          <Download />
-          Report
-        </Button>
-      {/if}
+    <Dialog.Footer class="mt-4">
+      <div class="flex w-full items-center justify-between">
+        <div class="flex items-center gap-2">
+          <Checkbox
+            id="exclude-weekends"
+            bind:checked={excludeWeekends}
+            aria-labelledby="exclude-label"
+          />
+          <Label
+            for="exclude-weekends"
+            id="exclude-label"
+            class="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >Exclude weekends</Label
+          >
+          <Tooltip.Root>
+            <Tooltip.Trigger>
+              <CircleHelp size="16" />
+            </Tooltip.Trigger>
+            <Tooltip.Content class="w-64">
+              <p class="text-muted-foreground">
+                Exclude weekends when calculating the duration of a finished
+                request. However, a request will still be included if it is
+                created/finished on a weekend.
+              </p>
+            </Tooltip.Content>
+          </Tooltip.Root>
+        </div>
+        {#if (sortBy === "date" && sortType === "request") || ((startDate.getTime() === 0 || endDate.getTime() === 0) && JSON.parse(dateRange))}
+          <Button class="gap-2" disabled><Download /> Report</Button>
+        {:else}
+          <Button
+            class="gap-2"
+            on:click={() => {
+              exportExcel(count, summary, reqTypes, requests, params);
+              resetParamsDates();
+              statDiagOpen = !statDiagOpen;
+            }}
+          >
+            <Download />
+            Report
+          </Button>
+        {/if}
+      </div>
     </Dialog.Footer>
   </Dialog.Content>
 </Dialog.Root>

@@ -1,27 +1,24 @@
 import ExcelJS from "exceljs";
 import type { Summary, RequestTypeInstancesCount, RequestType, Request, Params } from "./types";
 
-const columns = [
-  { header: "Student Number", key: "number", width: 50 },
-  { header: "Name", key: "name", width: 30 },
-  { header: "Email", key: "email", width: 30 },
-  { header: "Date Requested", key: "startDate", width: 30 },
-  { header: "Date Finished", key: "endDate", width: 30 },
-  { header: "Duration", key: "duration", width: 30 },
-  { header: "Requested Form", key: "reqType", width: 60 },
-  { header: "Copies", key: "copies", width: 30 },
-  { header: "Purpose", key: "purpose", width: 80 },
-  { header: "Remarks", key: "remarks", width: 80 },
-
-]
-
 export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: Summary[], reqTypes: RequestType[], requests: Request[], params: Params) {
   // set start date to be at 12 am
   params.endDate = new Date (params.endDate.setHours(23, 59, 59, 999));
-  console.log("end Date", params.endDate)
   params.startDate =  new Date (params.startDate.setHours(0, 0, 0, 0));
-  console.log("start Date", params.startDate)
-  console.log(params)
+
+  const columns = [
+    { header: "Student Number", key: "number", width: 50 },
+    { header: "Name", key: "name", width: 30 },
+    { header: "Email", key: "email", width: 30 },
+    { header: "Date Requested", key: "startDate", width: 30 },
+    { header: "Date Finished", key: "endDate", width: 30 },
+    { header: "Duration"+(params.excludeWeekends? " (Weekends Excluded)": ""), key: "duration", width: (params.excludeWeekends? 50: 30) },
+    { header: "Requested Form", key: "reqType", width: 60 },
+    { header: "Copies", key: "copies", width: 30 },
+    { header: "Purpose", key: "purpose", width: 80 },
+    { header: "Remarks", key: "remarks", width: 80 },
+  ]
+
   const workbook = new ExcelJS.Workbook();
   const mainWorksheet = workbook.addWorksheet("Overview");
 
@@ -63,7 +60,6 @@ export async function exportExcel(countS: RequestTypeInstancesCount[], summarY: 
 
 // if has specified date range, filter requests
 if (params.dateRange) {
-
   for (const rt of reqTypes) {
     counts.push({ reqTitle: rt.title, total: { pending: 0, finished: 0, stale: 0 } });
   }
@@ -113,9 +109,12 @@ if (params.dateRange) {
       return r;
     }
   });
+
 } else {
+  // if all lifetime
   counts = countS;
   summary = summarY;
+
 }
 
 counts.forEach((x) => {
@@ -200,7 +199,7 @@ if (params.sortBy === "date" && params.sortType !== "request") {
   });
 }
 
-let fws = workbook.addWorksheet("Finished Requests");
+let fws = workbook.addWorksheet("Finished Requests"); //fws = finished worksheet
 fws.state = "visible";
 fws.columns = columns;
 let spans: number[] = [];
@@ -208,8 +207,12 @@ finished.forEach((r) => {
   const start =  new Date(r.history[0].dateStarted);
   const end = new Date(r.currentStage.dateFinished);
 
-  // IF WEEKENDS SHOULD BE EXCLUDED FROM THE COUNT, create a variable n: number that stores the number of saturdays and sundays from start to end. then span = span - n * 86400000.
-  const span = Math.abs(end.getTime() - start.getTime()) ;
+  let span = Math.abs(end.getTime() - start.getTime()) ;
+  
+  if (params.excludeWeekends) {
+    span = span - countWeekendDays(start, end) * 86400000; 
+  }
+
   spans.push(span);
 
   const mins = Math.floor(((span / 1000) / 60) % 60);
@@ -266,7 +269,7 @@ pending.forEach((r) => {
   )
 });
 
-let sws = workbook.addWorksheet("Stale Requests");
+let sws = workbook.addWorksheet("Stale Requests"); // sws = stale worksheet
 sws.state = "visible";
 sws.columns = columns;
 stale.forEach((r) => {
@@ -388,3 +391,10 @@ export const sortFinishedOldest = (a: Request, b: Request) => {
   return dateA - dateB;
 };
 
+// from https://stackoverflow.com/a/21465288
+function countWeekendDays( d0: Date, d1: Date )
+{
+  var ndays = 1 + Math.round((d1.getTime()-d0.getTime())/(24*3600*1000));
+  var nsaturdays = Math.floor( (d0.getDay()+ndays) / 7 );
+  return 2*nsaturdays + (d0.getDay()==0? 1:0) - (d1.getDay()==6? 1:0);
+}
