@@ -127,14 +127,14 @@
             <Button
               type="submit"
               variant="link"
-              class="text-muted-foreground rounded-lg"
+              class="text-muted-foreground gap-2 rounded-lg no-underline"
             >
               <LogOut class="h-5 w-5" />
+              <span class="text-base font-normal"
+                >{!isCollapsed ? "Sign Out" : ""}</span
+              >
             </Button>
           </form>
-          {#if !isCollapsed}
-            <span class="text-base">Sign Out</span>
-          {/if}
         </div>
       </Tooltip.Trigger>
       <Tooltip.Content side="right">Logout</Tooltip.Content>
