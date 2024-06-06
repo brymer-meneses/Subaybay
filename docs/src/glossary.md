@@ -1,4 +1,4 @@
-# Glossary? (term may change)
+# Glossary
 
 This page provides standardized terms and phrases to refer to specific elements in the application.
 
@@ -44,6 +44,19 @@ A request can only at one stage at a time, so the "handler of
 the **current stage**" is also the "handler of the **request**".
 
 ## Procedures on requests
+**(Move) Forward** <br/>
+Change a request's current stage to the next stage, that is, closer to completion
+
+**(Move) Backward** <br/>
+Change a request's current stage to a previous stage, that is, further from completion
+
+**Pass**
+Change a request's handler, encompasses all movement (forward, backward, or without changing the stage).
+
+**Pass to Next** <br/>
+Finish a stage and move a request forward, to the next handler
+
+When referring to *stages*, the term "finish" has the same meaning as "pass to next" <br/>
 
 **Reassign** <br/>
 Change the handler of a request's current stage.
@@ -53,15 +66,6 @@ can be used interchangeably
 
 **Rollback** <br/>
 Move a request backwards to a previous stage.
-
-**Pass / Pass to Next** <br/>
-Finish a stage and move a request forward, to the next handler
-
-When referring to *stages*, the term "finish" has the same meaning as "pass to next" <br/>
-<small>
-Note that "<em>passing</em> a request" specifically refers to moving it forward,
-other terms are provided for moving it backwards or changing handler
-</small>
 
 **Finish (request)** <br/>
 Complete a request. The request should be archived right after

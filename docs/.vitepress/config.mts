@@ -15,12 +15,30 @@ export default defineConfig({
 
     sidebar: [
       {
+        items: [
+          { text: 'Glossary', link: '/glossary' },
+          { text: 'Navigation Guide', link: '/page-guides/navigation' },
+        ]
+      },
+      {
         text: 'Page Guides',
         items: [
-          { text: 'Inbox', link: '/guides/adming' },
-          { text: 'Requests', link: '/guides/requests' },
-          { text: 'Configuration', link: '/guides/configuration' },
-          { text: 'Configuration', link: '/guides/configuration' },
+          { text: 'Inbox', link: '/page-guides/inbox' },
+          { text: 'Requests', link: '/page-guides/requests' },
+          { text: 'Configuration', link: '/page-guides/configuration' },
+          { text: 'Admin', link: '/page-guides/configuration' },
+        ]
+      },
+      {
+        text: 'Functionality Guides',
+        items: [
+          { text: 'Request Management', link: '/functionality-guides/request-management' },
+        ]
+      },
+      {
+        text: 'Examples',
+        link: '/examples/examples-directory',
+        items: [
         ]
       }
     ],
