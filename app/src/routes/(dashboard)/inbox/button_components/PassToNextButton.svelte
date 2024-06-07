@@ -28,6 +28,7 @@
   <form action="?/finish_stage" method="POST" use:enhance={enhanceFunc}>
     <input type="hidden" name="requestId" value={stage.requestId} />
     <input type="hidden" name="nextHandlerId" value={request.nextHandlerId} />
+
     <Button
       type="submit"
       disabled={request.nextHandlerId in users ? false : true}

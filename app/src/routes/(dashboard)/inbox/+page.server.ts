@@ -3,12 +3,17 @@ import * as db from "$lib/server/database";
 import * as dbUtils from "$lib/server/dbUtils";
 import { ObjectId } from "mongodb";
 
+import ConfirmationEmail from "$lib/components/email/ConfirmationEmail.svelte";
+
 import { superValidate } from "sveltekit-superforms";
 import { formSchema } from "./schema";
 import { zod } from "sveltekit-superforms/adapters";
 import { fail } from "@sveltejs/kit";
 import { lucia } from "$lib/server/auth";
 import { sendInboxNotification } from "$lib/notifications";
+
+import transporter from "$lib/server/email";
+import { render } from "svelte-email";
 
 import type { InboxStageData, UserInfo } from "./inboxTypes";
 import {
@@ -148,6 +153,8 @@ const addStage = (
 };
 
 import { setFlash } from "sveltekit-flash-message/server";
+import { GOOGLE_SENDER_EMAIL } from "$env/static/private";
+
 
 export const actions: Actions = {
   add_request: async (event) => {
@@ -253,6 +260,7 @@ export const actions: Actions = {
     const data = await request.formData();
     const requestId: string = data.get("requestId")?.toString() ?? "";
     const nextHandlerId: string = data.get("nextHandlerId")?.toString() ?? "0";
+    const shouldSendEmail: boolean = (data.get("shouldSendEmail")?.toString() ?? "false") === "true" ? true : false;
 
     // Get Request and its RequestType
     const {
@@ -263,6 +271,40 @@ export const actions: Actions = {
     if (!req || !reqType) {
       setFlash(reqError, cookies);
       return;
+    }
+
+    console.log(shouldSendEmail);
+
+    if (shouldSendEmail) {
+      const emailHtml = render({
+        template: ConfirmationEmail,
+        props: {
+          request: req,
+          requestType: reqType,
+        }
+      });
+
+      const email = {
+        from: GOOGLE_SENDER_EMAIL,
+        to: req.studentEmail,
+        subject: `${reqType.title} has been finished`,
+        html: emailHtml
+      };
+
+      const sendEmail = async (mail: typeof email) => {
+        await new Promise((resolve, reject) => {
+          transporter.sendMail(mail, (err, info) => {
+            if (err) {
+              console.error(err);
+              reject(err);
+            } else {
+              resolve(info);
+            }
+          });
+        });
+      };
+
+      await sendEmail(email);
     }
 
     // Check if the request still exists in active

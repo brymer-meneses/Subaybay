@@ -37,24 +37,27 @@
       });
     } else {
       // group stages according to request type
-      // 
+      //
       let grouper: { [key: string]: MultiStageData } = {};
       for (const stage of stages) {
         if (stage.requestId in grouper) {
           // use the most recent stage as the main stage
-          if (grouper[stage.requestId].mainStage.inboxStageTypeIndex < stage.inboxStageTypeIndex) {
-            grouper[stage.requestId].otherStages.push(grouper[stage.requestId].mainStage);
-            grouper[stage.requestId].mainStage = stage
-          }
-          else {
+          if (
+            grouper[stage.requestId].mainStage.inboxStageTypeIndex <
+            stage.inboxStageTypeIndex
+          ) {
+            grouper[stage.requestId].otherStages.push(
+              grouper[stage.requestId].mainStage,
+            );
+            grouper[stage.requestId].mainStage = stage;
+          } else {
             grouper[stage.requestId].otherStages.push(stage);
           }
-        }
-        else {
+        } else {
           grouper[stage.requestId] = {
             mainStage: stage,
             otherStages: [],
-          }
+          };
         }
       }
 
@@ -62,9 +65,9 @@
         // sort other stages for organization purposes
         grouper[key].otherStages.sort((a, b) => {
           return a.inboxStageTypeIndex - b.inboxStageTypeIndex;
-        })
+        });
         return grouper[key];
-      })
+      });
     }
   }
 
@@ -86,7 +89,9 @@
     });
   }
 
-  $: { if (isShown && filtered.length > 0) select(0);}
+  $: {
+    if (isShown && filtered.length > 0) select(0);
+  }
 
   function select(stageIndex: number) {
     selectedStageIndex = stageIndex;
@@ -113,12 +118,12 @@
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
       <div class="relative w-full">
         <Search
-          class="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4"
+          class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
         />
         <Input
           type="search"
           placeholder="Search..."
-          class="bg-background w-full rounded-lg pl-8"
+          class="w-full rounded-lg bg-background pl-8"
           bind:value={searchTerm}
         />
       </div>

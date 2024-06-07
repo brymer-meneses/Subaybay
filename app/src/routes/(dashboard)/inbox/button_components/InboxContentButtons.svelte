@@ -1,5 +1,5 @@
 <script lang="ts">
-  import FinishButton from "./FinishButton.svelte";
+  import PassToNextButton from "./PassToNextButton.svelte";
   import ReassignButton from "./ReassignButton.svelte";
   import RollbackButton from "./RollbackButton.svelte";
   import ArchiveButton from "./ArchiveButton.svelte";
@@ -14,7 +14,7 @@
   export let processing = false;
 
   $: stage = multiStage.mainStage;
-  
+
   function enhanceFunc() {
     processing = true;
 
@@ -33,7 +33,7 @@
     {#if stage.finalStageTypeIndex == stage.currentStageTypeIndex}
       <ArchiveButton {stage} {enhanceFunc} />
     {:else}
-      <FinishButton {users} {stage} {request} {enhanceFunc} />
+      <PassToNextButton {users} {stage} {request} {enhanceFunc} />
     {/if}
     <!--If in pending inbox-->
   {:else}

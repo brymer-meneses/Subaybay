@@ -2,13 +2,18 @@
   import { enhance } from "$app/forms";
   import type { InboxStageData } from "../inboxTypes";
 
+  import { Switch } from "$lib/components/ui/switch";
+
   import * as Dialog from "$lib/components/ui/dialog";
   import { Button } from "$lib/components/ui/button";
 
   import { CheckCheck } from "lucide-svelte";
+  import { Card } from "$lib/components/ui/card";
 
   export let stage: InboxStageData;
   export let enhanceFunc: any;
+
+  let shouldSendEmail = false;
 </script>
 
 <Dialog.Root>
@@ -32,12 +37,19 @@
       </Dialog.Description>
     </Dialog.Header>
 
+    <Card class="flex items-center justify-between p-3">
+      <p class="text-sm">Send email to the student</p>
+      <Switch bind:checked={shouldSendEmail} />
+    </Card>
+
     <Dialog.Footer>
       <form action="?/finish_stage" method="POST" use:enhance={enhanceFunc}>
         <input type="hidden" name="requestId" value={stage.requestId} />
         <input type="hidden" name="nextHandlerId" value={""} />
+        <input type="hidden" name="shouldSendEmail" value={shouldSendEmail} />
+
         <Button class="h-9" variant="destructive" type="submit">
-          I'm Sure. Archive.
+          I'm Sure, archive.
         </Button>
       </form>
     </Dialog.Footer>
