@@ -1,10 +1,13 @@
 <script lang="ts">
   import * as DD from "$lib/components/ui/dropdown-menu";
   import * as Dialog from "$lib/components/ui/dialog";
+  import { Label } from "$lib/components/ui/label";
   import { Button } from "$lib/components/ui/button";
   import { MoveLeft } from "lucide-svelte/icons";
   import { enhance } from "$app/forms";
   import type { MultiStageData } from "../inboxTypes";
+  import { ChevronDown } from "lucide-svelte/icons";
+  import Separator from "$lib/components/ui/separator/separator.svelte";
 
   export let multiStage: MultiStageData;
   export let enhanceFunc;
@@ -39,58 +42,63 @@
   </Dialog.Trigger>
   <Dialog.Content>
     <Dialog.Header>
-      <Dialog.Title>Are you sure?</Dialog.Title>
+      <Dialog.Title>Rollback Request</Dialog.Title>
       <Dialog.Description>
-        This request is currently at
-        <strong>
-          Stage {stage.currentStageTypeIndex}: {stage.stageTitle}
-        </strong>. <br />
-
-        This will rollback the request to
-        <strong>
-          <DD.DropdownMenu>
-            <DD.DropdownMenuTrigger>
-              <div
-                class="flex flex-col items-center gap-x-4 rounded-lg border border-gray-300 p-1"
-              >
-                Stage {selectedIndex}: {options[selectedIndex]}
-              </div>
-            </DD.DropdownMenuTrigger>
-            <DD.DropdownMenuContent>
-              <DD.DropdownMenuLabel>Rollback to</DD.DropdownMenuLabel>
-
-              <DD.DropdownMenuSeparator />
-              <DD.DropdownMenuRadioGroup
-                value={selectedIndex}
-                onValueChange={(value) => {
-                  if (value) selectedIndex = value;
-                }}
-              >
-                {#each Object.keys(options) as optionStageIndex}
-                  <DD.DropdownMenuRadioItem
-                    class={selectedIndex === optionStageIndex
-                      ? "border-gray border"
-                      : ""}
-                    value={optionStageIndex}
-                  >
-                    {optionStageIndex}: {options[optionStageIndex]}
-                  </DD.DropdownMenuRadioItem>
-                {/each}
-              </DD.DropdownMenuRadioGroup>
-            </DD.DropdownMenuContent>
-          </DD.DropdownMenu>
-        </strong>
-
-        <br />
-        It will have to pass through all of the in-between stages again.
-        <br />
-        <br />
-        This cannot be undone.
-        <br />
-        Are you sure?
+        <p>
+          Once a request has been rolled back, it will have to pass through all
+          of the in-between stages again.
+        </p>
+        <p>This cannot be undone.</p>
       </Dialog.Description>
+      <Separator />
     </Dialog.Header>
-
+    <div class="flex flex-col gap-8">
+      <div class="flex flex-col gap-4">
+        <Label>Current Stage:</Label>
+        <Button variant="outline" class="pointer-events-none">
+          Stage {stage.currentStageTypeIndex}: {stage.stageTitle}.
+        </Button>
+      </div>
+      <div class="flex flex-col gap-4">
+        <Label>Rollback to:</Label>
+        <DD.DropdownMenu>
+          <DD.DropdownMenuTrigger class="group flex flex-row items-center">
+            <div
+              class="group-hover:bg-secondary flex h-full items-center rounded-l-xl border px-1 transition"
+            >
+              <ChevronDown />
+            </div>
+            <Button
+              variant="outline"
+              class="group-hover:bg-secondary w-full gap-4 rounded-l-none"
+            >
+              Stage {selectedIndex}: {options[selectedIndex]}
+            </Button>
+          </DD.DropdownMenuTrigger>
+          <DD.DropdownMenuContent>
+            <DD.DropdownMenuLabel>Rollback to</DD.DropdownMenuLabel>
+            <DD.DropdownMenuSeparator />
+            <DD.DropdownMenuRadioGroup
+              value={selectedIndex}
+              onValueChange={(value) => {
+                if (value) selectedIndex = value;
+              }}
+            >
+              {#each Object.keys(options) as optionStageIndex}
+                <DD.DropdownMenuRadioItem
+                  class={selectedIndex === optionStageIndex
+                    ? "border-gray border"
+                    : ""}
+                  value={optionStageIndex}
+                >
+                  Stage {optionStageIndex}: {options[optionStageIndex]}
+                </DD.DropdownMenuRadioItem>
+              {/each}
+            </DD.DropdownMenuRadioGroup>
+          </DD.DropdownMenuContent>
+        </DD.DropdownMenu>
+      </div>
+    </div>
     <Dialog.Footer>
       <form action="?/rollback_stage" method="POST" use:enhance={enhanceFunc}>
         <input type="hidden" name="requestId" value={stage.requestId} />
