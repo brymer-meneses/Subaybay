@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, tick } from "svelte";
+  import { tick } from "svelte";
   import { page } from "$app/stores";
   import { toast } from "svelte-sonner";
   import * as Card from "$lib/components/ui/card/index.js";
@@ -9,6 +9,8 @@
   import SendHorizontal from "lucide-svelte/icons/send-horizontal";
   import { Input } from "$lib/components/ui/input";
   import { Button } from "$lib/components/ui/button";
+
+  import { browser } from "$app/environment";
 
   import queryString from "query-string";
 
@@ -48,42 +50,44 @@
 
   let messageContainer: HTMLDivElement;
 
-  onMount(async () => {
-    const params = {
-      userId,
-      requestId,
-    };
+  $: {
+    if (browser) {
+      const params = {
+        userId,
+        requestId,
+      };
 
-    const root = `${$page.url.hostname}:${$page.url.port}`;
-    socket = new WebSocket(
-      `ws://${root}/socket/chat/ws?${queryString.stringify(params)}`,
-    );
-
-    socket.onopen = () => {
-      socket.send(
-        JSON.stringify({
-          type: "authenticate",
-          content: {
-            sessionId,
-          },
-        }),
+      const root = `${$page.url.hostname}:${$page.url.port}`;
+      socket = new WebSocket(
+        `ws://${root}/socket/chat/ws?${queryString.stringify(params)}`,
       );
-    };
 
-    socket.onclose = () => {
-      toast.error("The chat server closed unexpectedly", {
-        description: "Chat will not work properly",
-      });
-    };
+      socket.onopen = () => {
+        socket.send(
+          JSON.stringify({
+            type: "authenticate",
+            content: {
+              sessionId,
+            },
+          }),
+        );
+      };
 
-    socket.onerror = (ev) => {
-      toast.error("Failed to connect to the chat server", {
-        description: "Sending and receiving messages will not work",
-      });
-      // socket = null;
-    };
-    socket.onmessage = receiveMessageHandler;
-  });
+      socket.onclose = () => {
+        toast.error("The chat server closed unexpectedly", {
+          description: "Chat will not work properly",
+        });
+      };
+
+      socket.onerror = (ev) => {
+        toast.error("Failed to connect to the chat server", {
+          description: "Sending and receiving messages will not work",
+        });
+        // socket = null;
+      };
+      socket.onmessage = receiveMessageHandler;
+    }
+  }
 
   async function scrollToBottom(node: HTMLDivElement) {
     node.scroll({ top: node.scrollHeight, behavior: "smooth" });
