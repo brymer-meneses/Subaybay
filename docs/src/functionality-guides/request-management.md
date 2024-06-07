@@ -1,5 +1,5 @@
 # Request Management
-This section covers passing requests between members, handling ("removing") discontinued requests, and archiving requests.
+This section covers passing requests between members, handling ("removing") discontinued requests, archiving requests, and editing exiting requests.
 
 ## Pass to Next
 When there are no issues, a request only moves forward. This means that for the most part, the only 

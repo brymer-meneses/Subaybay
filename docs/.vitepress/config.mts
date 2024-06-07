@@ -33,6 +33,7 @@ export default defineConfig({
         text: 'Functionality Guides',
         items: [
           { text: 'Request Management', link: '/functionality-guides/request-management' },
+          { text: 'User Management', link: '/functionality-guides/user-management' }
         ]
       },
       {
