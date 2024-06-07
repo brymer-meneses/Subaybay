@@ -37,7 +37,7 @@
   {#if stage.finished}
     <CircleCheckBig class="stroke-2 text-emerald-600" />
   {:else if stage.isCurrent}
-    <LoaderCircle class="stroke-2 text-sky-600" />
+    <LoaderCircle class="stroke-2 text-sky-600 motion-safe:animate-spin" />
   {:else}
     <Circle class="stroke-2 text-gray-400" />
   {/if}

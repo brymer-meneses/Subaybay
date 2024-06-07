@@ -64,7 +64,7 @@
   </Sheet.Root>
 
   <Breadcrumb.Root class="hidden md:flex">
-    <Breadcrumb.List class="text-base">
+    <Breadcrumb.List>
       {#each $page.data.headerData as data, index}
         <Breadcrumb.Item>
           {#if data.href !== undefined}
