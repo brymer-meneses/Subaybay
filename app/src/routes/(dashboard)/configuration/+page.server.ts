@@ -32,15 +32,25 @@ export const actions: Actions = {
     const title = form.get("title")?.toString() ?? "";
     let stagesJSONStr = form.get("stageData")?.toString() ?? "";
 
-    if (title == "undefined" || title == "") {
+    /* 
+     * "Undefined" or any combination of cases might get accepted as a title 
+     * so, i put .toLowerCase()
+     * 
+     * I also put .trim() to prevent submitting titles with only just whitespaces. 
+     * ''.trim() is still '' haha
+     */
+
+    if (title.toLowerCase() == "undefined" || title.trim() == "") {
       setFlash({ type: "error", message: "Invalid Title" }, cookies);
       return fail(400);
     }
 
     // uses getLatestRequestTypes since it needs to also ignore deprecated
     const latestRequests = await getLatestRequestTypes();
+
+    // I added .toLowerCase() so that "Certificate of enrollment" wont get accepted if "Certificate of Enrollment" already exists.
     const duplicate = latestRequests.find((requestType) => {
-      return title === requestType.title;
+      return title.toLowerCase() === requestType.title.toLowerCase();
     });
     if (duplicate) {
       setFlash(
