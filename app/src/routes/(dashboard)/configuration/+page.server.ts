@@ -41,7 +41,7 @@ export const actions: Actions = {
     const latestRequests = await getLatestRequestTypes();
     const duplicate = latestRequests.find((requestType) => {
       return title === requestType.title;
-    })
+    });
     if (duplicate) {
       setFlash(
         {

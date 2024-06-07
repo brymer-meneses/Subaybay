@@ -1,6 +1,6 @@
 import * as db from "$lib/server/database";
 
-export async function getInbox (userId: string) {
+export async function getInbox(userId: string) {
   let userInbox: db.Inbox | null = await db.inbox.findOne({ userId: userId });
   if (!userInbox) {
     userInbox = {
@@ -13,9 +13,9 @@ export async function getInbox (userId: string) {
   }
 
   return userInbox;
-};
+}
 
-export async function addToInbox (
+export async function addToInbox(
   userId: string,
   type: "current" | "recallable",
   stageIdentifier: db.StageIdentifier,
@@ -28,9 +28,9 @@ export async function addToInbox (
       $set: { [type]: [...userInbox[type], stageIdentifier] },
     },
   );
-};
+}
 
-export async function removeFromInbox (
+export async function removeFromInbox(
   userId: string,
   type: "current" | "recallable",
   stageIdentifier: db.StageIdentifier,
@@ -49,7 +49,7 @@ export async function removeFromInbox (
       },
     },
   );
-};
+}
 
 export async function removeFromAllInboxes(request: db.Request) {
   await removeFromPendingInboxes(request);
@@ -74,14 +74,14 @@ export async function removeFromPendingInboxes(request: db.Request) {
   }
 }
 
-export async function removeFromActiveInbox (request: db.Request) {
+export async function removeFromActiveInbox(request: db.Request) {
   await removeFromInbox(request.currentStage.handlerId, "current", {
     requestId: request._id,
     stageTypeIndex: request.currentStage.stageTypeIndex,
   });
-};
+}
 
-export async function moveInInbox (
+export async function moveInInbox(
   userId: string,
   from: "current" | "recallable",
   stageIdentifier: db.StageIdentifier,
@@ -103,9 +103,9 @@ export async function moveInInbox (
       },
     },
   );
-};
+}
 
-export async function existsInInbox (
+export async function existsInInbox(
   userId: string,
   type: "current" | "recallable",
   stageIdentifier: db.StageIdentifier,
@@ -122,4 +122,4 @@ export async function existsInInbox (
   }
 
   return false;
-};
+}

@@ -149,7 +149,7 @@
             <div
               class={clsx(
                 startDate.getTime() === 0 && JSON.parse(dateRange)
-                  ? "text-muted-foreground pointer-events-none"
+                  ? "pointer-events-none text-muted-foreground"
                   : "",
               )}
             >

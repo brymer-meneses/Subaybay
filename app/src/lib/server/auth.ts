@@ -4,7 +4,7 @@ import { Google } from "arctic";
 
 import { dev } from "$app/environment";
 import { session, user, type User } from "./database";
-import { env } from "$env/dynamic/private"
+import { env } from "$env/dynamic/private";
 
 export const google = new Google(
   env.GOOGLE_CLIENT_ID,

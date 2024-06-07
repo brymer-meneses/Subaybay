@@ -38,7 +38,7 @@ export const load: PageServerLoad = async (event) => {
       total: { finished: 0, pending: 0, stale: 0 },
     });
   }
-  
+
   count = Array.from(new Set(count)) as RequestTypeInstancesCount[]; //remove duplicates
 
   for (const request of requests) {

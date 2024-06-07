@@ -20,9 +20,9 @@
     {href}
     {target}
     class={clsx(
-      "hover:text-foreground flex h-10 items-center rounded-xl px-4",
+      "flex h-10 items-center rounded-xl px-4 hover:text-foreground",
       isSelected
-        ? "text-accent-foreground bg-slate-200"
+        ? "bg-slate-200 text-accent-foreground"
         : "text-muted-foreground",
     )}
   >
@@ -38,9 +38,9 @@
         {href}
         {target}
         class={clsx(
-          "hover:text-foreground flex h-10 items-center rounded-xl px-4",
+          "flex h-10 items-center rounded-xl px-4 hover:text-foreground",
           isSelected
-            ? "text-accent-foreground bg-slate-200"
+            ? "bg-slate-200 text-accent-foreground"
             : "text-muted-foreground",
         )}
         use:builder.action

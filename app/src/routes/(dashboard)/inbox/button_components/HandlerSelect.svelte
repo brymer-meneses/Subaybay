@@ -20,7 +20,7 @@
         class="flex flex-row items-center gap-x-4 rounded-lg border border-gray-300 p-1"
       >
         {#if !(selectedUserId in users)}
-          <CircleUserRound class="stroke-muted-foreground h-8 w-8 stroke-1" />
+          <CircleUserRound class="h-8 w-8 stroke-muted-foreground stroke-1" />
         {:else}
           <Avatar.Avatar class="h-8 w-8">
             <Avatar.AvatarImage

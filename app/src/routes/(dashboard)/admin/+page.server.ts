@@ -31,7 +31,6 @@ export const load: PageServerLoad = async (event) => {
     { type: "Stale", count: 0, countThisMonth: -1 },
   ];
 
-
   // TODO: Refactor this. Ugly code
   for (const request of requests) {
     const reqType = requestTypes.find((e) => e._id === request.requestTypeId);
@@ -52,10 +51,13 @@ export const load: PageServerLoad = async (event) => {
         request.currentStage.finished
       ) {
         summary[0].count++;
-        const dateDiff = Math.floor((today.getTime() - currentStageDateFinished.getTime()) / (1000 * 60 * 60 * 24));
+        const dateDiff = Math.floor(
+          (today.getTime() - currentStageDateFinished.getTime()) /
+            (1000 * 60 * 60 * 24),
+        );
 
         if (dateDiff < 14) {
-          overview[overview.length-1 - dateDiff].value++;
+          overview[overview.length - 1 - dateDiff].value++;
         }
 
         if (isThisMonthAndYear(currentStageDateFinished)) {
@@ -77,7 +79,6 @@ function subtractDays(date: Date, days: number) {
   result.setHours(0, 0, 0, 0); // Ensure time is set to midnight
   return result;
 }
-
 
 function isThisMonthAndYear(date: Date) {
   const today = new Date();

@@ -155,7 +155,6 @@ const addStage = (
 import { setFlash } from "sveltekit-flash-message/server";
 import { GOOGLE_SENDER_EMAIL } from "$env/static/private";
 
-
 export const actions: Actions = {
   add_request: async (event) => {
     const { locals, cookies } = event;
@@ -260,7 +259,10 @@ export const actions: Actions = {
     const data = await request.formData();
     const requestId: string = data.get("requestId")?.toString() ?? "";
     const nextHandlerId: string = data.get("nextHandlerId")?.toString() ?? "0";
-    const shouldSendEmail: boolean = (data.get("shouldSendEmail")?.toString() ?? "false") === "true" ? true : false;
+    const shouldSendEmail: boolean =
+      (data.get("shouldSendEmail")?.toString() ?? "false") === "true"
+        ? true
+        : false;
 
     // Get Request and its RequestType
     const {
@@ -281,14 +283,14 @@ export const actions: Actions = {
         props: {
           request: req,
           requestType: reqType,
-        }
+        },
       });
 
       const email = {
         from: GOOGLE_SENDER_EMAIL,
         to: req.studentEmail,
         subject: `${reqType.title} has been finished`,
-        html: emailHtml
+        html: emailHtml,
       };
 
       const sendEmail = async (mail: typeof email) => {

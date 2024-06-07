@@ -29,7 +29,6 @@ export const actions: Actions = {
       setFlash({ type: "success", message: `${email} removed` }, cookies);
     }
 
-
     const res1 = await user.find({}).toArray();
     const res2 = await permittedEmail
       .find({}, { projection: { _id: 0 } })

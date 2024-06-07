@@ -6,10 +6,9 @@ import { redirect } from "sveltekit-flash-message/server";
 import { client } from "$lib/server/database";
 
 export const handle: Handle = async ({ event, resolve }) => {
-
-  // NOTE: 
+  // NOTE:
   // Top level await on $lib/server/database runs the code on build-time somehow
-  // tis is bade since the database may not be started on build time. 
+  // tis is bade since the database may not be started on build time.
   // This is a no-op, if the client is already connected
   await client.connect();
 

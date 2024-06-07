@@ -13,8 +13,8 @@
     </span>
   </Pop.PopoverTrigger>
   <Pop.PopoverContent>
-      <div>
-        {input}
-      </div>
+    <div>
+      {input}
+    </div>
   </Pop.PopoverContent>
 </Pop.Popover>

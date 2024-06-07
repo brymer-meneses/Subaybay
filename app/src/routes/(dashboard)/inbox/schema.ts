@@ -14,7 +14,7 @@ export const formSchema = z.object({
   selectedReqTypeIds: z
     .string()
     //checks for json string array with more than 1 element
-    .refine((value) => /^\[.+\]$/.test(value), { 
+    .refine((value) => /^\[.+\]$/.test(value), {
       message: "Must select atleast one request type",
     }),
 });

@@ -18,8 +18,11 @@ export interface InboxNotification {
   stageTypeIndex: number;
 }
 
-export async function sendInboxNotification(notification: InboxNotification, receiverId: string, credentials: { sessionId: string, userId: string }) {
-
+export async function sendInboxNotification(
+  notification: InboxNotification,
+  receiverId: string,
+  credentials: { sessionId: string; userId: string },
+) {
   if (receiverId == credentials.userId) {
     return;
   }
@@ -38,17 +41,17 @@ export async function sendInboxNotification(notification: InboxNotification, rec
     method: "POST",
     body: payload,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       userId: credentials.userId,
-      sessionId: credentials.sessionId
-    }
+      sessionId: credentials.sessionId,
+    },
   });
 
   try {
     const body = await response.text();
-    console.log(body)
+    console.log(body);
   } catch (err) {
-    console.log(err)
+    console.log(err);
   }
 }
 

@@ -131,12 +131,12 @@
       </div>
       <div class="relative w-80">
         <Search
-          class="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4"
+          class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
         />
         <Input
           type="search"
           placeholder="Search..."
-          class="bg-background w-full rounded-lg pl-8"
+          class="w-full rounded-lg bg-background pl-8"
           bind:value={searchTerm}
         />
       </div>

@@ -6,18 +6,24 @@ export const load: PageServerLoad = async (event) => {
   const activeRequests: db.Request[] = [];
   const finishedRequests: db.Request[] = [];
   const staleRequests: db.Request[] = [];
-  const requestTypes: db.RequestType[] = await db.requestType.find({}).toArray();
-
+  const requestTypes: db.RequestType[] = await db.requestType
+    .find({})
+    .toArray();
 
   for (const request of allReq) {
     if (!request.isFinished) {
       activeRequests.push(request);
     } else {
       const stageTypeIndex = request.currentStage.stageTypeIndex;
-      const requestType = requestTypes.find((rt: db.RequestType) => rt._id === request.requestTypeId)
+      const requestType = requestTypes.find(
+        (rt: db.RequestType) => rt._id === request.requestTypeId,
+      );
       if (requestType) {
-        const lastStageIndex = requestType?.stages.length-1;
-        if (stageTypeIndex <= lastStageIndex && !request.currentStage.finished) {
+        const lastStageIndex = requestType?.stages.length - 1;
+        if (
+          stageTypeIndex <= lastStageIndex &&
+          !request.currentStage.finished
+        ) {
           staleRequests.push(request);
         } else {
           finishedRequests.push(request);

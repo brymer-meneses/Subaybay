@@ -36,13 +36,13 @@
   <Card.Content>
     <div class="text-2xl font-bold">{s.count}</div>
     {#if s.type === "Finished"}
-      <p class="text-muted-foreground mb-4 text-xs">
+      <p class="mb-4 text-xs text-muted-foreground">
         +{percentage === Infinity ? s.countThisMonth : percentage + "%"} this month
       </p>
     {:else if s.type === "Pending"}
-      <p class="text-muted-foreground text-xs">ongoing requests</p>
+      <p class="text-xs text-muted-foreground">ongoing requests</p>
     {:else if s.type === "Stale"}
-      <p class="text-muted-foreground text-xs">stale requests</p>
+      <p class="text-xs text-muted-foreground">stale requests</p>
     {/if}
   </Card.Content>
 </Card.Root>

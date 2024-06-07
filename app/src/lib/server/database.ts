@@ -3,7 +3,6 @@ import { dev } from "$app/environment";
 
 import { env } from "$env/dynamic/private";
 
-
 // NOTE:
 // This gets run by the build step somehow, MongoClient(URI) will throw an
 // error if URI is not a valid mongodb URI (because mongodb://undefined:undefined/ is not valid)
@@ -13,9 +12,10 @@ import { env } from "$env/dynamic/private";
 // `client.connect` is a no-op if it is connected anyway
 
 const hostname = dev ? "localhost" : env.DATABASE_HOSTNAME;
-const URI = env.DATABASE_NAME !== undefined
-  ? `mongodb://${env.DATABASE_USERNAME}:${env.DATABASE_PASSWORD}@${hostname}:${env.DATABASE_PORT}/`
-  : "mongodb://localhost:27017";
+const URI =
+  env.DATABASE_NAME !== undefined
+    ? `mongodb://${env.DATABASE_USERNAME}:${env.DATABASE_PASSWORD}@${hostname}:${env.DATABASE_PORT}/`
+    : "mongodb://localhost:27017";
 
 export const client = new MongoClient(URI);
 export const database = client.db(env.DATABASE_NAME);

@@ -28,15 +28,14 @@ export type Summary = {
 type StageType = {
   stageTitle: string;
   defaultHandlerId: string;
-}
-
+};
 
 export type RequestType = {
   _id: string;
   title: string;
   version: number;
   stages: Array<StageType>;
-}
+};
 
 export type Request = {
   _id: string;
@@ -61,7 +60,7 @@ type Stage = {
   finished: boolean;
   dateStarted: Date;
   dateFinished: Date;
-}
+};
 
 export type Params = {
   sortBy: "date" | "requestType";

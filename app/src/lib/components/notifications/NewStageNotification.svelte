@@ -15,7 +15,7 @@
 </script>
 
 <div
-  class="mr-[14rem] flex h-[75px] w-full flex-row items-center justify-between gap-2 rounded-full pb-5 pl-3 pr-3 pt-5 overflow-hidden"
+  class="mr-[14rem] flex h-[75px] w-full flex-row items-center justify-between gap-2 overflow-hidden rounded-full pb-5 pl-3 pr-3 pt-5"
 >
   <div class="flex flex-row items-center gap-4">
     <Avatar.Root class="h-7 w-7">
@@ -23,15 +23,15 @@
       <Avatar.Fallback>CN</Avatar.Fallback>
     </Avatar.Root>
     <div class="w-full overflow-hidden">
-      <p class="text-muted-foreground text-sm">
+      <p class="text-sm text-muted-foreground">
         {from.name.split(" ")[0]}
         {type === "pass" ? "passed" : "reassigned"}
         a request to you.
       </p>
-      <p class="text-muted-foreground text-xs">
+      <p class="text-xs text-muted-foreground">
         <strong>{requestType.title}</strong>
       </p>
-      <p class="text-muted-foreground overflow-text-ellipsis text-xs">
+      <p class="overflow-text-ellipsis text-xs text-muted-foreground">
         {requestType.stages[request.currentStage.stageTypeIndex].stageTitle}
       </p>
     </div>

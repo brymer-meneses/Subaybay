@@ -1,6 +1,6 @@
 import * as db from "./database";
 
-export async function getLatestRequestTypes () {
+export async function getLatestRequestTypes() {
   let requestTypes: { [title: string]: db.RequestType } = {};
   var cursor = db.requestType.find();
 
@@ -24,7 +24,7 @@ export async function getLatestRequestTypes () {
   });
 
   return reqTypeList;
-};
+}
 
 /**
  * accessed by request type id
@@ -37,4 +37,4 @@ export async function getRequestTypes() {
   }
 
   return requestTypes;
-};
+}

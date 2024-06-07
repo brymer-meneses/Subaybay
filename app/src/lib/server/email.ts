@@ -1,4 +1,4 @@
-import { dev } from "$app/environment"
+import { dev } from "$app/environment";
 import { env } from "$env/dynamic/private";
 
 import nodemailer from "nodemailer";

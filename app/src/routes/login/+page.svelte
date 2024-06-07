@@ -20,14 +20,14 @@
           <img src={UP} alt="up-logo" class="h-[80px] w-[80px]" />
         </div>
         <h1 class="text-3xl font-bold">Welcome to UPB Subaybay!</h1>
-        <p class="text-muted-foreground text-balance">
+        <p class="text-balance text-muted-foreground">
           Internal Request Tracker for the Office of the University Registrar.
         </p>
         <Separator />
       </div>
       <div class="grid gap-4">
         <div class="flex h-40 flex-col justify-end">
-          <p class="text-muted-foreground text-sm">
+          <p class="text-sm text-muted-foreground">
             Sign in with Google to continue.
           </p>
         </div>
@@ -47,7 +47,7 @@
       </div>
     </div>
   </div>
-  <div class="bg-muted relative hidden lg:block">
+  <div class="relative hidden bg-muted lg:block">
     <img
       src={Oble}
       alt="placeholder"

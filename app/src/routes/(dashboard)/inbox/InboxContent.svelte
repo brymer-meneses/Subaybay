@@ -40,7 +40,7 @@
 
 {#if multiStage && stage && info && requests[stage.requestId]}
   <Card.Root class="overflow-hidden">
-    <Card.Header class="bg-muted/50 flex flex-row items-start">
+    <Card.Header class="flex flex-row items-start bg-muted/50">
       <div class="grid gap-0.5">
         <Card.Title class="group flex items-center gap-2 text-lg">
           {stage.stageTitle}
@@ -81,7 +81,9 @@
               </div>
             {/if}
             <br />
-            Current Stage: <Badge variant="secondary">{stage.currentStageTypeIndex}: {stage.stageTitle}</Badge>
+            Current Stage: <Badge variant="secondary"
+              >{stage.currentStageTypeIndex}: {stage.stageTitle}</Badge
+            >
           </div>
         </Card.Description>
       </div>
@@ -171,7 +173,12 @@
                 <Textarea disabled value={info.remarks} />
 
                 <p class="text-sm font-semibold">Progress</p>
-                <Progress value={Math.floor(stage.currentStageTypeIndex / stage.finalStageTypeIndex * 100)} />
+                <Progress
+                  value={Math.floor(
+                    (stage.currentStageTypeIndex / stage.finalStageTypeIndex) *
+                      100,
+                  )}
+                />
                 <p class="text-sm font-semibold">
                   Copies: <span class="font-normal">{info.copies}</span>
                 </p>
