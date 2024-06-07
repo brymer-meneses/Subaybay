@@ -126,9 +126,9 @@
   }
 </script>
 
-<Card.Root>
-  <Card.Content class="flex w-full flex-col gap-5 p-3">
-    <ScrollArea>
+<Card.Root class="flex h-full flex-col">
+  <Card.Content class="flex h-full w-full grow flex-col gap-5 p-3">
+    <ScrollArea class="h-[50vh] grow overflow-y-scroll xl:h-auto">
       <div bind:this={messageContainer}>
         <div class={height + " flex w-[96%] flex-col gap-2"}>
           {#each messages as message, _}
@@ -145,7 +145,7 @@
 
     <div class="flex w-full items-center space-x-2">
       <Input
-        class="border-b-1 w-full bg-accent focus:ring-0 focus:ring-offset-0"
+        class="border-b-1 bg-accent w-full focus:ring-0 focus:ring-offset-0"
         placeholder="Send a message ..."
         bind:value={messageContent}
       />

@@ -9,6 +9,7 @@
   import { Badge } from "$lib/components/ui/badge";
   import { Textarea } from "$lib/components/ui/textarea";
   import { Progress } from "$lib/components/ui/progress";
+  import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
 
   import Forward from "lucide-svelte/icons/forward";
   import MessageCircle from "lucide-svelte/icons/message-circle";
@@ -39,8 +40,8 @@
 </script>
 
 {#if multiStage && stage && info && requests[stage.requestId]}
-  <Card.Root class="overflow-hidden">
-    <Card.Header class="flex flex-row items-start bg-muted/50">
+  <Card.Root class="flex h-full flex-col">
+    <Card.Header class="bg-muted/50 flex flex-row items-start">
       <div class="grid gap-0.5">
         <Card.Title class="group flex items-center gap-2 text-lg">
           {stage.stageTitle}
@@ -102,103 +103,102 @@
         </Button>
       </div>
     </Card.Header>
-    <Card.Content
-      class="flex flex-grow flex-col gap-4 px-6 py-2 xl:h-[35.6rem]"
-    >
-      <Tabs.Root value="details">
-        <Tabs.List>
-          <Tabs.Trigger value="details" class="flex gap-2">
-            <ReceiptText size={18} />
-            Details</Tabs.Trigger
-          >
-          <Tabs.Trigger value="chat" class="flex gap-2"
-            ><MessageCircle size={18} />Chat</Tabs.Trigger
-          >
-        </Tabs.List>
+    <Card.Content class="flex grow flex-col gap-4 overflow-hidden px-6 py-2">
+      <Tabs.Root value="details" class="flex grow flex-col overflow-hidden">
+        <div>
+          <Tabs.List>
+            <Tabs.Trigger value="details" class="flex gap-2">
+              <ReceiptText size={18} />
+              Details</Tabs.Trigger
+            >
+            <Tabs.Trigger value="chat" class="flex gap-2"
+              ><MessageCircle size={18} />Chat</Tabs.Trigger
+            >
+          </Tabs.List>
+        </div>
 
-        <Tabs.Content value="details">
-          <Card.Root>
-            <Card.Content class="p-4">
-              <div class="flex flex-col gap-4">
-                <p class="text-sm font-semibold">Student Information</p>
-                <div class="flex flex-wrap gap-4">
-                  <Tooltip.Root>
-                    <Tooltip.Trigger>
-                      <Badge
-                        variant="secondary"
-                        class="flex gap-2 text-sm font-normal"
-                      >
-                        <GraduationCap size={18} />
-                        {info.studentNumber}
-                      </Badge>
-                    </Tooltip.Trigger>
-                    <Tooltip.Content>
-                      <p>Student Number</p>
-                    </Tooltip.Content>
-                  </Tooltip.Root>
+        <Tabs.Content value="details" class="grow overflow-hidden">
+          <ScrollArea class="h-full overflow-y-scroll">
+            <Card.Root class="h-[60vh] xl:h-full">
+              <Card.Content class="p-4">
+                <div class="flex flex-col gap-4">
+                  <p class="text-sm font-semibold">Student Information</p>
+                  <div class="flex flex-wrap gap-4">
+                    <Tooltip.Root>
+                      <Tooltip.Trigger>
+                        <Badge
+                          variant="secondary"
+                          class="flex gap-2 text-sm font-normal"
+                        >
+                          <GraduationCap size={18} />
+                          {info.studentNumber}
+                        </Badge>
+                      </Tooltip.Trigger>
+                      <Tooltip.Content>
+                        <p>Student Number</p>
+                      </Tooltip.Content>
+                    </Tooltip.Root>
 
-                  <Tooltip.Root>
-                    <Tooltip.Trigger>
-                      <Badge
-                        variant="secondary"
-                        class="flex gap-2 text-sm font-normal"
-                      >
-                        <UserRound size={18} />
-                        {info.studentName}
-                      </Badge>
-                    </Tooltip.Trigger>
-                    <Tooltip.Content>
-                      <p>Student Name</p>
-                    </Tooltip.Content>
-                  </Tooltip.Root>
+                    <Tooltip.Root>
+                      <Tooltip.Trigger>
+                        <Badge
+                          variant="secondary"
+                          class="flex gap-2 text-sm font-normal"
+                        >
+                          <UserRound size={18} />
+                          {info.studentName}
+                        </Badge>
+                      </Tooltip.Trigger>
+                      <Tooltip.Content>
+                        <p>Student Name</p>
+                      </Tooltip.Content>
+                    </Tooltip.Root>
 
-                  <Tooltip.Root>
-                    <Tooltip.Trigger>
-                      <Badge
-                        variant="secondary"
-                        class="flex gap-2 text-sm font-normal"
-                      >
-                        <Mail size={18} />
-                        {info.studentEmail}
-                      </Badge>
-                    </Tooltip.Trigger>
-                    <Tooltip.Content>
-                      <p>Student Email</p>
-                    </Tooltip.Content>
-                  </Tooltip.Root>
+                    <Tooltip.Root>
+                      <Tooltip.Trigger>
+                        <Badge
+                          variant="secondary"
+                          class="flex gap-2 text-sm font-normal"
+                        >
+                          <Mail size={18} />
+                          {info.studentEmail}
+                        </Badge>
+                      </Tooltip.Trigger>
+                      <Tooltip.Content>
+                        <p>Student Email</p>
+                      </Tooltip.Content>
+                    </Tooltip.Root>
+                  </div>
+                  <p class="text-sm font-semibold">Purpose</p>
+                  <Textarea disabled value={info.purpose} />
+                  <p class="text-sm font-semibold">Remarks</p>
+                  <Textarea disabled value={info.remarks} />
+
+                  <p class="text-sm font-semibold">Progress</p>
+                  <Progress
+                    value={Math.floor(
+                      (stage.currentStageTypeIndex /
+                        stage.finalStageTypeIndex) *
+                        100,
+                    )}
+                  />
+                  <p class="text-sm font-semibold">
+                    Copies: <span class="font-normal">{info.copies}</span>
+                  </p>
                 </div>
-                <p class="text-sm font-semibold">Purpose</p>
-                <Textarea disabled value={info.purpose} />
-                <p class="text-sm font-semibold">Remarks</p>
-                <Textarea disabled value={info.remarks} />
-
-                <p class="text-sm font-semibold">Progress</p>
-                <Progress
-                  value={Math.floor(
-                    (stage.currentStageTypeIndex / stage.finalStageTypeIndex) *
-                      100,
-                  )}
-                />
-                <p class="text-sm font-semibold">
-                  Copies: <span class="font-normal">{info.copies}</span>
-                </p>
-              </div>
-            </Card.Content>
-          </Card.Root>
+              </Card.Content>
+            </Card.Root>
+          </ScrollArea>
         </Tabs.Content>
 
-        <Tabs.Content value="chat">
-          <div class="flex flex-col">
-            <ChatArea
-              requestId={stage.requestId}
-              height="min-[320px]:h-[21.4rem] sm:max-lg:h-[21.4rem] xl:h-[26.25rem]"
-            />
-          </div>
+        <Tabs.Content value="chat" class="grow overflow-hidden">
+          <ChatArea requestId={stage.requestId} height="h-full" />
+          <!-- height="min-[320px]:h-[21.4rem] sm:max-lg:h-[21.4rem] xl:h-[26.25rem]" -->
         </Tabs.Content>
       </Tabs.Root>
     </Card.Content>
     <Card.Footer>
-      <div class="mt-auto flex w-full justify-end gap-4 pt-4">
+      <div class="flex h-10 w-full justify-end gap-4 py-2">
         <InboxContentButtons
           request={requests[stage.requestId]}
           {multiStage}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from "$app/stores";
   import { Button } from "$lib/components/ui/button/index.js";
   import { Input } from "$lib/components/ui/input/index.js";
   import { Textarea } from "$lib/components/ui/textarea/index.js";
@@ -78,140 +79,165 @@
       <FilePlus size="18" /> Create Request
     </Button>
   </Dialog.Trigger>
-  <Dialog.Content
-    class="max-h-screen sm:overflow-y-scroll md:overflow-y-scroll"
-  >
+  <Dialog.Content>
+    <!-- class="max-h-screen sm:overflow-y-scroll md:overflow-y-scroll" -->
     <form action="?/add_request" method="POST" use:enhance>
       <Dialog.Header>
         <Dialog.Title>Add details for new request.</Dialog.Title>
       </Dialog.Header>
-      <div class="grid gap-4 py-4">
-        <Form.Field
-          {form}
-          name="studentNumber"
-          class="gap-cols-4 grid items-center"
-        >
-          <Form.Control let:attrs>
-            <Form.Label>Student Number</Form.Label>
-            <Input
-              class="col-span-3"
-              {...attrs}
-              bind:value={$formData.studentNumber}
-            />
-          </Form.Control>
-          <Form.FieldErrors />
-        </Form.Field>
-
-        <Form.Field
-          {form}
-          name="studentName"
-          class="gap-cols-4 grid items-center"
-        >
-          <Form.Control let:attrs>
-            <Form.Label>Student Name</Form.Label>
-            <Input
-              class="col-span-3"
-              {...attrs}
-              bind:value={$formData.studentName}
-            />
-          </Form.Control>
-          <Form.FieldErrors />
-        </Form.Field>
-
-        <Form.Field
-          {form}
-          name="studentEmail"
-          class="gap-cols-4 grid items-center"
-        >
-          <Form.Control let:attrs>
-            <Form.Label>Student Email</Form.Label>
-            <Input
-              class="col-span-3"
-              {...attrs}
-              bind:value={$formData.studentEmail}
-            />
-          </Form.Control>
-          <Form.FieldErrors />
-        </Form.Field>
-
-        <Form.Field {form} name="purpose" class="gap-cols-4 grid items-center">
-          <Form.Control let:attrs>
-            <Form.Label>Purpose</Form.Label>
-            <Textarea
-              class="col-span-3"
-              {...attrs}
-              bind:value={$formData.purpose}
-            />
-          </Form.Control>
-          <Form.FieldErrors />
-        </Form.Field>
-
-        <Form.Field {form} name="remarks" class="gap-cols-4 grid items-center">
-          <Form.Control let:attrs>
-            <Form.Label>Remarks</Form.Label>
-            <Textarea
-              class="col-span-3"
-              {...attrs}
-              bind:value={$formData.remarks}
-            />
-          </Form.Control>
-          <Form.FieldErrors />
-        </Form.Field>
-
-        <Form.Field {form} name="selectedReqTypeIds" class="flex flex-col">
-          <Popover.Root bind:open>
+      <div class="grid gap-4 py-4 lg:grid-cols-8">
+        <!-- Student Number -->
+        <div class="lg:col-span-4">
+          <Form.Field
+            {form}
+            name="studentNumber"
+            class="gap-cols-4 grid items-center"
+          >
             <Form.Control let:attrs>
-              <Form.Label>Request Types</Form.Label>
-              <Popover.Trigger asChild let:builder role="combobox" {...attrs}>
-                <Button
-                  builders={[builder]}
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={open}
-                  class="w-full justify-between"
-                >
-                  {selectedCount == 0
-                    ? "Select atleast one request type"
-                    : selectedCount + " selected"}
-                  <CaretSort class="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </Popover.Trigger>
-              <input
-                hidden
-                value={$formData.selectedReqTypeIds}
-                name={attrs.name}
+              <Form.Label>Student Number</Form.Label>
+              <Input
+                class="col-span-3"
+                {...attrs}
+                bind:value={$formData.studentNumber}
               />
             </Form.Control>
+            <Form.FieldErrors />
+          </Form.Field>
+        </div>
 
-            <Popover.Content class="w-full p-0">
-              <Command.Root>
-                <Command.Input
-                  placeholder="Search request type..."
-                  class="h-9"
+        <!-- Name -->
+        <div class="lg:col-span-4">
+          <Form.Field
+            {form}
+            name="studentName"
+            class="gap-cols-4 grid items-center"
+          >
+            <Form.Control let:attrs>
+              <Form.Label>Student Name</Form.Label>
+              <Input
+                class="col-span-3"
+                {...attrs}
+                bind:value={$formData.studentName}
+              />
+            </Form.Control>
+            <Form.FieldErrors />
+          </Form.Field>
+        </div>
+
+        <!-- email -->
+        <div class="lg:col-span-4">
+          <Form.Field
+            {form}
+            name="studentEmail"
+            class="gap-cols-4 grid items-center"
+          >
+            <Form.Control let:attrs>
+              <Form.Label>Student Email</Form.Label>
+              <Input
+                class="col-span-3"
+                {...attrs}
+                bind:value={$formData.studentEmail}
+              />
+            </Form.Control>
+            <Form.FieldErrors />
+          </Form.Field>
+        </div>
+
+        <!-- reqtypes -->
+        <div class="lg:col-span-4">
+          <Form.Field {form} name="selectedReqTypeIds" class="flex flex-col">
+            <Popover.Root bind:open>
+              <Form.Control let:attrs>
+                <Form.Label>Request Types</Form.Label>
+                <Popover.Trigger asChild let:builder role="combobox" {...attrs}>
+                  <Button
+                    builders={[builder]}
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    class="w-full justify-between"
+                  >
+                    {selectedCount == 0
+                      ? "Select request type/s"
+                      : selectedCount + " selected"}
+                    <CaretSort class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </Popover.Trigger>
+                <input
+                  hidden
+                  value={$formData.selectedReqTypeIds}
+                  name={attrs.name}
                 />
-                <Command.Empty>No request type found.</Command.Empty>
-                <Command.Group>
-                  <ScrollArea class="h-52">
-                    {#each latestReqTypes as requestType}
-                      <Command.Item value={requestType.title}>
-                        <CopiesCountInput
-                          bind:value={reqTypeCounts[requestType._id]}
-                          onUpdated={(prev, value) =>
-                            updateSelection(requestType._id, prev, value)}
-                        />
-                        <Label class="px-1">
-                          {requestType.title}
-                        </Label>
-                      </Command.Item>
-                      <Separator class="my-0" />
-                    {/each}
-                  </ScrollArea>
-                </Command.Group>
-              </Command.Root>
-            </Popover.Content>
-          </Popover.Root>
-          <Form.FieldErrors />
-        </Form.Field>
+              </Form.Control>
+
+              <Popover.Content class="w-full p-0">
+                <Command.Root>
+                  <Command.Input
+                    placeholder="Search request type..."
+                    class="h-9"
+                  />
+                  <Command.Empty>No request type found.</Command.Empty>
+                  <Command.Group>
+                    <ScrollArea class="h-52">
+                      {#each latestReqTypes as requestType}
+                        <Command.Item value={requestType.title}>
+                          <CopiesCountInput
+                            bind:value={reqTypeCounts[requestType._id]}
+                            onUpdated={(prev, value) =>
+                              updateSelection(requestType._id, prev, value)}
+                          />
+                          <Label class="px-1">
+                            {requestType.title}
+                          </Label>
+                        </Command.Item>
+                        <Separator class="my-0" />
+                      {/each}
+                    </ScrollArea>
+                  </Command.Group>
+                </Command.Root>
+              </Popover.Content>
+            </Popover.Root>
+            <Form.FieldErrors />
+          </Form.Field>
+        </div>
+
+        <!-- purpose -->
+        <div class="lg:col-span-8">
+          <Form.Field
+            {form}
+            name="purpose"
+            class="gap-cols-4 grid items-center"
+          >
+            <Form.Control let:attrs>
+              <Form.Label>Purpose</Form.Label>
+              <Textarea
+                class="col-span-3"
+                {...attrs}
+                bind:value={$formData.purpose}
+              />
+            </Form.Control>
+            <Form.FieldErrors />
+          </Form.Field>
+        </div>
+
+        <!-- remarks -->
+        <div class="lg:col-span-8">
+          <Form.Field
+            {form}
+            name="remarks"
+            class="gap-cols-4 grid items-center"
+          >
+            <Form.Control let:attrs>
+              <Form.Label>Remarks</Form.Label>
+              <Textarea
+                class="col-span-3"
+                {...attrs}
+                bind:value={$formData.remarks}
+              />
+            </Form.Control>
+            <Form.FieldErrors />
+          </Form.Field>
+        </div>
       </div>
 
       <Dialog.Footer>

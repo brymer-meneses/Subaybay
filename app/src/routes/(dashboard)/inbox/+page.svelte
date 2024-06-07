@@ -47,11 +47,13 @@
   }, 0);
 </script>
 
-<main
-  class="grid flex-1 items-start gap-4 p-4 sm:py-0 sm:pl-9 md:gap-8 md:pl-2 md:pr-4 lg:grid-cols-1 xl:grid-cols-4 xl:px-6"
->
-  <div class="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
-    <Tabs.Root value="active" onValueChange={onTabChange}>
+<main class="flex flex-col justify-between gap-8 px-8 xl:h-[85vh] xl:flex-row">
+  <div class="h-full flex-grow xl:w-[50%]">
+    <Tabs.Root
+      value="active"
+      onValueChange={onTabChange}
+      class="flex h-full flex-grow flex-col"
+    >
       <div class="flex items-center">
         <Tabs.List>
           <Tabs.Trigger value="active">
@@ -65,28 +67,32 @@
           <NewRequest {latestReqTypes} data={data.form} />
         </div>
       </div>
-      <Tabs.Content value="active">
-        <Inbox
-          bind:this={inboxes.active}
-          stages={data.activeStages}
-          onSelectStage={selectStage}
-          type="active"
-          isShown={currentStageType === "active"}
-        />
+      <Tabs.Content value="active" class="grow overflow-hidden">
+        <div class="flex h-full overflow-hidden">
+          <Inbox
+            bind:this={inboxes.active}
+            stages={data.activeStages}
+            onSelectStage={selectStage}
+            type="active"
+            isShown={currentStageType === "active"}
+          />
+        </div>
       </Tabs.Content>
-      <Tabs.Content value="pending">
-        <Inbox
-          bind:this={inboxes.pending}
-          stages={data.pendingStages}
-          onSelectStage={selectStage}
-          type="pending"
-          isShown={currentStageType === "pending"}
-        />
+      <Tabs.Content value="pending" class="grow overflow-hidden">
+        <div class="flex h-full overflow-hidden">
+          <Inbox
+            bind:this={inboxes.pending}
+            stages={data.pendingStages}
+            onSelectStage={selectStage}
+            type="pending"
+            isShown={currentStageType === "pending"}
+          />
+        </div>
       </Tabs.Content>
     </Tabs.Root>
   </div>
 
-  <div class="lg:col-span-2">
+  <div class="h-full flex-grow xl:w-[50%]">
     <InboxContent
       {updateSelectedStage}
       bind:multiStage={selected}

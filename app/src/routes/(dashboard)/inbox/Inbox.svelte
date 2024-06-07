@@ -111,37 +111,37 @@
   }
 </script>
 
-<Card.Root>
+<Card.Root class="flex flex-grow flex-col border">
   <Card.Header class="px-7">
     <Card.Title>Inbox</Card.Title>
     <Card.Description>Recent stages that need completion</Card.Description>
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
       <div class="relative w-full">
         <Search
-          class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
+          class="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4"
         />
         <Input
           type="search"
           placeholder="Search..."
-          class="w-full rounded-lg bg-background pl-8"
+          class="bg-background w-full rounded-lg pl-8"
           bind:value={searchTerm}
         />
       </div>
     </div>
   </Card.Header>
-  <Card.Content>
-    <ScrollArea
-      class="flex h-[35rem] w-[98%] flex-grow flex-col sm:max-xl:h-96 lg:max-xl:w-full"
-    >
-      <div class="flex flex-col gap-2 transition-all">
+  <Card.Content class="flex flex-grow overflow-hidden">
+    <div class="h-[60vh] w-full grow xl:h-full">
+      <ScrollArea class="flex h-full flex-col transition-all">
         {#each filtered as multiStage, index}
-          <InboxItem
-            stage={multiStage.mainStage}
-            isSelected={selectedStageIndex == index}
-            onClick={() => select(index)}
-          />
+          <div class="mb-2">
+            <InboxItem
+              stage={multiStage.mainStage}
+              isSelected={selectedStageIndex == index}
+              onClick={() => select(index)}
+            />
+          </div>
         {/each}
-      </div>
-    </ScrollArea>
+      </ScrollArea>
+    </div>
   </Card.Content>
 </Card.Root>
