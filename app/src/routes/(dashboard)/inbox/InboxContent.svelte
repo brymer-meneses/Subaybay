@@ -22,7 +22,7 @@
   import type { MultiStageData, UserInfo } from "./inboxTypes";
 
   import ChatArea from "../ChatArea.svelte";
-  import InboxContentButtons from "./button_components/InboxContentButtons.svelte";
+  import InboxContentButtons from "./buttonComponents/InboxContentButtons.svelte";
 
   export let requests: { [key: string]: Request };
   export let users: { [key: string]: UserInfo };
