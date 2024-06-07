@@ -28,7 +28,7 @@
   >
     <div class="flex items-center gap-3">
       <svelte:component this={icon} class="h-5 w-5" />
-      <span class="text-base">{name}</span>
+      <span class="text-sm">{name}</span>
     </div>
   </a>
 {:else}

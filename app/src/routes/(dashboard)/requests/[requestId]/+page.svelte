@@ -1,12 +1,7 @@
 <script lang="ts">
   import HistoryView from "./HistoryView.svelte";
   import ProgressView from "./ProgressView.svelte";
-  import {
-    Card,
-    CardContent,
-    CardTitle,
-    CardHeader,
-  } from "$lib/components/ui/card";
+  import * as Card from "$lib/components/ui/card/index.js";
   import ChatArea from "../../ChatArea.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
@@ -93,16 +88,16 @@
           </Tabs.List>
 
           <Tabs.Content value="progress">
-            <Card>
-              <CardHeader>
-                <CardTitle class="flex gap-2">
+            <Card.Root>
+              <Card.Header>
+                <Card.Title class="flex gap-2">
                   {data.requestType.title}<Badge variant="outline"
                     >{classification[0].toUpperCase() +
                       classification.slice(1, classification.length)}</Badge
                   >
-                </CardTitle>
-              </CardHeader>
-              <CardContent class="flex flex-col gap-2">
+                </Card.Title>
+              </Card.Header>
+              <Card.Content class="flex flex-col gap-2">
                 <ScrollArea class="h-[39rem] px-4">
                   <ProgressView
                     request={data.request}
@@ -110,76 +105,71 @@
                     users={data.users}
                   />
                 </ScrollArea>
-              </CardContent>
-            </Card>
+              </Card.Content>
+            </Card.Root>
           </Tabs.Content>
 
           <Tabs.Content value="history">
-            <Card>
-              <CardHeader>
-                <CardTitle class="flex gap-2">
+            <Card.Root>
+              <Card.Header>
+                <Card.Title class="flex gap-2">
                   {data.requestType.title}<Badge variant="outline"
                     >{classification[0].toUpperCase() +
                       classification.slice(1, classification.length)}</Badge
                   >
-                </CardTitle>
-              </CardHeader>
-              <CardContent class="flex flex-col gap-2">
-                <ScrollArea class="h-[39rem] px-4">
+                </Card.Title>
+              </Card.Header>
+              <Card.Content class="flex h-[39rem] flex-col gap-2">
+                <ScrollArea class="px-4">
                   <HistoryView
                     request={data.request}
                     requestType={data.requestType}
                     users={data.users}
                   />
                 </ScrollArea>
-              </CardContent>
-            </Card>
+              </Card.Content>
+            </Card.Root>
           </Tabs.Content>
         </Tabs.Root>
       {/key}
     </div>
 
-    <div class="flex flex-col gap-4">
-      <Card class="mt-12 h-[45rem]  pt-6">
-        <CardContent>
-          <div class="flex flex-col gap-4">
-            <div class="flex justify-between">
-              <p class="font-semibold">Student Information</p>
-              <Options
-                bind:data={formData}
-                users={data.users}
-                bind:processing
-              />
-            </div>
-            {#if processing}
-              Processing... Please Wait
-            {/if}
-            <div class="flex flex-wrap gap-4">
-              <Badge variant="secondary" class="flex gap-2 text-sm">
-                <GraduationCap size={18} />
-                {data.studentNumber}
-              </Badge>
-              <Badge variant="secondary" class="flex gap-2 text-sm">
-                <UserRound size={18} />
-                {data.studentName}
-              </Badge>
-              <Badge variant="secondary" class="flex gap-2 text-sm">
-                <Mail size={18} />
-                {data.studentEmail}
-              </Badge>
-              <Badge variant="secondary" class="flex gap-2 text-sm">
-                <FileText size={18} />
-                {data.copies}
-              </Badge>
-            </div>
-            <p class="font-semibold">Purpose</p>
-            <Textarea disabled value={data.purpose} />
-            <p class="font-semibold">Remarks</p>
-            <Textarea disabled value={data.remarks} />
-            <ChatArea requestId={data.requestId} height="h-56" />
+    <Card.Root class="mt-12 pt-6">
+      <Card.Content>
+        <div class="flex flex-col gap-4">
+          <div class="flex justify-between">
+            <p class="font-semibold">Student Information</p>
+            <Options bind:data={formData} users={data.users} bind:processing />
           </div>
-        </CardContent>
-      </Card>
-    </div>
+          {#if processing}
+            Processing... Please Wait
+          {/if}
+          <div class="flex flex-wrap gap-4">
+            <Badge variant="secondary" class="flex gap-2 text-sm font-normal">
+              <GraduationCap size={18} />
+              {data.studentNumber}
+            </Badge>
+            <Badge variant="secondary" class="flex gap-2 text-sm font-normal">
+              <UserRound size={18} />
+              {data.studentName}
+            </Badge>
+            <Badge variant="secondary" class="flex gap-2 text-sm font-normal">
+              <Mail size={18} />
+              {data.studentEmail}
+            </Badge>
+            <Badge variant="secondary" class="flex gap-2 text-sm font-normal">
+              <FileText size={18} />
+              {data.copies}
+            </Badge>
+          </div>
+
+          <p class="text-sm font-semibold">Purpose</p>
+          <Textarea disabled value={data.purpose} />
+          <p class="text-sm font-semibold">Remarks</p>
+          <Textarea disabled value={data.remarks} />
+          <ChatArea requestId={data.requestId} height="h-56" />
+        </div>
+      </Card.Content>
+    </Card.Root>
   </main>
 {/if}
