@@ -3,7 +3,7 @@
   import * as Dialog from "$lib/components/ui/dialog/index.js";
   import { Button } from "$lib/components/ui/button";
 
-  import HandlerSelect from "../../inbox/button_components/HandlerSelect.svelte";
+  import HandlerSelect from "../../inbox/buttonComponents/HandlerSelect.svelte";
   import type { User } from "$lib/server/database";
   import { enhance } from "$app/forms";
 
