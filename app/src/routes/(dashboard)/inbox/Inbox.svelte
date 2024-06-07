@@ -11,7 +11,7 @@
   // these are the stages ungrouped
   export let stages: InboxStageData[] = [];
   export let type: "active" | "pending";
-  export let isShown;
+  export let isShown: boolean;
 
   let selectedStageIndex: number = 0;
   let searchTerm: string = "";
