@@ -1,9 +1,19 @@
 <script lang="ts">
-  import Badge from "$lib/components/ui/badge/badge.svelte";
+  import { page } from "$app/stores";
   import { Button } from "$lib/components/ui/button/index.js";
   import type { InboxStageData } from "./inboxTypes";
 
   export let stage: InboxStageData;
+  let studentName: string;
+  let studentNumber: string;
+
+  $: {
+    const relevantRequest = $page.data.relevantRequests[stage.requestId];
+    if (relevantRequest) {
+      studentName = relevantRequest.studentName;
+      studentNumber = relevantRequest.studentNumber;
+    }
+  }
 
   import clsx from "clsx";
 
@@ -16,20 +26,34 @@
   variant={isSelected ? "secondary" : "outline"}
   on:click={onClick}
 >
-  <div class="flex w-full flex-col items-start gap-2">
-    <div class="flex w-full flex-row justify-between">
-      <p class="text-base font-semibold">{stage.stageTitle}</p>
-      <p class="text-xs">{stage.requestId}</p>
+  <div class="flex w-full flex-col gap-2">
+    <div class="flex w-full flex-row justify-between gap-0">
+      <p class="text-base font-semibold">
+        {studentName}
+        <span class="text-muted-foreground text-xs">({studentNumber})</span>
+      </p>
+      <div class=""></div>
     </div>
-    <p class="text-sm">{stage.requestTitle}</p>
-
-    <div class="flex flex-row gap-2">
-      <Badge class="rounded-sm text-xs">
-        Step {stage.currentStageTypeIndex}
-      </Badge>
-      <Badge class="rounded-sm text-xs" variant="outline"
-        >{stage.dateSent.toLocaleString()}</Badge
+    <div class="flex flex-row">
+      <p class="text-muted-foreground text-xs">
+        Step {stage.currentStageTypeIndex}:
+        <span class="font-normal">{stage.inboxStageTitle}</span>
+      </p>
+    </div>
+    <div class="flex w-full flex-row justify-between">
+      <p
+        class="text-muted-foreground text-xs font-normal"
+        title={stage.requestTitle}
       >
+        {#if stage.requestTitle.length > 40}
+          {stage.requestTitle.substring(0, 40) + "..."}
+        {:else}
+          {stage.requestTitle}
+        {/if}
+      </p>
+      <p class="text-xs font-normal">
+        {stage.dateSent.toLocaleString()}
+      </p>
     </div>
   </div>
 </Button>

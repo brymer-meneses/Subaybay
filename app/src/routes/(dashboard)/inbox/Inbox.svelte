@@ -111,7 +111,7 @@
   }
 </script>
 
-<Card.Root class="flex flex-grow flex-col border">
+<Card.Root class="flex w-full flex-grow flex-col border">
   <Card.Header class="px-7">
     <Card.Title>Inbox</Card.Title>
     <Card.Description>Recent stages that need completion</Card.Description>
@@ -131,9 +131,9 @@
   </Card.Header>
   <Card.Content class="flex flex-grow overflow-hidden">
     <div class="h-[60vh] w-full grow xl:h-full">
-      <ScrollArea class="flex h-full flex-col transition-all">
+      <ScrollArea class="flex h-full w-full flex-col transition-all">
         {#each filtered as multiStage, index}
-          <div class="mb-2">
+          <div class="mb-2 w-full">
             <InboxItem
               stage={multiStage.mainStage}
               isSelected={selectedStageIndex == index}

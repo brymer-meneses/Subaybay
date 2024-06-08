@@ -10,7 +10,6 @@
   import Notifiable from "../Notifiable.svelte";
 
   export let data: PageServerData;
-
   let latestReqTypes = data.latestRequestTypes ?? [];
 
   let selected: MultiStageData | null = null;
@@ -48,7 +47,7 @@
 </script>
 
 <main class="flex flex-col justify-between gap-8 px-8 xl:h-[85vh] xl:flex-row">
-  <div class="h-full flex-grow xl:w-[50%]">
+  <div class="h-full flex-grow xl:w-[40%]">
     <Tabs.Root
       value="active"
       onValueChange={onTabChange}
@@ -92,7 +91,7 @@
     </Tabs.Root>
   </div>
 
-  <div class="h-full flex-grow xl:w-[50%]">
+  <div class="h-full flex-grow xl:w-[60%]">
     <InboxContent
       {updateSelectedStage}
       bind:multiStage={selected}
