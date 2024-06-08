@@ -5,43 +5,45 @@
   import { Button } from "$lib/components/ui/button/index.js";
 </script>
 
-<main class="bg-slate-50m relative m-0 mx-auto block h-[100vh] bg-slate-50">
-  <div
-    class="pointer-events-none absolute flex h-full w-full items-center justify-center"
-  >
-    <div
-      class="ball h-[300px] w-[300px] rotate-[20deg] md:h-[400px] md:w-[400px] xl:h-[500px] xl:w-[500px]"
-    ></div>
+<main
+  class="flex h-[100vh] flex-col overflow-hidden border bg-slate-50 xl:[&>div]:px-[20vh]"
+>
+  <div class="flex flex-row items-center justify-between px-10 py-10">
+    <img src={UP} alt="" class="h-[75px] w-[75px]" />
+    <div class="flex flex-row gap-4 xl:gap-6">
+      <Button
+        variant="link"
+        class="text-lg font-semibold"
+        on:click={() => goto("/login")}>Login</Button
+      >
+      <Button
+        variant="link"
+        class="text-lg font-semibold"
+        on:click={() => window.open("/docs", "_blank")}>Manual</Button
+      >
+    </div>
   </div>
   <div
-    class=" z-10 mx-auto flex h-full flex-col justify-between space-y-10 xl:block xl:w-[75%]"
+    class="hero relative flex flex-grow flex-col justify-center border bg-slate-100 p-10 backdrop-blur-lg"
   >
-    <div class="flex h-60 flex-row items-end justify-between px-10 pb-5">
-      <img src={UP} alt="" class="h-[75px] w-[75px]" />
-      <div class="flex flex-row gap-4 xl:gap-6">
-        <Button
-          variant="link"
-          class="text-lg font-semibold"
-          on:click={() => goto("/login")}>Login</Button
-        >
-        <Button
-          variant="link"
-          class="text-lg font-semibold"
-          on:click={() => window.open("/docs", "_blank")}>Manual</Button
-        >
-      </div>
-    </div>
-    <div class="hero h-[350px] p-10 backdrop-blur-lg">
-      <p class="subtext gap-2 text-xl text-[#D69A22]">
-        Internal <span class="text-[#760d11]">Request</span>
-        <span class="not-italic text-black">Tracker:</span>
-      </p>
-      <p class="maintext font-serif text-8xl font-bold">
-        UPB <br /> Subaybay
-      </p>
-      <p class="subtext gap-2 text-xl">CMSC 128</p>
-    </div>
-    <div class="flex grow flex-row space-x-16 p-10">
+    <!-- <div
+        class="pointer-events-none absolute m-0 flex h-full w-full items-center justify-center"
+      >
+        <div class="ball -z-10 aspect-square h-[80%] rotate-[20deg]"></div>
+      </div> -->
+    <p class="subtext gap-2 text-xl text-[#D69A22]">
+      Internal <span class="text-[#760d11]">Request</span>
+      <span class="not-italic text-black">Tracker:</span>
+    </p>
+    <p class="maintext font-serif text-8xl font-bold">
+      UPB <br /> Subaybay
+    </p>
+    <p class="subtext gap-2 text-xl">CMSC 128</p>
+  </div>
+  <div
+    class="flex-end flex grow flex-row items-center space-x-16 bg-slate-200 px-10 py-10"
+  >
+    <div class="flex flex-row space-x-20">
       <div>
         <p class="mb-2 text-xl font-semibold">Team ZEBrA:</p>
         <ul class="space-y-1">
