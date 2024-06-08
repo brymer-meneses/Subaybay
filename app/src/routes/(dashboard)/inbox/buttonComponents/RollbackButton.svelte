@@ -64,13 +64,13 @@
         <DD.DropdownMenu>
           <DD.DropdownMenuTrigger class="group flex flex-row items-center">
             <div
-              class="group-hover:bg-secondary flex h-full items-center rounded-l-xl border px-1 transition"
+              class="flex h-full items-center rounded-l-xl border px-1 transition group-hover:bg-secondary"
             >
               <ChevronDown />
             </div>
             <Button
               variant="outline"
-              class="group-hover:bg-secondary w-full gap-4 rounded-l-none"
+              class="w-full gap-4 rounded-l-none group-hover:bg-secondary"
             >
               Stage {selectedIndex}: {options[selectedIndex]}
             </Button>

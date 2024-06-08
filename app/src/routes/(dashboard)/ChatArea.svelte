@@ -1,11 +1,9 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { tick } from "svelte";
+  import { beforeUpdate, tick } from "svelte";
   import { toast } from "svelte-sonner";
   import * as Card from "$lib/components/ui/card/index.js";
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
-
-  import { writable } from "svelte/store";
 
   import ChatMessage from "./ChatMessage.svelte";
   import SendHorizontal from "lucide-svelte/icons/send-horizontal";
@@ -51,8 +49,15 @@
 
   let messageContainer: HTMLDivElement;
 
+  let isExpectedWebSocketClose = false;
+
+  beforeUpdate(() => {
+    isExpectedWebSocketClose = true;
+  });
+
   $: if (requestId && browser) {
     if (socket !== null) {
+      isExpectedWebSocketClose = false;
       socket.close();
     }
 
@@ -77,12 +82,23 @@
           },
         }),
       );
+      isExpectedWebSocketClose = false;
     };
 
-    socket.onerror = (ev) => {
-      toast.error("Failed to connect to the chat server", {
-        description: "Sending and receiving messages will not work",
-      });
+    socket.onclose = () => {
+      if (!isExpectedWebSocketClose) {
+        toast.error("The chat server unexpectedly closed", {
+          description: "Sending and receiving messages will not work",
+        });
+      }
+    };
+
+    socket.onerror = () => {
+      if (!isExpectedWebSocketClose) {
+        toast.error("Failed to connect to the chat server", {
+          description: "Sending and receiving messages will not work",
+        });
+      }
     };
 
     socket.onmessage = receiveMessageHandler;

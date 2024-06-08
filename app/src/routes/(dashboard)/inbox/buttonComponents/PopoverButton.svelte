@@ -2,7 +2,7 @@
   import * as Pop from "$lib/components/ui/popover";
   import HandlerSelect from "./HandlerSelect.svelte";
 
-  export let users;
+  export let users: { [key: string]: User };
   export let processing: boolean;
   export let handlerSelectTitle: string;
 

@@ -9,7 +9,7 @@
 
   export let users: { [key: string]: User };
   export let selectedUserId: string;
-  export let title;
+  export let title: string;
 </script>
 
 <div>{title}</div>
