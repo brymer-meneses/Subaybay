@@ -18,14 +18,14 @@ use tokio::sync::broadcast;
 
 pub async fn websocket(
     State(state): State<Arc<AppState>>,
-    Query(params): Query<ConnectionArgs>,
+    Query(args): Query<ConnectionArgs>,
     ws: WebSocketUpgrade<ServerMessage, ClientMessage>,
 ) -> impl IntoResponse {
-    ws.on_upgrade(move |socket| handle_connection(params, state, socket))
+    ws.on_upgrade(move |socket| handle_connection(Arc::new(args), state, socket))
 }
 
 async fn handle_connection(
-    params: ConnectionArgs,
+    connection_args: Arc<ConnectionArgs>,
     state: Arc<AppState>,
     socket: WebSocket<ServerMessage, ClientMessage>,
 ) {
@@ -34,7 +34,7 @@ async fn handle_connection(
     if let Some(Ok(Message::Item(ClientMessage::Authenticate { session_id }))) =
         ws_receiver.next().await
     {
-        match authenticate_user(&state.database, &session_id, &params.user_id).await {
+        match authenticate_user(&state.database, &session_id, &connection_args.user_id).await {
             Ok(AuthenticationStatus::Authorized) => {
                 tracing::debug!("Authenticated!");
             }
@@ -54,7 +54,7 @@ async fn handle_connection(
         return;
     }
 
-    match get_previous_messages(&params, state.database.clone()).await {
+    match get_previous_messages(&connection_args, state.database.clone()).await {
         Ok(messages) => {
             let _ = ws_sender
                 .send(Message::Item(ServerMessage::PreviousMessages(messages)))
@@ -70,34 +70,30 @@ async fn handle_connection(
     let sender = state.message_tx.clone();
 
     let database = state.database.clone();
+    let args = connection_args.clone();
 
     // listens to the broadcasted channels gets the complete information from the database and
     // sends it to the client
     let mut send_task = tokio::spawn(async move {
         while let Ok(message) = message_tx.recv().await {
-            if let Err(err) = send_server_message(message, &database, &mut ws_sender).await {
+            if let Err(err) = send_server_message(&args, message, &database, &mut ws_sender).await {
                 tracing::error!("{err}");
             }
         }
     });
+    let args = connection_args.clone();
 
     // receives chat payload from the client and stores the message in the database and sendsit
     // through the connected clients over the websocket
     let mut receive_task = tokio::spawn(async move {
         let database = state.database.clone();
         let notification_tx = &state.notification_tx;
-        let request_id = params.request_id;
         while let Some(message) = ws_receiver.next().await {
             match message {
                 Ok(Message::Item(message)) => {
-                    if let Err(err) = process_client_message(
-                        message,
-                        &sender,
-                        &database,
-                        notification_tx,
-                        &request_id,
-                    )
-                    .await
+                    if let Err(err) =
+                        process_client_message(&args, message, &sender, &database, notification_tx)
+                            .await
                     {
                         tracing::error!("{err}");
                     }
@@ -127,53 +123,43 @@ async fn handle_connection(
 }
 
 async fn send_server_message(
-    message: ClientMessage,
+    args: &Arc<ConnectionArgs>,
+    message: MessageTx,
     database: &mongodb::Database,
     ws_sender: &mut SplitSink<WebSocket<ServerMessage, ClientMessage>, Message<ServerMessage>>,
 ) -> Result<()> {
     let users = database.collection::<db::User>("users");
-    match message {
-        ClientMessage::Message {
-            date_time,
-            content,
-            user_id,
-        } => {
-            let user = users.find_one(doc! {"_id": &user_id}, None).await?;
+    let user = users.find_one(doc! {"_id": &args.user_id}, None).await?;
 
-            match user {
-                Some(user) => {
-                    let _ = ws_sender
-                        .send(Message::Item(ServerMessage::Reply(MessageWithProfile {
-                            date_time,
-                            user_id,
-                            content,
-                            profile_url: user.profile_url,
-                        })))
-                        .await;
-                }
-                None => {
-                    tracing::error!("Got an invalid user_id `{}`", &user_id);
-                }
-            }
+    if args.request_id != message.request_id {
+        return Ok(());
+    }
+
+    match user {
+        Some(user) => {
+            let _ = ws_sender
+                .send(Message::Item(ServerMessage::Reply(MessageWithProfile {
+                    date_time: message.date_time,
+                    user_id: message.user_id,
+                    content: message.content,
+                    profile_url: user.profile_url,
+                })))
+                .await;
         }
-
-        ClientMessage::Authenticate { .. } => {}
-
-        ClientMessage::Event {
-            date_time: _,
-            content: _,
-        } => {}
+        None => {
+            tracing::error!("Got an invalid user_id `{}`", &args.user_id);
+        }
     };
 
     Ok(())
 }
 
 async fn process_client_message(
+    args: &Arc<ConnectionArgs>,
     message: ClientMessage,
-    sender: &broadcast::Sender<ClientMessage>,
+    sender: &broadcast::Sender<MessageTx>,
     database: &mongodb::Database,
     notification_tx: &broadcast::Sender<db::Notification>,
-    request_id: &String,
 ) -> Result<()> {
     match message {
         ClientMessage::Authenticate { .. } => {}
@@ -187,7 +173,7 @@ async fn process_client_message(
             let chat_message = db::Message {
                 _id: ObjectId::new(),
                 user_id,
-                request_id: request_id.clone(),
+                request_id: args.request_id.clone(),
                 date_time,
                 content,
             };
@@ -199,10 +185,11 @@ async fn process_client_message(
 
             process_notifications(database, &chat_message, notification_tx).await?;
 
-            sender.send(ClientMessage::Message {
+            sender.send(MessageTx {
                 date_time,
                 content: chat_message.content,
                 user_id: chat_message.user_id,
+                request_id: chat_message.request_id,
             })?;
         }
 
@@ -317,7 +304,7 @@ async fn get_previous_messages(
 use crate::utils::get_time;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ConnectionArgs {
     request_id: String,
@@ -344,6 +331,15 @@ pub enum ClientMessage {
 
     #[serde(rename_all = "camelCase")]
     Authenticate { session_id: String },
+}
+
+// an internal data structure that gets shared between threads
+#[derive(Clone, Debug)]
+pub struct MessageTx {
+    date_time: u64,
+    content: String,
+    request_id: String,
+    user_id: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

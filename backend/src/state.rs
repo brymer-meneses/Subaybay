@@ -6,7 +6,7 @@ use tokio::sync::broadcast;
 #[derive(Clone)]
 pub struct AppState {
     pub database: Database,
-    pub message_tx: broadcast::Sender<chat::ClientMessage>,
+    pub message_tx: broadcast::Sender<chat::MessageTx>,
     pub notification_tx: broadcast::Sender<db::Notification>,
 }
 

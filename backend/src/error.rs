@@ -11,7 +11,7 @@ pub enum Error {
 
     Notification(tokio::sync::broadcast::error::SendError<Notification>),
 
-    Chat(tokio::sync::broadcast::error::SendError<chat::ClientMessage>),
+    Chat(tokio::sync::broadcast::error::SendError<chat::MessageTx>),
 
     BsonDe(mongodb::bson::de::Error),
     BsonSer(mongodb::bson::ser::Error),
