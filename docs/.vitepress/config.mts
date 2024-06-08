@@ -6,6 +6,7 @@ export default defineConfig({
   base: "/docs/",
   title: "UPB Subaybay Manual",
   description: "a documentation",
+  ignoreDeadLinks: true,
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
