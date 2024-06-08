@@ -43,21 +43,26 @@
   $: userId = $page.data.userInfo.id;
   $: sessionId = $page.data.sessionId;
 
+  $: if (requestId && browser) {
+    initializeWebsocket();
+  }
+
   let messages: Array<ServerMessage> = [];
   let socket: WebSocket | null = null;
   let messageContent: string;
 
   let messageContainer: HTMLDivElement;
-
   let isExpectedWebSocketClose = false;
 
-  beforeUpdate(() => {
-    isExpectedWebSocketClose = true;
-  });
-
-  $: if (requestId && browser) {
+  // NOTE:
+  // We need to put this in a function since
+  // the svelte compiler will cause a loop here since
+  // we're setting both `isExpectedWebSocketClose = true`
+  // and `false` at the same time.
+  // Which causes a loop since they would listen to each other
+  function initializeWebsocket() {
     if (socket !== null) {
-      isExpectedWebSocketClose = false;
+      isExpectedWebSocketClose = true;
       socket.close();
     }
 
