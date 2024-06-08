@@ -109,62 +109,64 @@
     </Card>
 
     {#if !processing}
-      <div class="flex justify-center">
-        <form
-          action="?/edit"
-          method="POST"
-          use:enhance={(event) => {
-            return handleSubmit(event);
-          }}
-        >
-          <Button type="submit">
-            <Pencil size="18" />
-            Accept Changes
-          </Button>
-        </form>
-      </div>
-      <!--Delete Button-->
-      <div class="flex justify-center">
-        <Dialog.Root>
-          <Dialog.Trigger>
-            <Button variant="destructive" class="h-9 gap-2">
-              <Eraser size="18" />
-              Delete
+      <div class="flex flex-row items-center justify-center gap-2">
+        <div class="flex justify-center">
+          <form
+            action="?/edit"
+            method="POST"
+            use:enhance={(event) => {
+              return handleSubmit(event);
+            }}
+          >
+            <Button type="submit" class="h-9 gap-2">
+              <Pencil size="18" />
+              Accept Changes
             </Button>
-          </Dialog.Trigger>
-          <Dialog.Content>
-            <Dialog.Header>
-              <Dialog.Title>Are you sure?</Dialog.Title>
-              <Dialog.Description>
-                This will delete this request type, so that no new requests of
-                this type can be created
-                <br /><br />
-                Requests already using it will not be affected
-                <br />
-                This cannot be undone
-                <br />
-                Are you sure?
-              </Dialog.Description>
-            </Dialog.Header>
+          </form>
+        </div>
+        <!--Delete Button-->
+        <div class="flex justify-center">
+          <Dialog.Root>
+            <Dialog.Trigger>
+              <Button variant="destructive" class="h-9 gap-2">
+                <Eraser size="18" />
+                Delete
+              </Button>
+            </Dialog.Trigger>
+            <Dialog.Content>
+              <Dialog.Header>
+                <Dialog.Title>Are you sure?</Dialog.Title>
+                <Dialog.Description>
+                  This will delete this request type, so that no new requests of
+                  this type can be created
+                  <br /><br />
+                  Requests already using it will not be affected
+                  <br />
+                  This cannot be undone
+                  <br />
+                  Are you sure?
+                </Dialog.Description>
+              </Dialog.Header>
 
-            <Dialog.Footer>
-              <form
-                action="?/delete"
-                method="POST"
-                use:enhance={() => {
-                  processing = true;
-                  return async ({ update, result }) => {
-                    await update();
-                    processing = false;
-                    if (result.type === "success") goto("../configuration");
-                  };
-                }}
-              >
-                <Button variant="destructive" type="submit">Delete</Button>
-              </form>
-            </Dialog.Footer>
-          </Dialog.Content>
-        </Dialog.Root>
+              <Dialog.Footer>
+                <form
+                  action="?/delete"
+                  method="POST"
+                  use:enhance={() => {
+                    processing = true;
+                    return async ({ update, result }) => {
+                      await update();
+                      processing = false;
+                      if (result.type === "success") goto("../configuration");
+                    };
+                  }}
+                >
+                  <Button variant="destructive" type="submit">Delete</Button>
+                </form>
+              </Dialog.Footer>
+            </Dialog.Content>
+          </Dialog.Root>
+        </div>
       </div>
     {:else}
       Processing... Please Wait
