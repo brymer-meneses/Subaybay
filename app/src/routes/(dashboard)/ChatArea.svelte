@@ -1,9 +1,11 @@
 <script lang="ts">
-  import { tick } from "svelte";
   import { page } from "$app/stores";
+  import { tick } from "svelte";
   import { toast } from "svelte-sonner";
   import * as Card from "$lib/components/ui/card/index.js";
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
+
+  import { writable } from "svelte/store";
 
   import ChatMessage from "./ChatMessage.svelte";
   import SendHorizontal from "lucide-svelte/icons/send-horizontal";
@@ -24,12 +26,11 @@
 
   type Reply = {
     content: string;
-    userId: string;
+    requestId: string;
   };
 
   type Event = {
     content: string;
-    roomId: string;
     userId: string;
   };
 
@@ -45,48 +46,46 @@
   $: sessionId = $page.data.sessionId;
 
   let messages: Array<ServerMessage> = [];
-  let socket: WebSocket;
+  let socket: WebSocket | null = null;
   let messageContent: string;
 
   let messageContainer: HTMLDivElement;
 
-  $: {
-    if (browser) {
-      const params = {
-        userId,
-        requestId,
-      };
-
-      const root = `${$page.url.hostname}:${$page.url.port}`;
-      socket = new WebSocket(
-        `ws://${root}/socket/chat/ws?${queryString.stringify(params)}`,
-      );
-
-      socket.onopen = () => {
-        socket.send(
-          JSON.stringify({
-            type: "authenticate",
-            content: {
-              sessionId,
-            },
-          }),
-        );
-      };
-
-      socket.onclose = () => {
-        toast.error("The chat server closed unexpectedly", {
-          description: "Chat will not work properly",
-        });
-      };
-
-      socket.onerror = (ev) => {
-        toast.error("Failed to connect to the chat server", {
-          description: "Sending and receiving messages will not work",
-        });
-        // socket = null;
-      };
-      socket.onmessage = receiveMessageHandler;
+  $: if (requestId && browser) {
+    if (socket !== null) {
+      socket.close();
     }
+
+    const params = {
+      userId,
+      requestId,
+    };
+
+    const root = `${$page.url.hostname}:${$page.url.port}`;
+
+    socket = new WebSocket(
+      `ws://${root}/socket/chat/ws?${queryString.stringify(params)}`,
+    );
+
+    socket.onopen = () => {
+      // @ts-ignore
+      socket.send(
+        JSON.stringify({
+          type: "authenticate",
+          content: {
+            sessionId,
+          },
+        }),
+      );
+    };
+
+    socket.onerror = (ev) => {
+      toast.error("Failed to connect to the chat server", {
+        description: "Sending and receiving messages will not work",
+      });
+    };
+
+    socket.onmessage = receiveMessageHandler;
   }
 
   async function scrollToBottom(node: HTMLDivElement) {
@@ -121,8 +120,9 @@
       },
     };
 
-    socket.send(JSON.stringify(messagePayload));
-    messageContent = "";
+    if (socket !== null) {
+      socket.send(JSON.stringify(messagePayload));
+    }
   }
 </script>
 
@@ -145,7 +145,7 @@
 
     <div class="flex w-full items-center space-x-2">
       <Input
-        class="border-b-1 bg-accent w-full focus:ring-0 focus:ring-offset-0"
+        class="border-b-1 w-full bg-accent focus:ring-0 focus:ring-offset-0"
         placeholder="Send a message ..."
         bind:value={messageContent}
       />

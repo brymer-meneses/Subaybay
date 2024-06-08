@@ -7,6 +7,7 @@ import { setFlash } from "sveltekit-flash-message/server";
 import { markRequestAsStale, reassign } from "../../inbox/stageHandling";
 import { sendInboxNotification } from "$lib/notifications";
 import { lucia } from "$lib/server/auth";
+import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async (event) => {
   const requestId = event.params.requestId;
@@ -29,62 +30,32 @@ export const load: PageServerLoad = async (event) => {
     request: storedData.request,
     requestType: storedData.requestType,
     users: storedData.users,
-    studentNumber: storedData.studentNumber,
-    studentName: storedData.studentName,
-    studentEmail: storedData.studentEmail,
-    purpose: storedData.purpose,
-    remarks: storedData.remarks,
-    copies: storedData.copies,
   };
 };
 
 const retrieveData = async (requestId: string) => {
   const cursor = db.user.find();
   const users: { [_id: string]: { name: string; profileUrl: string } } = {};
+
   for await (const user of cursor) {
     users[user._id] = { name: user.name, profileUrl: user.profileUrl };
   }
 
-  const request = await db.request.findOne({ _id: requestId });
-  if (!request)
-    return {
-      users: [],
-      request: request,
-      requestType: "",
-      studentNumber: "",
-      studentName: "",
-      studentEmail: "",
-      purpose: "",
-      remarks: "",
-      copies: 0,
-    };
+  const request = await db.request.findOne<db.Request>({ _id: requestId });
+  if (!request) {
+    error(400, "invalid request id")
+  }
 
-  const requestType = await db.requestType.findOne({
+  const requestType = await db.requestType.findOne<db.RequestType>({
     _id: request.requestTypeId,
   });
   if (!requestType)
-    return {
-      users: [],
-      request: request,
-      requestType: "",
-      studentNumber: "",
-      studentName: "",
-      studentEmail: "",
-      purpose: "",
-      remarks: "",
-      copies: 0,
-    };
+    error(400, "invalid request id")
 
   return {
     users,
     request,
     requestType,
-    studentNumber: request.studentNumber,
-    studentName: request.studentName,
-    studentEmail: request.studentEmail,
-    purpose: request.purpose,
-    remarks: request.remarks,
-    copies: request.copies,
   };
 };
 

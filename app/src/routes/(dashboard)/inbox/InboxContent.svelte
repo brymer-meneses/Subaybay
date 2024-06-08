@@ -41,7 +41,7 @@
 
 {#if multiStage && stage && info && requests[stage.requestId]}
   <Card.Root class="flex h-full flex-col">
-    <Card.Header class="bg-muted/50 flex flex-row items-start">
+    <Card.Header class="flex flex-row items-start bg-muted/50">
       <div class="grid gap-0.5">
         <Card.Title class="group flex items-center gap-2 text-lg">
           {stage.stageTitle}

@@ -20,21 +20,21 @@
     <div class="flex w-full flex-row justify-between gap-0">
       <p class="text-base font-semibold">
         {stage.studentName}
-        <span class="text-muted-foreground text-xs">
+        <span class="text-xs text-muted-foreground">
           ({stage.studentNumber})
         </span>
       </p>
       <div class=""></div>
     </div>
     <div class="flex flex-row">
-      <p class="text-muted-foreground text-xs">
+      <p class="text-xs text-muted-foreground">
         Step {stage.currentStageTypeIndex}:
         <span class="font-normal">{stage.inboxStageTitle}</span>
       </p>
     </div>
     <div class="flex w-full flex-row justify-between">
       <p
-        class="text-muted-foreground text-xs font-normal"
+        class="text-xs font-normal text-muted-foreground"
         title={stage.requestTitle}
       >
         {#if stage.requestTitle.length > 40}

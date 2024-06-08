@@ -20,8 +20,9 @@
   import Options from "./Options.svelte";
   import type { Request, RequestType } from "$lib/server/database";
   import { goto } from "$app/navigation";
+  import type { PageData } from "./$types";
 
-  export let data: any;
+  export let data: PageData;
   export let processing: boolean;
   let formData: any = data.form;
   let classification: "pending" | "finished" | "discontinued";
@@ -29,12 +30,12 @@
   $: {
     formData = data.form;
 
-    formData.data.studentNumber = data.studentNumber;
-    formData.data.studentName = data.studentName;
-    formData.data.studentEmail = data.studentEmail;
-    formData.data.purpose = data.purpose;
-    formData.data.remarks = data.remarks;
-    formData.data.copies = data.copies;
+    formData.data.studentNumber = data.request.studentNumber;
+    formData.data.studentName = data.request.studentName;
+    formData.data.studentEmail = data.request.studentEmail;
+    formData.data.purpose = data.request.purpose;
+    formData.data.remarks = data.request.remarks;
+    formData.data.copies = data.request.copies;
 
     if (!data.error.error) {
       classification = checkClassification(data.request, data.requestType);
@@ -149,34 +150,34 @@
           <div class="flex flex-wrap gap-4">
             <Badge variant="secondary" class="flex gap-2 text-sm font-normal">
               <GraduationCap size={18} />
-              {data.studentNumber}
+              {data.request.studentNumber}
             </Badge>
             <Badge variant="secondary" class="flex gap-2 text-sm font-normal">
               <UserRound size={18} />
-              {data.studentName}
+              {data.request.studentName}
             </Badge>
             <Badge variant="secondary" class="flex gap-2 text-sm font-normal">
               <Mail size={18} />
-              {data.studentEmail}
+              {data.request.studentEmail}
             </Badge>
             <Badge variant="secondary" class="flex gap-2 text-sm font-normal">
               <FileText size={18} />
-              {data.copies}
+              {data.request.copies}
             </Badge>
           </div>
 
           <div class="flex flex-col gap-2">
             <p class="text-sm font-semibold">Purpose</p>
-            <Textarea disabled value={data.purpose} />
+            <Textarea disabled value={data.request.purpose} />
           </div>
 
           <div class="flex flex-col gap-2">
             <p class="text-sm font-semibold">Remarks</p>
-            <Textarea disabled value={data.remarks} />
+            <Textarea disabled value={data.request.remarks} />
           </div>
 
           <div class="grow">
-            <ChatArea requestId={data.requestId} height="h-full" />
+            <ChatArea requestId={data.request._id} height="h-full" />
           </div>
         </div>
       </Card.Content>

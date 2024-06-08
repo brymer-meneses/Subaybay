@@ -69,18 +69,24 @@ async fn handle_connection(
     let mut message_tx = state.message_tx.subscribe();
     let sender = state.message_tx.clone();
 
-    let database = state.database.clone();
     let args = connection_args.clone();
+    let database = state.database.clone();
 
     // listens to the broadcasted channels gets the complete information from the database and
     // sends it to the client
     let mut send_task = tokio::spawn(async move {
         while let Ok(message) = message_tx.recv().await {
-            if let Err(err) = send_server_message(&args, message, &database, &mut ws_sender).await {
+            if args.request_id != message.request_id {
+                continue;
+            }
+
+            if let Err(err) = send_server_message(message, &database, &mut ws_sender).await {
                 tracing::error!("{err}");
+                return;
             }
         }
     });
+
     let args = connection_args.clone();
 
     // receives chat payload from the client and stores the message in the database and sendsit
@@ -96,6 +102,7 @@ async fn handle_connection(
                             .await
                     {
                         tracing::error!("{err}");
+                        return;
                     }
                 }
 
@@ -123,17 +130,12 @@ async fn handle_connection(
 }
 
 async fn send_server_message(
-    args: &Arc<ConnectionArgs>,
     message: MessageTx,
     database: &mongodb::Database,
     ws_sender: &mut SplitSink<WebSocket<ServerMessage, ClientMessage>, Message<ServerMessage>>,
 ) -> Result<()> {
     let users = database.collection::<db::User>("users");
-    let user = users.find_one(doc! {"_id": &args.user_id}, None).await?;
-
-    if args.request_id != message.request_id {
-        return Ok(());
-    }
+    let user = users.find_one(doc! {"_id": &message.user_id}, None).await?;
 
     match user {
         Some(user) => {
@@ -147,7 +149,7 @@ async fn send_server_message(
                 .await;
         }
         None => {
-            tracing::error!("Got an invalid user_id `{}`", &args.user_id);
+            tracing::error!("Got an invalid user_id `{}`", &message.user_id);
         }
     };
 
@@ -162,12 +164,8 @@ async fn process_client_message(
     notification_tx: &broadcast::Sender<db::Notification>,
 ) -> Result<()> {
     match message {
-        ClientMessage::Authenticate { .. } => {}
-        ClientMessage::Message {
-            date_time,
-            content,
-            user_id,
-        } => {
+        ClientMessage::Message { content, user_id } => {
+            let date_time = get_time();
             // we store the mesage here since if we do it in `send_task` it will be
             // duplicated by other threads
             let chat_message = db::Message {
@@ -192,6 +190,8 @@ async fn process_client_message(
                 request_id: chat_message.request_id,
             })?;
         }
+
+        ClientMessage::Authenticate { .. } => {}
 
         ClientMessage::Event {
             date_time: _,
@@ -304,7 +304,7 @@ async fn get_previous_messages(
 use crate::utils::get_time;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct ConnectionArgs {
     request_id: String,
@@ -315,12 +315,7 @@ pub struct ConnectionArgs {
 #[serde(tag = "type", content = "content", rename_all = "camelCase")]
 pub enum ClientMessage {
     #[serde(rename_all = "camelCase")]
-    Message {
-        #[serde(default = "get_time")]
-        date_time: u64,
-        content: String,
-        user_id: String,
-    },
+    Message { content: String, user_id: String },
 
     #[serde(rename_all = "camelCase")]
     Event {
@@ -334,7 +329,7 @@ pub enum ClientMessage {
 }
 
 // an internal data structure that gets shared between threads
-#[derive(Clone, Debug)]
+#[derive(Debug, Clone)]
 pub struct MessageTx {
     date_time: u64,
     content: String,
