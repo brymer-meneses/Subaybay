@@ -49,7 +49,7 @@
         <input type="hidden" name="shouldSendEmail" value={shouldSendEmail} />
 
         <Button class="h-9" variant="destructive" type="submit">
-          I'm Sure, archive.
+          I'm sure, archive.
         </Button>
       </form>
     </Dialog.Footer>

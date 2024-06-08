@@ -57,8 +57,8 @@
     const currentStage = stages[request.currentStage.stageTypeIndex];
     currentStage.finished = request.currentStage.finished;
     currentStage.handlerId = request.currentStage.handlerId;
-    currentStage.isHistory = false;
-    currentStage.isCurrent = true;
+    currentStage.isHistory = currentStage.finished;
+    currentStage.isCurrent = !currentStage.finished;
   }
 
   const nextStageIndex = request.currentStage.stageTypeIndex + 1;
