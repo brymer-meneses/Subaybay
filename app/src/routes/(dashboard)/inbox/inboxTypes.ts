@@ -12,6 +12,8 @@ export interface InboxStageData {
   inboxType: "active" | "pending";
   finalStageTypeIndex: number;
   finished: boolean;
+  studentName: string;
+  studentNumber:string;
 }
 
 export interface MultiStageData {

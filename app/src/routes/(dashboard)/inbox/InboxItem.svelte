@@ -4,16 +4,6 @@
   import type { InboxStageData } from "./inboxTypes";
 
   export let stage: InboxStageData;
-  let studentName: string;
-  let studentNumber: string;
-
-  $: {
-    const relevantRequest = $page.data.relevantRequests[stage.requestId];
-    if (relevantRequest) {
-      studentName = relevantRequest.studentName;
-      studentNumber = relevantRequest.studentNumber;
-    }
-  }
 
   import clsx from "clsx";
 
@@ -29,8 +19,10 @@
   <div class="flex w-full flex-col gap-2">
     <div class="flex w-full flex-row justify-between gap-0">
       <p class="text-base font-semibold">
-        {studentName}
-        <span class="text-muted-foreground text-xs">({studentNumber})</span>
+        {stage.studentName}
+        <span class="text-muted-foreground text-xs">
+          ({stage.studentNumber})
+        </span>
       </p>
       <div class=""></div>
     </div>

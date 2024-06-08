@@ -56,6 +56,7 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
   const activeStages = reqAndStages.activeStages;
   const pendingStages = reqAndStages.pendingStages;
 
+
   return {
     form: await superValidate(zod(formSchema)),
     userInfo: locals.user!,
@@ -149,7 +150,9 @@ const addStage = (
     inboxType: inboxType,
     finalStageTypeIndex: requestType.stages.length - 1,
     finished: stage.finished,
-  });
+    studentName: request.studentName,
+    studentNumber: request.studentNumber
+    })
 };
 
 import { setFlash } from "sveltekit-flash-message/server";

@@ -17,14 +17,12 @@
   let searchTerm: string = "";
   let multiStages: MultiStageData[] = [];
   let filtered: MultiStageData[] = multiStages;
-  let skipThese: string[] = [
-    "handlerId",
-    "prevHandlerId",
-    "inboxType",
-    "final",
-    "finished",
-    "currentStageTypeIndex",
-    "inboxStageTypeIndex",
+  let lookAtTheseOnly: string[] = [
+    "inboxStageTitle",
+    "requestTitle",
+    "stageTitle",
+    "studentName",
+    "studentNumber",
   ];
 
   $: {
@@ -75,7 +73,7 @@
     filtered = multiStages.filter((multiStage: MultiStageData) => {
       const stage = multiStage.mainStage;
       for (const key in stage) {
-        if (skipThese.includes(key as string)) continue;
+        if (!lookAtTheseOnly.includes(key as string)) continue;
         const stageKey = key as keyof InboxStageData;
         if (
           String(stage[stageKey])
