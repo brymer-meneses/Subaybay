@@ -1,5 +1,7 @@
 # User Management
-This section covers adding and removing users as well as changing admin status.
+This section covers 
+- adding and removing users 
+- changing admin status.
 
 All of these functions are done from the **Admin Page**. <br/>
 This also means that only *admins* are allowed to do the following.

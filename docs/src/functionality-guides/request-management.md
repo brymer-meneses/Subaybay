@@ -1,9 +1,42 @@
 # Request Management
-This section covers passing requests between members, handling ("removing") discontinued requests, archiving requests, and editing exiting requests.
+This section covers
+- creating requests
+- passing requests between members (pass to next, rollback, reassign)
+- "removing" and reassigning discontinued requests
+- finishing requests and notifying requesters
+- editing existing requests
+
+## Create a New Request
+Creating requests is done from the **Inbox** Page.
+
+**To create a new request**
+1. Click on the **Create Request** button.
+
+image
+
+2. Enter in the *student number*, *student name*, and *student email*. <br/>
+*In case the input format is wrong, the form will inform you.*
+
+image of error messages
+
+3. Click on the **select request type/s** field.
+
+image
+
+4. Select atleast one request type by clicking on the **plus**. <br/>
+*The number being changed is the number of copies to be shown in the request details, NOT the number of requests to be made*
+
+image
+
+5. Click Add
+
+image
+
+After a while, the request/s should appear in the **Active Inbox**
 
 ## Pass to Next
-When there are no issues, a request only moves forward. This means that for the most part, the only 
-necessary functionality is the **Pass to Next** option.
+When there are no issues, a request only moves forward to completion. 
+<br/><br/>
 
 Passing requests forward is done from the **Inbox** Page.
 
@@ -29,6 +62,7 @@ Unless you choose yourself as the next handler, the request should disappear fro
 ## Rollback
 In case mistakes are made along the process and a request needs to be brought back to a previous stage, there is the option
 to **Rollback** a request.
+<br/><br/>
 
 Rolling back requests is done from the **Inbox** Page.
 
@@ -75,6 +109,7 @@ Pending Inbox: Staff 1
 ## Mark as Stale / Discontinue
 In rare cases, a request can be cancelled while being processed. <br/>
 To keep a complete record of all processes in the office, there is no way to delete a request without accessing the database directly.
+<br/><br/>
 
 Instead, requests can be **Marked as Stale**. This is done from the **Request Detail Page**.
 
@@ -96,6 +131,7 @@ To mark a request as not stale, it can be [reassigned](#reassign) to a handler
 ## Reassign
 Sometimes, the person meant to handle a request isn't available. Thus, there is also the option
 to **Reassign** a request to another person. Additionally, **Reassigning** requests is a way to "revive" a request that was **marked as stale**.
+<br/><br/>
 
 *Note: Finished requests cannot be reassigned, only Pending and Discontinued*
 
@@ -132,9 +168,37 @@ image
 
 The reassignment should be reflected in the **Progress View** and **History View** of the request.
 
+## Finish, Archive, and Notify
+If a request was not discontinued, then it will eventually reach its Final Stage. At which point, it can be marked as finished and be removed from its handlers inboxes. Additionally, users are given the option to notify the requester via email that their request is done.
+<br/><br/>
+
+**Finishing and Archiving** requests is done from the **Inbox**. It can only be done to requests on their final stage. <br/>
+When a request is on its final stage, the **Pass to Next** button in the **Inbox** should be replaced by a **Finish and Archive** button.
+
+image
+
+**To finish and archive a request**
+1. Select the request of interest from the **Active** Inbox
+
+image
+
+2. Click the **Finish and Archive** button
+
+image
+
+3. (Optional) Toggle the "Send email to student" on
+
+image
+
+4. Confirm
+
+image
+
+The request should now disappear from all inboxes and appear in the **Finished** requests list. If "Send email to student" was toggled on, then an email should also be sent automatically.
 
 ## Edit Request Details
-Sometimes, mistakes are made in entering request details or *remarks* are added.
+Sometimes, mistakes are made in entering request details or *remarks* need to be added along the way. For this purpose, it is possible to **edit** request details.
+<br/><br/>
 
 Editing request details is done from the **Request Details Page**
 

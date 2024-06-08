@@ -1,51 +1,52 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig } from "vitepress";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  srcDir: 'src',
+  srcDir: "src",
   base: "/docs/",
   title: "UPB Subaybay Manual",
   description: "a documentation",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Glossary', link: '/glossary' }
+      { text: "Home", link: "/" },
+      { text: "Glossary", link: "/glossary" },
     ],
 
     sidebar: [
       {
         items: [
-          { text: 'Glossary', link: '/glossary' },
-          { text: 'Navigation Guide', link: '/page-guides/navigation' },
-        ]
+          { text: "Glossary", link: "/glossary" },
+          { text: "Navigation Guide", link: "/navigation" },
+        ],
       },
       {
-        text: 'Page Guides',
+        text: "Functionality Guides",
         items: [
-          { text: 'Inbox', link: '/page-guides/inbox' },
-          { text: 'Requests', link: '/page-guides/requests' },
-          { text: 'Configuration', link: '/page-guides/configuration' },
-          { text: 'Admin', link: '/page-guides/configuration' },
-        ]
+          {
+            text: "Request Management",
+            link: "/functionality-guides/request-management",
+          },
+          {
+            text: "User Management",
+            link: "/functionality-guides/user-management",
+          },
+          {
+            text: "Request Information",
+            link: "/functionality-guides/request-info",
+          },
+          { text: "Chatting", link: "/functionality-guides/chat" },
+        ],
       },
       {
-        text: 'Functionality Guides',
-        items: [
-          { text: 'Request Management', link: '/functionality-guides/request-management' },
-          { text: 'User Management', link: '/functionality-guides/user-management' }
-        ]
+        text: "Examples",
+        link: "/examples/examples-directory",
+        items: [],
       },
-      {
-        text: 'Examples',
-        link: '/examples/examples-directory',
-        items: [
-        ]
-      }
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
-    ]
-  }
-})
+      { icon: "github", link: "https://github.com/vuejs/vitepress" },
+    ],
+  },
+});

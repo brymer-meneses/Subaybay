@@ -6,12 +6,34 @@ This page provides standardized terms and phrases to refer to specific elements 
 ## Application Pages
 The following are terms used to name pages in the application
 **Inbox** <br/>
+The page containing the list of all active and pending requests a user is handling
+
+image
 
 **Requests Page** <br/>
 The page containing the list of all pages in a request
 
+image
+
 **Request Details Page** <br/>
 The page containing the details of an individual request
+
+image
+
+**Configuration** <br/>
+The page containing the list of request types and the form to create new request types
+
+image
+
+**Edit Request Type Page** <br/>
+The page containing the form to edit or delete and existing request type
+
+image
+
+**Admin Page** <br/>
+The page exclusive to admins
+
+image
 
 ## Parts of a Request
 
@@ -43,6 +65,7 @@ The handler *handles* a particular *stage* in the request.
 A request can only at one stage at a time, so the "handler of
 the **current stage**" is also the "handler of the **request**".
 
+
 ## Procedures on requests
 **(Move) Forward** <br/>
 Change a request's current stage to the next stage, that is, closer to completion
@@ -72,11 +95,22 @@ Complete a request. The request should be archived right after
 
 When referring to requests, the phrase "fully finish" may be used, but it has the same meaning as "finish"
 ## Types of Requests
+
+
 **Pending** <br/>
-An incomplete request that is actively be worked on
+An incomplete request that is being be worked on
+
+*Not to be confused with [Pending Inbox](#types-of-inboxes)*
 
 **Discontinued / Stale** <br/>
 An incomplete request that is no longer being worked on
 
 **Finished** <br/>
 A completed request
+
+## Types of Inboxes
+**Active Inbox** <br/>
+Contains the list of request being worked on by the owner of the inbox
+
+**Pending Inbox** <br/>
+Contains the list of incomplete requests that the owner of the inbox handled, but are being worked on by another user
