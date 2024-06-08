@@ -5,6 +5,7 @@ import { ObjectId } from "mongodb";
 
 import ConfirmationEmail from "$lib/components/email/ConfirmationEmail.svelte";
 
+import { customAlphabet } from 'nanoid/non-secure'
 import { superValidate } from "sveltekit-superforms";
 import { formSchema } from "./schema";
 import { zod } from "sveltekit-superforms/adapters";
@@ -158,6 +159,11 @@ const addStage = (
 import { setFlash } from "sveltekit-flash-message/server";
 import { GOOGLE_SENDER_EMAIL } from "$env/static/private";
 
+const generateRequestId = () => {
+  const nanoid = customAlphabet('1234567890abcdef', 7);
+  return nanoid();
+}
+
 export const actions: Actions = {
   add_request: async (event) => {
     const { locals, cookies } = event;
@@ -214,8 +220,9 @@ export const actions: Actions = {
       const nextHandlerId =
         reqType.stages.length >= 2 ? reqType.stages[1].defaultHandlerId : "";
 
+
       const req: db.Request = {
-        _id: new ObjectId().toString(),
+        _id: generateRequestId(),
         requestTypeId: idCount.id,
         studentNumber: studentNumber,
         studentName: studentName,
@@ -277,8 +284,6 @@ export const actions: Actions = {
       setFlash(reqError, cookies);
       return;
     }
-
-    console.log(shouldSendEmail);
 
     if (shouldSendEmail) {
       const emailHtml = render({
