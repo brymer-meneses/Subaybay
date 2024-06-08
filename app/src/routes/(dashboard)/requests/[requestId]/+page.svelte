@@ -78,17 +78,19 @@
     >
   </main>
 {:else}
-  <main class="mx-5 grid grid-cols-2 gap-4">
-    <div class="flex flex-col">
+  <main class="mx-5 flex flex-col gap-8 xl:h-[85vh] xl:flex-row">
+    <div class="flex h-full flex-grow flex-col xl:w-[50%]">
       {#key data}
-        <Tabs.Root value="progress">
-          <Tabs.List>
-            <Tabs.Trigger value="progress">Progress</Tabs.Trigger>
-            <Tabs.Trigger value="history">History</Tabs.Trigger>
-          </Tabs.List>
+        <Tabs.Root value="progress" class="flex h-full flex-col ">
+          <div class="flex items-center">
+            <Tabs.List>
+              <Tabs.Trigger value="progress">Progress</Tabs.Trigger>
+              <Tabs.Trigger value="history">History</Tabs.Trigger>
+            </Tabs.List>
+          </div>
 
-          <Tabs.Content value="progress">
-            <Card.Root>
+          <Tabs.Content value="progress" class="flex-grow overflow-hidden">
+            <Card.Root class="flex h-full flex-col overflow-hidden">
               <Card.Header>
                 <Card.Title class="flex gap-2">
                   {data.requestType.title}<Badge variant="outline"
@@ -97,8 +99,8 @@
                   >
                 </Card.Title>
               </Card.Header>
-              <Card.Content class="flex flex-col gap-2">
-                <ScrollArea class="h-[39rem] px-4">
+              <Card.Content class="flex grow flex-col gap-2 overflow-hidden">
+                <ScrollArea class="h-[60vh] px-4 xl:h-full">
                   <ProgressView
                     request={data.request}
                     requestType={data.requestType}
@@ -109,8 +111,8 @@
             </Card.Root>
           </Tabs.Content>
 
-          <Tabs.Content value="history">
-            <Card.Root>
+          <Tabs.Content value="history" class="flex-grow overflow-hidden">
+            <Card.Root class="flex h-full flex-col overflow-hidden">
               <Card.Header>
                 <Card.Title class="flex gap-2">
                   {data.requestType.title}<Badge variant="outline"
@@ -119,8 +121,8 @@
                   >
                 </Card.Title>
               </Card.Header>
-              <Card.Content class="flex h-[39rem] flex-col gap-2">
-                <ScrollArea class="px-4">
+              <Card.Content class="flex grow flex-col gap-2 overflow-hidden">
+                <ScrollArea class="h-[60vh] px-4 xl:h-full">
                   <HistoryView
                     request={data.request}
                     requestType={data.requestType}
@@ -134,9 +136,9 @@
       {/key}
     </div>
 
-    <Card.Root class="mt-12 pt-6">
-      <Card.Content>
-        <div class="flex flex-col gap-4">
+    <Card.Root class="flex h-full flex-grow flex-col pt-6 xl:w-[50%]">
+      <Card.Content class="h-full">
+        <div class="flex h-full flex-col gap-4">
           <div class="flex justify-between">
             <p class="font-semibold">Student Information</p>
             <Options bind:data={formData} users={data.users} bind:processing />
@@ -163,11 +165,19 @@
             </Badge>
           </div>
 
-          <p class="text-sm font-semibold">Purpose</p>
-          <Textarea disabled value={data.purpose} />
-          <p class="text-sm font-semibold">Remarks</p>
-          <Textarea disabled value={data.remarks} />
-          <ChatArea requestId={data.requestId} height="h-56" />
+          <div class="flex flex-col gap-2">
+            <p class="text-sm font-semibold">Purpose</p>
+            <Textarea disabled value={data.purpose} />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <p class="text-sm font-semibold">Remarks</p>
+            <Textarea disabled value={data.remarks} />
+          </div>
+
+          <div class="grow">
+            <ChatArea requestId={data.requestId} height="h-full" />
+          </div>
         </div>
       </Card.Content>
     </Card.Root>
