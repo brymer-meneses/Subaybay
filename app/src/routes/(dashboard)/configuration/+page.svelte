@@ -82,17 +82,17 @@
 </script>
 
 <!-- TODO add Responsive layout -->
-<main class="mx-8 flex flex-row space-x-4">
-  <div class="flex">
+<main class="flex flex-col justify-between gap-8 px-8 xl:h-[85vh] xl:flex-row">
+  <div class="h-full xl:w-[30%]">
     <RequestTypeList requestTypes={data.requestTypes} />
   </div>
-  <div class="flex w-[40%] flex-grow flex-col gap-4">
+  <div class="flex h-full flex-grow flex-col gap-4 xl:w-[70%]">
     <Input
       bind:value={title}
       class="focus-visible:ring-0"
       placeholder="Request Type Title (e.g. OTR-1)"
     />
-    <Card class="flex flex-col border-gray-300">
+    <Card class="flex h-full flex-col overflow-hidden">
       <CardHeader>
         <CardTitle>Stages</CardTitle>
         <CardDescription>
@@ -100,8 +100,8 @@
           edited.
         </CardDescription>
       </CardHeader>
-      <CardContent class="flex flex-col gap-2">
-        <ScrollArea class="h-[30rem] px-4">
+      <CardContent class="flex grow flex-col gap-2 overflow-hidden">
+        <ScrollArea class="h-[50vh] px-4 xl:h-full">
           {#each stages as stageType, stageIndex}
             <div class="mb-4">
               <ConfigStage
@@ -117,22 +117,26 @@
           {/each}
         </ScrollArea>
         <!--Button for adding new stage-->
-        <Button variant="outline" class="w-full" on:click={addSubstage}>
-          <Plus class="stroke-muted-foreground stroke-1" />
-        </Button>
       </CardContent>
-      <CardFooter>
-        <ConfigConfirmation requestTypeTitle={title} {processing}>
-          <form
-            action="?/create"
-            method="POST"
-            use:enhance={(event) => {
-              return handleSubmit(event);
-            }}
-          >
-            <Button type="submit">Create</Button>
-          </form>
-        </ConfigConfirmation>
+      <CardFooter class="flex flex-col gap-4">
+        <div class="w-full">
+          <Button variant="outline" class="w-full" on:click={addSubstage}>
+            <Plus class="stroke-muted-foreground stroke-1" />
+          </Button>
+        </div>
+        <div class="flex w-full justify-start">
+          <ConfigConfirmation requestTypeTitle={title} {processing}>
+            <form
+              action="?/create"
+              method="POST"
+              use:enhance={(event) => {
+                return handleSubmit(event);
+              }}
+            >
+              <Button type="submit">Create</Button>
+            </form>
+          </ConfigConfirmation>
+        </div>
       </CardFooter>
     </Card>
   </div>

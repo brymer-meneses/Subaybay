@@ -17,7 +17,7 @@
   });
 </script>
 
-<Card.Root class="w-[30rem] border ">
+<Card.Root class="flex h-full flex-col overflow-hidden">
   <Card.Header>
     <Card.Title>Request Types</Card.Title>
     <Card.Description
@@ -26,37 +26,41 @@
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
       <div class="relative w-full">
         <Search
-          class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
+          class="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4"
         />
         <Input
           type="search"
           placeholder="Search..."
-          class="w-full rounded-lg bg-background pl-8"
+          class="bg-background w-full rounded-lg pl-8"
           bind:value={searchTerm}
         />
       </div>
     </div>
   </Card.Header>
-  <Card.Content>
-    <p class="mb-4 text-sm text-muted-foreground">
-      Returned {filteredRequestTypes.length}
-      {filteredRequestTypes.length <= 1 ? "result" : "results"}.
-    </p>
+  <Card.Content class="flex grow flex-col overflow-hidden">
+    <div>
+      <p class="text-muted-foreground mb-4 text-sm">
+        Returned {filteredRequestTypes.length}
+        {filteredRequestTypes.length <= 1 ? "result" : "results"}.
+      </p>
+    </div>
     {#if filteredRequestTypes.length > 0}
-      <ScrollArea class="flex h-[560px] flex-col">
-        {#each filteredRequestTypes as requestType}
-          <Button
-            variant="link"
-            on:click={() => {
-              goto(`./configuration/${requestType._id}`);
-            }}
-            class="block"
-          >
-            {requestType.title}
-          </Button>
-          <Separator />
-        {/each}
-      </ScrollArea>
+      <div class="grow overflow-hidden">
+        <ScrollArea class="flex h-[50vh] flex-col xl:h-full">
+          {#each filteredRequestTypes as requestType}
+            <Button
+              variant="link"
+              on:click={() => {
+                goto(`./configuration/${requestType._id}`);
+              }}
+              class="block"
+            >
+              {requestType.title}
+            </Button>
+            <Separator />
+          {/each}
+        </ScrollArea>
+      </div>
     {/if}
   </Card.Content>
 </Card.Root>
