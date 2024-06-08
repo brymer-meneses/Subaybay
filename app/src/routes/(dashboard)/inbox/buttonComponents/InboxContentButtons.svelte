@@ -9,7 +9,7 @@
 
   export let request: Request;
   export let multiStage: MultiStageData;
-  export let users: any;
+  export let users: { [key: string]: User };
   export let updateSelectedStage: () => void;
   export let processing = false;
 

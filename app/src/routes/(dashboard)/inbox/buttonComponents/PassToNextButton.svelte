@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import type { InboxStageData, UserInfo } from "../inboxTypes";
+  import type { InboxStageData } from "../inboxTypes";
   import type { Request } from "$lib/server/database";
 
   import { Button } from "$lib/components/ui/button";
@@ -8,7 +8,7 @@
 
   import { CheckCheck } from "lucide-svelte";
 
-  export let users: { [key: string]: UserInfo };
+  export let users: { [key: string]: User };
   export let stage: InboxStageData;
   export let request: Request;
   export let enhanceFunc: any;

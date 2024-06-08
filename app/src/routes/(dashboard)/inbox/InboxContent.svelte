@@ -20,13 +20,13 @@
   import Locate from "lucide-svelte/icons/locate";
 
   import type { Request } from "$lib/server/database";
-  import type { MultiStageData, UserInfo } from "./inboxTypes";
+  import type { MultiStageData } from "./inboxTypes";
 
   import ChatArea from "../ChatArea.svelte";
   import InboxContentButtons from "./buttonComponents/InboxContentButtons.svelte";
 
   export let requests: { [key: string]: Request };
-  export let users: { [key: string]: UserInfo };
+  export let users: { [key: string]: User };
   export let multiStage: MultiStageData | null;
 
   $: stage = multiStage?.mainStage;

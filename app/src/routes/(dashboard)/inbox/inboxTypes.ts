@@ -13,7 +13,7 @@ export interface InboxStageData {
   finalStageTypeIndex: number;
   finished: boolean;
   studentName: string;
-  studentNumber:string;
+  studentNumber: string;
 }
 
 export interface MultiStageData {
@@ -21,8 +21,3 @@ export interface MultiStageData {
   otherStages: InboxStageData[];
 }
 
-// only contains very basic user data
-export interface UserInfo {
-  name: string;
-  profileUrl: string;
-}

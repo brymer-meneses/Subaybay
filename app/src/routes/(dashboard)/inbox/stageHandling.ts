@@ -5,7 +5,6 @@ import {
   removeFromAllInboxes,
   removeFromInbox,
 } from "$lib/server/inboxUtils";
-import { sendInboxNotification } from "$lib/notifications";
 
 class Result {
   type: "error" | "success";

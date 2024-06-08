@@ -1,15 +1,15 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import type { InboxStageData, UserInfo } from "../inboxTypes";
+  import type { InboxStageData } from "../inboxTypes";
   import type { Request } from "$lib/server/database";
 
   import * as Dialog from "$lib/components/ui/dialog";
   import { Button } from "$lib/components/ui/button";
   import PopoverButton from "./PopoverButton.svelte";
 
-  import User from "lucide-svelte/icons/user";
+  import UserIcon from "lucide-svelte/icons/user";
 
-  export let users: { [key: string]: UserInfo };
+  export let users: { [key: string]: User };
   export let stage: InboxStageData;
   export let request: Request | null;
   export let enhanceFunc: any;
@@ -25,7 +25,7 @@
   bind:nextHandlerId
 >
   <Button variant="outline" slot="button" class="h-9.5 gap-2">
-    <User size={18} /> Reassign
+    <UserIcon size={18} /> Reassign
   </Button>
 
   <Dialog.Root>

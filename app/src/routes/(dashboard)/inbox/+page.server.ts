@@ -15,7 +15,7 @@ import { sendInboxNotification } from "$lib/notifications";
 import transporter from "$lib/server/email";
 import { render } from "svelte-email";
 
-import type { InboxStageData, UserInfo } from "./inboxTypes";
+import type { InboxStageData } from "./inboxTypes";
 import {
   addToInbox,
   existsInInbox,
@@ -71,9 +71,9 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
 
 const getUsers = async () => {
   const cursor = db.user.find();
-  const users: { [_id: string]: UserInfo } = {};
+  const users: { [_id: string]: User } = {};
   for await (const user of cursor) {
-    users[user._id] = { name: user.name, profileUrl: user.profileUrl };
+    users[user._id] = user;
   }
 
   return users;
@@ -152,7 +152,7 @@ const addStage = (
     finished: stage.finished,
     studentName: request.studentName,
     studentNumber: request.studentNumber
-    })
+  })
 };
 
 import { setFlash } from "sveltekit-flash-message/server";
