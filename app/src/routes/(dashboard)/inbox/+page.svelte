@@ -1,8 +1,6 @@
 <script lang="ts">
-  import { blur, crossfade, fly, slide } from "svelte/transition";
+  import { fly } from "svelte/transition";
   import { quintOut } from "svelte/easing";
-
-  import { animateInboxContentEntrance } from "$lib/animations";
 
   import * as Tabs from "$lib/components/ui/tabs/index.js";
   import Inbox from "./Inbox.svelte";
@@ -13,7 +11,6 @@
 
   import { notifications } from "$lib/notifications";
   import Notifiable from "../Notifiable.svelte";
-  import { onMount } from "svelte";
 
   export let data: PageServerData;
   let latestReqTypes = data.latestRequestTypes ?? [];

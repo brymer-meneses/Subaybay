@@ -1,12 +1,10 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button/index.js";
-  import { animateInboxContentEntrance } from "$lib/animations";
   import type { InboxStageData } from "./inboxTypes";
 
   export let stage: InboxStageData;
 
   import clsx from "clsx";
-  import { tick } from "svelte";
 
   export let isSelected: boolean;
   export let onClick: () => void = () => {};
