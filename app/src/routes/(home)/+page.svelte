@@ -26,11 +26,6 @@
   <div
     class="hero relative flex flex-grow flex-col justify-center border bg-slate-100 p-10 backdrop-blur-lg"
   >
-    <!-- <div
-        class="pointer-events-none absolute m-0 flex h-full w-full items-center justify-center"
-      >
-        <div class="ball -z-10 aspect-square h-[80%] rotate-[20deg]"></div>
-      </div> -->
     <p class="subtext gap-2 text-xl text-[#D69A22]">
       Internal <span class="text-[#760d11]">Request</span>
       <span class="not-italic text-black">Tracker:</span>
@@ -41,7 +36,7 @@
     <p class="subtext gap-2 text-xl">CMSC 128</p>
   </div>
   <div
-    class="flex-end flex grow flex-row items-center space-x-16 bg-slate-200 px-10 py-10"
+    class="flex-end flex h-3 grow flex-row items-center space-x-16 bg-slate-200 px-10 py-5"
   >
     <div class="flex flex-row space-x-20">
       <div>

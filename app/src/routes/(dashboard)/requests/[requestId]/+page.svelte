@@ -176,7 +176,7 @@
             <Textarea disabled value={data.request.remarks} />
           </div>
 
-          <div class="grow">
+          <div class="grow overflow-hidden">
             <ChatArea requestId={data.request._id} height="h-full" />
           </div>
         </div>

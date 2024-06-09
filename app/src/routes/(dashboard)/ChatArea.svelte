@@ -152,21 +152,201 @@
     <ScrollArea class="h-[50vh] grow overflow-y-scroll xl:h-auto">
       <div bind:this={messageContainer}>
         <div class={height + " flex w-[96%] flex-col gap-2"}>
-          {#each messages as message, _}
+          <ChatMessage
+            message={"Hello"}
+            byYou={true}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={false}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={true}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={false}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={true}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={false}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={true}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={false}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={true}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={false}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={true}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={false}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={true}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={false}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={true}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={false}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={true}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={false}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={true}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={false}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={true}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={false}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={true}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={false}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={true}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={false}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={true}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={false}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={true}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <ChatMessage
+            message={"Hello"}
+            byYou={false}
+            dateTime={0}
+            profileUrl={""}
+          />
+          <!-- {#each messages as message, _}
             <ChatMessage
               message={message.content}
               byYou={message.userId == userId ? true : false}
               dateTime={message.dateTime}
               profileUrl={message.profileUrl}
             />
-          {/each}
+          {/each} -->
         </div>
       </div>
     </ScrollArea>
 
     <div class="flex w-full items-center space-x-2">
       <Input
-        class="border-b-1 w-full bg-accent focus:ring-0 focus:ring-offset-0"
+        class="border-b-1 bg-accent w-full focus:ring-0 focus:ring-offset-0"
         placeholder="Send a message ..."
         bind:value={messageContent}
       />
