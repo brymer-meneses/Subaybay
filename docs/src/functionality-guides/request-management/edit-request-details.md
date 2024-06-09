@@ -9,11 +9,11 @@ Editing request details is done from the **Request Details Page**
 
 1. Click the stacked dots and select **Edit Request**
 
-image
+`image`
 
 2. Input the new details
 
-image
+`image`
 
 3. Confirm
 

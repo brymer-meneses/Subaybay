@@ -4,7 +4,7 @@ Creating requests is done from the **Inbox** Page.
 
 `image pointing where to click to go to /inbox`
 
-## Steps in creating a new Request
+## To create a New Request
 
 1. Click on the **Create Request** button.
 
