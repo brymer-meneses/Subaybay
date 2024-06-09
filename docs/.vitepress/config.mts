@@ -26,7 +26,32 @@ export default defineConfig({
         items: [
           {
             text: "Request Management",
-            link: "/functionality-guides/request-management",
+            items: [
+              {
+                text: "Overview",
+                link: "/functionality-guides/request-management"
+              },
+              {
+                text: "Create a New Request",
+                link: "/functionality-guides/request-management/create-new-request"
+              },
+              {
+                text: "Pass to Next",
+                link: "/functionality-guides/request-management/pass-to-next"
+              },
+              {
+                text: "Rollback",
+                link: "/functionality-guides/request-management/rollback"
+              },
+              {
+                text: "Mark as Stale/Discontinue",
+                link: "/functionality-guides/request-management/discontinue"
+              },
+              {
+                text: "Edit Request Details",
+                link: "/functionality-guides/request-management/edit-request-details"
+              }
+            ]
           },
           {
             text: "User Management",
@@ -38,11 +63,6 @@ export default defineConfig({
           },
           { text: "Chatting", link: "/functionality-guides/chat" },
         ],
-      },
-      {
-        text: "Examples",
-        link: "/examples/examples-directory",
-        items: [],
       },
     ],
 
