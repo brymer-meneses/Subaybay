@@ -3,11 +3,11 @@ import * as db from "$lib/server/database";
 import { fail, superValidate } from "sveltekit-superforms";
 import { formSchema } from "./schema";
 import { zod } from "sveltekit-superforms/adapters";
-import { setFlash } from "sveltekit-flash-message/server";
+import { redirect, setFlash } from "sveltekit-flash-message/server";
 import { markRequestAsStale, reassign } from "../../inbox/stageHandling";
 import { sendInboxNotification } from "$lib/notifications";
 import { lucia } from "$lib/server/auth";
-import { error } from '@sveltejs/kit';
+import { type ServerLoadEvent } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async (event) => {
   const requestId = event.params.requestId;
@@ -21,7 +21,7 @@ export const load: PageServerLoad = async (event) => {
     error.error = true;
   }
 
-  const storedData = await retrieveData(requestId);
+  const storedData = await retrieveData(requestId, event);
 
   return {
     error: error,
@@ -33,7 +33,7 @@ export const load: PageServerLoad = async (event) => {
   };
 };
 
-const retrieveData = async (requestId: string) => {
+const retrieveData = async (requestId: string, event: ServerLoadEvent) => {
   const cursor = db.user.find();
   const users: { [_id: string]: { name: string; profileUrl: string } } = {};
 
@@ -43,14 +43,15 @@ const retrieveData = async (requestId: string) => {
 
   const request = await db.request.findOne<db.Request>({ _id: requestId });
   if (!request) {
-    error(400, "invalid request id")
+    redirect("/requests", { type: "error", message: "Invalid request id" }, event.cookies);
   }
 
   const requestType = await db.requestType.findOne<db.RequestType>({
     _id: request.requestTypeId,
   });
-  if (!requestType)
-    error(400, "invalid request id")
+  if (!requestType) {
+    redirect("/requests", { type: "error", message: "Invalid request id" }, event.cookies);
+  }
 
   return {
     users,

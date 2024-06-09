@@ -111,7 +111,7 @@
             name="Manual"
             href="/docs"
             {isCollapsed}
-            target={"_blank"}
+            target="_self"
           />
         </div>
       </Tooltip.Trigger>
