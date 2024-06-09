@@ -168,21 +168,21 @@ export default defineConfig({
             link: "/examples/examples-directory"
           },
           {
-            text: "Managing Users",
-            link: "/examples/managing-users"
+            text: "Passing to Completion",
+            link: "/examples/passing-to-completion"
           },
           {
             text: "Making Corrections",
             link: "/examples/making-corrections"
           },
           {
-            text: "Passing to Completion",
-            link: "/examples/passing-to-completion"
-          },
-          {
             text: "Downloading Statistics",
             link: "/examples/downloading-statistics"
-          }
+          },
+          {
+            text: "Managing Users",
+            link: "/examples/managing-users"
+          },
         ]
       },
     ],

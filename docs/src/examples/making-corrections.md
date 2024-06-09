@@ -1,5 +1,5 @@
 # Example: Correcting mistakes
-This section demonstrates the process of creating a request and correcting errors that were made during the process
+This section demonstrates the process of creating multiple requests and correcting errors that were made during the process
 
 Functionalities demonstrated:
 - creating multiple requests
@@ -11,7 +11,7 @@ Functionalities demonstrated:
 
 ::: info
 <p style="color: lightseagreen">
-The teal colored text describes a potential situation to imagine
+The teal colored text describes a situation to imagine, which prompts the next actions
 </p>
 :::
 
@@ -25,13 +25,13 @@ Otherwise, sign in to another account using another browser, that account will b
 
 _**<span style="color: peru">Using Account A</span>** unless specified otherwise_
 
-1. Navigate to the **Inbox** and click on **Create New Request**
-
 <br/>
 <p style="color: lightseagreen">
 Milo Fishtooth makes a request for a <i>Certificate of Enrolment</i> and a <i>Certificate of Grade Equivalence</i> <br/>
 Two copies of each are needed
 </p>
+
+1. Navigate to the **Inbox** and click on **Create New Request**
 
 2. Input the following details:
     - Student Name: Milo Fishtooth
@@ -117,7 +117,7 @@ Milo Fishtooth says he actually does need the <i>Certificate of Grade Equivalenc
     - This is the method for marking a request as "un-stale"
 
 ::: warning
-This next part cannot be done without a second account as reassignment for non-stale requests can only be done between different accounts
+Steps 20 - 22 cannot be done without a second account as reassignment for non-stale requests can only be done between different accounts
 :::
 
 <p style="color: lightseagreen">
@@ -130,4 +130,15 @@ The owner of <b>Account B</b> is unavailable, but you have also the authority to
     - A form should pop up prompting you for the new handler
 
 22. Select yourself as the new handler
-    - _Request A_ should appear in your **Active Inbox** at the stage **Account B** should have proceessed
+
+<br/>
+
+23. Navigate to your **Active Inbox**
+    - _Request A_ should be in your **Active Inbox** at the stage **Account B** should have processed
+
+24. Click **View Progress**
+    - You should be redirected to the **Request Details Page**
+
+25. Observe the Progress and History
+    - The progress should show you as the handler of the Stage, rather than **Account B**
+    - The history should include the rollbacks and reassignments
