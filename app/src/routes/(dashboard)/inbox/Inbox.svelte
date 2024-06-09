@@ -133,7 +133,7 @@
     <div class="h-[60vh] w-full grow xl:h-full">
       <ScrollArea class="flex h-full w-full flex-col transition-all">
         {#each filtered as multiStage, index}
-          <div>
+          <div class="mb-2 w-full">
             <InboxItem
               stage={multiStage.mainStage}
               isSelected={selectedStageIndex == index}
