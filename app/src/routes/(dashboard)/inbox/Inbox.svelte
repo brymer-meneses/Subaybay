@@ -5,6 +5,9 @@
   import InboxItem from "./InboxItem.svelte";
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
   import type { InboxStageData, MultiStageData } from "./inboxTypes";
+  import { crossfade } from "svelte/transition";
+  import { quintIn, quintInOut } from "svelte/easing";
+  import { fly } from "svelte/transition";
 
   export let onSelectStage: (stage: MultiStageData) => void;
 
@@ -109,6 +112,24 @@
       return filtered[selectedStageIndex];
     }
   }
+
+  export const [send, receive] = crossfade({
+    duration: (d) => Math.sqrt(d * 200),
+
+    fallback(node, params) {
+      const style = getComputedStyle(node);
+      const transform = style.transform === "none" ? "" : style.transform;
+
+      return {
+        duration: 600,
+        easing: quintInOut,
+        css: (t) => `
+				transform: ${transform} scale(${t});
+				opacity: ${t}
+			`,
+      };
+    },
+  });
 </script>
 
 <Card.Root class="flex w-full flex-grow flex-col border">
@@ -133,7 +154,7 @@
     <div class="h-[60vh] w-full grow xl:h-full">
       <ScrollArea class="flex h-full w-full flex-col transition-all">
         {#each filtered as multiStage, index}
-          <div class="mb-2 w-full">
+          <div class="mb-2 w-full" in:fly={{ x: 300 }} out:fly={{ x: -300 }}>
             <InboxItem
               stage={multiStage.mainStage}
               isSelected={selectedStageIndex == index}

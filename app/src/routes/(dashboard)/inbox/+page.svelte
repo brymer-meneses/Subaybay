@@ -1,4 +1,9 @@
 <script lang="ts">
+  import { blur, crossfade, fly, slide } from "svelte/transition";
+  import { quintOut } from "svelte/easing";
+
+  import { animateInboxContentEntrance } from "$lib/animations";
+
   import * as Tabs from "$lib/components/ui/tabs/index.js";
   import Inbox from "./Inbox.svelte";
   import InboxContent from "./InboxContent.svelte";
@@ -8,6 +13,7 @@
 
   import { notifications } from "$lib/notifications";
   import Notifiable from "../Notifiable.svelte";
+  import { onMount } from "svelte";
 
   export let data: PageServerData;
   let latestReqTypes = data.latestRequestTypes ?? [];
@@ -91,12 +97,23 @@
     </Tabs.Root>
   </div>
 
-  <div class="h-full flex-grow xl:w-[60%]">
-    <InboxContent
-      {updateSelectedStage}
-      bind:multiStage={selected}
-      requests={data.relevantRequests ?? {}}
-      users={data.users ?? {}}
-    />
-  </div>
+  {#if selected}
+    {#key selected.mainStage.requestId}
+      <div
+        class="h-full flex-grow xl:w-[60%]"
+        in:fly={{
+          delay: 100,
+          duration: 300,
+          easing: quintOut,
+        }}
+      >
+        <InboxContent
+          {updateSelectedStage}
+          bind:multiStage={selected}
+          requests={data.relevantRequests ?? {}}
+          users={data.users ?? {}}
+        />
+      </div>
+    {/key}
+  {/if}
 </main>
