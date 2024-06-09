@@ -16,8 +16,16 @@ export default defineConfig({
         text: "Guides", 
         items: [
           { text: "Glossary", link: "/glossary" },
-          { text: "Navigation", link: "/navigation" },
-          { text: "Functionality", link: "/functionality-guides/request-management" },
+          { text: "Navigation Guide", link: "/navigation" },
+          { 
+            text: "Functionality", 
+            items: [
+              { text: "Request Management", link: "/functionality-guides/request-management" },
+              { text: "User Management", link: "/functionality-guides/user-management" },
+              { text: "Request Information", link: "/functionality-guides/request-info" },
+              { text: "Chatting", link: "/functionality-guides/chat" },
+            ]
+          },
         ]
       }, 
       { text: "Examples", link: "/examples/examples-directory"}
