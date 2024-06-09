@@ -12,13 +12,18 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: "Home", link: "/" },
-      { 
-        text: "Guides", 
+      {
+        text: "Application",
+        link: "../",
+        target: "_self",
+      },
+      {
+        text: "Guides",
         items: [
           { text: "Glossary", link: "/glossary" },
           { text: "Navigation Guide", link: "/navigation" },
-          { 
-            text: "Functionality", 
+          {
+            text: "Functionality",
             items: [
               { text: "Request Management", link: "/functionality-guides/request-management" },
               { text: "User Management", link: "/functionality-guides/user-management" },
@@ -27,8 +32,8 @@ export default defineConfig({
             ]
           },
         ]
-      }, 
-      { text: "Examples", link: "/examples/examples-directory"}
+      },
+      { text: "Examples", link: "/examples/examples-directory" }
     ],
     sidebar: [
       {
@@ -133,8 +138,8 @@ export default defineConfig({
               },
             ]
           },
-          { 
-            text: "Chatting", 
+          {
+            text: "Chatting",
             collapsed: true,
             items: [
               {
@@ -149,7 +154,7 @@ export default defineConfig({
                 text: "Request Details Page Chat",
                 link: "/functionality-guides/chat/request-details-chat"
               },
-            ]  
+            ]
           },
         ],
       },
