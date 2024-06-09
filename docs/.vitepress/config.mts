@@ -50,6 +50,7 @@ export default defineConfig({
           { text: "Overview", link: "/navigation" },
           { text: "Basics", link: "/navigation/basics" },
           { text: "Pages", link: "/navigation/pages" },
+          { text: "Views", link: "/navigation/views" },
         ]
       },
       {
@@ -158,13 +159,25 @@ export default defineConfig({
         collapsed: true,
         items: [
           {
-            text: "Examples Directory",
+            text: "Overview",
             link: "/examples/examples-directory"
           },
           {
-            text: "User Management",
-            link: "/examples/user-management"
+            text: "Managing Users",
+            link: "/examples/managing-users"
           },
+          {
+            text: "Making Corrections",
+            link: "/examples/making-corrections"
+          },
+          {
+            text: "Passing to Completion",
+            link: "/examples/passing-to-completion"
+          },
+          {
+            text: "Downloading Statistics",
+            link: "/examples/downloading-statistics"
+          }
         ]
       },
     ],

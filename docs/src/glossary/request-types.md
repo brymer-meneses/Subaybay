@@ -2,9 +2,9 @@
 
 ## Pending
 
-An incomplete request that is being be worked on
+An incomplete request that is being worked on
 
-_Not to be confused with [Pending Inbox](#types-of-inboxes)_
+_Not to be confused with [Pending Inbox](./inbox-types.md)_
 
 ## Discontinued / Stale
 

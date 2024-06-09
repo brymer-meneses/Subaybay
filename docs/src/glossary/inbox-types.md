@@ -2,7 +2,7 @@
 
 ## Active Inbox
 
-Contains the list of request being worked on by the owner of the inbox
+Contains the list of requests being worked on by the owner of the inbox
 
 ## Pending Inbox
 
