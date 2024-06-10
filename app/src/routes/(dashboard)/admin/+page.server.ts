@@ -21,9 +21,12 @@ export const load: PageServerLoad = async (event) => {
   const today = new Date();
   let overview: { date: Date; value: number }[] = [];
 
-  for (let i = 13; i >= 0; i--) {
+  for (let i = 0; i < 14; i++) {
     overview.push({ date: subtractDays(today, i), value: 0 });
   }
+
+  console.log(overview)
+
 
   let summary = [
     { type: "Finished", count: 0, countThisMonth: 0 },
@@ -33,6 +36,7 @@ export const load: PageServerLoad = async (event) => {
 
   // TODO: Refactor this. Ugly code
   for (const request of requests) {
+    // console.log(request.currentStage.dateStarted)
     const reqType = requestTypes.find((e) => e._id === request.requestTypeId);
 
     const stages = reqType?.stages;
@@ -57,7 +61,8 @@ export const load: PageServerLoad = async (event) => {
         );
 
         if (dateDiff < 14) {
-          overview[overview.length - 1 - dateDiff].value++;
+          console.log(dateDiff)
+          overview[dateDiff].value++;
         }
 
         if (isThisMonthAndYear(currentStageDateFinished)) {
@@ -70,7 +75,7 @@ export const load: PageServerLoad = async (event) => {
       }
     }
   }
-  return { users, stats: { summary, overview } };
+  return { users, stats: { summary, overview: overview.reverse() } };
 };
 
 function subtractDays(date: Date, days: number) {

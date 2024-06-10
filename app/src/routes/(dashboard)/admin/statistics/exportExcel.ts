@@ -83,16 +83,20 @@ export async function exportExcel(
   // if has specified date range, filter requests
   if (params.dateRange) {
     for (const rt of reqTypes) {
-      counts.push({
-        reqTitle: rt.title,
-        total: { pending: 0, finished: 0, stale: 0 },
-      });
+      // console.log(rt.title, rt.deprecated)
+      if (!rt.deprecated) {
+        counts.push({
+          reqTitle: rt.title,
+          total: { pending: 0, finished: 0, stale: 0 },
+        });
+      }
     }
     counts = Array.from(new Set(counts)); // remove duplicate haha
+    // console.log(reqTypes)
 
     finished = finished.filter((r) => {
       let dateFinished = r.currentStage.dateFinished;
-      let reqTitle = reqTypes.find((rt) => rt._id === r.requestTypeId)?.title;
+      let reqTitle = reqTypes.find((rt) => rt._id === r.requestTypeId && !rt.deprecated)?.title;
       if (
         dateFinished.getTime() - params.startDate.getTime() > 0 &&
         params.endDate.getTime() - dateFinished.getTime() > 0
@@ -267,8 +271,8 @@ export async function exportExcel(
       number: r.studentNumber,
       name: r.studentName,
       email: r.studentEmail,
-      startDate: start,
-      endDate: end,
+      startDate: start.toLocaleString(),
+      endDate: end.toLocaleString(),
       duration: `${days > 0 ? days + (days > 1 ? "days" : "day") : ""} ${hr + (hr > 1 ? "hrs" : "hr")} ${mins + (mins > 1 ? "mins" : "min")}`, //spaghetti
       reqType: reqTypes.find((rt) => rt._id === r.requestTypeId)?.title,
       copies: r.copies,
@@ -300,7 +304,7 @@ export async function exportExcel(
         r.history.length > 0
           ? r.history[0].dateStarted
           : r.currentStage.dateStarted,
-      ),
+      ).toLocaleString(),
       endDate: "Ongoing",
       duration: "Ongoing",
       reqType: reqTypes.find((rt) => rt._id === r.requestTypeId)?.title,
@@ -322,7 +326,7 @@ export async function exportExcel(
         r.history.length > 0
           ? r.history[0].dateStarted
           : r.currentStage.dateStarted,
-      ),
+      ).toLocaleString(),
       endDate: "Discontinued",
       duration: "Discontinued",
       reqType: reqTypes.find((rt) => rt._id === r.requestTypeId)?.title,
@@ -461,3 +465,5 @@ function countWeekendDays(d0: Date, d1: Date) {
     2 * nsaturdays + (d0.getDay() == 0 ? 1 : 0) - (d1.getDay() == 6 ? 1 : 0)
   );
 }
+
+

@@ -69,6 +69,7 @@ for (const item of basicCerts) {
     _id: item[0],
     title: item[1],
     version: 1,
+    deprecated: false,
     stages: [
       {
         stageTitle: "Newly Created Request",
@@ -96,6 +97,7 @@ db.requestTypes.insertMany([
     _id: "otr1",
     title: "Official Transcript of Records (OTR) - First Request",
     version: 1,
+    deprecated: false,
     stages: [
       {
         stageTitle: "Newly Created Request",
@@ -143,6 +145,7 @@ db.requestTypes.insertMany([
     _id: "otr2",
     title: "Official Transcript of Records (OTR) - Second Request",
     version: 1,
+    deprecated: false,
     stages: [
       {
         stageTitle: "Newly Created Request",
@@ -178,6 +181,7 @@ db.requestTypes.insertMany([
     _id: "wes",
     title: "WES",
     version: 1,
+    deprecated: false,
     stages: [
       {
         stageTitle: "Newly Created Request",
@@ -209,6 +213,7 @@ db.requestTypes.insertMany([
     _id: "cav",
     title: "Certification, Authentication and Verification",
     version: 1,
+    deprecated: false,
     stages: [
       {
         stageTitle: "Newly Created Request",

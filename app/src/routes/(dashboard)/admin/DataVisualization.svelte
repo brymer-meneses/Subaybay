@@ -36,10 +36,8 @@
   $: barWidth = innerWidth / xTicks.length;
 
   function formatDate(date: Date) {
-    return new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "numeric",
-    }).format(date);
+    let d = date.toLocaleString("en-US", { month: "short", day: "numeric" });
+    return d;
   }
 </script>
 
@@ -169,7 +167,7 @@
           >
         {:else}
           <rect
-            class="max-w-[51px] bg-primary-foreground"
+            class="bg-primary-foreground max-w-[51px]"
             x={xScale(i) + 10}
             y={yScale(point.value)}
             width={barWidth / 2 - 5}
