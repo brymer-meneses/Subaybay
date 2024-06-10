@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import { page } from "$app/stores";
   import { beforeUpdate, tick } from "svelte";
   import { toast } from "svelte-sonner";
@@ -38,7 +39,6 @@
   };
 
   export let requestId: string;
-  export let height: string = "h-48";
 
   $: userId = $page.data.userInfo.id;
   $: sessionId = $page.data.sessionId;
@@ -143,26 +143,38 @@
 
     if (socket !== null) {
       socket.send(JSON.stringify(messagePayload));
+      messageContent = "";
     }
   }
+
+  onMount(() => {
+    async function handleKeydown(e: KeyboardEvent) {
+      if (e.key === "Enter") {
+        await sendMessageHandler();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeydown);
+    return () => {
+      document.removeEventListener("keydown", handleKeydown);
+    };
+  });
 </script>
 
 <Card.Root class="flex h-full flex-col">
   <Card.Content class="flex h-full w-full grow flex-col gap-5 p-3">
-    <ScrollArea class="h-[50vh] grow overflow-y-scroll xl:h-auto">
-      <div bind:this={messageContainer}>
-        <div class={height + " flex w-[96%] flex-col gap-2"}>
-          {#each messages as message, _}
-            <ChatMessage
-              message={message.content}
-              byYou={message.userId == userId ? true : false}
-              dateTime={message.dateTime}
-              profileUrl={message.profileUrl}
-            />
-          {/each}
-        </div>
+    <div bind:this={messageContainer} class="h-[50vh] overflow-auto xl:h-full">
+      <div class="flex h-full w-[96%] flex-col gap-2">
+        {#each messages as message, _}
+          <ChatMessage
+            message={message.content}
+            byYou={message.userId == userId ? true : false}
+            dateTime={message.dateTime}
+            profileUrl={message.profileUrl}
+          />
+        {/each}
       </div>
-    </ScrollArea>
+    </div>
 
     <div class="flex w-full items-center space-x-2">
       <Input

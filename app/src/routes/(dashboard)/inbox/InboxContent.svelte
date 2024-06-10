@@ -40,7 +40,7 @@
 
 {#if multiStage && stage && info && requests[stage.requestId]}
   <Card.Root class="flex h-full flex-col">
-    <Card.Header class="flex flex-row items-start bg-muted/50">
+    <Card.Header class="bg-muted/50 flex flex-row items-start">
       <div class="grid gap-0.5">
         <Card.Title class="group flex items-center gap-2 text-lg">
           {stage.stageTitle}
@@ -191,7 +191,9 @@
         </Tabs.Content>
 
         <Tabs.Content value="chat" class="grow overflow-hidden">
-          <ChatArea requestId={stage.requestId} height="h-full" />
+          <!-- <div class="h-full w-full border"> -->
+          <ChatArea requestId={stage.requestId} />
+          <!-- </div> -->
         </Tabs.Content>
       </Tabs.Root>
     </Card.Content>
