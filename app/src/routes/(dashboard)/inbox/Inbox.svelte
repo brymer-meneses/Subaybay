@@ -138,8 +138,8 @@
 </script>
 
 <Card.Root class="flex w-full flex-grow flex-col border">
-  <Card.Header class="px-7">
-    <div class="flex flex-row justify-between">
+  <Card.Header class="flex flex-col gap-2 px-7">
+    <div class="flex flex-col justify-between gap-4 xl:flex-row">
       <div>
         <Card.Title>Inbox</Card.Title>
         <Card.Description>Recent stages that need completion</Card.Description>
