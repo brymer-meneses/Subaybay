@@ -45,6 +45,8 @@
     />
   {/each}
   <!--Current Stage-->
+  <!--Only show if request is pending or stale-->
+  {#if !request.isFinished || !request.currentStage.finished}
   <HistoryViewEntry
     avatarSrc={users[currentStage.handlerId]?.profileUrl}
     avatarAlt={users[currentStage.handlerId]?.name}
@@ -52,4 +54,5 @@
     date={"Started " + currentStage.date.toString()}
     badge={currentStage.remarks}
   />
+  {/if}
 </div>
