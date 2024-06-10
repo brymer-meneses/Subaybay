@@ -40,7 +40,7 @@
 
 {#if multiStage && stage && info && requests[stage.requestId]}
   <Card.Root class="flex h-full flex-col">
-    <Card.Header class="flex flex-row items-start bg-muted/50">
+    <Card.Header class="bg-muted/50 flex flex-row items-start">
       <div class="grid gap-0.5">
         <Card.Title class="group flex items-center gap-2 text-lg">
           {stage.stageTitle}
@@ -81,9 +81,17 @@
               </div>
             {/if}
             <br />
-            Current Stage: <Badge variant="secondary"
-              >{stage.currentStageTypeIndex}: {stage.stageTitle}</Badge
-            >
+            Current Stage:
+            <Badge variant="secondary">
+              {stage.currentStageTypeIndex}: {stage.stageTitle}
+            </Badge>
+            {#if stage.currentStageTypeIndex < stage.finalStageTypeIndex}
+              <br /><br />
+              Next Stage:
+              <Badge variant="secondary">
+                {stage.currentStageTypeIndex + 1}: {stage.nextStageTitle}
+              </Badge>
+            {/if}
           </div>
         </Card.Description>
       </div>

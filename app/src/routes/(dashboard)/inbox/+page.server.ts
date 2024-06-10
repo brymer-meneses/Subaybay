@@ -141,6 +141,7 @@ const addStage = (
     stageTitle: requestType.stages[stage.stageTypeIndex].stageTitle,
     inboxStageTitle:
       requestType.stages[stageIdentifier.stageTypeIndex].stageTitle,
+    nextStageTitle: requestType.stages[stage.stageTypeIndex + 1]?.stageTitle ?? "None",
     dateSent: stage.dateStarted,
     requestId: stageIdentifier.requestId,
     handlerId: stage.handlerId,
