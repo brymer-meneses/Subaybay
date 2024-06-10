@@ -79,14 +79,13 @@
     </Button>
   </Dialog.Trigger>
   <Dialog.Content>
-    <!-- class="max-h-screen sm:overflow-y-scroll md:overflow-y-scroll" -->
     <form action="?/add_request" method="POST" use:enhance>
       <Dialog.Header>
         <Dialog.Title>Add details for new request.</Dialog.Title>
       </Dialog.Header>
-      <div class="grid gap-4 py-4 lg:grid-cols-8">
+      <div class="grid grid-cols-8 gap-4 py-4 2xl:grid-cols-1">
         <!-- Student Number -->
-        <div class="lg:col-span-4">
+        <div class="col-span-4 2xl:col-span-1">
           <Form.Field
             {form}
             name="studentNumber"
@@ -105,7 +104,7 @@
         </div>
 
         <!-- Name -->
-        <div class="lg:col-span-4">
+        <div class="col-span-4 2xl:col-span-1">
           <Form.Field
             {form}
             name="studentName"
@@ -124,7 +123,7 @@
         </div>
 
         <!-- email -->
-        <div class="lg:col-span-4">
+        <div class="col-span-4 2xl:col-span-1">
           <Form.Field
             {form}
             name="studentEmail"
@@ -143,7 +142,7 @@
         </div>
 
         <!-- reqtypes -->
-        <div class="lg:col-span-4">
+        <div class="col-span-4 2xl:col-span-1">
           <Form.Field {form} name="selectedReqTypeIds" class="flex flex-col">
             <Popover.Root bind:open>
               <Form.Control let:attrs>
@@ -201,7 +200,7 @@
         </div>
 
         <!-- purpose -->
-        <div class="lg:col-span-8">
+        <div class="col-span-8 2xl:col-span-1">
           <Form.Field
             {form}
             name="purpose"
@@ -220,7 +219,7 @@
         </div>
 
         <!-- remarks -->
-        <div class="lg:col-span-8">
+        <div class="col-span-8 2xl:col-span-1">
           <Form.Field
             {form}
             name="remarks"

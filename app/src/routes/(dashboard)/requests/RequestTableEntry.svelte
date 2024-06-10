@@ -29,23 +29,25 @@
   // }
 </script>
 
-<Table.Row class="auto-rows grid w-full grid-cols-12 items-center text-left">
-  <Table.Cell class="col-span-1">
+<Table.Row
+  class="auto-rows grid w-full grid-cols-6 items-center text-left xl:grid-cols-12"
+>
+  <Table.Cell class="col-span-1 hidden xl:grid">
     <span class="font-semibold">{index + 1}</span>
   </Table.Cell>
   <Table.Cell class="col-span-1 px-1">
     <span class="">{request.studentNumber}</span>
   </Table.Cell>
-  <Table.Cell class="col-span-2 overflow-hidden text-ellipsis">
+  <Table.Cell class="col-span-2 hidden overflow-hidden text-ellipsis xl:grid">
     <span class="px-1">{request.studentName}</span>
   </Table.Cell>
-  <Table.Cell class="col-span-2 overflow-hidden text-ellipsis">
+  <Table.Cell class="col-span-2 hidden overflow-hidden text-ellipsis xl:grid">
     <span class="px-1">{request.studentEmail}</span>
   </Table.Cell>
   <Table.Cell class="col-span-2">
     <span class="px-1">{request.requestTitle}</span>
   </Table.Cell>
-  <Table.Cell class="col-span-1">
+  <Table.Cell class="col-span-1 hidden xl:grid">
     <span class="px-1">{request.copies}</span>
   </Table.Cell>
   <Table.Cell class="col-span-2">

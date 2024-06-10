@@ -108,7 +108,7 @@
     </div>
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
       <div>
-        <span class="mr-2">Sort:</span>
+        <span class="text-muted-foreground mr-2 text-sm">Sort:</span>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
             <Button variant="outline" class="pr-0"
@@ -131,12 +131,12 @@
       </div>
       <div class="relative w-80">
         <Search
-          class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
+          class="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4"
         />
         <Input
           type="search"
           placeholder="Search..."
-          class="w-full rounded-lg bg-background pl-8"
+          class="bg-background w-full rounded-lg pl-8"
           bind:value={searchTerm}
         />
       </div>
@@ -149,21 +149,25 @@
         {filteredRequests.length === 1 ? "result" : "results"}.</Table.Caption
       >
       <Table.Header>
-        <Table.Row class="auto-rows grid w-full grid-cols-12 text-left">
-          <Table.Head class="col-span-1"></Table.Head>
+        <Table.Row
+          class="auto-rows grid w-full grid-cols-6 text-left xl:grid-cols-12"
+        >
+          <Table.Head class="col-span-1 hidden xl:grid"></Table.Head>
           <Table.Head class="col-span-1 grid items-center p-0"
             >Student Num.</Table.Head
           >
-          <Table.Head class="col-span-2 grid items-center"
+          <Table.Head class="col-span-2 hidden items-center xl:grid"
             >Student Name</Table.Head
           >
-          <Table.Head class="col-span-2 grid items-center"
+          <Table.Head class="col-span-2 hidden items-center xl:grid"
             >Student Email</Table.Head
           >
           <Table.Head class="col-span-2 grid items-center"
             >Request Type</Table.Head
           >
-          <Table.Head class="col-span-1 grid items-center">Copies</Table.Head>
+          <Table.Head class="col-span-1 hidden items-center xl:grid"
+            >Copies</Table.Head
+          >
           {#if classification !== "finished"}
             <Table.Head class="col-span-2 grid items-center">
               Date Requested

@@ -145,7 +145,7 @@
         <Card.Description>Recent stages that need completion</Card.Description>
       </div>
       <div>
-        <span class="mr-2">Sort:</span>
+        <span class="text-muted-foreground mr-2 text-sm">Sort:</span>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
             <Button variant="outline" class="pr-0"

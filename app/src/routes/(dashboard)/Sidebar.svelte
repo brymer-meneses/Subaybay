@@ -42,7 +42,7 @@
 
 <aside
   class={clsx(
-    "fixed inset-y-0 left-0 hidden flex-col border-r bg-background transition-all sm:flex",
+    "bg-background fixed inset-y-0 left-0 hidden flex-col border-r sm:flex",
     isCollapsed ? "w-[81px] items-center" : "w-[224px] items-start",
   )}
 >
@@ -104,7 +104,7 @@
     <Tooltip.Root>
       <Tooltip.Trigger>
         <div
-          class="flex items-center text-muted-foreground hover:text-accent-foreground"
+          class="text-muted-foreground hover:text-accent-foreground flex items-center"
         >
           <NavLink
             icon={Book}
@@ -121,13 +121,13 @@
     <Tooltip.Root>
       <Tooltip.Trigger>
         <div
-          class="flex items-center text-muted-foreground hover:text-accent-foreground"
+          class="text-muted-foreground hover:text-accent-foreground flex items-center"
         >
           <form method="post" action="/auth/logout">
             <Button
               type="submit"
               variant="link"
-              class="gap-2 rounded-lg text-muted-foreground hover:no-underline"
+              class="text-muted-foreground gap-2 rounded-lg hover:no-underline"
             >
               <LogOut class="h-5 w-5" /><span class="text-sm font-normal"
                 >{!isCollapsed ? "Sign Out" : ""}</span
