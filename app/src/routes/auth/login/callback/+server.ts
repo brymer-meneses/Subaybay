@@ -52,12 +52,12 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
         email: account.email,
       });
 
-      // Uncomment this para sa testing
-      // if (!isWhitelisted) {
-      //   throw new Error(`${account.email} is not waitlisted.` );
-      // } else {
-      //   await permittedEmail.deleteOne( {email: account.email }); // Remove the email in the permitted emails collection
-      // }
+      // Dont forget to Uncomment these:
+      if (!isWhitelisted) {
+        throw new Error(`${account.email} is not authorized.` );
+      } else {
+        await permittedEmail.deleteOne( {email: account.email }); // Remove the email in the permitted emails collection
+      }
 
       await user.insertOne({
         _id: account.sub,

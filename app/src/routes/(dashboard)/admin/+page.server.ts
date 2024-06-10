@@ -25,7 +25,7 @@ export const load: PageServerLoad = async (event) => {
     overview.push({ date: subtractDays(today, i), value: 0 });
   }
 
-  console.log(overview)
+  // console.log(overview)
 
 
   let summary = [
@@ -61,7 +61,7 @@ export const load: PageServerLoad = async (event) => {
         );
 
         if (dateDiff < 14) {
-          console.log(dateDiff)
+          // console.log(dateDiff)
           overview[dateDiff].value++;
         }
 
