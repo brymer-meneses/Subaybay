@@ -2,21 +2,21 @@
 
 ## Inbox
 
-1. Open either the [Command Window](#command-window-shortcut) or the [Sidebar](#sidebar)
+1. Open either the [Command Window](./basics#command-window-shortcut) or the [Sidebar](./basics#sidebar)
 2. Click on the **Inbox** button.
 
 -insert images showing the button in the command window and the sidebar-
 
 ## Requests
 
-1. Open either the [Command Window](#command-window-shortcut) or the [Sidebar](#sidebar)
+1. Open either the [Command Window](./basics#command-window-shortcut) or the [Sidebar](./basics#sidebar)
 2. Click on the **Requests** button.
 
 -insert images showing the button in the command window and the sidebar-
 
 ## Configuration
 
-1. Open either the [Command Window](#command-window-shortcut) or the [Sidebar](#sidebar)
+1. Open either the [Command Window](./basics#command-window-shortcut) or the [Sidebar](./basics#sidebar)
 2. Click on the **Configuration** button.
 
 -insert images showing the button in the command window and the sidebar-
@@ -26,7 +26,7 @@
 _Note: the admin page can only be accessed by an admin account._
 _A standard account will not be shown the buttons linking to the Admin page._ <br/>
 
-1. Open either the [Command Window](#command-window-shortcut) or the [Sidebar](#sidebar)
+1. Open either the [Command Window](./basics#command-window-shortcut) or the [Sidebar](./basics#sidebar)
 2. Click on the **Admin** button.
 
 -insert images showing the button in the command window and the sidebar-

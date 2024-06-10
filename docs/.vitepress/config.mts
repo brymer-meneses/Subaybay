@@ -202,10 +202,6 @@ export default defineConfig({
             link: "/examples/managing-request-types"
           },
           {
-            text: "Downloading Statistics",
-            link: "/examples/downloading-statistics"
-          },
-          {
             text: "Managing Users",
             link: "/examples/managing-users"
           },
