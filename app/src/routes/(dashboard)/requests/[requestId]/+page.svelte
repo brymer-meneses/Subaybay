@@ -1,9 +1,11 @@
 <script lang="ts">
   import HistoryView from "./HistoryView.svelte";
   import ProgressView from "./ProgressView.svelte";
-  import * as Card from "$lib/components/ui/card/index.js";
   import ChatArea from "../../ChatArea.svelte";
+  
+  import * as Card from "$lib/components/ui/card/index.js";
   import Button from "$lib/components/ui/button/button.svelte";
+  import ProcessingPleaseWait from "$lib/components/processing/ProcessingPleaseWait.svelte";
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
   import * as Tabs from "$lib/components/ui/tabs";
   import { Badge } from "$lib/components/ui/badge";
@@ -145,7 +147,7 @@
             <Options bind:data={formData} users={data.users} bind:processing />
           </div>
           {#if processing}
-            Processing... Please Wait
+            <ProcessingPleaseWait />
           {/if}
           <div class="flex flex-wrap gap-4">
             <Badge variant="secondary" class="flex gap-2 text-sm font-normal">

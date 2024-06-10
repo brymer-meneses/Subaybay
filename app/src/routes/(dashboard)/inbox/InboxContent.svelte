@@ -35,7 +35,6 @@
 
   let processing = false;
 
-  //todo change display when processing is true
   $: info = stage ? requests[stage.requestId] : null;
 </script>
 
@@ -193,7 +192,6 @@
 
         <Tabs.Content value="chat" class="grow overflow-hidden">
           <ChatArea requestId={stage.requestId} height="h-full" />
-          <!-- height="min-[320px]:h-[21.4rem] sm:max-lg:h-[21.4rem] xl:h-[26.25rem]" -->
         </Tabs.Content>
       </Tabs.Root>
     </Card.Content>

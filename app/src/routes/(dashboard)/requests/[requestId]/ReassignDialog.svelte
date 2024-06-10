@@ -2,6 +2,7 @@
   import Separator from "$lib/components/ui/separator/separator.svelte";
   import * as Dialog from "$lib/components/ui/dialog/index.js";
   import { Button } from "$lib/components/ui/button";
+  import ProcessingPleaseWait from "$lib/components/processing/ProcessingPleaseWait.svelte";
 
   import HandlerSelect from "../../inbox/buttonComponents/HandlerSelect.svelte";
   import type { User } from "$lib/server/database";
@@ -64,7 +65,7 @@
             Confirm. Reassign.
           </Button>
         {:else}
-          Processing... Please Wait
+          <ProcessingPleaseWait />
         {/if}
       </form>
     </Dialog.Footer>

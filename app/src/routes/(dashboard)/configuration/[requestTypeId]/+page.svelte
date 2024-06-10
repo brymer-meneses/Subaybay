@@ -3,6 +3,7 @@
   import { enhance } from "$app/forms";
   import { goto } from "$app/navigation";
 
+  import ProcessingPleaseWait from "$lib/components/processing/ProcessingPleaseWait.svelte";
   import { Button } from "$lib/components/ui/button";
   import * as Dialog from "$lib/components/ui/dialog";
   import {
@@ -169,7 +170,7 @@
         </div>
       </div>
     {:else}
-      Processing... Please Wait
+      <ProcessingPleaseWait />
     {/if}
   </div>
 </main>

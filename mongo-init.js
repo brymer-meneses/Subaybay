@@ -42,19 +42,19 @@ db.users.insertMany([
 
 // [id, title, prepares]
 basicCerts = [
-  ["coe", "Certificate of Enrollment", "certifications"],
-  ["cge", "Certificate of Grade Equivalence", "certifications"],
-  ["cg", "Certificate of Graduation", "certifications"],
-  ["cmi", "Certificate of Medium of Instruction", "certifications"],
-  ["gmc", "Certificate of No Disciplinary Case (GMC)", "certifications"],
-  ["cnhdg", "Certificate of Non-Issuance of Honorable Dismissal for Graduates", "certifications"],
-  ["cue", "Certificate of Units Earned", "certifications"],
-  ["cft", "Certificate of Free Tuition", "certifications"],
-  ["cnstpsn", "Certificate of NSTP Serial No.", "certifications"],
-  ["cnson", "Certificate of No S.O. Number", "certifications"],
-  ["ctc", "Certificate of Transfer Credential", "certifications"],
-  ["tcg", "True Copy of Grades", "certifications"],
-  ["cd", "Course Description", "certifications"],
+  ["coe", "Certificate of Enrollment", "Certifications"],
+  ["cge", "Certificate of Grade Equivalence", "Certifications"],
+  ["cg", "Certificate of Graduation", "Certifications"],
+  ["cmi", "Certificate of Medium of Instruction", "Certifications"],
+  ["gmc", "Certificate of No Disciplinary Case (GMC)", "Certifications"],
+  ["cnhdg", "Certificate of Non-Issuance of Honorable Dismissal for Graduates", "Certifications"],
+  ["cue", "Certificate of Units Earned", "Certifications"],
+  ["cft", "Certificate of Free Tuition", "Certifications"],
+  ["cnstpsn", "Certificate of NSTP Serial No.", "Certifications"],
+  ["cnson", "Certificate of No S.O. Number", "Certifications"],
+  ["ctc", "Certificate of Transfer Credential", "Certifications"],
+  ["tcg", "True Copy of Grades", "Certifications"],
+  ["cd", "Course Description", "Certifications"],
   ["ctcotr", "Authentication of OTR", "CTC OTR"],
   ["ctcd", "Authentication of Diploma", "CTC Diploma"],
   ["dt", "Diploma Translation", "Diploma Translation"],
@@ -176,7 +176,7 @@ db.requestTypes.insertMany([
   },
   {
     _id: "wes",
-    title: "WES",// todo find out what this means
+    title: "WES",
     version: 1,
     stages: [
       {

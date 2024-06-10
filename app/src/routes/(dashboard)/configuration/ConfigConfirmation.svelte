@@ -1,6 +1,7 @@
 <script lang="ts">
   import * as Dialog from "$lib/components/ui/dialog";
   import { Button } from "$lib/components/ui/button";
+  import ProcessingPleaseWait from "$lib/components/processing/ProcessingPleaseWait.svelte";
 
   export let requestTypeTitle: string;
   export let processing: boolean;
@@ -17,7 +18,7 @@
     {#if !processing}
       <Button disabled={!requestTypeTitle}>Create</Button>
     {:else}
-      Processing... Please Wait
+      <ProcessingPleaseWait />
     {/if}
   </Dialog.Trigger>
   <Dialog.Content>

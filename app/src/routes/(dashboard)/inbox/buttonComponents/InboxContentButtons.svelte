@@ -3,6 +3,7 @@
   import ReassignButton from "./ReassignButton.svelte";
   import RollbackButton from "./RollbackButton.svelte";
   import ArchiveButton from "./ArchiveButton.svelte";
+  import ProcessingPleaseWait from "$lib/components/processing/ProcessingPleaseWait.svelte";
 
   import type { MultiStageData } from "../inboxTypes";
   import type { Request } from "$lib/server/database";
@@ -40,5 +41,5 @@
     <RollbackButton {multiStage} {enhanceFunc} />
   {/if}
 {:else}
-  Processing... Please Wait...
+  <ProcessingPleaseWait />
 {/if}

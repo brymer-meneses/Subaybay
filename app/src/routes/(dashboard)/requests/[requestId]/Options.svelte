@@ -12,6 +12,7 @@
   import Pencil from "lucide-svelte/icons/pencil";
   import UsersRound from "lucide-svelte/icons/users-round";
   import EllipsisVertical from "lucide-svelte/icons/ellipsis-vertical";
+  import ProcessingPleaseWait from "$lib/components/processing/ProcessingPleaseWait.svelte";
 
   import type { User } from "$lib/server/database";
   import ReassignDialog from "./ReassignDialog.svelte";
@@ -246,7 +247,7 @@
 
       <Dialog.Footer>
         {#if processing}
-          Processing... Please Wait
+          <ProcessingPleaseWait />
         {:else}
           <Button type="submit" class="h-9 gap-2" disabled={processing}>
             Confirm Changes
