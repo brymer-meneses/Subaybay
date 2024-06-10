@@ -19,25 +19,25 @@
     <div class="flex w-full flex-row justify-between gap-0">
       <p class="text-base font-semibold">
         {stage.studentName}
-        <span class="text-xs text-muted-foreground">
+        <span class="text-muted-foreground text-xs">
           ({stage.studentNumber})
         </span>
       </p>
       <div class=""></div>
     </div>
     <div class="flex flex-row">
-      <p class="text-xs text-muted-foreground">
+      <p class="text-muted-foreground text-xs">
         Step {stage.currentStageTypeIndex}:
         <span class="font-normal">{stage.inboxStageTitle}</span>
       </p>
     </div>
     <div class="flex w-full flex-row justify-between">
       <p
-        class="text-xs font-normal text-muted-foreground"
+        class="text-muted-foreground text-xs font-normal"
         title={stage.requestTitle}
       >
-        {#if stage.requestTitle.length > 40}
-          {stage.requestTitle.substring(0, 40) + "..."}
+        {#if stage.requestTitle.length > 30}
+          {stage.requestTitle.substring(0, 30) + "..."}
         {:else}
           {stage.requestTitle}
         {/if}

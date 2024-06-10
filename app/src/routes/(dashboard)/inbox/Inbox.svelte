@@ -1,10 +1,13 @@
 <script lang="ts">
   import * as Card from "$lib/components/ui/card/index.js";
+  import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
   import Input from "$lib/components/ui/input/input.svelte";
   import Search from "lucide-svelte/icons/search";
   import InboxItem from "./InboxItem.svelte";
+  import Button from "$lib/components/ui/button/button.svelte";
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
   import type { InboxStageData, MultiStageData } from "./inboxTypes";
+  import ChevronDown from "lucide-svelte/icons/chevron-down";
 
   export let onSelectStage: (stage: MultiStageData) => void;
 
@@ -24,6 +27,8 @@
     "studentName",
     "studentNumber",
   ];
+
+  let sortBy: string = "Newest";
 
   $: {
     if (type === "active") {
@@ -93,6 +98,11 @@
     }
   }
 
+  $: {
+    if (sortBy === "Newest") filtered = filtered.sort(sortInboxNewest);
+    else if (sortBy === "Oldest") filtered = filtered.sort(sortInboxOldest);
+  }
+
   function select(stageIndex: number) {
     selectedStageIndex = stageIndex;
     onSelectStage(filtered[selectedStageIndex]);
@@ -109,21 +119,63 @@
       return filtered[selectedStageIndex];
     }
   }
+
+  const sortInbox = (a: MultiStageData, b: MultiStageData) => {
+    let dateA = a.mainStage.dateSent.getTime();
+    let dateB = b.mainStage.dateSent.getTime();
+    return { dateA, dateB };
+  };
+
+  const sortInboxNewest = (a: MultiStageData, b: MultiStageData) => {
+    const { dateA, dateB } = sortInbox(a, b);
+    return dateB - dateA;
+  };
+
+  const sortInboxOldest = (a: MultiStageData, b: MultiStageData) => {
+    const { dateA, dateB } = sortInbox(a, b);
+    return dateA - dateB;
+  };
 </script>
 
 <Card.Root class="flex w-full flex-grow flex-col border">
   <Card.Header class="px-7">
-    <Card.Title>Inbox</Card.Title>
-    <Card.Description>Recent stages that need completion</Card.Description>
+    <div class="flex flex-row justify-between">
+      <div>
+        <Card.Title>Inbox</Card.Title>
+        <Card.Description>Recent stages that need completion</Card.Description>
+      </div>
+      <div>
+        <span class="mr-2">Sort:</span>
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
+            <Button variant="outline" class="pr-0"
+              >{sortBy} <ChevronDown class="mx-2" /></Button
+            >
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content>
+            <DropdownMenu.Label>Sort By</DropdownMenu.Label>
+            <DropdownMenu.Separator />
+            <DropdownMenu.RadioGroup bind:value={sortBy}>
+              <DropdownMenu.RadioItem value={"Newest"}
+                >Newest</DropdownMenu.RadioItem
+              >
+              <DropdownMenu.RadioItem value={"Oldest"}
+                >Oldest</DropdownMenu.RadioItem
+              >
+            </DropdownMenu.RadioGroup>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
+      </div>
+    </div>
     <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
       <div class="relative w-full">
         <Search
-          class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
+          class="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4"
         />
         <Input
           type="search"
           placeholder="Search..."
-          class="w-full rounded-lg bg-background pl-8"
+          class="bg-background w-full rounded-lg pl-8"
           bind:value={searchTerm}
         />
       </div>
