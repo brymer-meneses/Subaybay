@@ -199,7 +199,9 @@
         </Tabs.Content>
 
         <Tabs.Content value="chat" class="grow overflow-hidden">
-          <ChatArea requestId={stage.requestId} height="h-full" />
+          <!-- <div class="h-full w-full border"> -->
+          <ChatArea requestId={stage.requestId} />
+          <!-- </div> -->
         </Tabs.Content>
       </Tabs.Root>
     </Card.Content>
