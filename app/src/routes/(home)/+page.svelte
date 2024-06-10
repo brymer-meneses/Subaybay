@@ -36,7 +36,7 @@
     <p class="subtext gap-2 text-xl">CMSC 128</p>
   </div>
   <div
-    class="flex-end flex h-3 grow flex-row items-center space-x-16 bg-slate-200 px-10 py-5"
+    class="flex-end flex h-3 grow flex-row items-center space-x-16 bg-slate-200 px-10 py-10"
   >
     <div class="flex flex-row space-x-20">
       <div>
