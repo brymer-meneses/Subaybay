@@ -81,9 +81,17 @@
               </div>
             {/if}
             <br />
-            Current Stage: <Badge variant="secondary"
-              >{stage.currentStageTypeIndex}: {stage.stageTitle}</Badge
-            >
+            Current Stage:
+            <Badge variant="secondary">
+              {stage.currentStageTypeIndex}: {stage.stageTitle}
+            </Badge>
+            {#if stage.currentStageTypeIndex < stage.finalStageTypeIndex}
+              <br /><br />
+              Next Stage:
+              <Badge variant="secondary">
+                {stage.currentStageTypeIndex + 1}: {stage.nextStageTitle}
+              </Badge>
+            {/if}
           </div>
         </Card.Description>
       </div>
