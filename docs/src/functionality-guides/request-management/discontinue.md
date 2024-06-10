@@ -8,7 +8,7 @@ Instead, requests can be **Marked as Stale**. This is done from the **Request De
 
 _Note that only Pending requests can be marked as stale_
 
-**To mark a request as stale**
+## To mark a request as stale
 
 1. Click on the stacked dots and select **Mark as Stale**
 

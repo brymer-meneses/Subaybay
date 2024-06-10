@@ -6,7 +6,7 @@ to **Rollback** a request.
 
 Rolling back requests is done from the **Inbox** Page.
 
-**To rollback a request**:
+## To rollback a request
 
 1. Select the request of interest from the **Pending Inbox**
 

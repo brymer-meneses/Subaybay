@@ -5,7 +5,7 @@ When there are no issues, a request only moves forward to completion.
 
 Passing requests forward is done from the **Inbox** Page.
 
-**To pass a request to another person**:
+## To pass a request to another person
 
 1. Select the request of interest from the **Active Inbox**
 

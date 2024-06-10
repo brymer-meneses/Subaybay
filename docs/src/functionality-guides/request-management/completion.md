@@ -8,7 +8,7 @@ When a request is on its final stage, the **Pass to Next** button in the **Inbox
 
 image
 
-**To finish and archive a request**
+## To finish and archive a request
 
 1. Select the request of interest from the **Active** Inbox
 

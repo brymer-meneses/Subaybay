@@ -5,7 +5,7 @@ Sometimes, mistakes are made in entering request details or _remarks_ need to be
 
 Editing request details is done from the **Request Details Page**
 
-**To edit request details**
+## To edit request details
 
 1. Click the stacked dots and select **Edit Request**
 

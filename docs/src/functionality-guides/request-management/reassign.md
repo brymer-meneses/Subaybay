@@ -8,7 +8,7 @@ _Note: Finished requests cannot be reassigned, only Pending and Discontinued_
 
 Reassigning requests can be done from two locations: the **Inbox** and the **Request Details Page**.
 
-**To reassign a request from the inbox** <br/>
+## To reassign a request from the inbox
 _This option is only available if the request is in your_ **_Active Inbox_** <br/>
 
 1. Select the request of interest from your **Active Inbox**

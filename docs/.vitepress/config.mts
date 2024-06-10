@@ -157,6 +157,28 @@ export default defineConfig({
               },
             ]
           },
+          {
+            text: "Request Types Management",
+            collapsed: true,
+            items: [
+              {
+                text: "Overview",
+                link: "/functionality-guides/request-types-management"
+              },
+              {
+                text: "Create Request Types",
+                link: "/functionality-guides/request-types-management/create-request-type"
+              },
+              {
+                text: "Edit Request Types",
+                link: "/functionality-guides/request-types-management/edit-request-type"
+              },
+              {
+                text: "Delete Request Types",
+                link: "/functionality-guides/request-types-management/delete-request-type"
+              },
+            ]
+          },
         ],
       },
       {
@@ -174,6 +196,10 @@ export default defineConfig({
           {
             text: "Making Corrections",
             link: "/examples/making-corrections"
+          },
+          {
+            text: "Managing Request Types",
+            link: "/examples/managing-request-types"
           },
           {
             text: "Downloading Statistics",
