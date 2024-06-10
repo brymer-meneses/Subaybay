@@ -148,16 +148,15 @@
   }
 
   onMount(() => {
-    async function handleKeydown(e: KeyboardEvent) {
-      if (e.key === "Enter") {
-        await sendMessageHandler();
-      }
-    }
-
-    document.addEventListener("keydown", handleKeydown);
-    return () => {
-      document.removeEventListener("keydown", handleKeydown);
-    };
+    // async function handleKeydown(e: KeyboardEvent) {
+    //   if (e.key === "Enter") {
+    //     await sendMessageHandler();
+    //   }
+    // }
+    // document.addEventListener("keydown", handleKeydown);
+    // return () => {
+    //   document.removeEventListener("keydown", handleKeydown);
+    // };
   });
 </script>
 
