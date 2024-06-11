@@ -158,7 +158,7 @@ const addStage = (
 };
 
 import { setFlash } from "sveltekit-flash-message/server";
-import { GOOGLE_SENDER_EMAIL } from "$env/static/private";
+import { env } from "$env/dynamic/private";
 
 const generateRequestId = () => {
   const nanoid = customAlphabet('1234567890abcdef', 7);
@@ -296,7 +296,7 @@ export const actions: Actions = {
       });
 
       const email = {
-        from: GOOGLE_SENDER_EMAIL,
+        from: env.GOOGLE_SENDER_EMAIL,
         to: req.studentEmail,
         subject: `${reqType.title} has been finished`,
         html: emailHtml,
