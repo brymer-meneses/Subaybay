@@ -26,6 +26,14 @@ services:
       database:
         condition: service_started
 
+  docs:
+    image: brymermeneses/subaybay-docs:latest
+    restart: unless-stopped
+    ports: 
+      - ${DOCS_PORT}:4173
+    env_file:
+      - ./.env
+
   database:
     image: mongo
     restart: unless-stopped

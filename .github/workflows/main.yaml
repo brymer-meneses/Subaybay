@@ -24,7 +24,12 @@ jobs:
         working-directory: backend
         run: | 
           docker build . --tag ${{ secrets.DOCKERHUB_USERNAME }}/subaybay-backend
+      - name: Build Docs Image
+        working-directory: docs
+        run: | 
+          docker build . --tag ${{ secrets.DOCKERHUB_USERNAME }}/subaybay-docs
       - name: Publish Images
         run: | 
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/subaybay-app
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/subaybay-backend
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/subaybay-docs
