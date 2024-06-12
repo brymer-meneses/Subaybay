@@ -9,7 +9,6 @@ export const load: PageServerLoad = async (event) => {
   }
 
   const users: User[] = await user.find({}).toArray();
-  console.log(event.locals.user)
   return { users, currentUser: event.locals.user };
 };
 
