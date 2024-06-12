@@ -5,6 +5,7 @@
   import LogOut from "lucide-svelte/icons/log-out";
   import UsersRound from "lucide-svelte/icons/users-round";
   import FilePlus from "lucide-svelte/icons/file-plus";
+  import Bell from "lucide-svelte/icons/bell";
 
   // import Person from "svelte-radix/Person.svelte";
   // import Rocket from "svelte-radix/Rocket.svelte";
@@ -48,6 +49,13 @@
     <Command.Empty>No results found.</Command.Empty>
 
     <Command.Group heading="Go to">
+      <Command.Item
+        onSelect={() => handleOnSelect("notifications")}
+        class="cursor-pointer"
+      >
+        <Bell class="mr-2 h-4 w-4" />
+        <span>Notifications</span>
+      </Command.Item>
       <Command.Item
         onSelect={() => handleOnSelect("inbox")}
         class="cursor-pointer"
