@@ -207,6 +207,10 @@ export default defineConfig({
           },
         ]
       },
+      {
+        text: "Environment Variables",
+        link: "/environment-variables"
+      }
     ],
     search: {
       provider: 'local'
