@@ -18,7 +18,7 @@
         <Tabs.Trigger value="messages">Messages</Tabs.Trigger>
       </Tabs.List>
       <Tabs.Content value="requests">
-        <RequestsList />
+        <RequestsList data={data.inboxNotificationsData} />
       </Tabs.Content>
       <Tabs.Content value="messages">
         <MessagesList data={data.messageNotificationData} />

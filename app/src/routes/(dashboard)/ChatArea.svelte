@@ -133,6 +133,8 @@
   }
 
   async function sendMessageHandler() {
+    if (messageContent.length === 0) return;
+
     const messagePayload: ClientMessage = {
       type: "message",
       content: {
@@ -177,7 +179,7 @@
 
     <div class="flex w-full items-center space-x-2">
       <Input
-        class="border-b-1 bg-accent w-full focus:ring-0 focus:ring-offset-0"
+        class="border-b-1 w-full bg-accent focus:ring-0 focus:ring-offset-0"
         placeholder="Send a message ..."
         bind:value={messageContent}
       />

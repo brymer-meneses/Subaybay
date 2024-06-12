@@ -20,6 +20,7 @@ pub struct Notification {
     pub _id: ObjectId,
     pub seen: bool,
     pub user_id: String,
+    pub date_time: u64,
     pub body: NotificationBody,
 }
 

@@ -1,5 +1,6 @@
 use axum::{
     extract::{Query, State},
+    http::StatusCode,
     response::IntoResponse,
     Json,
 };
@@ -10,7 +11,7 @@ use crate::{
     database::{self as db, Event, Notification, NotificationBody, StageIdentifier},
     error::Result,
     state::AppState,
-    utils::{authenticate_user, AuthenticationStatus},
+    utils::{authenticate_user, get_time, AuthenticationStatus},
 };
 
 use mongodb::bson::{doc, oid::ObjectId};
@@ -22,17 +23,32 @@ pub async fn events(
     Json(event): Json<db::Event>,
 ) -> impl IntoResponse {
     let notification_tx = state.notification_tx.clone();
+    let notifications_collection = state
+        .database
+        .collection::<db::Notification>("notifications");
 
-    let status = notification_tx.send(Notification {
+    let notification = Notification {
         _id: ObjectId::new(),
         seen: false,
+        date_time: get_time(),
         user_id: event.get_receiver_id().to_owned(),
         body: NotificationBody::Event(event),
-    });
+    };
 
-    if let Err(err) = status {
+    if let Err(err) = notifications_collection
+        .insert_one(&notification, None)
+        .await
+    {
         tracing::error!("{err}");
+        return StatusCode::INTERNAL_SERVER_ERROR;
     }
+
+    if let Err(err) = notification_tx.send(notification) {
+        tracing::error!("{err}");
+        return StatusCode::INTERNAL_SERVER_ERROR;
+    }
+
+    return StatusCode::OK;
 }
 
 pub async fn websocket(

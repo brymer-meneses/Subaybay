@@ -221,6 +221,7 @@ async fn process_notifications(
         let notification = db::Notification {
             _id: ObjectId::new(),
             seen: false,
+            date_time: message.date_time,
             body: db::NotificationBody::Message {
                 message_id: message._id,
             },
