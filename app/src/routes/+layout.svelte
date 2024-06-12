@@ -13,7 +13,7 @@
 
   const flash = getFlash(page);
 
-  onMount(() => {
+  const processFlash = () => {
     if ($flash) {
       switch ($flash.type) {
         case "error":
@@ -24,19 +24,12 @@
           break;
       }
     }
-  });
+  };
+
+  onMount(() => processFlash());
 
   $: {
-    if ($flash) {
-      switch ($flash.type) {
-        case "error":
-          toast.error($flash.message, $flash.args);
-          break;
-        case "success":
-          toast.success($flash.message, $flash.args);
-          break;
-      }
-    }
+    processFlash();
   }
 </script>
 

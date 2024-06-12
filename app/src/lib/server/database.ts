@@ -29,6 +29,7 @@ export const permittedEmail =
   database.collection<PermittedEmail>("permittedEmails");
 
 export const notification = database.collection<Notification>("notifications");
+export const message = database.collection<Message>("messages");
 
 export interface User {
   _id: string;
@@ -120,12 +121,13 @@ export interface InboxStageData {
 }
 
 export interface Notification {
-  _id: Object,
+  _id: ObjectId,
   seen: boolean,
   userId: string,
   body: {
     type: "NewStage" | "RolledBackStage" | "ReassignedStage" | "message";
     content: MessageNotification | InboxNotification
+    messageId?: string,
   }
 }
 

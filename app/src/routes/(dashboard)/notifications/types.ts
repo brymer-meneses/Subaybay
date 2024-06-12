@@ -1,6 +1,7 @@
 import type { Message, Request, RequestType, User, StageIdentifier } from "$lib/server/database";
 
 export interface MessageNotificationData {
+  _id: string,
   request: Request;
   requestType: RequestType,
   message: Message;
@@ -9,6 +10,7 @@ export interface MessageNotificationData {
 }
 
 export interface InboxNotificationData {
+  _id: string,
   type: "NewStage" | "RolledbackStage" | "ReassignedStage"
   request: Request,
   requestType: RequestType,

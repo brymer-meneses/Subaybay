@@ -1,15 +1,49 @@
-import type { PageServerLoad } from "./$types"
+import type { PageServerLoad, Actions } from "./$types"
 import type { MessageNotificationData, InboxNotificationData } from "./types";
+
+import { z } from "zod";
 
 import * as db from "$lib/server/database";
 import { ObjectId } from "mongodb";
+import { zfd } from "zod-form-data";
+import { setFlash } from "sveltekit-flash-message/server";
+import { message } from "sveltekit-superforms";
+import { redirect } from "@sveltejs/kit";
 
 
-export const load: PageServerLoad = async ({ cookies, locals }) => {
+export const load: PageServerLoad = async ({ locals }) => {
   const messageNotificationData = await getMessageNotifications(locals.user?.id!);
   const inboxNotificationsData = await getInboxNotifications(locals.user?.id!);
 
   return { messageNotificationData, inboxNotificationsData }
+}
+
+
+export const actions: Actions = {
+  set_seen: async ({ request, cookies }) => {
+
+    const schema = zfd.formData({
+      notification_id: zfd.text(),
+    })
+
+    try {
+      const { notification_id } = schema.parse(await request.formData());
+      const notification = await db.notification.findOneAndUpdate({ _id: new ObjectId(notification_id) }, {
+        "$set": {
+          "seen": true,
+        }
+      })
+
+      // TODO: redirect user to the proper path
+      // also learn how i can leverage cookies to make the user open certain tabs using cookies
+
+    } catch (error) {
+      console.log(error)
+      setFlash({ type: "error", message: "Something went wrong" }, cookies);
+      return;
+    }
+
+  }
 }
 
 async function getInboxNotifications(userId: string) {
@@ -58,7 +92,7 @@ async function getInboxNotifications(userId: string) {
 
     {
       $project: {
-        _id: 0,
+        _id: 1,
         seen: 1,
         from: "$user",
         request: "$request",
@@ -142,7 +176,7 @@ async function getMessageNotifications(userId: string) {
       },
       {
         $project: {
-          _id: 0,
+          _id: 1,
           seen: 1,
           from: "$user",
           request: "$request",
@@ -157,8 +191,10 @@ async function getMessageNotifications(userId: string) {
 }
 
 function sanitizeId(elem: any) {
+  if (elem._id) {
+    elem._id = elem._id.toString();
+  }
   for (const [_, object] of Object.entries(elem)) {
-
     // @ts-ignore
     if (object._id && object._id instanceof ObjectId) {
       // @ts-ignore
