@@ -9,21 +9,15 @@ Rolling back requests is done from the **Inbox** Page.
 ## To rollback a request
 
 1. Select the request of interest from the **Pending Inbox**
-
-image
-
 2. Click the **Rollback** button
 
-image
+![Rollback 1](/request-management/rollback1.png)
 
 3. Select the stage to rollback the request to <br/>
    _Note that you can only rollback a request to a stage that you handled_
-
-image
-
 4. Confirm
 
-image
+![Rollback 2](/request-management/rollback2.png)
 
 Unless you handled the request at multiple stages, it should disappear from your **Pending Inbox**. It should now appear in your **Active Inbox**.
 

@@ -41,7 +41,7 @@ export default defineConfig({
         collapsed: true,
         items: [
           { text: "Overview", link: "/glossary" },
-          { text: "Application Page", link: "/glossary/app-page" },
+          { text: "Application Pages", link: "/glossary/app-page" },
           { text: "Parts of a Request", link: "/glossary/request-parts" },
           { text: "Procedures on a Request", link: "/glossary/request-procedures" },
           { text: "Types of Requests", link: "/glossary/request-types" },

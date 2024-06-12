@@ -1,25 +1,32 @@
 # Pages
 
+## Notifications
+
+1. Open either the [Command Window](./basics#command-window-shortcut) or the [Sidebar](./basics#sidebar)
+2. Click on the **Notifications** button.
+
+![Navigation-Notifications](/navigation/navigation-notifications.png)
+
 ## Inbox
 
 1. Open either the [Command Window](./basics#command-window-shortcut) or the [Sidebar](./basics#sidebar)
 2. Click on the **Inbox** button.
 
--insert images showing the button in the command window and the sidebar-
+![Navigation-Inbox](/navigation/navigation-inbox.png)
 
 ## Requests
 
 1. Open either the [Command Window](./basics#command-window-shortcut) or the [Sidebar](./basics#sidebar)
 2. Click on the **Requests** button.
 
--insert images showing the button in the command window and the sidebar-
+![Navigation-Requests](/navigation/navigation-requests.png)
 
 ## Configuration
 
 1. Open either the [Command Window](./basics#command-window-shortcut) or the [Sidebar](./basics#sidebar)
 2. Click on the **Configuration** button.
 
--insert images showing the button in the command window and the sidebar-
+![Navigation-Configuration](/navigation/navigation-configuration.png)
 
 ## Admin
 
@@ -29,16 +36,16 @@ _A standard account will not be shown the buttons linking to the Admin page._ <b
 1. Open either the [Command Window](./basics#command-window-shortcut) or the [Sidebar](./basics#sidebar)
 2. Click on the **Admin** button.
 
--insert images showing the button in the command window and the sidebar-
+![Navigation-Admin](/navigation/navigation-admin.png)
 
 ## Request Details Page
 
 ### Method 1 - Through Requests Page
 
 1. Navigate to the [Requests Page](#requests) and find the request of interest.
-2. Click the right-most button, this should redirect to the Request Details Page
+2. Click the right-most button `>`, this should redirect to the Request Details Page
 
--insert image-
+![Navigation-Requests-Details-Page-1](/navigation/navigation-request-details-1.png)
 
 ### Method 2 - Through Inbox
 
@@ -48,11 +55,11 @@ _This method only works if the account accessing the request details has the req
 2. Find and select the request of interest.
 3. Click on **View Progress**
 
--insert image
+![Navigation-Requests-Details-Page-2](/navigation/navigation-request-details-2.png)
 
 ## Edit Request Type Page
 
 1. Navigate to the [Configuration](#configuration) Page.
 2. Find and click on the request type of interest.
 
--insert image-
+![Navigation-Request-Type](/navigation/navigation-edit-request-type.png)

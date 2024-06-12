@@ -12,11 +12,11 @@ _Note that only Pending requests can be marked as stale_
 
 1. Click on the stacked dots and select **Mark as Stale**
 
-image
+![Mark as Stale 1](/request-management/stale1.png)
 
 2. Confirm
 
-image
+![Mark as Stale 2](/request-management/stale2.png)
 
 The request should now disappear from all inboxes and appear in the **Discontinued** requests list.
 

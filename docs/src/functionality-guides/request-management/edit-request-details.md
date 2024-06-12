@@ -9,12 +9,11 @@ Editing request details is done from the **Request Details Page**
 
 1. Click the stacked dots and select **Edit Request**
 
-`image`
+![Edit 1](/request-management/edit1.png)
 
 2. Input the new details
-
-`image`
-
 3. Confirm
+
+![Edit 2](/request-management/edit2.png)
 
 The request details should immediately be reflected on the page once processing is finished.
