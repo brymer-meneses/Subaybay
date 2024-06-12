@@ -28,6 +28,8 @@ export const inbox = database.collection<Inbox>("inboxes");
 export const permittedEmail =
   database.collection<PermittedEmail>("permittedEmails");
 
+export const notification = database.collection<Notification>("notifications");
+
 export interface User {
   _id: string;
   email: string;
@@ -115,4 +117,24 @@ export interface InboxStageData {
   stageTitle: string;
   dateSent: Date;
   requestId: string;
+}
+
+export interface Notification {
+  _id: Object,
+  seen: boolean,
+  userId: string,
+  body: {
+    type: "NewStage" | "RolledBackStage" | "ReassignedStage" | "message";
+    content: MessageNotification | InboxNotification
+  }
+}
+
+export interface MessageNotification {
+  messageId: ObjectId
+}
+
+export interface InboxNotification {
+  stage: StageIdentifier,
+  receiverId: string,
+  from: string,
 }

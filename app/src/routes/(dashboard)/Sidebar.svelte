@@ -4,6 +4,7 @@
   import FileCog from "lucide-svelte/icons/file-cog";
   import UsersRound from "lucide-svelte/icons/users-round";
   import Book from "lucide-svelte/icons/book";
+  import Bell from "lucide-svelte/icons/bell";
 
   import ChevronLeft from "lucide-svelte/icons/chevron-left";
   import ChevronRight from "lucide-svelte/icons/chevron-right";
@@ -68,22 +69,24 @@
     </div>
     <Separator />
     <div class="flex w-full flex-col">
-      <Notifiable count={totalCount.inbox}>
-        <NavLink icon={Inbox} name="Inbox" href="/inbox" {isCollapsed} />
-      </Notifiable>
-      <NavLink icon={ListTodo} name="Requests" href="/requests" {isCollapsed} />
-      <Notifiable>
+      <Notifiable active={true}>
         <NavLink
-          icon={FileCog}
-          name="Configuration"
-          href="/configuration"
+          icon={Bell}
+          name="Notifications"
+          href="/notifications"
           {isCollapsed}
         />
       </Notifiable>
+      <NavLink icon={Inbox} name="Inbox" href="/inbox" {isCollapsed} />
+      <NavLink icon={ListTodo} name="Requests" href="/requests" {isCollapsed} />
+      <NavLink
+        icon={FileCog}
+        name="Configuration"
+        href="/configuration"
+        {isCollapsed}
+      />
       {#if $page.data.userInfo.isAdmin}
-        <Notifiable>
-          <NavLink icon={UsersRound} name="Admin" href="/admin" {isCollapsed} />
-        </Notifiable>
+        <NavLink icon={UsersRound} name="Admin" href="/admin" {isCollapsed} />
       {/if}
     </div>
 

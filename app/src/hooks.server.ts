@@ -39,7 +39,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     event.locals.session = session;
   }
 
-  const protectedPaths = ["inbox", "configuration", "admin", "requests"];
+  const protectedPaths = ["inbox", "configuration", "admin", "requests", "notifications"];
 
   if (!event.locals.user) {
     for (const path of protectedPaths) {

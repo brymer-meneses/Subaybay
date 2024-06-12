@@ -10,7 +10,6 @@
   import type { MultiStageData } from "./inboxTypes";
 
   import { notifications } from "$lib/notifications";
-  import Notifiable from "../Notifiable.svelte";
 
   export let data: PageServerData;
   let latestReqTypes = data.latestRequestTypes ?? [];
@@ -58,12 +57,8 @@
     >
       <div class="flex items-center">
         <Tabs.List>
-          <Tabs.Trigger value="active">
-            <Notifiable count={totalActive}>Active</Notifiable>
-          </Tabs.Trigger>
-          <Tabs.Trigger value="pending">
-            <Notifiable count={totalPending}>Pending</Notifiable>
-          </Tabs.Trigger>
+          <Tabs.Trigger value="active">Active</Tabs.Trigger>
+          <Tabs.Trigger value="pending">Pending</Tabs.Trigger>
         </Tabs.List>
         <div class="ml-auto flex items-center gap-2">
           <NewRequest {latestReqTypes} data={data.form} />

@@ -56,8 +56,16 @@ export const load: LayoutServerLoad = async (event) => {
             : "Overview",
         },
       ];
-
       break;
+    case "notifications":
+      headerData = [
+        { href: "/notifications", content: "Notifications" },
+        {
+          content: "Manage notifications"
+        },
+      ];
+      break;
+
   }
 
   // need to put this here since sidebar is in the +layout.svelte in dashboard and
