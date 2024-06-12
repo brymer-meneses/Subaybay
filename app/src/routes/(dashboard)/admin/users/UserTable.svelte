@@ -42,13 +42,13 @@
                       ? user.name.substring(0, 20) + "..."
                       : user.name}
                     <span
-                      class="hidden font-normal text-muted-foreground lg:block xl:inline"
+                      class="text-muted-foreground hidden font-normal lg:block xl:inline"
                     >
                       ({user._id})
                     </span>
                   </p>
                   <p
-                    class="hidden text-sm text-muted-foreground lg:block xl:inline"
+                    class="text-muted-foreground hidden text-sm lg:block xl:inline"
                   >
                     {user.email.length > 25
                       ? user.email.substring(0, 25) + "..."
@@ -64,15 +64,39 @@
             {/if}
             <Badge variant="outline">Staff</Badge>
           </Table.Cell>
-          <Table.Cell class="flex justify-center">
+          <Table.Cell class="flex items-center justify-center align-middle">
             {#if user.isAdmin}
-              <RemoveAdminForm {user} />
+              <div
+                class={$page.data.currentUser.id === user._id
+                  ? "cursor-not-allowed"
+                  : ""}
+              >
+                <div
+                  class={$page.data.currentUser.id === user._id
+                    ? "pointer-events-none opacity-60"
+                    : ""}
+                >
+                  <RemoveAdminForm {user} />
+                </div>
+              </div>
             {:else}
               <AddAdminForm {user} />
             {/if}
           </Table.Cell>
-          <Table.Cell class="flex justify-center">
-            <RemoveUserForm {user} />
+          <Table.Cell class="flex items-center justify-center align-middle">
+            <div
+              class={$page.data.currentUser.id === user._id
+                ? "cursor-not-allowed"
+                : ""}
+            >
+              <div
+                class={$page.data.currentUser.id === user._id
+                  ? "pointer-events-none opacity-60"
+                  : ""}
+              >
+                <RemoveUserForm {user} />
+              </div>
+            </div>
           </Table.Cell>
         </Table.Row>
       {/each}

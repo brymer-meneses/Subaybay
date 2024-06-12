@@ -55,25 +55,3 @@
     </div>
   </div>
 </main>
-
-<style>
-  .ball {
-    background: linear-gradient(
-      calc(180deg + 50deg),
-      #f8af7a 20%,
-      #f86217 40%,
-      #760d11
-    );
-    filter: blur(20px);
-    animation: 225s test-animate infinite linear;
-  }
-
-  @keyframes test-animate {
-    from {
-      rotate: 0deg;
-    }
-    to {
-      rotate: 360deg;
-    }
-  }
-</style>
