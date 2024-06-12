@@ -78,8 +78,16 @@ export default defineConfig({
                 link: "/functionality-guides/request-management/pass-to-next"
               },
               {
+                text: "Finish and Archive",
+                link: "/functionality-guides/request-management/completion"
+              },
+              {
                 text: "Rollback",
                 link: "/functionality-guides/request-management/rollback"
+              },
+              {
+                text: "Reassign",
+                link: "/functionality-guides/request-management/reassign"
               },
               {
                 text: "Mark as Stale/Discontinue",

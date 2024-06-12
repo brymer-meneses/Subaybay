@@ -2,14 +2,11 @@
 
 Creating requests is done from the **Inbox** Page.
 
-`image pointing where to click to go to /inbox`
-
 ## To create a new request
 
 1. Click on the **Create Request** button.
 
 ![Create 1](/request-management/create1.png)
-`image`
 
 2. Enter in the _student number_, _student name_, and _student email_. <br/>
    _In case the input format is wrong, the form will inform you._

@@ -11,18 +11,15 @@ Reassigning requests can be done from two locations: the **Inbox** and the **Req
 ## To reassign a request from the inbox
 _This option is only available if the request is in your_ **_Active Inbox_** <br/>
 
-1. Select the request of interest from your **Active Inbox**
-
-image
-
+1. Select the request of interest from the **Active Inbox**
 2. Click **Reassign**
 
-image
+![Reassign 1](/request-management/reassign-inbox1.png)
 
 3. Select the new handler <br/>
    _Note that selecting yourself will not work_
 
-image
+![Reassign 2](/request-management/reassign-inbox2.png)
 
 4. Confirm
 
@@ -30,13 +27,13 @@ image
 
 1. Click the stacked dots and select **Reassign**
 
-image
+![Reassign 1](/request-management/reassign1.png)
 
 2. Select the new handler <br/>
    _Note that selecting the current handler will not work_
 
-image
-
 3. Confirm
+
+![Reassign 2](/request-management/reassign2.png)
 
 The reassignment should be reflected in the **Progress View** and **History View** of the request.

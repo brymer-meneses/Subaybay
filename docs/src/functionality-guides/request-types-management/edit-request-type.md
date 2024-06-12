@@ -7,8 +7,4 @@ Request type deletion is done from the **Edit Request Type Page** of the request
 ## To edit a request type
 1. Edit the stages as with [Request Type Creation](create-request-type.md)
 
-image
-
-2. Confirm Changes
-
-image
+![Edit Request Type](/request-types/edit.png)

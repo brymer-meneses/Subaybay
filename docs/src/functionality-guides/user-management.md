@@ -6,4 +6,4 @@ This section covers
 - changing admin status.
 
 All of these functions are done from the **Admin Page**. <br/>
-This also means that only _admins_ are allowed to do the following.
+This also means that only _admins_ are allowed manage users.

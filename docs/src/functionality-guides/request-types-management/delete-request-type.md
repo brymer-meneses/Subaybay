@@ -7,8 +7,8 @@ Request type deletion is done from the **Edit Request Type Page** of the request
 ## To delete a request type
 1. Click the **Delete** button
 
-image
+![Delete Request Type 1](/request-types/delete1.png)
 
 2. Confirm
 
-image
+![Delete Request Type 2](/request-types/delete2.png)

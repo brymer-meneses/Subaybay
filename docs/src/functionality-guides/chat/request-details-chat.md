@@ -4,4 +4,4 @@
 
 1. Enter a message in the chat area and click the send button
 
-`image`
+![Chat Request Details](/chat/chat-details.png)
