@@ -14,5 +14,7 @@ export interface InboxNotificationData {
   requestType: RequestType,
   stage: StageIdentifier,
   seen: boolean,
+  // seconds since unix epoch
+  dateTime: number,
   from: User,
 }
