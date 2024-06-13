@@ -3,7 +3,6 @@
   "devDependencies": {
     "vitepress": "^1.2.3"
   },
-  "main": "index.js",
   "scripts": {
     "dev": "vitepress dev .",
     "build": "vitepress build .",
