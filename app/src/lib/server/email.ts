@@ -6,7 +6,7 @@ import nodemailer from "nodemailer";
 let transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465,
-  secure: !dev,
+  secure: false,
   auth: {
     user: env.GOOGLE_SENDER_EMAIL,
     pass: env.GOOGLE_SENDER_PASSWORD,
