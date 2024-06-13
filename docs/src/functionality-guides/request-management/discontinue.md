@@ -20,4 +20,4 @@ _Note that only Pending requests can be marked as stale_
 
 The request should now disappear from all inboxes and appear in the **Discontinued** requests list.
 
-To mark a request as not stale, it can be [reassigned](#reassign) to a handler
+To mark a request as not stale, it can be [reassigned](./reassign#reassign) to a handler

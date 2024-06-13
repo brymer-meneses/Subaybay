@@ -16,4 +16,4 @@ Done from **Admin** page.
 
 ![Remove 2](/user-management/remove2.png)
 
-To add the user back again, follow the procedure for [Adding Users](#add-user--email)
+To add the user back again, follow the procedure for [Adding Users](./add-user#add-user--email)
