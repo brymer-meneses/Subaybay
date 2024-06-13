@@ -5,12 +5,15 @@ import nodemailer from "nodemailer";
 
 let transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
-  port: 587,
+  port: 465,
   secure: !dev,
   auth: {
     user: env.GOOGLE_SENDER_EMAIL,
     pass: env.GOOGLE_SENDER_PASSWORD,
   },
+  tls: {
+    ciphers: 'SSLv3'
+  }
 });
 
 transporter.verify((error, success) => {
