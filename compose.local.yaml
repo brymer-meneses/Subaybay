@@ -9,8 +9,6 @@ services:
       - ${APP_PORT}:3000
     env_file:
       - ./.env
-    environment:
-      ON_DOCKER: "true"
     depends_on:
       database:
         condition: service_started
@@ -34,8 +32,6 @@ services:
       - ${BACKEND_PORT}:8080
     env_file:
       - ./.env
-    environment:
-      ON_DOCKER: "true"
     depends_on:
       database:
         condition: service_started
