@@ -13,12 +13,20 @@ export const load: PageServerLoad = async (event) => {
 };
 
 export const actions: Actions = {
-  remove_user: async ({ cookies, request }) => {
+  remove_user: async ({ cookies, request, locals }) => {
     const data = await request.formData();
     const email: string = data.get("email") as string;
 
     if (!email) {
       console.log("Null email.");
+      return;
+    }
+
+    if (email === locals.user?.email) {
+      setFlash(
+        { type: "error", message: "You cannot remove privileges to yourself." },
+        cookies,
+      );
       return;
     }
 
@@ -37,12 +45,20 @@ export const actions: Actions = {
     return { users: res1, emails: res2 };
   },
 
-  remove_admin: async ({ cookies, request }) => {
+  remove_admin: async ({ cookies, request, locals }) => {
     const data = await request.formData();
     const email: string = data.get("email") as string;
 
     if (!email) {
       console.log("Null email.");
+      return;
+    }
+
+    if (email === locals.user?.email) {
+      setFlash(
+        { type: "error", message: "You cannot remove yourself." },
+        cookies,
+      );
       return;
     }
 
