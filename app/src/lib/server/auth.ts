@@ -6,10 +6,21 @@ import { dev } from "$app/environment";
 import { session, user, type User } from "./database";
 import { env } from "$env/dynamic/private";
 
+import { page } from "$app/stores";
+
+let url;
+let prefix = env.USES_HTTPS === "true" ? "https" : "http";
+
+page.subscribe((page) => {
+  url = `${prefix}://${page.url.hostname}:${page.url.port}`;
+})
+
+
 export const google = new Google(
   env.GOOGLE_CLIENT_ID,
   env.GOOGLE_CLIENT_SECRET,
-  "http://localhost:5173/auth/login/callback",
+
+  `${url}/auth/login/callback`,
 );
 
 const adapter = new MongodbAdapter(session, user);
