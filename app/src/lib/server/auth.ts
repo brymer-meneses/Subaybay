@@ -6,15 +6,9 @@ import { dev } from "$app/environment";
 import { session, user, type User } from "./database";
 import { env } from "$env/dynamic/private";
 
-import { page } from "$app/stores";
 
-let url;
-let prefix = env.USES_HTTPS === "true" ? "https" : "http";
-
-page.subscribe((page) => {
-  url = `${prefix}://${page.url.hostname}:${page.url.port}`;
-})
-
+const prefix = env.USES_HTTPS === "true" ? "https" : "http";
+const url = env.APP_URL;
 
 export const google = new Google(
   env.GOOGLE_CLIENT_ID,
