@@ -34,6 +34,7 @@
   let searchItems: RequestSearchItem[] = [];
   let filteredRequests: RequestSearchItem[] = [];
   let sortBy: string = "Newest";
+  let filterBy: string = "none";
 
   $: {
     searchItems = requests.map((r) => {
@@ -72,11 +73,15 @@
 
     filteredRequests = searchItems.filter((request: RequestSearchItem) => {
       for (const key in request) {
+        let iNeedToNameThisVariableBetterHaha =
+          filterBy === "none" ? true : request.requestTitle === filterBy;
+
         const userKey = key as keyof RequestSearchItem;
         if (
           String(request[userKey])
             .toLowerCase()
-            .includes(searchTerm.trim().toLowerCase())
+            .includes(searchTerm.trim().toLowerCase()) &&
+          iNeedToNameThisVariableBetterHaha
         ) {
           return request;
         }
@@ -125,6 +130,27 @@
               <DropdownMenu.RadioItem value={"Oldest"}
                 >Oldest</DropdownMenu.RadioItem
               >
+            </DropdownMenu.RadioGroup>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
+      </div>
+      <div>
+        <span class="text-muted-foreground mr-2 text-sm">Filter by:</span>
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
+            <Button variant="outline" class="pr-0"
+              >{filterBy} <ChevronDown class="mx-2" /></Button
+            >
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content class="h-96 overflow-y-scroll">
+            <DropdownMenu.Label>Request Type</DropdownMenu.Label>
+            <DropdownMenu.Separator />
+            <DropdownMenu.RadioGroup bind:value={filterBy}>
+              {#each $page.data.requestTypes as rt}
+                <DropdownMenu.RadioItem value={rt.title}>
+                  {rt.title}
+                </DropdownMenu.RadioItem>
+              {/each}
             </DropdownMenu.RadioGroup>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
