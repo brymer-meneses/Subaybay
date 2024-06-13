@@ -105,57 +105,62 @@
 
 <Card.Root>
   <Card.Header
-    class="flex flex-col px-7 align-middle md:flex-row md:items-center md:justify-between"
+    class="items center flex flex-col px-7 xl:flex-row xl:justify-between "
   >
     <div class="space-y-2">
       <Card.Title>Requests</Card.Title>
       <Card.Description>List of requests</Card.Description>
     </div>
-    <div class="flex flex-row items-center space-x-4 space-y-0 align-middle">
-      <div>
-        <span class="text-muted-foreground mr-2 text-sm">Sort:</span>
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
-            <Button variant="outline" class="pr-0"
-              >{sortBy} <ChevronDown class="mx-2" /></Button
-            >
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content>
-            <DropdownMenu.Label>Sort By</DropdownMenu.Label>
-            <DropdownMenu.Separator />
-            <DropdownMenu.RadioGroup bind:value={sortBy}>
-              <DropdownMenu.RadioItem value={"Newest"}
-                >Newest</DropdownMenu.RadioItem
+    <div class="flex flex-col-reverse gap-4 xl:flex-row">
+      <div class="flex flex-row gap-4">
+        <div>
+          <span class="text-muted-foreground mr-2 text-sm">Sort:</span>
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <Button variant="outline" class="pr-0"
+                >{sortBy} <ChevronDown class="mx-2" /></Button
               >
-              <DropdownMenu.RadioItem value={"Oldest"}
-                >Oldest</DropdownMenu.RadioItem
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              <DropdownMenu.Label>Sort By</DropdownMenu.Label>
+              <DropdownMenu.Separator />
+              <DropdownMenu.RadioGroup bind:value={sortBy}>
+                <DropdownMenu.RadioItem value={"Newest"}
+                  >Newest</DropdownMenu.RadioItem
+                >
+                <DropdownMenu.RadioItem value={"Oldest"}
+                  >Oldest</DropdownMenu.RadioItem
+                >
+              </DropdownMenu.RadioGroup>
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        </div>
+        <div>
+          <span class="text-muted-foreground mr-2 text-sm">Filter by:</span>
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <Button variant="outline" class="flex w-60 justify-between pr-0"
+                ><p class="truncate">
+                  {filterBy.substring(0, Math.min(30, filterBy.length))}
+                </p>
+                <ChevronDown class="mx-2" /></Button
               >
-            </DropdownMenu.RadioGroup>
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content class="h-96 overflow-y-scroll">
+              <DropdownMenu.Label>Request Type</DropdownMenu.Label>
+              <DropdownMenu.Separator />
+              <DropdownMenu.RadioGroup bind:value={filterBy}>
+                {#each $page.data.requestTypes as rt}
+                  <DropdownMenu.RadioItem value={rt.title}>
+                    {rt.title}
+                  </DropdownMenu.RadioItem>
+                {/each}
+              </DropdownMenu.RadioGroup>
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        </div>
       </div>
-      <div>
-        <span class="text-muted-foreground mr-2 text-sm">Filter by:</span>
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
-            <Button variant="outline" class="pr-0"
-              >{filterBy} <ChevronDown class="mx-2" /></Button
-            >
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content class="h-96 overflow-y-scroll">
-            <DropdownMenu.Label>Request Type</DropdownMenu.Label>
-            <DropdownMenu.Separator />
-            <DropdownMenu.RadioGroup bind:value={filterBy}>
-              {#each $page.data.requestTypes as rt}
-                <DropdownMenu.RadioItem value={rt.title}>
-                  {rt.title}
-                </DropdownMenu.RadioItem>
-              {/each}
-            </DropdownMenu.RadioGroup>
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
-      </div>
-      <div class="relative w-80">
+      <div class="relative grow xl:w-80">
         <Search
           class="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4"
         />
