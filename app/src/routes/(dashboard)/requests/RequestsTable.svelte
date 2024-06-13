@@ -146,10 +146,16 @@
                 <ChevronDown class="mx-2" /></Button
               >
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content class="h-96 overflow-y-scroll">
+            <DropdownMenu.Content>
               <DropdownMenu.Label>Request Type</DropdownMenu.Label>
               <DropdownMenu.Separator />
-              <DropdownMenu.RadioGroup bind:value={filterBy}>
+              <DropdownMenu.RadioGroup
+                bind:value={filterBy}
+                class="h-96 overflow-y-scroll"
+              >
+                <DropdownMenu.RadioItem value={"none"}>
+                  none
+                </DropdownMenu.RadioItem>
                 {#each $page.data.requestTypes as rt}
                   <DropdownMenu.RadioItem value={rt.title}>
                     {rt.title}
