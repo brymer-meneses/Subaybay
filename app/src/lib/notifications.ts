@@ -23,6 +23,7 @@ export async function sendInboxNotification(
   notification: InboxNotification,
   receiverId: string,
   credentials: { sessionId: string; userId: string },
+  fetch: any,
 ) {
   if (receiverId == credentials.userId) {
     return;
@@ -38,7 +39,7 @@ export async function sendInboxNotification(
     receiverId,
   });
 
-  const response = await fetch("http://localhost:8080/notifications/events", {
+  const response = await fetch("/notifications/events", {
     method: "POST",
     body: payload,
     headers: {

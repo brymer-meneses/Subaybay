@@ -264,7 +264,7 @@ export const actions: Actions = {
       setFlash({ type: "success", message: message }, cookies);
     }
   },
-  finish_stage: async ({ request, locals, cookies }) => {
+  finish_stage: async ({ request, locals, cookies, fetch }) => {
     const userId = locals.user?.id ?? "0";
     const sessionId = cookies.get(lucia.sessionCookieName)!;
     const data = await request.formData();
@@ -349,6 +349,7 @@ export const actions: Actions = {
         },
         nextHandlerId,
         credentials,
+        fetch,
       );
 
       result = await passRequest(req, reqType, nextHandlerId);
@@ -358,7 +359,7 @@ export const actions: Actions = {
 
     setFlash(result, cookies);
   },
-  rollback_stage: async ({ locals, request, cookies }) => {
+  rollback_stage: async ({ locals, request, cookies, fetch }) => {
     const userId = locals.user?.id ?? "0";
     const data = await request.formData();
     const requestId: string = data.get("requestId")?.toString() ?? "";
@@ -424,10 +425,11 @@ export const actions: Actions = {
       },
       req.currentStage.prevHandlerId,
       credentials,
+      fetch,
     );
     setFlash(result, cookies);
   },
-  reassign_stage: async ({ locals, request, cookies }) => {
+  reassign_stage: async ({ locals, request, cookies, fetch }) => {
     const data = await request.formData();
     const requestId: string = data.get("requestId")?.toString() ?? "";
     const nextHandlerId: string = data.get("nextHandlerId")?.toString() ?? "";
@@ -459,6 +461,7 @@ export const actions: Actions = {
       },
       nextHandlerId,
       credentials,
+      fetch,
     );
     setFlash(result, cookies);
   },

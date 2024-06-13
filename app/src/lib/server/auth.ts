@@ -7,14 +7,14 @@ import { session, user, type User } from "./database";
 import { env } from "$env/dynamic/private";
 
 
-const prefix = env.USES_HTTPS === "true" ? "https" : "http";
-const url = env.APP_URL;
+const protocol = env.USES_HTTPS === "true" ? "https" : "http";
+const url = !dev ? env.APP_URL : "localhost:5173";
 
 export const google = new Google(
   env.GOOGLE_CLIENT_ID,
   env.GOOGLE_CLIENT_SECRET,
 
-  `${url}/auth/login/callback`,
+  `${protocol}://${url}/auth/login/callback`,
 );
 
 const adapter = new MongodbAdapter(session, user);
