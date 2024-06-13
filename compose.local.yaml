@@ -22,8 +22,6 @@ services:
     restart: unless-stopped
     ports:
       - ${DOCS_PORT}:4173
-    environment:
-      ON_DOCKER: "true"
 
   backend:
     build: backend
