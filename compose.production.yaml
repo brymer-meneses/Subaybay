@@ -16,7 +16,6 @@ services:
         condition: service_started
       docs:
         condition: service_started
-    container_name: app
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
@@ -30,7 +29,6 @@ services:
     depends_on:
       database:
         condition: service_started
-    container_name: backend
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
@@ -41,7 +39,6 @@ services:
       - ${DOCS_PORT}:4173
     env_file:
       - ./.env
-    container_name: docs
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
@@ -58,7 +55,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DATABASE_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-    container_name: database
     labels:
       - com.centurylinklabs.watchtower.enable=false
 
