@@ -1,7 +1,12 @@
-import { dev } from "$app/environment";
 import { env } from "$env/dynamic/private";
 
 import nodemailer from "nodemailer";
+
+// NOTE: 
+// It might seem like I'm doing unsecure things but 
+// setting `secure: true` would create an internal error
+// and disallow sending emails from the client. In addition to that,
+// `rejectUnauthorized: false`, is also needed because of this
 
 let transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -12,7 +17,7 @@ let transporter = nodemailer.createTransport({
     pass: env.GOOGLE_SENDER_PASSWORD,
   },
   tls: {
-    ciphers: 'SSLv3'
+    rejectUnauthorized: false,
   }
 });
 
