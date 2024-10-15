@@ -43,11 +43,18 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
     );
 
     const account: GoogleAccount = await response.json();
-
     const googleId = account.sub;
     const existingAccount = await user.findOne({ _id: googleId });
 
-    if (!existingAccount) {
+    if (await user.countDocuments() == 0) {
+      await user.insertOne({
+        _id: account.sub,
+        name: account.name,
+        email: account.email,
+        profileUrl: account.picture,
+        isAdmin: true,
+      });
+    } else if (!existingAccount) {
       const isWhitelisted = await permittedEmail.findOne({
         email: account.email,
       });

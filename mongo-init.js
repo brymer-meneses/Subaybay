@@ -1,45 +1,6 @@
 // https://www.mongodb.com/docs/mongodb-shell/reference/methods/
 db = new Mongo().getDB("subaybay");
 
-db.users.insertMany([
-  {
-    _id: "sampleid1",
-    name: "Yuumi",
-    email: "yuumi@lol.com",
-    profileUrl: "https://www.mobafire.com/images/champion/square/yuumi.png",
-    isAdmin: false,
-  },
-  {
-    _id: "sampleid2",
-    name: "Smolder",
-    email: "smolder@lol.com",
-    profileUrl: "https://www.mobafire.com/images/champion/square/smolder.png",
-    isAdmin: true,
-  },
-  {
-    _id: "sampleid3",
-    name: "Gnar",
-    email: "gnar@lol.com",
-    profileUrl: "https://www.mobafire.com/images/champion/square/gnar.png",
-    isAdmin: true,
-  },
-  {
-    _id: "sampleid4",
-    name: "Aurelion Sol",
-    email: "sol@lol.com",
-    profileUrl:
-      "https://www.mobafire.com/images/champion/square/aurelion-sol.png",
-    isAdmin: false,
-  },
-  {
-    _id: "sampleid5",
-    name: "Kog' Maw",
-    email: "kogmaw@lol.com",
-    profileUrl: "https://www.mobafire.com/images/champion/square/kogmaw.png",
-    isAdmin: false,
-  },
-]);
-
 // [id, title, prepares]
 basicCerts = [
   ["coe", "Certificate of Enrollment", "Certifications"],
@@ -47,7 +8,11 @@ basicCerts = [
   ["cg", "Certificate of Graduation", "Certifications"],
   ["cmi", "Certificate of Medium of Instruction", "Certifications"],
   ["gmc", "Certificate of No Disciplinary Case (GMC)", "Certifications"],
-  ["cnhdg", "Certificate of Non-Issuance of Honorable Dismissal for Graduates", "Certifications"],
+  [
+    "cnhdg",
+    "Certificate of Non-Issuance of Honorable Dismissal for Graduates",
+    "Certifications",
+  ],
   ["cue", "Certificate of Units Earned", "Certifications"],
   ["cft", "Certificate of Free Tuition", "Certifications"],
   ["cnstpsn", "Certificate of NSTP Serial No.", "Certifications"],
@@ -139,7 +104,7 @@ db.requestTypes.insertMany([
         stageTitle: "Notify Requester",
         defaultHandlerId: "",
       },
-    ]
+    ],
   },
   {
     _id: "otr2",
@@ -149,23 +114,23 @@ db.requestTypes.insertMany([
     stages: [
       {
         stageTitle: "Newly Created Request",
-        defaultHandlerId: ""
+        defaultHandlerId: "",
       },
       {
         stageTitle: "Print and Sign OTR",
-        defaultHandlerId: "" //staff 2
+        defaultHandlerId: "", //staff 2
       },
       {
         stageTitle: "Signature",
-        defaultHandlerId: "" //staff 1
+        defaultHandlerId: "", //staff 1
       },
       {
         stageTitle: "Signature",
-        defaultHandlerId: "" //staff 3
+        defaultHandlerId: "", //staff 3
       },
       {
         stageTitle: "Signature of University Registrar",
-        defaultHandlerId: ""
+        defaultHandlerId: "",
       },
       {
         stageTitle: "Prepare final copy and CTC OTR (if applicable)",
@@ -175,7 +140,7 @@ db.requestTypes.insertMany([
         stageTitle: "Notify Requester",
         defaultHandlerId: "",
       },
-    ]
+    ],
   },
   {
     _id: "wes",
@@ -193,20 +158,20 @@ db.requestTypes.insertMany([
       },
       {
         stageTitle: "University Registrar Signature (OTR)",
-        defaultHandlerId: ""
+        defaultHandlerId: "",
       },
       {
         stageTitle: "Preparation of WES", //staff 2
-        defaultHandlerId: ""
+        defaultHandlerId: "",
       },
       {
         stageTitle: "University Registrar Signature (WES Verification)",
-        defaultHandlerId: ""
+        defaultHandlerId: "",
       },
       {
         stageTitle: "Notify Requester",
-        defaultHandlerId: ""
-      }
+        defaultHandlerId: "",
+      },
     ],
   },
   {
@@ -217,40 +182,41 @@ db.requestTypes.insertMany([
     stages: [
       {
         stageTitle: "Newly Created Request",
-        defaultHandlerId: ""
+        defaultHandlerId: "",
       },
       {
         stageTitle: "Preparation of CTC Diploma",
-        defaultHandlerId: ""
+        defaultHandlerId: "",
       },
       {
         stageTitle: "University Registrar Signature (CTC Diploma)",
-        defaultHandlerId: ""
+        defaultHandlerId: "",
       },
       {
         stageTitle: "Preparation of CTC Diploma Translation", // staff 1
-        defaultHandlerId: ""
+        defaultHandlerId: "",
       },
       {
         stageTitle: "University Registrar Signature (CTC Diploma Translation)", // staff 1
-        defaultHandlerId: ""
+        defaultHandlerId: "",
       },
       {
         stageTitle: "Preparation of OTR", // staff 2
-        defaultHandlerId: ""
+        defaultHandlerId: "",
       },
       {
         stageTitle: "Preparation of CAV",
-        defaultHandlerId: ""
+        defaultHandlerId: "",
       },
       {
         stageTitle: "University Registrar Signature", // staff 1
-        defaultHandlerId: ""
+        defaultHandlerId: "",
       },
       {
         stageTitle: "Notify Requester",
-        defaultHandlerId: ""
+        defaultHandlerId: "",
       },
-   ]
-  }
+    ],
+  },
 ]);
+
