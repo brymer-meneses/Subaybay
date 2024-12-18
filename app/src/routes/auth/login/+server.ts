@@ -1,14 +1,21 @@
-import { generateCodeVerifier, generateState } from "arctic";
-import { google } from "$lib/server/auth";
+import { Google, generateCodeVerifier, generateState } from "arctic";
+import { env } from "$env/dynamic/private";
 import {
   redirect,
   type RequestEvent,
   type RequestHandler,
 } from "@sveltejs/kit";
 
-import { dev } from "$app/environment";
-
 export const GET: RequestHandler = async (event: RequestEvent) => {
+  const secure = env.USES_HTTPS == "true";
+  const protocol = !secure ? "http" : "https";
+  const callbackUrl = `${protocol}://${event.url.host}/auth/login/callback`;
+
+  const google = new Google(
+    env.GOOGLE_CLIENT_ID,
+    env.GOOGLE_CLIENT_SECRET,
+    callbackUrl,
+  );
   if (event.locals.user) {
     redirect(302, "/inbox");
   }
@@ -16,27 +23,29 @@ export const GET: RequestHandler = async (event: RequestEvent) => {
   const state = generateState();
   const codeVerifier = generateCodeVerifier();
 
-  const url = await google.createAuthorizationURL(state, codeVerifier, {
-    scopes: ["profile", "email", "openid"],
-  });
+  const authorizationUrl = await google.createAuthorizationURL(
+    state,
+    codeVerifier,
+    {
+      scopes: ["profile", "email", "openid"],
+    },
+  );
 
   const tenMinutesInSeconds = 60 * 10;
 
   // store state verifier as cookie
   event.cookies.set("state", state, {
-    secure: !dev,
+    secure: secure,
     path: "/",
-    httpOnly: true,
     maxAge: tenMinutesInSeconds,
   });
 
   // store code verifier as cookie
   event.cookies.set("code_verifier", codeVerifier, {
-    secure: !dev,
+    secure: secure,
     path: "/",
-    httpOnly: true,
     maxAge: tenMinutesInSeconds,
   });
 
-  redirect(302, url.toString());
+  redirect(302, authorizationUrl.toString());
 };

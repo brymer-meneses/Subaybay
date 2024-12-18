@@ -1,21 +1,8 @@
 import { Lucia, TimeSpan } from "lucia";
 import { MongodbAdapter } from "@lucia-auth/adapter-mongodb";
-import { Google } from "arctic";
 
-import { dev } from "$app/environment";
 import { session, user, type User } from "./database";
 import { env } from "$env/dynamic/private";
-
-
-const protocol = env.USES_HTTPS === "true" ? "https" : "http";
-const url = !dev ? env.APP_URL : "localhost:5173";
-
-export const google = new Google(
-  env.GOOGLE_CLIENT_ID,
-  env.GOOGLE_CLIENT_SECRET,
-
-  `${protocol}://${url}/auth/login/callback`,
-);
 
 const adapter = new MongodbAdapter(session, user);
 
@@ -23,7 +10,7 @@ export const lucia = new Lucia(adapter, {
   sessionExpiresIn: new TimeSpan(1, "d"),
   sessionCookie: {
     attributes: {
-      secure: !dev,
+      secure: env.USES_HTTPS == "true",
     },
     name: "auth_session",
   },

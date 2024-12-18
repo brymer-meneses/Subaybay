@@ -1,9 +1,10 @@
-import { OAuth2RequestError } from "arctic";
+import { Google, OAuth2RequestError } from "arctic";
 import type { RequestHandler } from "@sveltejs/kit";
 
 import { redirect } from "sveltekit-flash-message/server";
 
-import { google, lucia } from "$lib/server/auth";
+import { env } from "$env/dynamic/private";
+import { lucia } from "$lib/server/auth";
 import { user, permittedEmail } from "$lib/server/database";
 
 interface GoogleAccount {
@@ -28,6 +29,14 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
     redirect("/", { type: "error", message: "Authentication Error" }, cookies);
   }
 
+  const protocol = env.USES_HTTPS == "false" ? "http" : "https";
+  const callbackUrl = `${protocol}://${url.host}/auth/login/callback`;
+  const google = new Google(
+    env.GOOGLE_CLIENT_ID,
+    env.GOOGLE_CLIENT_SECRET,
+    callbackUrl,
+  );
+
   try {
     const tokens = await google.validateAuthorizationCode(
       code,
@@ -46,7 +55,7 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
     const googleId = account.sub;
     const existingAccount = await user.findOne({ _id: googleId });
 
-    if (await user.countDocuments() == 0) {
+    if ((await user.countDocuments()) == 0) {
       await user.insertOne({
         _id: account.sub,
         name: account.name,
@@ -61,9 +70,13 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 
       // Dont forget to Uncomment these:
       if (!isWhitelisted) {
-        throw new Error(`${account.email} is not authorized.` );
+        redirect(
+          "/",
+          { type: "error", message: "User not whitelisted." },
+          cookies,
+        );
       } else {
-        await permittedEmail.deleteOne( {email: account.email }); // Remove the email in the permitted emails collection
+        await permittedEmail.deleteOne({ email: account.email }); // Remove the email in the permitted emails collection
       }
 
       await user.insertOne({
@@ -79,10 +92,13 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
     const sessionCookie = lucia.createSessionCookie(session.id);
 
     cookies.set(sessionCookie.name, sessionCookie.value, {
+      secure: secure,
       path: ".",
       ...sessionCookie.attributes,
     });
-  } catch (e) {
+  } catch (e: any) {
+    const errorMessage: string = e.message ?? "Authentication Error";
+
     if (e instanceof OAuth2RequestError) {
       redirect(
         "/",
@@ -91,8 +107,6 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
       );
     }
 
-    const errorMessage: string = e.message ?? "Authentication Error";
-    console.log(errorMessage);
     redirect("/", { type: "error", message: errorMessage }, cookies);
   }
 

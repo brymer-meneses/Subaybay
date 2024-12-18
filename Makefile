@@ -21,12 +21,11 @@ endif
 format:
 	cd app && npx prettier --write .
 
-run:
+start:
 ifeq ($(MODE), dev)
 	docker compose -f compose.local.yaml --env-file .env up --build $(SERVICES) -d
-	@cd app && npm run dev
 else ifeq ($(MODE), prod)
-	docker compose -f compose.production.yaml --env-file .env up --build -d
+	docker compose -f compose.production.yaml --env-file .env up --build $(SERVICES) -d
 else
 	$(error Invalid argument `$(MODE)` for `MODE`. Expected either `prod` or `dev`.)
 endif
