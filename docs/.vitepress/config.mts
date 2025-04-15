@@ -25,15 +25,24 @@ export default defineConfig({
           {
             text: "Functionality",
             items: [
-              { text: "Request Management", link: "/functionality-guides/request-management" },
-              { text: "User Management", link: "/functionality-guides/user-management" },
-              { text: "Request Information", link: "/functionality-guides/request-info" },
+              {
+                text: "Request Management",
+                link: "/functionality-guides/request-management",
+              },
+              {
+                text: "User Management",
+                link: "/functionality-guides/user-management",
+              },
+              {
+                text: "Request Information",
+                link: "/functionality-guides/request-info",
+              },
               { text: "Chatting", link: "/functionality-guides/chat" },
-            ]
+            ],
           },
-        ]
+        ],
       },
-      { text: "Examples", link: "/examples/examples-directory" }
+      { text: "Examples", link: "/examples/examples-directory" },
     ],
     sidebar: [
       {
@@ -43,7 +52,10 @@ export default defineConfig({
           { text: "Overview", link: "/glossary" },
           { text: "Application Pages", link: "/glossary/app-page" },
           { text: "Parts of a Request", link: "/glossary/request-parts" },
-          { text: "Procedures on a Request", link: "/glossary/request-procedures" },
+          {
+            text: "Procedures on a Request",
+            link: "/glossary/request-procedures",
+          },
           { text: "Types of Requests", link: "/glossary/request-types" },
           { text: "Types of Inboxes", link: "/glossary/inbox-types" },
         ],
@@ -56,7 +68,7 @@ export default defineConfig({
           { text: "Basics", link: "/navigation/basics" },
           { text: "Pages", link: "/navigation/pages" },
           { text: "Views", link: "/navigation/views" },
-        ]
+        ],
       },
       {
         text: "Functionality Guides",
@@ -67,37 +79,37 @@ export default defineConfig({
             items: [
               {
                 text: "Overview",
-                link: "/functionality-guides/request-management"
+                link: "/functionality-guides/request-management",
               },
               {
                 text: "Create a New Request",
-                link: "/functionality-guides/request-management/create-new-request"
+                link: "/functionality-guides/request-management/create-new-request",
               },
               {
                 text: "Pass to Next",
-                link: "/functionality-guides/request-management/pass-to-next"
+                link: "/functionality-guides/request-management/pass-to-next",
               },
               {
                 text: "Finish and Archive",
-                link: "/functionality-guides/request-management/completion"
+                link: "/functionality-guides/request-management/completion",
               },
               {
                 text: "Rollback",
-                link: "/functionality-guides/request-management/rollback"
+                link: "/functionality-guides/request-management/rollback",
               },
               {
                 text: "Reassign",
-                link: "/functionality-guides/request-management/reassign"
+                link: "/functionality-guides/request-management/reassign",
               },
               {
                 text: "Mark as Stale/Discontinue",
-                link: "/functionality-guides/request-management/discontinue"
+                link: "/functionality-guides/request-management/discontinue",
               },
               {
                 text: "Edit Request Details",
-                link: "/functionality-guides/request-management/edit-request-details"
-              }
-            ]
+                link: "/functionality-guides/request-management/edit-request-details",
+              },
+            ],
           },
           {
             text: "User Management",
@@ -105,25 +117,25 @@ export default defineConfig({
             items: [
               {
                 text: "Overview",
-                link: "/functionality-guides/user-management"
+                link: "/functionality-guides/user-management",
               },
               {
                 text: "Add User/Email",
-                link: "/functionality-guides/user-management/add-user.md"
+                link: "/functionality-guides/user-management/add-user.md",
               },
               {
                 text: "Remove User",
-                link: "/functionality-guides/user-management/remove-user.md"
+                link: "/functionality-guides/user-management/remove-user.md",
               },
               {
                 text: "Add Admin",
-                link: "/functionality-guides/user-management/add-admin.md"
+                link: "/functionality-guides/user-management/add-admin.md",
               },
               {
                 text: "Remove Admin",
-                link: "/functionality-guides/user-management/remove-admin.md"
+                link: "/functionality-guides/user-management/remove-admin.md",
               },
-            ]
+            ],
           },
           {
             text: "Request Information",
@@ -131,21 +143,21 @@ export default defineConfig({
             items: [
               {
                 text: "Overview",
-                link: "/functionality-guides/request-info"
+                link: "/functionality-guides/request-info",
               },
               {
                 text: "Request Progress",
-                link: "/functionality-guides/request-info/request-progress"
+                link: "/functionality-guides/request-info/request-progress",
               },
               {
                 text: "Request History",
-                link: "/functionality-guides/request-info/request-history"
+                link: "/functionality-guides/request-info/request-history",
               },
               {
                 text: "Request Statistics",
-                link: "/functionality-guides/request-info/request-statistics"
+                link: "/functionality-guides/request-info/request-statistics",
               },
-            ]
+            ],
           },
           {
             text: "Chatting",
@@ -153,17 +165,17 @@ export default defineConfig({
             items: [
               {
                 text: "Overview",
-                link: "/functionality-guides/chat"
+                link: "/functionality-guides/chat",
               },
               {
                 text: "Inbox Chat",
-                link: "/functionality-guides/chat/inbox-chat"
+                link: "/functionality-guides/chat/inbox-chat",
               },
               {
                 text: "Request Details Page Chat",
-                link: "/functionality-guides/chat/request-details-chat"
+                link: "/functionality-guides/chat/request-details-chat",
               },
-            ]
+            ],
           },
           {
             text: "Request Types Management",
@@ -171,21 +183,21 @@ export default defineConfig({
             items: [
               {
                 text: "Overview",
-                link: "/functionality-guides/request-types-management"
+                link: "/functionality-guides/request-types-management",
               },
               {
                 text: "Create Request Types",
-                link: "/functionality-guides/request-types-management/create-request-type"
+                link: "/functionality-guides/request-types-management/create-request-type",
               },
               {
                 text: "Edit Request Types",
-                link: "/functionality-guides/request-types-management/edit-request-type"
+                link: "/functionality-guides/request-types-management/edit-request-type",
               },
               {
                 text: "Delete Request Types",
-                link: "/functionality-guides/request-types-management/delete-request-type"
+                link: "/functionality-guides/request-types-management/delete-request-type",
               },
-            ]
+            ],
           },
         ],
       },
@@ -195,33 +207,47 @@ export default defineConfig({
         items: [
           {
             text: "Overview",
-            link: "/examples/examples-directory"
+            link: "/examples/examples-directory",
           },
           {
             text: "Passing to Completion",
-            link: "/examples/passing-to-completion"
+            link: "/examples/passing-to-completion",
           },
           {
             text: "Making Corrections",
-            link: "/examples/making-corrections"
+            link: "/examples/making-corrections",
           },
           {
             text: "Managing Request Types",
-            link: "/examples/managing-request-types"
+            link: "/examples/managing-request-types",
           },
           {
             text: "Managing Users",
-            link: "/examples/managing-users"
+            link: "/examples/managing-users",
           },
-        ]
+        ],
       },
       {
-        text: "Environment Variables",
-        link: "/environment-variables"
-      }
+        text: "Maintenance",
+        collapsed: true,
+        items: [
+          {
+            text: "Environment Variables",
+            link: "/maintenance/environment-variables",
+          },
+          {
+            text: "Modifying Email Template",
+            link: "/maintenance/modifying-email-template",
+          },
+          {
+            text: "Redeployment",
+            link: "/maintenance/redeployment",
+          },
+        ],
+      },
     ],
     search: {
-      provider: 'local'
+      provider: "local",
     },
     socialLinks: [
       { icon: "github", link: "https://github.com/brymer-meneses/Subaybay" },
