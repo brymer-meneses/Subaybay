@@ -67,7 +67,7 @@ In `ConfirmationEmail.svelte`, we can see two props declared. The word after `ex
 
 ## Html Section Guide
 
-The Html section mostly uses basic HTML elements, with exception of `<Html></Html>` and `<Text></Text>`, which both are imported from the `svelte-email` library. This section works like a normal HTML, but for simplicity, `div` elements will not be included in the guide (everything will be written inline from top to bottom).
+The Html section mostly uses basic HTML elements, with exception of `<Html></Html>` and `<Text></Text>`, which both are imported from the `svelte-email` library. Note that other components from the `svelte-email` library can still be used (please visit [their documentation](https://svelte-email.vercel.app/docs/overview/svelte-email) for these additional components) . This section works like a normal HTML, but for simplicity, `div` elements will not be included in the guide (everything will be written inline from top to bottom).
 ![Html Section](html_section.png)
 In `ConfirmationEmail.svelte`, we can see the default email template hardcoded along with some HTML elements. This section provides some of the basic elements that can be used.
 
