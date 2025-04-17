@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Html, Text } from "svelte-email";
+  import QRCode from "$lib/assets/CSM_QR_Code.png"
   import type { Request } from "$lib/server/database";
 
   export let request: Request;
@@ -36,13 +37,8 @@
     Tel. (074) 442 5592 <br>
     <br>
     <br>
-    <strong>Please  help us improve our services! Fill out our Client Satisfaction Measurement Form: TODO:link(CSM) or scan this QR code: </strong><br>
+    <strong>Please  help us improve our services! Fill out our Client Satisfaction Measurement Form: <a href="https://tinryurl.com/upb-csm" target="_blank" >CSM</a> or scan this QR code: </strong><br>
     <br>
-    <!-- <img src={imported-our-pic-here}/> -->
-    TODO:qr-code-from-OUR
-    <!-- Hello {request.studentName}, <br /> -->
-
-    <!-- This is to inform you that your request for {requestType.title} has already been -->
-    <!-- finished. You may get the request at the OUR office. -->
+    <img src={QRCode} alt="CSM QR Code" width="294"/>
   </Text>
 </Html>
