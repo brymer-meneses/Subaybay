@@ -1,11 +1,15 @@
 import type { PageServerLoad, Actions } from "./$types";
+import type { MailOptions } from "nodemailer/lib/json-transport";
+
+import { resolve } from "path";
+
 import * as db from "$lib/server/database";
 import * as dbUtils from "$lib/server/dbUtils";
 import { ObjectId } from "mongodb";
 
 import ConfirmationEmail from "$lib/components/email/ConfirmationEmail.svelte";
 
-import { customAlphabet } from 'nanoid/non-secure'
+import { customAlphabet } from "nanoid/non-secure";
 import { superValidate } from "sveltekit-superforms";
 import { formSchema } from "./schema";
 import { zod } from "sveltekit-superforms/adapters";
@@ -56,7 +60,6 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
   const requests = reqAndStages.requests;
   const activeStages = reqAndStages.activeStages;
   const pendingStages = reqAndStages.pendingStages;
-
 
   return {
     form: await superValidate(zod(formSchema)),
@@ -141,7 +144,8 @@ const addStage = (
     stageTitle: requestType.stages[stage.stageTypeIndex].stageTitle,
     inboxStageTitle:
       requestType.stages[stageIdentifier.stageTypeIndex].stageTitle,
-    nextStageTitle: requestType.stages[stage.stageTypeIndex + 1]?.stageTitle ?? "None",
+    nextStageTitle:
+      requestType.stages[stage.stageTypeIndex + 1]?.stageTitle ?? "None",
     dateSent: stage.dateStarted,
     requestId: stageIdentifier.requestId,
     handlerId: stage.handlerId,
@@ -153,17 +157,17 @@ const addStage = (
     finalStageTypeIndex: requestType.stages.length - 1,
     finished: stage.finished,
     studentName: request.studentName,
-    studentNumber: request.studentNumber
-  })
+    studentNumber: request.studentNumber,
+  });
 };
 
 import { setFlash } from "sveltekit-flash-message/server";
 import { env } from "$env/dynamic/private";
 
 const generateRequestId = () => {
-  const nanoid = customAlphabet('1234567890abcdef', 7);
+  const nanoid = customAlphabet("1234567890abcdef", 7);
   return nanoid();
-}
+};
 
 export const actions: Actions = {
   add_request: async (event) => {
@@ -220,7 +224,6 @@ export const actions: Actions = {
 
       const nextHandlerId =
         reqType.stages.length >= 2 ? reqType.stages[1].defaultHandlerId : "";
-
 
       const req: db.Request = {
         _id: generateRequestId(),
@@ -295,11 +298,19 @@ export const actions: Actions = {
         },
       });
 
-      const email = {
+      const imagePath = resolve("./static/CSM_QR_Code.png");
+      const email: MailOptions = {
         from: env.GOOGLE_SENDER_EMAIL,
         to: req.studentEmail,
         subject: `${reqType.title} has been finished`,
         html: emailHtml,
+        attachments: [
+          {
+            path: imagePath,
+            filename: "qrcode.png",
+            cid: "qrcode",
+          },
+        ],
       };
 
       const sendEmail = async (mail: typeof email) => {
