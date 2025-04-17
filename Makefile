@@ -1,6 +1,6 @@
 
 MODE := dev
-SERVICES := backend docs
+SERVICES := backend docs app
 
 all: run
 
@@ -8,25 +8,12 @@ stop:
 	docker compose down
 
 reset-database:
-ifeq ($(MODE), dev)
-	docker compose -f compose.local.yaml down database
-	docker volume rm subaybay-local_db-data
-else ifeq ($(MODE), prod)
-	docker compose -f compose.production.yaml down database
-	docker volume rm subaybay-production-data
-else
-	$(error Invalid argument `$(MODE)` for `MODE`. Expected either `prod` or `dev`.)
-endif
+	docker compose -f compose.yaml down database
+	docker volume rm subaybay_db-data
 
 format:
 	cd app && npx prettier --write .
 
 start:
-ifeq ($(MODE), dev)
-	docker compose -f compose.local.yaml --env-file .env up --build $(SERVICES) -d
-else ifeq ($(MODE), prod)
-	docker compose -f compose.production.yaml --env-file .env up --build $(SERVICES) -d
-else
-	$(error Invalid argument `$(MODE)` for `MODE`. Expected either `prod` or `dev`.)
-endif
+	docker compose -f compose.yaml --env-file .env up --build $(SERVICES) -d
 

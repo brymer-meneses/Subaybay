@@ -5,17 +5,20 @@ University of the Philippines Baguio
 
 ## Running
 
-We use `Makefile` to automate tasks. Invoke the following command to run the
-client and initialize the database on **development** mode.
+We use a `Makefile` to automate tasks. 
 
 ```bash
-make run
+# run all the services
+make start
 ```
-
-To run the application in **production**, invoke
+Invoking `make start` will run all the services defined `compose.yaml`, this is
+not ideal since we want hot-reloading while debugging the svelte-kit app. Instead, we
+can select the services as follows:
 
 ```bash
-make run MODE=prod
+make start SERVICES="docs backend"
+cd app
+npm run dev
 ```
 
 ## Notes
