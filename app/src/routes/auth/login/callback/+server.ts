@@ -90,6 +90,7 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 
     const session = await lucia.createSession(googleId, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
+    const secure = env.USES_HTTPS == "true";
 
     cookies.set(sessionCookie.name, sessionCookie.value, {
       secure: secure,
