@@ -37,7 +37,7 @@
     Tel. (074) 442 5592 <br>
     <br>
     <br>
-    <strong>Please  help us improve our services! Fill out our Client Satisfaction Measurement Form: <a href="https://tinryurl.com/upb-csm" target="_blank" >CSM</a> or scan this QR code: </strong><br>
+    <strong>Please  help us improve our services! Fill out our Client Satisfaction Measurement Form: <a href="https://tinyurl.com/upb-csm" target="_blank" >CSM</a> or scan this QR code: </strong><br>
     <br>
     <img src={QRCode} alt="CSM QR Code" width="294"/>
   </Text>
