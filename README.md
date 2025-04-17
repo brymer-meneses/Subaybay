@@ -13,7 +13,7 @@ make start
 ```
 Invoking `make start` will run all the services defined `compose.yaml`, this is
 not ideal since we want hot-reloading while debugging the svelte-kit app. Instead, we
-can select the services as follows:
+can selectively run the services as follows:
 
 ```bash
 make start SERVICES="docs backend"
