@@ -137,7 +137,10 @@ Your request for TCG is ready for pickup.
 
 ## Adding Images
 
-Adding images to the template requires a few additional steps. We will be using the `Img` component from the `svelte-email` library. This section will explain [how the QR code in the default template is added](#how-was-the-qr-code-image-added-in-the-email-template) and [how the approach can be generalized to support adding any number of images](#generalized-approach-for-adding-images-in-the-template), in case more images need to be included in the future.
+Adding images to the template requires a few additional steps. We will be using the `Img` component from the `svelte-email` library. This section will explain the following:
+
+- [how the QR code in the default template is added](#how-was-the-qr-code-image-added-in-the-email-template)
+- [how the approach can be generalized to support adding any number of images](#generalized-approach-for-adding-images-in-the-template), in case more images need to be included in the future
 
 ### How was the QR Code image added in the email template?
 
@@ -316,7 +319,7 @@ const emailHtml = render({
                 template: ConfirmationEmail,
                 props: {
                     request: req,
-                requestType: reqType,
+                    requestType: reqType,
                 },
             });
 ```
