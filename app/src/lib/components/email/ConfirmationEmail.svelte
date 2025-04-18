@@ -1,6 +1,8 @@
 <script lang="ts">
   import { Html, Text, Img } from "svelte-email";
+  import type { Request, RequestType } from "$lib/server/database";
 
+  export let request: Request;
   export let requestType: RequestType;
 </script>
 
@@ -15,7 +17,7 @@
     <strong><u>printed and duly signed authorization letter</u></strong>
     and
     <strong
-      ><u>photocopies of your valid ID and your representative's ID.</u></strong
+      ><u>photocopies of your valid ID and your representative's ID</u></strong
     >. <br />
     <br />
     <strong>If the above is not possible</strong>, you may ask a courier service
