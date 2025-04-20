@@ -137,17 +137,157 @@ Your request for TCG is ready for pickup.
 
 ## Adding Images
 
-Adding images to the template requires a few additional steps. We will be using the `Img` component from the `svelte-email` library. This section will explain the following:
+Adding images to the template requires a few additional steps. We will be using the `Img` component from the `svelte-email` library. This section will start with first explain [how to add new images](#guide-to-adding-images-in-the-template), in case more images need to be included in the future.
 
-- [how the QR code in the default template is added](#how-was-the-qr-code-image-added-in-the-email-template)
-- [how the approach can be generalized to support adding any number of images](#generalized-approach-for-adding-images-in-the-template), in case more images need to be included in the future
+Then it will detail [how the QR code in the default template was added](#how-the-qr-code-image-was-added-in-the-email-template), in case a deeper understanding of the process is needed.
 
-### How was the QR Code image added in the email template?
+### Guide to adding images in the template
+
+For this example, we will embed multiple images into our template-`n` images.
+
+First, place the images you need to embed in the `/app/static/` folder.
+
+Next, navigate to `ConfirmationEmail.svelte`, located at
+
+```text
+/app/src/lib/components/email/ConfirmationEmail.svelte
+```
+
+Add an `Img` component for each image.
+
+```svelte
+<Img src="cid:unique_1" alt="Image 1" width="20" height="40"/> <br>
+```
+
+An `Img` component requires a `src`, an `alt`, a `width`, and a `height`. The `width` and `height` are the image dimensions in the email. The `alt`, short for "alternative text", is a textual description of the image. Finally, the `src` needs to be in the form of a `cid`.
+
+::: tip
+A `cid` is a unique identifier for the image within the email. It does not have to be the same as the filename; you can choose any unique name.
+:::
+
+```svelte
+<script lang="ts">
+    import { Html, Text, Img } from "svelte-email";
+    // script here...
+</script>
+
+<Html lang="en">
+    <Text>
+        Here is the 1st image. <br>
+        <Img src="cid:unique_1" alt="Image 1" width="20" height="40"/> <br>
+
+        Here is the 2nd image. <br>
+        <Img src="cid:unique_2" alt="Image 2" width="20" height="40"/> <br>
+
+        ... <br>
+
+        Here is the nth image. <br>
+        <Img src="cid:unique_n" alt="Image n" width="20" height="40"/> <br>
+    </Text>
+</Html>
+```
+
+Finally, navigate to the following file:
+
+```text
+/app/src/routes/(dashboard)/inbox/+page.server.ts
+```
+
+You will need to add the following line of code for each image
+
+```Typescript
+const imagePath = resolve("./static/<filename>");
+```
+
+Look for the space between `const emailHtml` and `const email`; this is where you will place the above code:
+
+```Typescript
+    if (shouldSendEmail) {
+        const emailHtml = render({
+            template: ConfirmationEmail,
+            props: {
+            request: req,
+            requestType: reqType,
+            },
+        });
+
+        // insert images here (the actual code may already contain an example ImagePath)
+
+        const email: MailOptions = {
+            // ...
+        };
+      // ...
+    }
+```
+
+From here, look for the `attachments` property. Between the square brackets [], enter the following code for each image:
+
+```Typescript
+{
+    path: imagePath,
+    filename: "<filename>",
+    cid: "<cid>",
+}
+```
+
+See the code below for a more concrete example:
+
+```Typescript
+export const actions: Actions = {
+    // ...
+    finish_stage: async ({ request, locals, cookies, fetch }) => {
+        //...
+        if (shouldSendEmail) {
+            // render svelte component here
+
+            const imagePath1 = resolve("./static/image_1.png");
+            const imagePath2 = resolve("./static/image_2.png");
+            // ...
+            const imagePathN = resolve("./static/image_n.png");
+
+            const email: MailOptions = {
+                from: env.GOOGLE_SENDER_EMAIL,
+                to: req.studentEmail,
+                subject: "Email with multiple embedded images!",
+                html: emailHtml,
+                attachments: [
+                    {
+                        path: imagePath1,
+                        filename: "filename_1.png",
+                        cid: "unique_1",
+                    },
+                    {
+                        path: imagePath2,
+                        filename: "filename_2.png",
+                        cid: "unique_2",
+                    },
+                    //...
+                    {
+                        path: imagePathN,
+                        filename: "filename_n.png",
+                        cid: "unique_n",
+                    },
+                ],
+            };
+
+            // send email handler here
+        }
+        //...
+    }
+    // ...
+}
+```
+
+::: tip
+With the code blocks above, `image_1.png` will be embeded on the spot where the `Img` component has a `cid` of `unique_1`, same goes for `image_2.png` until `image_n.png`.
+:::
+
+### How the QR Code image was added in the email template
 
 1. The QR code image was put in the `/app/static/` folder, with filename `CSM_QR_CODE.png`.
    ![qr code image in static](qr_in_static.png)
 
-2. An `Img` component was added in the template with a `cid` correctly set as this serves as the unique identifier for the image. The format for the content ID in the src of the image is `cid:<unique_identifier_here>`.
+2. An `Img` component was added in the template with a `cid` correctly set. This serves as the unique identifier for the image. The format for the content ID in the src of the image is `cid:<unique_identifier_here>`.
 
 ```svelte
 <script lang="ts">
@@ -179,7 +319,7 @@ Note that we are **not** importing anything within the script section that is re
 /app/src/routes/(dashboard)/inbox/+page.server.ts
 ```
 
-In the `.../inbox/+page.server.ts`, we modified the `export const actions: Actions` object, particularly the `actions.finish_stage` async function. The `actions` object should follow the structure below.
+In the file `.../inbox/+page.server.ts`, we modified the `export const actions: Actions` object, particularly the `actions.finish_stage` async function. The `actions` object should follow the structure below.
 
 ```Typescript
 export const actions: Actions = {
@@ -187,7 +327,7 @@ export const actions: Actions = {
     finish_stage: async ({ request, locals, cookies, fetch }) => {
         /**
          *
-         * Important Codes Here
+         * Important Code Here
          *
          */
     },
@@ -198,7 +338,7 @@ export const actions: Actions = {
 
 Here is what the `finish_stage` async function looks like (please expand the details container to see code).
 ::: details Structure of `actions.finish_stage` Async Function
-Note that some of the code are commented out here so that only the important parts are emphasized, particularly, the code inside the `if (shouldSendEmail) {}` block. However, in the actual codebase, these lines are not commented out.
+Note that some of the code is commented out here so that only the important parts are emphasized, particularly, the code inside the `if (shouldSendEmail) {}` block. However, in the actual codebase, these lines are not commented out.
 
 ```Typescript
 export const actions: Actions = {
@@ -310,7 +450,7 @@ export const actions: Actions = {
 
 :::
 
-Now, breaking this down, the code emphasized above can be looked at in 3 parts.
+Now, breaking this down, the code emphasized above can be divided into 3 parts.
 
 A. Here, we use the `render` function from the `svelte-email` library. This converts the svelte component into native HTML elements.
 
@@ -403,84 +543,3 @@ C. The last part handles sending the emails.
 
 await sendEmail(email);
 ```
-
-### Generalized Approach for Adding Images in the Template
-
-Now, we want to generalize the process by providing an example since it is possible that in the future revisions of the template, multiple images are to be added. Thus, this subsection discusses how the approach can be generalized to support adding any number of images.
-
-::: tip Example
-Suppose we want to embed `n` number of images in our template. We do so by adding `n` number of `Img` components. The code below shows how the different `cid` are set to be unique from other images.
-
-```svelte
-<script lang="ts">
-    import { Html, Text, Img } from "svelte-email";
-    // script here...
-</script>
-
-<Html lang="en">
-    <Text>
-        Here is the 1st image. <br>
-        <Img src="cid:unique_1" alt="Image 1" width="20" height="40"/> <br>
-
-        Here is 2nd image. <br>
-        <Img src="cid:unique_2" alt="Image 2" width="20" height="40"/> <br>
-
-        ... <br>
-
-        Here is nth image. <br>
-        <Img src="cid:unique_n" alt="Image n" width="20" height="40"/> <br>
-    </Text>
-</Html>
-```
-
-In our server script, we should have the following:
-
-```Typescript
-export const actions: Actions = {
-    // ...
-    finish_stage: async ({ request, locals, cookies, fetch }) => {
-        //...
-        if (shouldSendEmail) {
-            // render svelte component here
-
-            const imagePath1 = resolve("./static/image_1.png");
-            const imagePath2 = resolve("./static/image_2.png");
-            // ...
-            const imagePathN = resolve("./static/image_n.png");
-
-            const email: MailOptions = {
-                from: env.GOOGLE_SENDER_EMAIL,
-                to: req.studentEmail,
-                subject: "Email with multiple embedded images!",
-                html: emailHtml,
-                attachments: [
-                    {
-                        path: imagePath1,
-                        filename: "filename_1.png",
-                        cid: "unique_1",
-                    },
-                    {
-                        path: imagePath2,
-                        filename: "filename_2.png",
-                        cid: "unique_2",
-                    },
-                    //...
-                    {
-                        path: imagePathN,
-                        filename: "filename_n.png",
-                        cid: "unique_n",
-                    },
-                ],
-            };
-
-            // send email handler here
-        }
-        //...
-    }
-    // ...
-}
-```
-
-With the code blocks above, `image_1.png` will be embeded on the spot where the `Img` component has a `cid` of `unique_1`, same goes for `image_2.png` until `image_n.png`.
-
-:::
