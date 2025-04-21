@@ -9,7 +9,7 @@ This section contains the steps for redeployment in order to update the app acro
 git pull
 ```
 
-3. Everything in the makefile should be Start the deployment by running:
+3. Everything in the Makefile should be set up. The deployment can be started by running:
 
 ```terminal
 make start
