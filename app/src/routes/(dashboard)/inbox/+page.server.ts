@@ -290,11 +290,15 @@ export const actions: Actions = {
     }
 
     if (shouldSendEmail) {
+      const lastStage = req.history[req.history.length - 1];
+      const handler = await db.user.findOne({ _id: lastStage.handlerId });
+
       const emailHtml = render({
         template: ConfirmationEmail,
         props: {
           request: req,
           requestType: reqType,
+          handlerName: handler!.name,
         },
       });
 
@@ -302,7 +306,7 @@ export const actions: Actions = {
       const email: MailOptions = {
         from: env.GOOGLE_SENDER_EMAIL,
         to: req.studentEmail,
-        subject: `${reqType.title} has been finished`,
+        subject: `Request for ${reqType.title}`,
         html: emailHtml,
         attachments: [
           {

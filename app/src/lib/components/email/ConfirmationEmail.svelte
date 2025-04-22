@@ -4,16 +4,16 @@
 
   export let request: Request;
   export let requestType: RequestType;
+  export let handlerName: string;
 </script>
 
 <Html lang="en">
   <Text>
     Good day! <br />
     <br />
-    Your request for <span style="color:red">{requestType.title}</span> is ready
-    for pickup. You may get this personally and present any valid ID and claim
-    stub (if applicable) upon claiming it or have it picked up from the OUR by
-    your authorized representative with a
+    Your request for {requestType.title} is ready for pickup. You may get this personally
+    and present any valid ID and claim stub (if applicable) upon claiming it or have
+    it picked up from the OUR by your authorized representative with a
     <strong><u>printed and duly signed authorization letter</u></strong>
     and
     <strong
@@ -39,8 +39,10 @@
     <br />
     <br />
     Thank you,<br />
+    {handlerName}
     <br />
     <br />
+    For: <br />
     <strong>Assoc. Prof. Victoria Lourdes C. Diaz</strong><br />
     University Registrar <br />
     UP Baguio <br />

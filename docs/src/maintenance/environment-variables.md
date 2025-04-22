@@ -42,4 +42,4 @@ The following are the environment variables necessary to make the app run.
 | Variable                 | Information                                                                                    |
 | ------------------------ | ---------------------------------------------------------------------------------------------- |
 | `GOOGLE_SENDER_EMAIL`    | The email used to automatically notify requesters that their request is done being processed   |
-| `GOOGLE_SENDER_PASSWORD` | The password to the email used to notify requesters that their request is done being processed |
+| `GOOGLE_SENDER_PASSWORD` | The password to the email used to notify requesters that their request is done being processed. You can get this from [here](https://myaccount.google.com/apppasswords). |
