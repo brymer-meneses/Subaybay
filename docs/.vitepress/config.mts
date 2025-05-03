@@ -14,7 +14,7 @@ export default defineConfig({
       { text: "Home", link: "/" },
       {
         text: "Application",
-        link: "../",
+        link: "../inbox",
         target: "_self",
       },
       {
