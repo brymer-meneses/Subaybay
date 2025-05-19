@@ -1,4 +1,5 @@
 type User = {
+  nickname: string | null;
   _id: string;
   name: string;
   email: string;

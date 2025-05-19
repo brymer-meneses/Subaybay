@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import * as Table from "$lib/components/ui/table";
+  import { Pencil } from "lucide-svelte";
 
   import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
   import { Badge } from "$lib/components/ui/badge/index.js";
@@ -18,17 +19,18 @@
     {users.length === 1 ? "result" : "results"}.</Table.Caption
   >
   <Table.Header>
-    <Table.Row class="grid w-full grid-cols-6 text-left">
+    <Table.Row class="grid w-full grid-cols-8 text-left">
       <Table.Head class="col-span-2 ">User</Table.Head>
       <Table.Head class="col-span-2 ">Roles</Table.Head>
+      <Table.Head class="col-span-2 ">Nickname</Table.Head>
       <Table.Head class="col-span-2 text-center ">Actions</Table.Head>
     </Table.Row>
   </Table.Header>
   <ScrollArea class="h-[28rem]">
     <Table.Body>
       {#each users as user (user._id)}
-        <Table.Row class="grid w-full grid-cols-6 text-left">
-          <Table.Cell class="col-span-2">
+        <Table.Row class="grid w-full grid-cols-8 text-left">
+          <Table.Cell class="col-span-2 content-center">
             <div class="mb-4 flex items-center justify-between space-x-4">
               <div class="flex items-center lg:space-x-4">
                 <img
@@ -58,11 +60,26 @@
               </div>
             </div>
           </Table.Cell>
-          <Table.Cell class="col-span-2">
+          <Table.Cell class="col-span-2 content-center">
             {#if user.isAdmin}
               <Badge>Admin</Badge>
             {/if}
             <Badge variant="outline">Staff</Badge>
+          </Table.Cell>
+          <Table.Cell class="col-span-2 content-center">
+            <!-- TODO: fix -->
+             <div class="flex gap-4 group items-center">
+              <div>
+                {#if !user.nickname}
+                  <p class="text-muted-foreground">Set nickname here...</p>
+                {:else}
+                  {user.nickname}
+                {/if}
+              </div>
+              <div class="cursor-pointer opacity-0 group-hover:opacity-100">
+                <Pencil size="18" />
+              </div>
+              </div>
           </Table.Cell>
           <Table.Cell class="flex items-center justify-center align-middle">
             {#if user.isAdmin}

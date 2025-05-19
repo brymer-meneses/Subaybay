@@ -34,6 +34,7 @@ export const message = database.collection<Message>("messages");
 export interface User {
   _id: string;
   email: string;
+  nickname: string | null;
   name: string;
   profileUrl: string;
   isAdmin: boolean;
@@ -121,22 +122,22 @@ export interface InboxStageData {
 }
 
 export interface Notification {
-  _id: ObjectId,
-  seen: boolean,
-  userId: string,
+  _id: ObjectId;
+  seen: boolean;
+  userId: string;
   body: {
     type: "NewStage" | "RolledBackStage" | "ReassignedStage" | "message";
-    content: MessageNotification | InboxNotification
-    messageId?: string,
-  }
+    content: MessageNotification | InboxNotification;
+    messageId?: string;
+  };
 }
 
 export interface MessageNotification {
-  messageId: ObjectId
+  messageId: ObjectId;
 }
 
 export interface InboxNotification {
-  stage: StageIdentifier,
-  receiverId: string,
-  from: string,
+  stage: StageIdentifier;
+  receiverId: string;
+  from: string;
 }
