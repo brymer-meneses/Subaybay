@@ -6,8 +6,6 @@ University of the Philippines Baguio.
 This project was developed as part of our CMSC 128 (Software Engineering) course at UP Baguio.
 For the installation process, please see [Installation section](#installation).
 
-<!-- idk if [text](#id) works in github MD-->
-
 ## Motivation
 
 The OUR previously relied on manual tracking of documents, which can be prone to errors and delays.
@@ -23,20 +21,11 @@ UPB Subaybay was developed to help the OUR manage and track requests more effici
     </summary>
     <blockquote>
         <ul>
-            <li>Zedrick</li>
-            <li>Grandemir</li>
-            <li>Brymer</li>
+            <li><a href="https://github.com/ZDSeven">Zedrick De Guzman</a></li>
+            <li><a href="https://github.com/Arktii">Grandemir Baysa-Pee</a></li>
+            <li><a href="https://github.com/brymer-meneses">Brymer Bernard Meneses</a></li>
             <li><a href="https://github.com/AndreBryant">Andre Bryant Bagalso</a></li>
         </ul>
-        <details>
-            <summary>
-                Note to team
-            </summary>
-            <blockquote>
-            <p>Push a commit with your full names added (if you don't mind your full names showing here).</p>
-            <p>- Andre (Best Project manager)</p>
-            </blockquote>
-        </details>
     </blockquote>
 </details>
 
@@ -61,8 +50,6 @@ UPB Subaybay was developed to help the OUR manage and track requests more effici
 ## Tech Stack
 
 ### App
-
-<!-- Add links -->
 
 - [SvelteKit](https://svelte.dev)
 - [TailwindCSS](https://tailwindcss.com)
@@ -93,8 +80,8 @@ UPB Subaybay was developed to help the OUR manage and track requests more effici
 
 ### Cloning the repo:
 
-```
-git clone https://github.com/brymer-meneses/Subaybay
+```bash
+git clone https://github.com/brymer-meneses/Subaybay.git
 cd Subaybay
 ```
 
