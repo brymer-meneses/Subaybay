@@ -1,6 +1,6 @@
 # <img src="./app/src/lib/assets//UP.png" width="28"/> UPB Subaybay
 
-UPB Subaybay is an internal document tracker for the Office of the University Registrar (OUR) of the
+UPB Subaybay is an internal document request tracker for the Office of the University Registrar (OUR) of the
 University of the Philippines Baguio.
 
 This project was developed as part of our CMSC 128 (Software Engineering) course at UP Baguio.
